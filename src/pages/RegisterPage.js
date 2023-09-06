@@ -1,17 +1,10 @@
 import { Helmet } from 'react-helmet-async';
-// @mui
 import { styled } from '@mui/material/styles';
-import {Container, Typography, Divider, Stack, Button } from '@mui/material';
+import {Container, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-// hooks
 import useResponsive from '../hooks/useResponsive';
-// components
-import Logo from '../components/logo';
-import Iconify from '../components/iconify';
-// sections
-import { LoginForm } from '../sections/auth/login';
 import { RegisterForm } from '../sections/auth/register';
-// ----------------------------------------------------------------------
+
 
 const StyledRoot = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -39,8 +32,6 @@ const StyledContent = styled('div')(({ theme }) => ({
   padding: theme.spacing(12, 0),
 }));
 
-// ----------------------------------------------------------------------
-
 export default function RegisterPage() {
   const mdUp = useResponsive('up', 'md');
 
@@ -51,14 +42,6 @@ export default function RegisterPage() {
       </Helmet>
 
       <StyledRoot>
-        <Logo
-          sx={{
-            position: 'fixed',
-            top: { xs: 16, sm: 24, md: 40 },
-            left: { xs: 16, sm: 24, md: 40 },
-          }}
-        />
-
         {mdUp && (
           <StyledSection>
             <img src="/assets/illustrations/illustration_register.jpg" alt="register" />
@@ -68,34 +51,13 @@ export default function RegisterPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign up to Minimal
+              Sign up to AioPro
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
               Do have an account? 
-              <Link to="/login">Sign In</Link>
+              <Link to="/login">Login</Link>
             </Typography>
-
-            {/* <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
-              </Button>
-
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
-              </Button>
-
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
-              </Button>
-            </Stack>
-
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                OR
-              </Typography>
-            </Divider> */}
-
             <RegisterForm />
           </StyledContent>
         </Container>

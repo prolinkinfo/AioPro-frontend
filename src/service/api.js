@@ -51,11 +51,7 @@ export const apipost = async (path, data) => {
     return response;
   } catch (error) {
     if (error && error.response) {
-      if (error && error.response.data && error.response.status === 401) {
-        if (error.response.data.message) {
-          toast.error(error.response.data.message);
-        }
-      }
+      toast.error(error.response.data.error);
     }
   }
 };

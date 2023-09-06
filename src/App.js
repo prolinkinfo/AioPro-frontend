@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from './theme';
 import Page404 from './pages/Page404';
+import RegisterPage from './pages/RegisterPage';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +39,7 @@ export default function App() {
       ) : (
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       )}
