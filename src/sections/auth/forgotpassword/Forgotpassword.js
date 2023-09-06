@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Stack, IconButton, InputAdornment, TextField, Checkbox, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -8,39 +8,45 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import CircularProgress from '@mui/material/CircularProgress';
-import { apipost } from '../../../service/api';
+import { apiput } from '../../../service/api';
 import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
+export default function Forgotpassword() {
+  const { token } = useParams();
+
+  console.log('paraps', token);
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLogin] = useState(false);
 
   const initialValues = {
-    email: '',
+    token: '',
     password: '',
+    confirmPassword: '',
   };
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
+    confirmPassword: yup
+      .string()
+      .required('confirmPassword is required')
+      .oneOf([yup.ref('password'), null], 'Password does not match'),
   });
 
   const Adddata = async (values) => {
     setIsLogin(true);
-    const data = values;
-    const result = await apipost('/api/auth/login', data);
+    const data = { ...values, token };
+
+    console.log('data12345678', data);
+    const result = await apiput('/api/auth/forgotPassword', data);
+    console.log('dataforget', result);
     if (result && result.status === 200) {
-      localStorage.setItem('user', JSON.stringify(result?.data?.userData));
-      localStorage.setItem('user_id', result?.data?.userData?.id);
-      localStorage.setItem('userRole', result?.data?.userData?.role);
-      navigate('/dashboard/app');
-    } else {
+      alert('password updated successfully');
       navigate('/login');
     }
-
     setIsLogin(false);
   };
 
@@ -57,15 +63,6 @@ export default function LoginForm() {
     <>
       <form onSubmit={formik.handleSubmit}>
         <Stack spacing={3} mb={2}>
-          <TextField
-            name="email"
-            label="Email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-
           <TextField
             name="password"
             label="Password"
@@ -84,15 +81,30 @@ export default function LoginForm() {
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
           />
+          <TextField
+            name="confirmPassword"
+            label="confirmPassword"
+            type={showPassword ? 'text' : 'confirmPassword'}
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+            helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+          />
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
           <FormControlLabel control={<Checkbox name="remember" />} label="Remember me" />
-          <Link to="/resetpassword" variant="subtitle2" underline="hover">
-            Forgot password?
-          </Link>
         </Stack>
         <LoadingButton fullWidth size="large" type="submit" variant="contained" disabled={!!isLoading}>
-          {isLoading ? <CircularProgress /> : 'Login'}
+          {isLoading ? <CircularProgress /> : 'Forget Password'}
         </LoadingButton>
       </form>
     </>

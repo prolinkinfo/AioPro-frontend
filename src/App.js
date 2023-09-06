@@ -14,6 +14,8 @@ import LoginPage from './pages/LoginPage';
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from './theme';
 import Page404 from './pages/Page404';
+import Resetpassword from './pages/Resetpassword';
+import Forgotpassword from './pages/Forgotpassword';
 import RegisterPage from './pages/RegisterPage';
 
 // ----------------------------------------------------------------------
@@ -39,8 +41,10 @@ export default function App() {
       ) : (
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<RegisterPage />} />
+          <Route path="/resetpassword" element={<Resetpassword />} />
+          <Route path="/forgot-password/:token" element={<Forgotpassword />} />
           <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="/signup" element={<RegisterPage />} />
         </Routes>
       )}
     </ThemeProvider>

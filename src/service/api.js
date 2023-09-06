@@ -34,6 +34,26 @@ export const apiget = async (path) => {
   }
 };
 
+export const resetpassword = async (path, data) => {
+  try {
+    const response = await axios({
+      url: constant.baseUrl + path,
+      method: 'POST',
+      data,
+    });
+   return response
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+          console.log(error);
+        }
+      }
+    }
+  }
+};
+
 export const apipost = async (path, data) => {
   try {
     const response = await axios.post(constant.baseUrl + path, data, {
@@ -51,7 +71,11 @@ export const apipost = async (path, data) => {
     return response;
   } catch (error) {
     if (error && error.response) {
-      toast.error(error.response.data.error);
+      if (error && error.response.data && error.response.status === 401) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
     }
   }
 };
@@ -134,3 +158,7 @@ export const deleteManyApi = async (path, data) => {
     }
   }
 };
+
+//  export const forgetpassword = (path, data)=>{
+
+//  }
