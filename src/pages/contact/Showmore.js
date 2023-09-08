@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import * as React from 'react';
 import Button from '@mui/material/Button';
@@ -15,15 +16,15 @@ import Select from '@mui/material/Select';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material';
-import { toast } from 'react-toastify';
-import { apipost } from '../../service/api';
-// import { FiSave } from "react-icons/fi";
-// import { GiCancel } from "react-icons/gi";
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { apiget, apiput } from '../../service/api';
 import Palette from '../../theme/palette';
 
-const Add = (props) => {
-  const { open, handleClose, setUserAction } = props;
-  const userid = localStorage.getItem('user_id');
+const Edit = (props) => {
+  const { open, handleClose, showdata, id, fetchContact } = props;
+  console.log('showdata', showdata);
+  const [contactData, setContactData] = useState({});
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -43,47 +44,79 @@ const Add = (props) => {
 
   // -----------   initialValues
   const initialValues = {
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
-    phoneNumber: '',
-    emailAddress: '',
-    address: '',
-    alternatePhoneNumber: '',
-    additionalEmailAddress: '',
-    instagramProfile: '',
-    twitterProfile: '',
-    preferredContactMethod: '',
-    referralSource: '',
-    referralContactName: '',
-    relationshipToReferrer: '',
-    preferencesForMarketingCommunications: '',
-    preferredLanguage: '',
-    createdBy: userid,
+    firstName: contactData?.firstName,
+    lastName: contactData?.lastName,
+    dateOfBirth: contactData?.dateOfBirth,
+    gender: contactData?.gender,
+    phoneNumber: contactData?.phoneNumber,
+    emailAddress: contactData?.emailAddress,
+    address: contactData?.address,
+    alternatePhoneNumber: contactData?.alternatePhoneNumber,
+    additionalEmailAddress: contactData?.additionalEmailAddress,
+    instagramProfile: contactData?.instagramProfile,
+    twitterProfile: contactData?.twitterProfile,
+    preferredContactMethod: contactData?.preferredContactMethod,
+    referralSource: contactData?.referralSource,
+    referralContactName: contactData?.referralContactName,
+    relationshipToReferrer: contactData?.relationshipToReferrer,
+    preferencesForMarketingCommunications: contactData?.preferencesForMarketingCommunications,
+    preferredLanguage: contactData?.preferredLanguage,
+    modifiedOn: '',
   };
 
-  // add contact api
-  const addContact = async (values) => {
-    console.log('values12345', values);
+  // add Contact Edit api
+  const editContact = async (values) => {
     const data = values;
-    const result = await apipost('contact/add', data);
-    setUserAction(result);
 
-    if (result && result.status === 201) {
-      formik.resetForm();
+    console.log('editContact', data, id);
+    const result = await apiput(`contact/edit/${id}`, data);
+
+    if (result && result.status === 200) {
       handleClose();
-      toast.success(result.data.message);
+      fetchContact();
     }
   };
+
+  // fetch api
+  const fetchdata = async () => {
+    const result = await apiget(`contact/view/${id}`);
+    if (result && result.status === 200) {
+      setContactData(result?.data[0]);
+    }
+  };
+
+  useEffect(() => {
+    fetchdata();
+  }, [open]);
 
   // formik
   const formik = useFormik({
     initialValues,
-    validationSchema,
-    onSubmit: async (values) => {
-      addContact(values);
-    },
+    // validationSchema,
+    enableReinitialize: true,
+    // onSubmit: async (values) => {
+    //   const ContactData = {
+    //     firstName: values.firstName,
+    //     lastName: values.lastName,
+    //     dateOfBirth: values.dateOfBirth,
+    //     gender: values.gender,
+    //     phoneNumber: values.phoneNumber,
+    //     emailAddress: values.emailAddress,
+    //     address: values.address,
+    //     alternatePhoneNumber: values.alternatePhoneNumber,
+    //     additionalEmailAddress: values.additionalEmailAddress,
+    //     instagramProfile: values.instagramProfile,
+    //     twitterProfile: values.twitterProfile,
+    //     preferredContactMethod: values.preferredContactMethod,
+    //     referralSource: values.referralSource,
+    //     referralContactName: values.referralContactName,
+    //     relationshipToReferrer: values.relationshipToReferrer,
+    //     preferencesForMarketingCommunications: values.preferencesForMarketingCommunications,
+    //     preferredLanguage: values.preferredLanguage,
+    //     modifiedOn: new Date(),
+    //   };
+    //   editContact(ContactData);
+    // },
   });
 
   return (
@@ -98,7 +131,7 @@ const Add = (props) => {
             // color: "white",
           }}
         >
-          <Typography variant="h6">Add New </Typography>
+          <Typography variant="h6">Show More</Typography>
           <Typography>
             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -118,37 +151,19 @@ const Add = (props) => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.firstName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  helperText={formik.touched.firstName && formik.errors.firstName}
+                  value={showdata?.firstName}
+                  //   onChange={formik.handleChange}
+                  //   error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                  //   helperText={formik.touched.firstName && formik.errors.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Last name</FormLabel>
-                <TextField
-                  id="lastName"
-                  name="lastName"
-                  size="small"
-                  fullWidth
-                  value={formik.values.lastName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-                  helperText={formik.touched.lastName && formik.errors.lastName}
-                />
+                <TextField id="lastName" name="lastName" size="small" fullWidth value={showdata?.lastName} />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Date Of Birth</FormLabel>
-                <TextField
-                  name="dateOfBirth"
-                  type="date"
-                  size="small"
-                  fullWidth
-                  value={formik.values.dateOfBirth}
-                  onChange={formik.handleChange}
-                  error={formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)}
-                  helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
-                />
+                <TextField name="dateOfBirth" type="date" size="small" fullWidth value={showdata?.dateOfBirth} />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Phone number</FormLabel>
@@ -158,10 +173,7 @@ const Add = (props) => {
                   size="small"
                   type="number"
                   fullWidth
-                  value={formik.values.phoneNumber}
-                  onChange={formik.handleChange}
-                  error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
-                  helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
+                  value={showdata?.phoneNumber}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -171,16 +183,13 @@ const Add = (props) => {
                   name="emailAddress"
                   size="small"
                   fullWidth
-                  value={formik.values.emailAddress}
-                  onChange={formik.handleChange}
-                  error={formik.touched.emailAddress && Boolean(formik.errors.emailAddress)}
-                  helperText={formik.touched.emailAddress && formik.errors.emailAddress}
+                  value={showdata?.emailAddress}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <FormLabel>Gender</FormLabel>
-                  <RadioGroup row name="gender" onChange={formik.handleChange} value={formik.values.gender}>
+                  <RadioGroup row name="gender" value={showdata?.gender}>
                     <FormControlLabel value="Male" control={<Radio />} label="Male" />
                     <FormControlLabel value="Female" control={<Radio />} label="Female" />
                     <FormControlLabel value="Other" control={<Radio />} label="Other" />
@@ -192,18 +201,7 @@ const Add = (props) => {
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Address</FormLabel>
-                <TextField
-                  id="address"
-                  name="address"
-                  size="small"
-                  multiline
-                  fullWidth
-                  rows={4}
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  error={formik.touched.address && Boolean(formik.errors.address)}
-                  helperText={formik.touched.address && formik.errors.address}
-                />
+                <TextField id="address" name="address" size="small" multiline fullWidth value={showdata?.address} />
               </Grid>
             </Grid>
             <Typography style={{ marginBottom: '15px' }} variant="h6" mt={2}>
@@ -218,10 +216,7 @@ const Add = (props) => {
                   type="number"
                   size="small"
                   fullWidth
-                  value={formik.values.alternatePhoneNumber}
-                  onChange={formik.handleChange}
-                  error={formik.touched.alternatePhoneNumber && Boolean(formik.errors.alternatePhoneNumber)}
-                  helperText={formik.touched.alternatePhoneNumber && formik.errors.alternatePhoneNumber}
+                  value={showdata?.alternatePhoneNumber}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -232,10 +227,7 @@ const Add = (props) => {
                   type="email"
                   size="small"
                   fullWidth
-                  value={formik.values.additionalEmailAddress}
-                  onChange={formik.handleChange}
-                  error={formik.touched.additionalEmailAddress && Boolean(formik.errors.additionalEmailAddress)}
-                  helperText={formik.touched.additionalEmailAddress && formik.errors.additionalEmailAddress}
+                  value={showdata?.additionalEmailAddress}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -246,17 +238,8 @@ const Add = (props) => {
                   type=""
                   size="small"
                   fullWidth
-                  onChange={(e) => formik.setFieldValue('instagramProfile', `${e.target.value}`)}
+                  value={showdata?.instagramProfile}
                 />
-                {formik.values.instagramProfile && (
-                  <a
-                    href={`https://www.instagram.com/${formik.values.instagramProfile}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Link
-                  </a>
-                )}
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Twitter profile</FormLabel>
@@ -266,13 +249,8 @@ const Add = (props) => {
                   type=""
                   size="small"
                   fullWidth
-                  onChange={(e) => formik.setFieldValue('twitterProfile', `${e.target.value}`)}
+                  value={showdata?.twitterProfile}
                 />
-                {formik.values.twitterProfile && (
-                  <a href={`https://twitter.com/${formik.values.twitterProfile}`} target="_blank" rel="noreferrer">
-                    Link
-                  </a>
-                )}
               </Grid>
               <Grid item xs={12} sm={12}>
                 <FormLabel>Preferred Contact Method</FormLabel>
@@ -282,8 +260,7 @@ const Add = (props) => {
                   type=""
                   size="small"
                   fullWidth
-                  value={formik.values.preferredContactMethod}
-                  onChange={formik.handleChange}
+                  value={showdata?.preferredContactMethod}
                 />
               </Grid>
             </Grid>
@@ -295,12 +272,11 @@ const Add = (props) => {
                 <FormControl fullWidth>
                   <FormLabel>Referral source</FormLabel>
                   <Select
+                    labelId="demo-simple-select-label"
                     id="referralSource"
                     name="referralSource"
                     size="small"
-                    value={formik.values.referralSource}
-                    onChange={formik.handleChange}
-                    error={formik.touched.referralSource && Boolean(formik.errors.referralSource)}
+                    value={showdata?.referralSource}
                   >
                     <MenuItem value="Existing Customers">Existing Customers</MenuItem>
                     <MenuItem value="Professional Networks">Professional Networks</MenuItem>
@@ -320,8 +296,7 @@ const Add = (props) => {
                   name="referralContactName"
                   size="small"
                   fullWidth
-                  value={formik.values.referralContactName}
-                  onChange={formik.handleChange}
+                  value={showdata?.referralContactName}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -331,8 +306,7 @@ const Add = (props) => {
                   name="relationshipToReferrer"
                   size="small"
                   fullWidth
-                  value={formik.values.relationshipToReferrer}
-                  onChange={formik.handleChange}
+                  value={showdata?.relationshipToReferrer}
                 />
               </Grid>
             </Grid>
@@ -348,7 +322,7 @@ const Add = (props) => {
                     id="preferencesForMarketingCommunications"
                     name="preferencesForMarketingCommunications"
                     size="small"
-                    value={formik.values.preferencesForMarketingCommunications}
+                    value={showdata?.preferencesForMarketingCommunications}
                     onChange={formik.handleChange}
                     error={
                       formik.touched.preferencesForMarketingCommunications &&
@@ -358,15 +332,6 @@ const Add = (props) => {
                     <MenuItem value="Opt-in">Opt-in</MenuItem>
                     <MenuItem value="Opt-out">Opt-out</MenuItem>
                   </Select>
-                  <FormHelperText
-                    error={
-                      formik.touched.preferencesForMarketingCommunications &&
-                      Boolean(formik.errors.preferencesForMarketingCommunications)
-                    }
-                  >
-                    {formik.touched.preferencesForMarketingCommunications &&
-                      formik.errors.preferencesForMarketingCommunications}
-                  </FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -377,7 +342,7 @@ const Add = (props) => {
                   type=""
                   size="small"
                   fullWidth
-                  value={formik.values.preferredLanguage}
+                  value={showdata?.preferredLanguage}
                   onChange={formik.handleChange}
                 />
               </Grid>
@@ -385,15 +350,6 @@ const Add = (props) => {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={formik.handleSubmit}
-            style={{ textTransform: 'capitalize' }}
-            // startIcon={<FiSave />}
-          >
-            Save
-          </Button>
           <Button
             type="reset"
             variant="outlined"
@@ -412,4 +368,4 @@ const Add = (props) => {
   );
 };
 
-export default Add;
+export default Edit;

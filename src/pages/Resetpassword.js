@@ -75,7 +75,7 @@ export default function Resetpassword() {
 
             <Typography variant="body2" sx={{ mb: 5 }}>
               Don’t have an account?{''}
-              <Link to="/" variant="subtitle2">
+              <Link to="/signup" variant="subtitle2">
                 Sign Up
               </Link>
             </Typography>

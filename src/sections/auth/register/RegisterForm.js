@@ -7,7 +7,6 @@ import * as yup from 'yup';
 import { apipost } from '../../../service/api';
 import Iconify from '../../../components/iconify';
 
-
 export default function RgisterForm() {
   const navigate = useNavigate();
 
@@ -18,10 +17,14 @@ export default function RgisterForm() {
     email: '',
     password: '',
     confirmPassword: '',
+    lastName: '',
+    firstName: '',
   };
 
   // validationSchema
   const validationSchema = yup.object({
+    lastName: yup.string().required('lastName is required'),
+    firstName: yup.string().required('firstName is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
     confirmPassword: yup
@@ -36,6 +39,8 @@ export default function RgisterForm() {
       password: values?.password,
       confirmPassword: values?.confirmPassword,
       role: 'user',
+      firstName: values?.firstName,
+      lastName: values?.lastName,
     };
     const result = await apipost('/api/auth/signup', data);
     if (result && result.status === 200) {
@@ -56,6 +61,22 @@ export default function RgisterForm() {
     <>
       <form>
         <Stack spacing={3} mb={2}>
+          <TextField
+            name="firstName"
+            label="first Name"
+            value={formik.values.firstName}
+            onChange={formik.handleChange}
+            error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+            helperText={formik.touched.firstName && formik.errors.firstName}
+          />
+          <TextField
+            name="lastName"
+            label="last Name"
+            value={formik.values.lastName}
+            onChange={formik.handleChange}
+            error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+            helperText={formik.touched.lastName && formik.errors.lastName}
+          />
           <TextField
             name="email"
             label="Email"
