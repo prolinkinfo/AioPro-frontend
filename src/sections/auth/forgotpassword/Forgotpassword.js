@@ -27,9 +27,16 @@ export default function Forgotpassword() {
     confirmPassword: '',
   };
 
+  const pwVlidation = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/';
   // -----------  validationSchema
   const validationSchema = yup.object({
-    password: yup.string().required('Password is required'),
+    password: yup
+      .string()
+      .required('Password is required')
+      .matches(
+        pwVlidation,
+        'Must Contain minimum 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
+      ),
     confirmPassword: yup
       .string()
       .required('confirmPassword is required')

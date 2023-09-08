@@ -20,10 +20,14 @@ export default function RgisterForm() {
     confirmPassword: '',
   };
 
+  const pwVlidation ="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
   // validationSchema
   const validationSchema = yup.object({
     email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().required('Password is required'),
+    password: yup.string().required("Password is required")
+    .matches(pwVlidation,
+      "Must Contain minimum 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+    ),
     confirmPassword: yup
       .string()
       .required('Confirm Password is required')
