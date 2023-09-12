@@ -3,10 +3,12 @@ import { Card, Stack, Button, Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarContainer } from '@mui/x-data-grid';
 import { DeleteOutline } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
-import { useNavigate } from 'react-router-dom';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import { useNavigate, Link } from 'react-router-dom';
 import Iconify from '../../components/iconify';
 import AddUser from './Add';
 
+import Event from './Event';
 import { allusers, apidelete } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
@@ -16,6 +18,7 @@ import EditContact from './Edit';
 
 function CustomToolbar({ selectedRowIds, fetchdata }) {
   const [opendelete, setOpendelete] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleCloseDelete = () => {
     setOpendelete(false);
@@ -29,14 +32,17 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
     console.log('data12345', data.join(''));
     const response = await apidelete('/api/users', data.join('').toString());
     console.log('responsedeleteuser', response);
-    fetchdata();
-    handleCloseDelete();
+    if (response?.status === 200) {
+      fetchdata();
+      handleCloseDelete();
+    }
   };
 
   return (
     <GridToolbarContainer>
+      {console.log('user?.id!==selectedRowIds', user?.id, selectedRowIds)}
       <GridToolbar />
-      {selectedRowIds && selectedRowIds.length > 0 && (
+      {selectedRowIds && selectedRowIds.length > 0 && user?.role === 'admin' && !selectedRowIds.includes(user?.id) && (
         <Button
           variant="text"
           sx={{ textTransform: 'capitalize' }}
@@ -61,10 +67,14 @@ const User = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [id, setId] = useState('');
+  const [data, setdata] = useState({});
   const navigate = useNavigate();
   const [openEdit, setOpenEdit] = useState(false);
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
+  const [openevent, setOpenevent] = useState(false);
+  const handleOpenevent = () => setOpenevent(true);
+  const handleCloseevent = () => setOpenevent(false);
 
   const handleSelectionChange = (selectionModel) => {
     setSelectedRowIds(selectionModel);
@@ -125,15 +135,35 @@ const User = () => {
         );
       },
     },
+    {
+      field: 'event',
+      headerName: 'Event',
+      flex: 1,
+      // eslint-disable-next-line arrow-body-style
+      renderCell: (params) => {
+        const handleClick = async (data) => {
+          setdata(data);
+          handleOpenevent();
+        };
+        return (
+          <div>
+            {console.log('datarenderCell', params)}
+            <Link to={`/dashboard/event/${params?.row?._id}`}>
+              <EventNoteIcon />
+            </Link>
+          </div>
+        );
+      },
+    },
   ];
 
-  const fetchdata = async () => {
+  async function fetchdata() {
     const result = await allusers('/api/users');
     console.log('resultwwe', result);
     if (result && result.status === 200) {
       setAllUser(result?.data);
     }
-  };
+  }
   useEffect(() => {
     fetchdata();
   }, [openAdd, openEdit]);

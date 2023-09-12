@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +24,8 @@ import { apiget, apiput } from '../../service/api';
 const Edit = (props) => {
   const { handleClose, open, id, fetchdata } = props;
   const [userDetails, setUserDetails] = useState({});
+  const [Role, setrole] = useState(id?.row?.role);
+  console.log("Role",Role)
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('First Name is required'),
@@ -142,18 +144,25 @@ const Edit = (props) => {
                   helperText={formik.touched.emailAddress && formik.errors.emailAddress}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Role</FormLabel>
+              <FormLabel style={{marginLeft:"30px",marginBottom:"-20px",marginTop:"20px"}}>Role</FormLabel>
+              <Grid item xs={12} sm={12} md={12} style={{display:"flex"}}>
                 <TextField
                   id="role"
                   name="role"
                   size="small"
+                  disabled
                   value={formik.values.role}
                   onChange={formik.handleChange}
                   fullWidth
                   error={formik.touched.role && Boolean(formik.errors.role)}
                   helperText={formik.touched.role && formik.errors.role}
                 />
+
+                <Select id="role" name="role" size="small" value={formik.values.role} onChange={formik.handleChange}>
+                  <MenuItem value="admin">admin</MenuItem>
+                  <MenuItem value="user">user</MenuItem>
+                  <MenuItem value="superadmin">super admin</MenuItem>
+                </Select>
               </Grid>
             </Grid>
           </form>

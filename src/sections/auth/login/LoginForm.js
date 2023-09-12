@@ -5,6 +5,7 @@ import { Stack, IconButton, InputAdornment, TextField, Checkbox, FormControlLabe
 import { LoadingButton } from '@mui/lab';
 // components
 import { useFormik } from 'formik';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -32,13 +33,16 @@ export default function LoginForm() {
     setIsLogin(true);
     const data = values;
     const result = await apipost('/api/auth/login', data);
+
+    console.log('userresult', result);
     if (result && result.status === 200) {
+       localStorage.setItem('userName', JSON.stringify(result?.data?.userData?.userName));
       localStorage.setItem('user', JSON.stringify(result?.data?.userData));
       localStorage.setItem('user_id', result?.data?.userData?.id);
       localStorage.setItem('userRole', result?.data?.userData?.role);
       navigate('/dashboard/app');
     } else {
-      navigate('/login');
+      toast.error('Email or password are incorrect');
     }
 
     setIsLogin(false);

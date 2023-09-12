@@ -11,7 +11,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button } from '@mui/material';
-import { adduser } from '../../service/api';
+import { apipost } from '../../service/api';
 
 const Add = (props) => {
   // eslint-disable-next-line react/prop-types
@@ -19,50 +19,41 @@ const Add = (props) => {
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    firstName: yup.string().required('Frist Name is required'),
-    lastName: yup.string().required('Last Name is required'),
-    emailAddress: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-        'Must Contain minimum 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
-      ),
-    confirmPassword: yup
-      .string()
-      .required('Confirm Password is required')
-      .oneOf([yup.ref('password'), null], 'Password does not match'),
+    name: yup.string().required('Name is required'),
+    manager: yup.string().required('Manager is required'),
+    department: yup.string().required('department is required'),
+    teamMember: yup.string().required('teamMember is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
-    firstName: '',
+    name: '',
+    manager: '',
     lastName: '',
-    emailAddress: '',
-    password: '',
-    confirmPassword:"",
+    department: '',
+    teamMember: '',
   };
 
   // add user api
   const addUser = async (values) => {
     const data = {
-      email: values?.emailAddress,
-      password: values?.password,
-      confirmPassword: values?.confirmPassword,
-      role: 'user',
-      firstName: values?.firstName,
-      lastName: values?.lastName,
-    };
-    const result = await adduser('/api/auth/signup', data);
+      manager: values?.manager,
 
-    if (result && result.status === 200) {
-      formik.resetForm();
-      handleClose();
-      toast.success(result.data.message);
-    } else {
-      alert(result.error);
-    }
+      name: values?.name,
+      department: values?.department,
+      teamMember: values?.teamMember,
+    };
+
+    console.log("datateam",data)
+    // const result = await apipost('/api/auth/signup', data);
+
+    // if (result && result.status === 200) {
+    //   formik.resetForm();
+    //   handleClose();
+    //   toast.success(result.data.message);
+    // } else {
+    //   alert(result.error);
+    // }
   };
 
   const formik = useFormik({
@@ -93,74 +84,60 @@ const Add = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>First name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <TextField
-                  id="firstName"
-                  name="firstName"
+                  id="name"
+                  name="name"
                   label=""
                   size="small"
                   maxRows={10}
-                  value={formik.values.firstName}
+                  value={formik.values.name}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  helperText={formik.touched.firstName && formik.errors.firstName}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  helperText={formik.touched.name && formik.errors.name}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Last name</FormLabel>
+                <FormLabel>Manager</FormLabel>
                 <TextField
-                  id="lastName"
-                  name="lastName"
+                  id="manager"
+                  name="manager"
                   label=""
                   size="small"
-                  value={formik.values.lastName}
+                  value={formik.values.manager}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-                  helperText={formik.touched.lastName && formik.errors.lastName}
+                  error={formik.touched.manager && Boolean(formik.errors.manager)}
+                  helperText={formik.touched.manager && formik.errors.manager}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Department</FormLabel>
                 <TextField
-                  id="emailAddress"
-                  name="emailAddress"
+                  id="department"
+                  name="department"
                   label=""
                   size="small"
-                  value={formik.values.emailAddress}
+                  value={formik.values.department}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.emailAddress && Boolean(formik.errors.emailAddress)}
-                  helperText={formik.touched.emailAddress && formik.errors.emailAddress}
+                  error={formik.touched.department && Boolean(formik.errors.department)}
+                  helperText={formik.touched.department && formik.errors.department}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>TeamMember</FormLabel>
                 <TextField
-                  id="password"
-                  name="password"
+                  id="teamMember"
+                  name="teamMember"
                   label=""
                   size="small"
-                  value={formik.values.password}
+                  value={formik.values.teamMember}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>confirmPassword</FormLabel>
-                <TextField
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  label=""
-                  size="small"
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  fullWidth
-                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  error={formik.touched.teamMember && Boolean(formik.errors.teamMember)}
+                  helperText={formik.touched.teamMember && formik.errors.teamMember}
                 />
               </Grid>
             </Grid>

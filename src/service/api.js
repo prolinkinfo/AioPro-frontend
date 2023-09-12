@@ -55,9 +55,7 @@ export const resetpassword = async (path, data) => {
 export const apipost = async (path, data) => {
   try {
     const response = await axios.post(constant.baseUrl + path, data, {
-      headers: {
-        Authorization: localStorage.getItem('token'),
-      },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     if (response.data.token && response.data.token !== null) {
       localStorage.setItem('token', response?.data?.token);
@@ -79,6 +77,25 @@ export const apipost = async (path, data) => {
     }
   }
 };
+export const adduser = async (path, data) => {
+  try {
+    const response = await axios.post(constant.baseUrl + path, data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    return response;
+  } catch (error) {
+    console.log('errorresponse', error);
+    if (error && error.response) {
+      if (error && error.response.data && error.response.status === 400) {
+        if (error.response.data) {
+          return error?.response?.data;
+          // toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+};
+
 
 export const apiput = async (path, data) => {
   try {
@@ -161,7 +178,6 @@ export const allusers = async (path) => {
     }
     return response;
   } catch (error) {
-    console.log('error12345667788', error);
     if (error && error.response) {
       if (error && error.response && error.response.status === 400) {
         if (error.response.data.message) {
@@ -172,3 +188,116 @@ export const allusers = async (path) => {
     }
   }
 };
+
+export const addmeeting= async (path, data) => {
+  try {
+    const response = await axios.post(constant.baseUrl + path, data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    
+    });
+    if (response.data.token && response.data.token !== null) {
+      localStorage.setItem('token', response?.data?.token)
+    }
+
+    if (response && response.status === 200) {
+      toast.success(response.data.message);
+    }
+    return response;
+
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response.data && error.response.status === 401) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+};
+
+
+
+
+export const getmeeting = async (path) => {
+  try {
+    const response = await axios.get(constant.baseUrl + path, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (response.data.token && response.data.token !== null) {
+      localStorage.setItem('token', response?.data?.token);
+    }
+
+    if (response && response.status === 200) {
+      toast.success(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response.data && error.response.status === 401) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+};
+
+
+export const getsingleuser = async (path, data) => {
+  try {
+    const response = await axios.get(`${constant.baseUrl + path}/${data}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+};
+
+
+export const deletemeetingApi=async(path,data)=>{
+   try {
+    const response = await axios.delete(`${constant.baseUrl + path}/${data}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+}
+
+export const apieditmeeting=async(path,data)=>{
+  try {
+    const response = await axios.put(constant.baseUrl + path, data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+
+    if (response.data.token && response.data.token !== null) {
+      localStorage.setItem('token', response.data.token);
+    }
+    if (response && response.status === 200) {
+      toast.success(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+}

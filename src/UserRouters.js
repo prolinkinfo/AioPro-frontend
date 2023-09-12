@@ -3,28 +3,28 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import UserView from './pages/user/View'
+import UserView from './pages/user/View';
 import Lead from './pages/Lead/Lead';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/DashboardAppPage';
-import LeadView from './pages/Lead/View'
+import LeadView from './pages/Lead/View';
 import Contact from './pages/contact/Contact';
-import ContactView from './pages/contact/View'
-import Policy from './pages/policy/Policy'
-import PolicyView from './pages/policy/View'
+import ContactView from './pages/contact/View';
+import Policy from './pages/policy/Policy';
+import PolicyView from './pages/policy/View';
 import Calendar from './pages/Calendar/Calendar';
 import Document from './pages/documents/Documents';
 import Calls from './pages/calls/Call';
-import CallsView from './pages/calls/View'
+import CallsView from './pages/calls/View';
 import Meeting from './pages/meeting/Meeting';
-import MeetingView from './pages/meeting/View'
-import Email from './pages/email/Email'
-import EmailView from './pages/email/View'
+import MeetingView from './pages/meeting/View';
+import Email from './pages/email/Email';
+import EmailView from './pages/email/View';
 import Task from './pages/task/Task';
-import TaskView from './pages/task/View'
-import EmailTemplate from './pages/emailTemplate/EmailTemplate';
-import AddEmailTemplate from './pages/emailTemplate/Add'
-import ViewEmailTemplate from './pages/emailTemplate/View'
+import TaskView from './pages/task/View';
+import EmailTemplate from './pages/settings/Settings';
+import AddEmailTemplate from './pages/settings/Add';
+import ViewEmailTemplate from './pages/settings/View';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -33,7 +33,7 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        {  element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user/view/:id', element: <UserView /> },
         { path: 'lead', element: <Lead /> },

@@ -11,7 +11,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button } from '@mui/material';
-import { adduser } from '../../service/api';
+import { apipost } from '../../service/api';
 
 const Add = (props) => {
   // eslint-disable-next-line react/prop-types
@@ -22,17 +22,7 @@ const Add = (props) => {
     firstName: yup.string().required('Frist Name is required'),
     lastName: yup.string().required('Last Name is required'),
     emailAddress: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-        'Must Contain minimum 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
-      ),
-    confirmPassword: yup
-      .string()
-      .required('Confirm Password is required')
-      .oneOf([yup.ref('password'), null], 'Password does not match'),
+    password: yup.string().required('Password is required'),
   });
 
   // -----------   initialValues
@@ -41,7 +31,6 @@ const Add = (props) => {
     lastName: '',
     emailAddress: '',
     password: '',
-    confirmPassword:"",
   };
 
   // add user api
@@ -49,12 +38,12 @@ const Add = (props) => {
     const data = {
       email: values?.emailAddress,
       password: values?.password,
-      confirmPassword: values?.confirmPassword,
+      confirmPassword: values?.password,
       role: 'user',
       firstName: values?.firstName,
       lastName: values?.lastName,
     };
-    const result = await adduser('/api/auth/signup', data);
+    const result = await apipost('/api/auth/signup', data);
 
     if (result && result.status === 200) {
       formik.resetForm();
@@ -147,20 +136,6 @@ const Add = (props) => {
                   fullWidth
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>confirmPassword</FormLabel>
-                <TextField
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  label=""
-                  size="small"
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  fullWidth
-                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                 />
               </Grid>
             </Grid>
