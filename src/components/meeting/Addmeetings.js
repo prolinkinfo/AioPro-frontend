@@ -20,14 +20,18 @@ import dayjs from 'dayjs';
 import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
 
 const Addmeetings = (props) => {
-  const { open, handleClose, _id, setUserAction, data } = props;
+  const { open, handleClose, _id, setUserAction, data, getdata, user } = props;
   const [leadData, setLeadData] = useState([]);
   const [contactData, setContactData] = useState([]);
 
   const Userid = localStorage.getItem('user_id');
   const userRole = localStorage.getItem('userRole');
   const userName = localStorage.getItem('userName');
-  console.log('userdata', JSON.parse(userName));
+  const [singleuser, setsingleuser] = useState({});
+
+  useEffect(() => {
+    setsingleuser(user);
+  }, [user]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -57,14 +61,13 @@ const Addmeetings = (props) => {
     duration: '',
     location: '',
     note: '',
-    createdBy: JSON.parse(userName),
-    userid: Userid,
+    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
+    userid: singleuser?._id ? singleuser?._id : Userid,
   };
 
   // add meeting api
   const addMeeting = async (values) => {
     const data = values;
-    console.log('data', data);
     const result = await addmeeting('/api/meeting', data);
     console.log('resultmeetinfg', result);
 
@@ -72,6 +75,7 @@ const Addmeetings = (props) => {
       formik.resetForm();
       setUserAction(result);
       handleClose();
+      getdata();
       toast.success(result.data.message);
     }
   };

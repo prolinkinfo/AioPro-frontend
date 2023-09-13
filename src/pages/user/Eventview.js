@@ -1,10 +1,11 @@
-/* eslint-disable react/prop-types */
+import { useNavigate } from 'react-router-dom';
+// import { Modal } from '@mui/material';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { BiLink } from 'react-icons/bi';
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -12,27 +13,50 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useState, useEffect } from 'react';
-import { FiSave } from 'react-icons/fi';
-import { GiCancel } from 'react-icons/gi';
-import { Autocomplete, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  FormLabel,
+  Dialog,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  DialogContentText,
+  FormHelperText,
+} from '@mui/material';
 import dayjs from 'dayjs';
-import { apiget, apiput, apieditmeeting } from '../../service/api';
+import { GiCancel } from 'react-icons/gi';
+import { FiSave } from 'react-icons/fi';
+import { adduser, apieditmeeting } from '../../service/api';
+// import { Link } from 'react-router-dom';
+// import DeleteTask from './components/deleteTask';
+// import EditTask from './components/editTask';
 
-const Editmeetings = (props) => {
-  const { handleClose, open, id, fetchMeeting, fetchdata } = props;
-  console.log('id11111', id);
+const EventView = (props) => {
+  const { onClose, isOpen, info, getdata, handleCloseevent, iD } = props;
+  const [data, setData] = useState();
+  const [edit, setEdit] = useState(false);
+  const [deleteModel, setDelete] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const [isLoding, setIsLoding] = useState(false);
+  const navigate = useNavigate();
 
-  const [meetingDetails, setMeetingDetails] = useState({});
-  const [leadData, setLeadData] = useState([]);
-  const [contactData, setContactData] = useState([]);
-  const params = useParams();
+  const fetchViewData = async () => {
+    if (info) {
+      setIsLoding(true);
+      setIsLoding(false);
+    }
+  };
 
-  const userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem('userRole');
+  useEffect(() => {
+    fetchViewData();
+  }, [info]);
 
-  // -----------  validationSchema
+  const handleViewOpen = () => {
+    // navigate(user?.role !== 'admin' ? `/view/${info}` : `/admin/view/${info}`);
+  };
+
+  // -----------   initialValues
   const validationSchema = yup.object({
     subject: yup.string().required('Subject is required'),
     status: yup.string().required('Status is required'),
@@ -42,51 +66,27 @@ const Editmeetings = (props) => {
     note: yup.string().required('Note is required'),
   });
 
-  // -----------   initialValues
+  console.log('id1111111111111', iD);
+
   const initialValues = {
-    subject: id?.row?.subject,
-    status: id?.row?.status,
-    startDate: id?.row?.startDate,
-    duration: id?.row?.duration,
-    location: id?.row?.location,
-    note: id?.row?.note,
+    subject: iD?.subject,
+    status: iD?.status,
+    startDate: iD?.startDate,
+    duration: iD?.duration ? iD?.duration : '15 minutes',
+    location: iD?.location,
+    note: iD?.note,
     modifiedOn: '',
   };
 
-  // fetch api
-  // const fetchdata = async () => {
-  //     const result = await apiget(`meeting/view/${params.id}`)
-  //     if (result && result.status === 200) {
-  //         setMeetingDetails(result?.data?.meetings)
-  //     }
-  // }
-
-  // edit api
   const EditMeeting = async (values) => {
-    const data = { ...values, _id: id?.row?._id };
-    console.log('data', data);
+    const data = { ...values, _id: iD._id };
+    console.log('data123456', data);
 
     const result = await apieditmeeting(`/api/meeting`, data);
     console.log('data', result);
     if (result && result.status === 200) {
-      handleClose();
-      fetchdata();
-    }
-  };
-
-  // lead api
-  const fetchLeadData = async () => {
-    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setLeadData(result?.data?.result);
-    }
-  };
-
-  // contact api
-  const fetchContactData = async () => {
-    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setContactData(result?.data?.result);
+      handleCloseevent();
+      getdata();
     }
   };
 
@@ -107,16 +107,9 @@ const Editmeetings = (props) => {
     },
   });
 
-  useEffect(() => {
-    fetchdata();
-    fetchLeadData();
-    fetchContactData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <div>
-      <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
         <DialogTitle
           id="scroll-dialog-title"
           style={{
@@ -128,7 +121,7 @@ const Editmeetings = (props) => {
         >
           <Typography variant="h6">Edit Meeting </Typography>
           <Typography>
-            <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+            <ClearIcon onClick={handleCloseevent} style={{ cursor: 'pointer' }} />
           </Typography>
         </DialogTitle>
 
@@ -263,7 +256,7 @@ const Editmeetings = (props) => {
             startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
-              handleClose();
+              handleCloseevent();
             }}
             color="error"
           >
@@ -275,4 +268,4 @@ const Editmeetings = (props) => {
   );
 };
 
-export default Editmeetings;
+export default EventView;

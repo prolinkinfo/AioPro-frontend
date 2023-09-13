@@ -10,7 +10,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button } from '@mui/material';
+import { FormLabel, Dialog, Button, Select, MenuItem, FormControl } from '@mui/material';
 import { adduser } from '../../service/api';
 
 const Add = (props) => {
@@ -22,6 +22,7 @@ const Add = (props) => {
     firstName: yup.string().required('Frist Name is required'),
     lastName: yup.string().required('Last Name is required'),
     emailAddress: yup.string().email('Invalid email').required('Email is required'),
+    role: yup.string().required('role is required'),
     password: yup
       .string()
       .required('Password is required')
@@ -41,7 +42,8 @@ const Add = (props) => {
     lastName: '',
     emailAddress: '',
     password: '',
-    confirmPassword:"",
+    confirmPassword: '',
+    role: '',
   };
 
   // add user api
@@ -50,7 +52,7 @@ const Add = (props) => {
       email: values?.emailAddress,
       password: values?.password,
       confirmPassword: values?.confirmPassword,
-      role: 'user',
+      role: values?.role,
       firstName: values?.firstName,
       lastName: values?.lastName,
     };
@@ -134,6 +136,25 @@ const Add = (props) => {
                   error={formik.touched.emailAddress && Boolean(formik.errors.emailAddress)}
                   helperText={formik.touched.emailAddress && formik.errors.emailAddress}
                 />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Role</FormLabel>
+                <FormControl sx={{ m: 1, minWidth: 530, minHeight: 1 }}>
+                  <Select
+                    name="role"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={formik.values.role}
+                    label="role"
+                    onChange={formik.handleChange}
+                  >
+                    <MenuItem value="TerritoryManager">Territory Manager (TM)</MenuItem>
+                    <MenuItem value="NationalManager">National Manager (NM)</MenuItem>
+                    <MenuItem value="ZonalManager">Zonal Manager (ZM)</MenuItem>
+                    <MenuItem value="RegionalManager, ">Regional Manager (RM) </MenuItem>
+                    <MenuItem value="BranchManager">Branch Manager (BM)</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Password</FormLabel>

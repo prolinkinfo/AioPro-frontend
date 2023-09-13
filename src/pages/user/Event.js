@@ -64,7 +64,6 @@
 
 // export default Event;
 
-
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -79,16 +78,18 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import Iconify from '../../components/iconify/Iconify';
 import AddTask from '../../components/task/AddTask';
-import { apidelete, apiget } from '../../service/api';
-import ViewEdit from '../../components/task/Edit'
+import { apidelete, apiget, allusers, singleuser, getsingleuser } from '../../service/api';
+import ViewEdit from '../../components/task/Edit';
+import EventView from './Eventview';
+import Editmeetings from '../../components/meeting/Editmeetings';
 import ActionButtonTwo from '../../components/ActionButtonTwo';
-import AddMeeting from '../../components/meeting/Addmeetings'
-import AddCall from '../../components/call/Addcalls'
+import AddMeeting from '../../components/meeting/Addmeetings';
+import AddCall from '../../components/call/Addcalls';
 
 const Event = () => {
   const [userAction, setUserAction] = useState(null);
   const [data, setData] = useState([]);
-  const [taskId, setTaskId] = useState('');
+  const [iD, setTaskId] = useState('');
   const [openTask, setOpenTask] = useState(false);
   const [openMeeting, setOpenMeeting] = useState(false);
   const [openCall, setOpenCall] = useState(false);
@@ -96,15 +97,40 @@ const Event = () => {
 
   const userid = localStorage.getItem('user_id');
   const userRole = localStorage.getItem('userRole');
-  const {id} =useParams()
+  const [alluser, setalluser] = useState([]);
+  const { id } = useParams();
+  const [user, setUser] = useState({});
+  const [eventView, setEventView] = useState(false);
+  const [info, setInfo] = useState();
+  const [date, setDate] = useState();
 
-  console.log("userid",id)
+  console.log('userid', id);
 
-  useEffect(()=>{
-    
-    
+  async function fetchdata() {
+    const result = await allusers(`/api/users`);
+    if (result && result.status === 200) {
+      console.log('result?', result);
+      const data = result?.data.filter((item) => item._id === id);
+      const particularuser = data.map((item) => item?.meetingData);
+      const aaaa = particularuser[0].map((it) => {
+        return { ...it, title: it.subject, date: it.startDate };
+      });
+      setalluser(aaaa);
+    }
+  }
+  const getuser = async () => {
+    const result = await getsingleuser(`/api/users`, id);
+    console.log('result', result.data);
+    setUser(result.data);
+  };
 
-  },[id])
+  useEffect(() => {
+    fetchdata();
+    getuser();
+  }, [id]);
+  const getdata = () => {
+    fetchdata();
+  };
 
   // open task model
   const handleOpenTask = () => setOpenTask(true);
@@ -126,7 +152,9 @@ const Event = () => {
   };
 
   const handleEventClick = (clickInfo) => {
-    setTaskId(clickInfo?.event?._def?.extendedProps?._id);
+    setEventView(true);
+    console.log('clickInfo?.event?._def?.extendedProps?._id', clickInfo?.event?.extendedProps);
+    setTaskId(clickInfo?.event?.extendedProps);
     handleOpenViewEdit();
     if (clickInfo.event.url) {
       clickInfo.jsEvent.preventDefault();
@@ -143,9 +171,12 @@ const Event = () => {
   );
 
   // delete api
-  const deletedata = async () => {
-    await apidelete(`task/delete/${taskId}`);
-    handleCloseViewEdit();
+  // const deletedata = async () => {
+  //   await apidelete(`task/delete/${taskId}`);
+  //   handleCloseViewEdit();
+  // };
+  const handleCloseevent = () => {
+    setEventView(false);
   };
 
   const fetchApiTask = async () => {
@@ -198,13 +229,19 @@ const Event = () => {
         lead="lead"
         contact="contact"
       />
+      <EventView isOpen={eventView} handleCloseevent={handleCloseevent} iD={iD} getdata={getdata} />
 
       {/* View Edit Model */}
       {/* <ViewEdit open={openViewEdit} handleClose={handleCloseViewEdit} id={taskId} deletedata={deletedata} lead='lead' contact='contact' setUserAction={setUserAction} fetchEvent={fetchdata} /> */}
 
       {/* Add Meeting Model */}
-      <AddMeeting open={openMeeting} handleClose={handleCloseMeeting} setUserAction={setUserAction} />
-
+      <AddMeeting
+        open={openMeeting}
+        handleClose={handleCloseMeeting}
+        setUserAction={setUserAction}
+        getdata={getdata}
+        user={user}
+      />
       {/* Add Call Model */}
       <AddCall open={openCall} handleClose={handleCloseCall} setUserAction={setUserAction} />
 
@@ -224,7 +261,7 @@ const Event = () => {
           height="600px"
           // dateClick={handleDateClick}
           // events={calendarDataCalendar}
-          events={data}
+          events={alluser}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
@@ -255,5 +292,4 @@ const Event = () => {
   );
 };
 
- export default Event;;
-
+export default Event;
