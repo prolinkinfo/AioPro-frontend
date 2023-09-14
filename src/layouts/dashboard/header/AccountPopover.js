@@ -12,21 +12,20 @@ import account from '../../../_mock/account';
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
-  const user = JSON.parse(localStorage.getItem('user'))
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const MENU_OPTIONS = [
     {
-      label: 'Home',
+      label: 'Profile',
       icon: 'eva:home-fill',
-      path: "/dashboard/app"
+      path: `/dashboard/profile/${user._id}`,
     },
     {
-      label: 'Profile',
+      label: 'Setting',
       icon: 'eva:person-fill',
-      path: `/dashboard/user/view/${user._id}`
+      path: `/dashboard/user/view/${user._id}`,
     },
   ];
-
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -36,32 +35,31 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const logout = () => {
     try {
       localStorage.clear();
       navigate('/login');
     } catch (error) {
-      console.error("Error while navigating:", error);
+      console.error('Error while navigating:', error);
     }
-  }
+  };
 
   // const checkTokenExpiration = () => {
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage (or session)
-    if (token) {
-      try {
-        const decodedToken = Jwt(token);
-        const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-        if (decodedToken.exp < currentTime) {
-          logout();
-          toast.error("Token has expired")
-        }
+  const token = localStorage.getItem('token'); // Retrieve the token from local storage (or session)
+  if (token) {
+    try {
+      const decodedToken = Jwt(token);
+      const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+      if (decodedToken.exp < currentTime) {
+        logout();
+        toast.error('Token has expired');
       }
-      catch (error) {
-        console.error('Error decoding token:', error);
-      }
+    } catch (error) {
+      console.error('Error decoding token:', error);
     }
+  }
   // };
 
   return (
@@ -106,12 +104,12 @@ export default function AccountPopover() {
         }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap style={{ textTransform: "capitalize" }}>
-            {`${user?.firstName} ${user?.lastName}`}
+          <Typography variant="subtitle2" noWrap style={{ textTransform: 'capitalize' }}>
+            {`${user?.userName}`}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          {/* <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {user?.emailAddress}
-          </Typography>
+          </Typography> */}
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -119,13 +117,15 @@ export default function AccountPopover() {
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option, index) => (
             <MenuItem key={index + 1}>
-              <Link to={option.path} style={{ textDecoration: "none", color: "black" }}>{option.label}</Link>
+              <Link to={option.path} style={{ textDecoration: 'none', color: 'black' }}>
+                {option.label}
+              </Link>
             </MenuItem>
           ))}
         </Stack>
-        <Divider sx={{ borderStyle: 'dashed' }} />
+        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
 
-        <MenuItem onClick={logout} sx={{ m: 1 }} >
+        <MenuItem onClick={logout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>

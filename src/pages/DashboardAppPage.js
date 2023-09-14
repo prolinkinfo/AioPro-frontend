@@ -26,78 +26,83 @@ import { apiget } from '../service/api';
 export default function DashboardAppPage() {
   const theme = useTheme();
 
-  const [totalLead, setTotalLead] = useState([])
-  const [totalContact, setTotalContact] = useState([])
-  const [totalPolicy, setTotalPolicy] = useState([])
-  const [totalEvent, setTotalEvent] = useState([])
+  const [totalLead, setTotalLead] = useState([]);
+  const [totalContact, setTotalContact] = useState([]);
+  const [totalPolicy, setTotalPolicy] = useState([]);
+  const [totalEvent, setTotalEvent] = useState([]);
   const userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem("userRole")
+  const userRole = localStorage.getItem('userRole');
 
   // lead api
   const fetchLead = async () => {
-    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${userid}`)
+    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${userid}`);
     if (result && result.status === 200) {
-      setTotalLead(result?.data?.total_recodes)
+      setTotalLead(result?.data?.total_recodes);
     }
-  }
+  };
 
   // contact api
   const fetchContact = async () => {
-    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${userid}`)
+    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${userid}`);
     if (result && result.status === 200) {
-      setTotalContact(result?.data?.total_recodes)
+      setTotalContact(result?.data?.total_recodes);
     }
-  }
+  };
 
   // contact api
   const fetchPolicy = async () => {
-    const result = await apiget(userRole === 'admin' ? `policy/list` : `policy/list/?createdBy=${userid}`)
+    const result = await apiget(userRole === 'admin' ? `policy/list` : `policy/list/?createdBy=${userid}`);
     if (result && result.status === 200) {
-      setTotalPolicy(result?.data?.total_recodes)
+      setTotalPolicy(result?.data?.total_recodes);
     }
-  }
+  };
 
   // contact api
   const fetchEvent = async () => {
-    const result = await apiget(userRole === 'admin' ? `task/list` : `task/list/?createdBy=${userid}`)
+    const result = await apiget(userRole === 'admin' ? `task/list` : `task/list/?createdBy=${userid}`);
     if (result && result.status === 200) {
-      setTotalEvent(result?.data?.total_recodes)
+      setTotalEvent(result?.data?.total_recodes);
     }
-  }
+  };
 
   useEffect(() => {
     fetchLead();
     fetchContact();
     fetchPolicy();
     fetchEvent();
-  }, [])
+  }, []);
+
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <>
-      <Helmet>
-        {/* <title> Dashboard | Minimal UI </title> */}
-      </Helmet>
+      <Helmet>{/* <title> Dashboard | Minimal UI </title> */}</Helmet>
 
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back 
+        <Typography variant="h4" sx={{ mb: 5 ,textTransform:"capitalize"}}>
+          Hi, {user?.userName}
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Leads" total={totalLead} icon={'ic:baseline-leaderboard'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Contacts" total={totalContact} color="info" icon={'fluent:book-contacts-24-filled'} />
+          <Grid item xs={12} sm={6} md={4}>
+            <AppWidgetSummary
+              title="Contacts"
+              total={totalContact}
+              color="info"
+              icon={'fluent:book-contacts-24-filled'}
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Policies" total={totalPolicy} color="warning" icon={'ic:baseline-policy'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Tasks" total={totalEvent} color="error" icon={'mdi:events'} />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
