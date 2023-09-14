@@ -10,7 +10,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Select, MenuItem, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { adduser } from '../../service/api';
 
 const Add = (props) => {
@@ -139,20 +139,45 @@ const Add = (props) => {
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Role</FormLabel>
-                <FormControl sx={{ m: 1, minWidth: 530, minHeight: 1 }}>
+                <FormControl fullWidth>
                   <Select
                     name="role"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={formik.values.role}
-                    label="role"
+                    size="small"
+                    fullWidth
                     onChange={formik.handleChange}
                   >
-                    <MenuItem value="TerritoryManager">Territory Manager (TM)</MenuItem>
-                    <MenuItem value="NationalManager">National Manager (NM)</MenuItem>
-                    <MenuItem value="ZonalManager">Zonal Manager (ZM)</MenuItem>
-                    <MenuItem value="RegionalManager, ">Regional Manager (RM) </MenuItem>
-                    <MenuItem value="BranchManager">Branch Manager (BM)</MenuItem>
+                    <MenuItem value="Hr">Hr</MenuItem>
+                    <MenuItem value="Admin">Admin </MenuItem>
+                    <MenuItem value="National Manager">National Manager </MenuItem>
+                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Role</FormLabel>
+                <FormControl fullWidth>
+                  <Select
+                    name="role"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={formik.values.role}
+                    size="small"
+                    fullWidth
+                    onChange={formik.handleChange}
+                  >
+                    <MenuItem value="Hr">Hr</MenuItem>
+                    <MenuItem value="Admin">Admin </MenuItem>
+                    <MenuItem value="National Manager">National Manager </MenuItem>
+                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
