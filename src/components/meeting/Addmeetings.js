@@ -20,14 +20,15 @@ import dayjs from 'dayjs';
 import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
 
 const Addmeetings = (props) => {
-  const { open, handleClose, _id, setUserAction, data } = props;
-  const [leadData, setLeadData] = useState([]);
-  const [contactData, setContactData] = useState([]);
+  const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
 
-  const Userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem('userRole');
+  
   const userName = localStorage.getItem('userName');
-  console.log('userdata', JSON.parse(userName));
+  const [singleuser, setsingleuser] = useState({});
+
+  useEffect(() => {
+    setsingleuser(user);
+  }, [user]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -39,39 +40,31 @@ const Addmeetings = (props) => {
     note: yup.string().required('Note is required'),
   });
 
-  // -----------   initialValues
-  const [userfirstname, setuserfirstname] = useState('');
-  async function getuser() {
-    const user = await getsingleuser('/api/users', Userid);
-    const name = await user?.data?.firstName;
-    return name;
-  }
-  //  getuser()
-  useEffect(() => {
-    console.log('userfirstname', userfirstname);
-  }, []);
+
   const initialValues = {
     subject: '',
     status: '',
     startDate: '',
+    endDate: '',
     duration: '',
     location: '',
     note: '',
-    createdBy: JSON.parse(userName),
-    userid: Userid,
+    backgroundColor: '',
+    textColor: '',
+    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
+    userid: id,
   };
 
   // add meeting api
   const addMeeting = async (values) => {
     const data = values;
-    console.log('data', data);
     const result = await addmeeting('/api/meeting', data);
-    console.log('resultmeetinfg', result);
+    setUserAction(result);
 
     if (result && result.status === 200) {
       formik.resetForm();
-      setUserAction(result);
       handleClose();
+      fetchApiMeeting();
       toast.success(result.data.message);
     }
   };
@@ -86,27 +79,6 @@ const Addmeetings = (props) => {
     },
   });
 
-  // lead api
-  const fetchLeadData = async () => {
-    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${Userid}`);
-    if (result && result.status === 200) {
-      setLeadData(result?.data?.result);
-    }
-  };
-
-  // contact api
-  const fetchContactData = async () => {
-    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${Userid}`);
-    if (result && result.status === 200) {
-      setContactData(result?.data?.result);
-    }
-  };
-
-  useEffect(() => {
-    fetchLeadData();
-    fetchContactData();
-    // formik.values.meetingAttendes = data?.emailAddress
-  }, [open, data]);
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -179,8 +151,21 @@ const Addmeetings = (props) => {
                     helperText={formik.touched.startDate && formik.errors.startDate}
                   />
                 </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>End Date</FormLabel>
+                  <TextField
+                    name="endDate"
+                    type={'datetime-local'}
+                    size="small"
+                    fullWidth
+                    value={dayjs(formik.values.endDate).format('YYYY-MM-DD HH:mm:ss')}
+                    onChange={formik.handleChange}
+                    error={formik.touched.endDate && Boolean(formik.errors.endDate)}
+                    helperText={formik.touched.endDate && formik.errors.endDate}
+                  />
+                </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Duration</FormLabel>
                   <FormControl fullWidth>
                     <Select
@@ -206,7 +191,7 @@ const Addmeetings = (props) => {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Location</FormLabel>
                   <TextField
                     id="location"
@@ -219,7 +204,46 @@ const Addmeetings = (props) => {
                     helperText={formik.touched.location && formik.errors.location}
                   />
                 </Grid>
-
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Background Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="backgroundColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.backgroundColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.backgroundColor &&
+                      Boolean(formik.errors.backgroundColor)
+                    }
+                    helperText={
+                      formik.touched.backgroundColor && formik.errors.backgroundColor
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Text Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="textColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.textColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.textColor &&
+                      Boolean(formik.errors.textColor)
+                    }
+                    helperText={
+                      formik.touched.textColor && formik.errors.textColor
+                    }
+                  />
+                </Grid>
                 <Grid item xs={12} sm={12}>
                   <FormLabel>Note</FormLabel>
                   <TextField

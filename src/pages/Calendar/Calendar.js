@@ -79,7 +79,7 @@ const Calendar = () => {
             title: item.subject,
             start: item.startDate,
             end: item.endDate,
-            textColor:item.textColor,
+            textColor: item.textColor,
             backgroundColor: item.backgroundColor
         }));
     };

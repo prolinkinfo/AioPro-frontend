@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { constant } from '../constant';
 
 export const apiget = async (path) => {
+  console.log(path,"path")
   try {
     // eslint-disable-next-line prefer-const
     let response = await axios.get(constant.baseUrl + path, {
@@ -261,9 +262,9 @@ export const getsingleuser = async (path, data) => {
 };
 
 
-export const deletemeetingApi=async(path,data)=>{
+export const deletemeetingApi=async(path)=>{
    try {
-    const response = await axios.delete(`${constant.baseUrl + path}/${data}`, {
+    const response = await axios.delete(constant.baseUrl + path, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     return response;
@@ -300,4 +301,49 @@ export const apieditmeeting=async(path,data)=>{
       }
     }
   }
+}
+
+
+
+export const singleuser = async (path,data) => {
+  console.log('allusers', path);
+  try {
+    const response = await axios.get(`${constant.baseUrl + path}/${data}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (response.data.token && response.data.token !== null) {
+      localStorage.setItem('token', response.data.token);
+    }
+    if (response && response.status === 200) {
+      toast.success(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+          console.log(error);
+        }
+      }
+    }
+  }
+};
+
+export const deleteManymeeting=async(path,data)=>{
+try {
+    const response = await axios.delete(constant.baseUrl + path, data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    return response;
+  } catch (error) {
+    if (error && error.response) {
+      if (error && error.response && error.response.status === 400) {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
+  }
+
 }

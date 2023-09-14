@@ -1,10 +1,11 @@
-/* eslint-disable react/prop-types */
+import { useNavigate, useParams } from 'react-router-dom';
+// import { Modal } from '@mui/material';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { BiLink } from 'react-icons/bi';
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -12,81 +13,68 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useState, useEffect } from 'react';
-import { FiSave } from 'react-icons/fi';
-import { GiCancel } from 'react-icons/gi';
-import { Autocomplete, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  FormLabel,
+  Dialog,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  DialogContentText,
+  FormHelperText,
+} from '@mui/material';
 import dayjs from 'dayjs';
-import { apiget, apiput, apieditmeeting } from '../../service/api';
+import { GiCancel } from 'react-icons/gi';
+import { FiDelete, FiSave } from 'react-icons/fi';
+import { adduser, apidelete, apieditmeeting, apiget, deletemeetingApi } from '../../service/api';
+import DeleteModel from '../../components/Deletemodle'
 
-const Editmeetings = (props) => {
-  const { handleClose, open, id, fetchMeeting, fetchdata } = props;
-  console.log('id11111', id);
+const EditMeeting = (props) => {
+  const {  isOpen, meetingsId, fetchApiMeeting, handleCloseevent, dataByMeetingId, setUserAction } = props;
 
-  const [meetingDetails, setMeetingDetails] = useState({});
-  const [leadData, setLeadData] = useState([]);
-  const [contactData, setContactData] = useState([]);
-  const params = useParams();
 
-  const userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem('userRole');
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
 
-  // -----------  validationSchema
+  
+
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+  // -----------   initialValues
   const validationSchema = yup.object({
-    subject: yup.string().required('Subject is required'),
+    title: yup.string().required('Subject is required'),
     status: yup.string().required('Status is required'),
-    startDate: yup.string().required('Start Date is required'),
+    start: yup.string().required('Start Date is required'),
     location: yup.string().required('Location is required'),
     duration: yup.string().required('Duration is required'),
     note: yup.string().required('Note is required'),
   });
 
-  // -----------   initialValues
+
   const initialValues = {
-    subject: id?.row?.subject,
-    status: id?.row?.status,
-    startDate: id?.row?.startDate,
-    duration: id?.row?.duration,
-    location: id?.row?.location,
-    note: id?.row?.note,
+    _id: dataByMeetingId?._id,
+    title: dataByMeetingId?.title,
+    status: dataByMeetingId?.status,
+    start: dataByMeetingId?.start,
+    end: dataByMeetingId?.end,
+    duration: dataByMeetingId?.duration,
+    location: dataByMeetingId?.location,
+    backgroundColor: dataByMeetingId?.backgroundColor,
+    textColor: dataByMeetingId?.textColor,
+    note: dataByMeetingId?.note,
     modifiedOn: '',
   };
 
-  // fetch api
-  // const fetchdata = async () => {
-  //     const result = await apiget(`meeting/view/${params.id}`)
-  //     if (result && result.status === 200) {
-  //         setMeetingDetails(result?.data?.meetings)
-  //     }
-  // }
-
-  // edit api
   const EditMeeting = async (values) => {
-    const data = { ...values, _id: id?.row?._id };
-    console.log('data', data);
+    const data = values;
+    console.log('data123456', data);
 
     const result = await apieditmeeting(`/api/meeting`, data);
-    console.log('data', result);
+    setUserAction(result)
     if (result && result.status === 200) {
-      handleClose();
-      fetchdata();
-    }
-  };
-
-  // lead api
-  const fetchLeadData = async () => {
-    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setLeadData(result?.data?.result);
-    }
-  };
-
-  // contact api
-  const fetchContactData = async () => {
-    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setContactData(result?.data?.result);
+      fetchApiMeeting();
+      handleCloseevent();
     }
   };
 
@@ -96,27 +84,37 @@ const Editmeetings = (props) => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       const meetingData = {
-        subject: values.subject,
+        _id: values._id,
+        title: values.title,
         status: values.status,
-        startDate: values.startDate,
+        start: values.start,
+        end: values.end,
         duration: values.duration,
         location: values.location,
+        backgroundColor: values.backgroundColor,
+        textColor: values.textColor,
         note: values.note,
+        modifiedOn: new Date()
+
       };
       EditMeeting(meetingData);
     },
   });
 
-  useEffect(() => {
-    fetchdata();
-    fetchLeadData();
-    fetchContactData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const deleteData = async (id) => {
+    const result = await deletemeetingApi(`/api/meeting/${id}`)
+    setUserAction(result)
+    handleCloseDeleteModel();
+    handleCloseevent();
+    fetchApiMeeting();
+}
 
   return (
     <div>
-      <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+
+      <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} id={meetingsId} deleteData={deleteData}/>
+
+      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
         <DialogTitle
           id="scroll-dialog-title"
           style={{
@@ -128,7 +126,7 @@ const Editmeetings = (props) => {
         >
           <Typography variant="h6">Edit Meeting </Typography>
           <Typography>
-            <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+            <ClearIcon onClick={handleCloseevent} style={{ cursor: 'pointer' }} />
           </Typography>
         </DialogTitle>
 
@@ -139,15 +137,15 @@ const Editmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Subject</FormLabel>
                   <TextField
-                    id="subject"
-                    name="subject"
+                    id="title"
+                    name="title"
                     size="small"
                     maxRows={10}
                     fullWidth
-                    value={formik.values.subject}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
-                    error={formik.touched.subject && Boolean(formik.errors.subject)}
-                    helperText={formik.touched.subject && formik.errors.subject}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -176,17 +174,30 @@ const Editmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Start Date</FormLabel>
                   <TextField
-                    name="startDate"
+                    name="start"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.start).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
-                    error={formik.touched.startDate && Boolean(formik.errors.startDate)}
-                    helperText={formik.touched.startDate && formik.errors.startDate}
+                    error={formik.touched.start && Boolean(formik.errors.start)}
+                    helperText={formik.touched.start && formik.errors.start}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>End Date</FormLabel>
+                  <TextField
+                    name="end"
+                    type={'datetime-local'}
+                    size="small"
+                    fullWidth
+                    value={dayjs(formik.values.end).format('YYYY-MM-DD HH:mm:ss')}
+                    onChange={formik.handleChange}
+                    error={formik.touched.end && Boolean(formik.errors.end)}
+                    helperText={formik.touched.end && formik.errors.end}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Duration</FormLabel>
                   <FormControl fullWidth>
                     <Select
@@ -212,7 +223,7 @@ const Editmeetings = (props) => {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Location</FormLabel>
                   <TextField
                     id="location"
@@ -225,7 +236,46 @@ const Editmeetings = (props) => {
                     helperText={formik.touched.location && formik.errors.location}
                   />
                 </Grid>
-
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Background Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="backgroundColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.backgroundColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.backgroundColor &&
+                      Boolean(formik.errors.backgroundColor)
+                    }
+                    helperText={
+                      formik.touched.backgroundColor && formik.errors.backgroundColor
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Text Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="textColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.textColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.textColor &&
+                      Boolean(formik.errors.textColor)
+                    }
+                    helperText={
+                      formik.touched.textColor && formik.errors.textColor
+                    }
+                  />
+                </Grid>
                 <Grid item xs={12} sm={12}>
                   <FormLabel>Note</FormLabel>
                   <TextField
@@ -257,13 +307,23 @@ const Editmeetings = (props) => {
             Save
           </Button>
           <Button
+            type="submit"
+            variant="contained"
+            onClick={handleOpenDeleteModel}
+            style={{ textTransform: 'capitalize' }}
+            color="error"
+            startIcon={<FiDelete />}
+          >
+            Delete
+          </Button>
+          <Button
             type="reset"
             variant="outlined"
             style={{ textTransform: 'capitalize' }}
             startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
-              handleClose();
+              handleCloseevent();
             }}
             color="error"
           >
@@ -275,4 +335,4 @@ const Editmeetings = (props) => {
   );
 };
 
-export default Editmeetings;
+export default EditMeeting;

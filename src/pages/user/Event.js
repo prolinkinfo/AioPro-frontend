@@ -1,69 +1,3 @@
-// /* eslint-disable react/prop-types */
-// /* eslint-disable react-hooks/exhaustive-deps */
-// /* eslint-disable prefer-const */
-// import * as React from 'react';
-// import Button from '@mui/material/Button';
-// import Dialog from '@mui/material/Dialog';
-// import DialogActions from '@mui/material/DialogActions';
-// import DialogContent from '@mui/material/DialogContent';
-// import DialogTitle from '@mui/material/DialogTitle';
-// import Typography from '@mui/material/Typography';
-// import Grid from '@mui/material/Grid';
-// import TextField from '@mui/material/TextField';
-// import ClearIcon from '@mui/icons-material/Clear';
-// import dayGridPlugin from '@fullcalendar/daygrid';
-// import FullCalendar from '@fullcalendar/react';
-// import { useFormik } from 'formik';
-// import * as yup from 'yup';
-// import { MenuItem, Select } from '@mui/material';
-// import FormLabel from '@mui/material/FormLabel';
-// import { useEffect, useState } from 'react';
-
-// import { apiget, apiput } from '../../service/api';
-// // import { FiSave } from "react-icons/fi";
-// // import { GiCancel } from "react-icons/gi";
-
-// const Event = (props) => {
-//   const { handleClose, open, data, fetchdata } = props;
-//   console.log('data', data);
-//   const [userDetails, setUserDetails] = useState({})
-
-//   return (
-//     <div>
-//       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
-//         <DialogTitle
-//           id="scroll-dialog-title"
-//           style={{
-//             display: 'flex',
-//             justifyContent: 'space-between',
-//           }}
-//         >
-//           <Typography variant="h6">All Events </Typography>
-//           <Typography>
-//             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
-//           </Typography>
-//         </DialogTitle>
-//         <FullCalendar
-//           plugins={[dayGridPlugin]}
-//           initialView="dayGridMonth"
-//           weekends={false}
-//           events={[
-//             { title: 'event 1', date: '2023-09-12' },
-//             { title: 'event 2', date: '2023-09-13' },
-//           ]}
-//         />
-//         <DialogActions>
-//           <Button type="submit" variant="contained" onClick={() => handleClose()} style={{ textTransform: 'capitalize' }}>
-//             Close
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-//     </div>
-//   );
-// };
-
-// export default Event;
-
 
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
@@ -76,64 +10,62 @@ import interactionPlugin from '@fullcalendar/interaction';
 import Container from '@mui/material/Container';
 import { Button, Stack, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
 import Iconify from '../../components/iconify/Iconify';
-import AddTask from '../../components/task/AddTask';
-import { apidelete, apiget } from '../../service/api';
-import ViewEdit from '../../components/task/Edit'
-import ActionButtonTwo from '../../components/ActionButtonTwo';
-import AddMeeting from '../../components/meeting/Addmeetings'
-import AddCall from '../../components/call/Addcalls'
+import { apiget, getsingleuser } from '../../service/api';
+import EditMeeting from '../meeting/EditMeeting';
+import AddMeeting from '../meeting/Addmeetings';
 
 const Event = () => {
   const [userAction, setUserAction] = useState(null);
-  const [data, setData] = useState([]);
-  const [taskId, setTaskId] = useState('');
-  const [openTask, setOpenTask] = useState(false);
   const [openMeeting, setOpenMeeting] = useState(false);
-  const [openCall, setOpenCall] = useState(false);
   const [openViewEdit, setOpenViewEdit] = useState(false);
+  const [meetingList, setMeetingList] = useState([]);
+  const [dataByMeetingId, setDataByMeetingId] = useState(null);
+  const [meetingsId,setMeetingsId] = useState('') 
+  const { id } = useParams();
+  const [user, setUser] = useState({});
+  const [eventView, setEventView] = useState(false);
 
-  const userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem('userRole');
-  const {id} =useParams()
+  const getuser = async () => {
+    const result = await getsingleuser(`/api/users`, id);
+    console.log('result', result.data);
+    setUser(result.data);
+  };
 
-  console.log("userid",id)
+  useEffect(() => {
+    getuser();
+  }, [id]);
 
-  useEffect(()=>{
-    
-    
-
-  },[id])
-
-  // open task model
-  const handleOpenTask = () => setOpenTask(true);
-  const handleCloseTask = () => setOpenTask(false);
 
   // open meeting model
   const handleOpenMeeting = () => setOpenMeeting(true);
   const handleCloseMeeting = () => setOpenMeeting(false);
 
-  // open call model
-  const handleOpenCall = () => setOpenCall(true);
-  const handleCloseCall = () => setOpenCall(false);
+  const fetchApByMeetingd = async (meetingId) => {
+    if (meetingId) {
+      const result = await apiget(`/api/meeting/${meetingId}`);
+      if (result?.statusText === "OK") {
+        setDataByMeetingId(result?.data)
+      }
+    }
 
-  const handleOpenViewEdit = () => setOpenViewEdit(true);
+  };
+  const handleOpenViewEdit = (meetingId) => {
+    fetchApByMeetingd(meetingId)
+    setOpenViewEdit(true)
+    setMeetingsId(meetingId)
+  };
   const handleCloseViewEdit = () => setOpenViewEdit(false);
 
-  const handleDateSelect = (selectInfo) => {
-    handleCloseTask();
-  };
-
   const handleEventClick = (clickInfo) => {
-    setTaskId(clickInfo?.event?._def?.extendedProps?._id);
-    handleOpenViewEdit();
+    setEventView(true);
+    handleOpenViewEdit(clickInfo?.event?._def?.extendedProps?._id);
     if (clickInfo.event.url) {
       clickInfo.jsEvent.preventDefault();
       window.open(clickInfo.event.url);
     }
   };
-  const handleEvents = (events) => {};
+
 
   const renderEventContent = (eventInfo) => (
     <>
@@ -142,97 +74,61 @@ const Event = () => {
     </>
   );
 
-  // delete api
-  const deletedata = async () => {
-    await apidelete(`task/delete/${taskId}`);
-    handleCloseViewEdit();
-  };
-
-  const fetchApiTask = async () => {
-    // const result = await apiget(userRole === 'admin' ? `task/list` : `task/list/?createdBy=${userid}`);
-    // return result.data.result.map((item) => ({
-    //   title: item.subject,
-    //   start: item.startDate,
-    //   end: item.endDate,
-    //   textColor: item.textColor,
-    //   backgroundColor: item.backgroundColor,
-    // }));
+  const handleCloseevent = () => {
+    setEventView(false);
   };
 
   const fetchApiMeeting = async () => {
-    // const result = await apiget(userRole === 'admin' ? `meeting/list` : `meeting/list/?createdBy=${userid}`);
-    // return result.data.result.map((item) => ({
-    //   title: item.subject,
-    //   start: item.startDate,
-    //   end: item.endDate,
-    // }));
+    const result = await apiget(`/api/meeting/?userid=${id}`);
+    if (result?.statusText === "OK") {
+      setMeetingList(result?.data)
+    }
   };
 
-  const fetchApiCall = async () => {
-    // const result = await apiget(userRole === 'admin' ? `call/list` : `call/list/?createdBy=${userid}`);
-    // return result.data.result.map((item) => ({
-    //   title: item.subject,
-    //   start: item.startDateTime,
-    // }));
-  };
+  useEffect(async () => {
+    fetchApiMeeting();
+  }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // // const taskApiData = await fetchApiTask();
-      // const meetingApiData = await fetchApiMeeting();
-      // const callApiData = await fetchApiCall();
-      // const combinedData = [...taskApiData, ...meetingApiData, ...callApiData];
-      // setData(combinedData);
-    };
 
-    fetchData();
-  }, [openTask, openViewEdit, userAction]);
 
   return (
     <div>
-      {/* Add Task Model */}
-      <AddTask
-        open={openTask}
-        handleClose={handleCloseTask}
-        setUserAction={setUserAction}
-        lead="lead"
-        contact="contact"
-      />
-
-      {/* View Edit Model */}
-      {/* <ViewEdit open={openViewEdit} handleClose={handleCloseViewEdit} id={taskId} deletedata={deletedata} lead='lead' contact='contact' setUserAction={setUserAction} fetchEvent={fetchdata} /> */}
 
       {/* Add Meeting Model */}
-      <AddMeeting open={openMeeting} handleClose={handleCloseMeeting} setUserAction={setUserAction} />
+      <AddMeeting
+        open={openMeeting}
+        handleClose={handleCloseMeeting}
+        setUserAction={setUserAction}
+        fetchApiMeeting={fetchApiMeeting}
+        user={user}
+        id={id}
+      />
 
-      {/* Add Call Model */}
-      <AddCall open={openCall} handleClose={handleCloseCall} setUserAction={setUserAction} />
+      <EditMeeting isOpen={eventView} handleCloseevent={handleCloseevent} dataByMeetingId={dataByMeetingId} fetchApiMeeting={fetchApiMeeting} setUserAction={setUserAction} meetingsId={meetingsId}/>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4">Calendar</Typography>
-          <ActionButtonTwo
-            handleOpenTask={handleOpenTask}
-            handleOpenMeeting={handleOpenMeeting}
-            handleOpenCall={handleOpenCall}
-          />
+        <Stack direction="row" alignItems="center" mb={5} justifyContent={"space-between"}>
+          <Typography variant="h4" >
+            Calendar
+          </Typography>
+          <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenMeeting}>
+              New Meeting
+            </Button>
+          </Stack>
         </Stack>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           minHeight="400px"
           height="600px"
-          // dateClick={handleDateClick}
-          // events={calendarDataCalendar}
-          events={data}
+          events={meetingList}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
           }}
           eventClick={handleEventClick}
-          eventsSet={handleEvents}
-          select={handleDateSelect}
           eventContent={renderEventContent}
           views={{
             listWeek: { buttonText: 'List' },
@@ -255,5 +151,4 @@ const Event = () => {
   );
 };
 
- export default Event;;
-
+export default Event;

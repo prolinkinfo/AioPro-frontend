@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import * as React from 'react';
 import Button from '@mui/material/Button';
@@ -12,107 +13,69 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useState, useEffect } from 'react';
-import { FiSave } from 'react-icons/fi';
-import { GiCancel } from 'react-icons/gi';
+import { useEffect, useState } from 'react';
 import { Autocomplete, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
-import { apiget, apiput, apieditmeeting } from '../../service/api';
+import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
 
-const Editmeetings = (props) => {
-  const { handleClose, open, id, fetchMeeting, fetchdata } = props;
-  console.log('id11111', id);
+const Addmeetings = (props) => {
+  const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
 
-  const [meetingDetails, setMeetingDetails] = useState({});
-  const [leadData, setLeadData] = useState([]);
-  const [contactData, setContactData] = useState([]);
-  const params = useParams();
+  
+  const userName = localStorage.getItem('userName');
+  const [singleuser, setsingleuser] = useState({});
 
-  const userid = localStorage.getItem('user_id');
-  const userRole = localStorage.getItem('userRole');
+  useEffect(() => {
+    setsingleuser(user);
+  }, [user]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    subject: yup.string().required('Subject is required'),
+    title: yup.string().required('Subject is required'),
     status: yup.string().required('Status is required'),
-    startDate: yup.string().required('Start Date is required'),
+    start: yup.string().required('Start Date is required'),
     location: yup.string().required('Location is required'),
     duration: yup.string().required('Duration is required'),
     note: yup.string().required('Note is required'),
   });
 
-  // -----------   initialValues
+
   const initialValues = {
-    subject: id?.row?.subject,
-    status: id?.row?.status,
-    startDate: id?.row?.startDate,
-    duration: id?.row?.duration,
-    location: id?.row?.location,
-    note: id?.row?.note,
-    modifiedOn: '',
+    title: '',
+    status: '',
+    start: '',
+    end: '',
+    duration: '',
+    location: '',
+    note: '',
+    backgroundColor: '',
+    textColor: '',
+    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
+    userid: id,
   };
 
-  // fetch api
-  // const fetchdata = async () => {
-  //     const result = await apiget(`meeting/view/${params.id}`)
-  //     if (result && result.status === 200) {
-  //         setMeetingDetails(result?.data?.meetings)
-  //     }
-  // }
-
-  // edit api
-  const EditMeeting = async (values) => {
-    const data = { ...values, _id: id?.row?._id };
-    console.log('data', data);
-
-    const result = await apieditmeeting(`/api/meeting`, data);
-    console.log('data', result);
+  // add meeting api
+  const addMeeting = async (values) => {
+    const data = values;
+    const result = await addmeeting('/api/meeting', data);
     if (result && result.status === 200) {
+      formik.resetForm();
+      fetchApiMeeting();
       handleClose();
-      fetchdata();
+      toast.success(result.data.message);
     }
   };
 
-  // lead api
-  const fetchLeadData = async () => {
-    const result = await apiget(userRole === 'admin' ? `lead/list` : `lead/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setLeadData(result?.data?.result);
-    }
-  };
-
-  // contact api
-  const fetchContactData = async () => {
-    const result = await apiget(userRole === 'admin' ? `contact/list` : `contact/list/?createdBy=${userid}`);
-    if (result && result.status === 200) {
-      setContactData(result?.data?.result);
-    }
-  };
-
+  // formik
   const formik = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize: true,
-    onSubmit: async (values) => {
-      const meetingData = {
-        subject: values.subject,
-        status: values.status,
-        startDate: values.startDate,
-        duration: values.duration,
-        location: values.location,
-        note: values.note,
-      };
-      EditMeeting(meetingData);
+    onSubmit: async (values, { resetForm }) => {
+      addMeeting(values);
+      resetForm();
     },
   });
-
-  useEffect(() => {
-    fetchdata();
-    fetchLeadData();
-    fetchContactData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div>
@@ -126,7 +89,7 @@ const Editmeetings = (props) => {
             // color: "white",
           }}
         >
-          <Typography variant="h6">Edit Meeting </Typography>
+          <Typography variant="h6">Add Meeting </Typography>
           <Typography>
             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -139,15 +102,15 @@ const Editmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Subject</FormLabel>
                   <TextField
-                    id="subject"
-                    name="subject"
+                    id="title"
+                    name="title"
                     size="small"
                     maxRows={10}
                     fullWidth
-                    value={formik.values.subject}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
-                    error={formik.touched.subject && Boolean(formik.errors.subject)}
-                    helperText={formik.touched.subject && formik.errors.subject}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -176,17 +139,31 @@ const Editmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Start Date</FormLabel>
                   <TextField
-                    name="startDate"
+                    name="start"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.start).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
-                    error={formik.touched.startDate && Boolean(formik.errors.startDate)}
-                    helperText={formik.touched.startDate && formik.errors.startDate}
+                    error={formik.touched.start && Boolean(formik.errors.start)}
+                    helperText={formik.touched.start && formik.errors.start}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>End Date</FormLabel>
+                  <TextField
+                    name="end"
+                    type={'datetime-local'}
+                    size="small"
+                    fullWidth
+                    value={dayjs(formik.values.end).format('YYYY-MM-DD HH:mm:ss')}
+                    onChange={formik.handleChange}
+                    error={formik.touched.end && Boolean(formik.errors.end)}
+                    helperText={formik.touched.end && formik.errors.end}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Duration</FormLabel>
                   <FormControl fullWidth>
                     <Select
@@ -212,7 +189,7 @@ const Editmeetings = (props) => {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Location</FormLabel>
                   <TextField
                     id="location"
@@ -225,7 +202,46 @@ const Editmeetings = (props) => {
                     helperText={formik.touched.location && formik.errors.location}
                   />
                 </Grid>
-
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Background Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="backgroundColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.backgroundColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.backgroundColor &&
+                      Boolean(formik.errors.backgroundColor)
+                    }
+                    helperText={
+                      formik.touched.backgroundColor && formik.errors.backgroundColor
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Text Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="textColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.textColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.textColor &&
+                      Boolean(formik.errors.textColor)
+                    }
+                    helperText={
+                      formik.touched.textColor && formik.errors.textColor
+                    }
+                  />
+                </Grid>
                 <Grid item xs={12} sm={12}>
                   <FormLabel>Note</FormLabel>
                   <TextField
@@ -252,7 +268,6 @@ const Editmeetings = (props) => {
             onClick={formik.handleSubmit}
             style={{ textTransform: 'capitalize' }}
             color="secondary"
-            startIcon={<FiSave />}
           >
             Save
           </Button>
@@ -260,7 +275,6 @@ const Editmeetings = (props) => {
             type="reset"
             variant="outlined"
             style={{ textTransform: 'capitalize' }}
-            startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
               handleClose();
@@ -275,4 +289,4 @@ const Editmeetings = (props) => {
   );
 };
 
-export default Editmeetings;
+export default Addmeetings;

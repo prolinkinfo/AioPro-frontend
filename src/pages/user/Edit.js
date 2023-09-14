@@ -25,7 +25,7 @@ const Edit = (props) => {
   const { handleClose, open, id, fetchdata } = props;
   const [userDetails, setUserDetails] = useState({});
   const [Role, setrole] = useState(id?.row?.role);
-  console.log("Role",Role)
+  console.log('Role', Role);
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('First Name is required'),
@@ -95,7 +95,7 @@ const Edit = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Edit </Typography>
+          <Typography variant="h6">User </Typography>
           <Typography>
             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -144,8 +144,8 @@ const Edit = (props) => {
                   helperText={formik.touched.emailAddress && formik.errors.emailAddress}
                 />
               </Grid>
-              <FormLabel style={{marginLeft:"30px",marginBottom:"-20px",marginTop:"20px"}}>Role</FormLabel>
-              <Grid item xs={12} sm={12} md={12} style={{display:"flex"}}>
+              <FormLabel style={{ marginLeft: '30px', marginBottom: '-20px', marginTop: '20px' }}>Role</FormLabel>
+              <Grid item xs={12} sm={12} md={12} style={{ display: 'flex' }}>
                 <TextField
                   id="role"
                   name="role"

@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 // sections
 // mock
-import { apiget, deleteManyApi, getmeeting, deletemeetingApi } from '../../service/api';
+import { apiget, deleteManyApi, getmeeting, deletemeetingApi, deleteManymeeting } from '../../service/api';
 import DeleteModel from '../../components/Deletemodle';
 import TableStyle from '../../components/TableStyle';
 import Iconify from '../../components/iconify/Iconify';
@@ -25,11 +25,20 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
   const handleOpenDelete = () => setOpendelete(true);
 
   const deleteManyMettings = async (data) => {
-    const response = await deletemeetingApi('/api/meeting', data.join('').toString());
-
-    if (response?.status === 200) {
-      fetchdata();
-      handleCloseDelete();
+    console.log('data', data);
+    if (data.length === 1) {
+      const response = await deletemeetingApi('/api/meeting', data.join('').toString());
+      if (response?.status === 200) {
+        fetchdata();
+        handleCloseDelete();
+      }
+    } else {
+      const response = await deleteManymeeting('/api/meeting/deleteMany', data);
+      console.log('deleteMany', response);
+      if (response?.status === 200) {
+        fetchdata();
+        handleCloseDelete();
+      }
     }
   };
 
@@ -61,11 +70,11 @@ const Meeting = () => {
   const [userAction, setUserAction] = useState(null);
   const [allMeeting, setAllMeeting] = useState([]);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-   const [openEdit, setOpenEdit] = useState(false);
-   const handleOpenEdit = () => setOpenEdit(true);
-   const handleCloseEdit = () => setOpenEdit(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
   const navigate = useNavigate();
-  const [id,setId]=useState("")
+  const [id, setId] = useState('');
 
   const userid = localStorage.getItem('user_id');
   const userRole = localStorage.getItem('userRole');
@@ -163,9 +172,14 @@ const Meeting = () => {
     const result = await getmeeting('/api/meeting');
 
     if (result && result.status === 200) {
-      setAllMeeting(result?.data);
+      console.log('result', result?.data);
+      const data = result?.data.filter((item) => item.userid === userid);
+
+      console.log('result', data);
+      setAllMeeting(data);
     }
   };
+  const getdata = () => {};
   useEffect(() => {
     fetchdata();
   }, [userAction]);
@@ -173,7 +187,7 @@ const Meeting = () => {
   return (
     <>
       {/* Add Meeting */}
-      <AddMeeting open={openMeeting} handleClose={handleCloseMeeting} setUserAction={setUserAction} />
+      <AddMeeting open={openMeeting} handleClose={handleCloseMeeting} setUserAction={setUserAction} getdata={getdata} />
 
       <Container>
         <TableStyle>
