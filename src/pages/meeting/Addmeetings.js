@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-// import { Modal } from '@mui/material';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { BiLink } from 'react-icons/bi';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import * as React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -13,103 +13,73 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useEffect, useState } from 'react';
+import { Autocomplete, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
 import { toast } from 'react-toastify';
-import {
-  FormLabel,
-  Dialog,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  DialogContentText,
-  FormHelperText,
-} from '@mui/material';
 import dayjs from 'dayjs';
-import { GiCancel } from 'react-icons/gi';
-import { FiSave } from 'react-icons/fi';
-import { adduser, apieditmeeting } from '../../service/api';
-// import { Link } from 'react-router-dom';
-// import DeleteTask from './components/deleteTask';
-// import EditTask from './components/editTask';
+import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
 
-const EventView = (props) => {
-  const { onClose, isOpen, info, getdata, handleCloseevent, iD } = props;
-  const [data, setData] = useState();
-  const [edit, setEdit] = useState(false);
-  const [deleteModel, setDelete] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user'));
-  const [isLoding, setIsLoding] = useState(false);
-  const navigate = useNavigate();
+const Addmeetings = (props) => {
+  const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
 
-  const fetchViewData = async () => {
-    if (info) {
-      setIsLoding(true);
-      setIsLoding(false);
-    }
-  };
+  
+  const userName = localStorage.getItem('userName');
+  const [singleuser, setsingleuser] = useState({});
 
   useEffect(() => {
-    fetchViewData();
-  }, [info]);
+    setsingleuser(user);
+  }, [user]);
 
-  const handleViewOpen = () => {
-    // navigate(user?.role !== 'admin' ? `/view/${info}` : `/admin/view/${info}`);
-  };
-
-  // -----------   initialValues
+  // -----------  validationSchema
   const validationSchema = yup.object({
-    subject: yup.string().required('Subject is required'),
+    title: yup.string().required('Subject is required'),
     status: yup.string().required('Status is required'),
-    startDate: yup.string().required('Start Date is required'),
+    start: yup.string().required('Start Date is required'),
     location: yup.string().required('Location is required'),
     duration: yup.string().required('Duration is required'),
     note: yup.string().required('Note is required'),
   });
 
-  console.log('id1111111111111', iD);
 
   const initialValues = {
-    subject: iD?.subject,
-    status: iD?.status,
-    startDate: iD?.startDate,
-    duration: iD?.duration ? iD?.duration : '15 minutes',
-    location: iD?.location,
-    note: iD?.note,
-    modifiedOn: '',
+    title: '',
+    status: '',
+    start: '',
+    end: '',
+    duration: '',
+    location: '',
+    note: '',
+    backgroundColor: '',
+    textColor: '',
+    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
+    userid: id,
   };
 
-  const EditMeeting = async (values) => {
-    const data = { ...values, _id: iD._id };
-    console.log('data123456', data);
-
-    const result = await apieditmeeting(`/api/meeting`, data);
-    console.log('data', result);
+  // add meeting api
+  const addMeeting = async (values) => {
+    const data = values;
+    const result = await addmeeting('/api/meeting', data);
     if (result && result.status === 200) {
-      handleCloseevent();
-      getdata();
+      formik.resetForm();
+      fetchApiMeeting();
+      handleClose();
+      toast.success(result.data.message);
     }
   };
 
+  // formik
   const formik = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize: true,
-    onSubmit: async (values) => {
-      const meetingData = {
-        subject: values.subject,
-        status: values.status,
-        startDate: values.startDate,
-        duration: values.duration,
-        location: values.location,
-        note: values.note,
-      };
-      EditMeeting(meetingData);
+    onSubmit: async (values, { resetForm }) => {
+      addMeeting(values);
+      resetForm();
     },
   });
 
   return (
     <div>
-      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+      <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
         <DialogTitle
           id="scroll-dialog-title"
           style={{
@@ -119,9 +89,9 @@ const EventView = (props) => {
             // color: "white",
           }}
         >
-          <Typography variant="h6">Edit Meeting </Typography>
+          <Typography variant="h6">Add Meeting </Typography>
           <Typography>
-            <ClearIcon onClick={handleCloseevent} style={{ cursor: 'pointer' }} />
+            <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
         </DialogTitle>
 
@@ -132,15 +102,15 @@ const EventView = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Subject</FormLabel>
                   <TextField
-                    id="subject"
-                    name="subject"
+                    id="title"
+                    name="title"
                     size="small"
                     maxRows={10}
                     fullWidth
-                    value={formik.values.subject}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
-                    error={formik.touched.subject && Boolean(formik.errors.subject)}
-                    helperText={formik.touched.subject && formik.errors.subject}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -169,17 +139,31 @@ const EventView = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Start Date</FormLabel>
                   <TextField
-                    name="startDate"
+                    name="start"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.start).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
-                    error={formik.touched.startDate && Boolean(formik.errors.startDate)}
-                    helperText={formik.touched.startDate && formik.errors.startDate}
+                    error={formik.touched.start && Boolean(formik.errors.start)}
+                    helperText={formik.touched.start && formik.errors.start}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>End Date</FormLabel>
+                  <TextField
+                    name="end"
+                    type={'datetime-local'}
+                    size="small"
+                    fullWidth
+                    value={dayjs(formik.values.end).format('YYYY-MM-DD HH:mm:ss')}
+                    onChange={formik.handleChange}
+                    error={formik.touched.end && Boolean(formik.errors.end)}
+                    helperText={formik.touched.end && formik.errors.end}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Duration</FormLabel>
                   <FormControl fullWidth>
                     <Select
@@ -205,7 +189,7 @@ const EventView = (props) => {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <FormLabel>Location</FormLabel>
                   <TextField
                     id="location"
@@ -218,7 +202,46 @@ const EventView = (props) => {
                     helperText={formik.touched.location && formik.errors.location}
                   />
                 </Grid>
-
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Background Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="backgroundColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.backgroundColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.backgroundColor &&
+                      Boolean(formik.errors.backgroundColor)
+                    }
+                    helperText={
+                      formik.touched.backgroundColor && formik.errors.backgroundColor
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Text Color</FormLabel>
+                  <TextField
+                    id=""
+                    name="textColor"
+                    label=""
+                    type="color"
+                    size="small"
+                    fullWidth
+                    value={formik.values.textColor}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.textColor &&
+                      Boolean(formik.errors.textColor)
+                    }
+                    helperText={
+                      formik.touched.textColor && formik.errors.textColor
+                    }
+                  />
+                </Grid>
                 <Grid item xs={12} sm={12}>
                   <FormLabel>Note</FormLabel>
                   <TextField
@@ -245,7 +268,6 @@ const EventView = (props) => {
             onClick={formik.handleSubmit}
             style={{ textTransform: 'capitalize' }}
             color="secondary"
-            startIcon={<FiSave />}
           >
             Save
           </Button>
@@ -253,10 +275,9 @@ const EventView = (props) => {
             type="reset"
             variant="outlined"
             style={{ textTransform: 'capitalize' }}
-            startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
-              handleCloseevent();
+              handleClose();
             }}
             color="error"
           >
@@ -268,4 +289,4 @@ const EventView = (props) => {
   );
 };
 
-export default EventView;
+export default Addmeetings;

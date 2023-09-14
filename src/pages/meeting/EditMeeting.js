@@ -1,11 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
+import { useNavigate, useParams } from 'react-router-dom';
+// import { Modal } from '@mui/material';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { BiLink } from 'react-icons/bi';
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -13,28 +13,39 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useEffect, useState } from 'react';
-import { Autocomplete, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
 import { toast } from 'react-toastify';
+import {
+  FormLabel,
+  Dialog,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  DialogContentText,
+  FormHelperText,
+} from '@mui/material';
 import dayjs from 'dayjs';
-import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
+import { GiCancel } from 'react-icons/gi';
+import { FiDelete, FiSave } from 'react-icons/fi';
+import { adduser, apidelete, apieditmeeting, apiget, deletemeetingApi } from '../../service/api';
+import DeleteModel from '../../components/Deletemodle'
 
-const Addmeetings = (props) => {
-  const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
+const EditMeeting = (props) => {
+  const {  isOpen, meetingsId, fetchApiMeeting, handleCloseevent, dataByMeetingId, setUserAction } = props;
+
+
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
 
   
-  const userName = localStorage.getItem('userName');
-  const [singleuser, setsingleuser] = useState({});
 
-  useEffect(() => {
-    setsingleuser(user);
-  }, [user]);
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
-  // -----------  validationSchema
+  // -----------   initialValues
   const validationSchema = yup.object({
-    subject: yup.string().required('Subject is required'),
+    title: yup.string().required('Subject is required'),
     status: yup.string().required('Status is required'),
-    startDate: yup.string().required('Start Date is required'),
+    start: yup.string().required('Start Date is required'),
     location: yup.string().required('Location is required'),
     duration: yup.string().required('Duration is required'),
     note: yup.string().required('Note is required'),
@@ -42,46 +53,68 @@ const Addmeetings = (props) => {
 
 
   const initialValues = {
-    subject: '',
-    status: '',
-    startDate: '',
-    endDate: '',
-    duration: '',
-    location: '',
-    note: '',
-    backgroundColor: '',
-    textColor: '',
-    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
-    userid: id,
+    _id: dataByMeetingId?._id,
+    title: dataByMeetingId?.title,
+    status: dataByMeetingId?.status,
+    start: dataByMeetingId?.start,
+    end: dataByMeetingId?.end,
+    duration: dataByMeetingId?.duration,
+    location: dataByMeetingId?.location,
+    backgroundColor: dataByMeetingId?.backgroundColor,
+    textColor: dataByMeetingId?.textColor,
+    note: dataByMeetingId?.note,
+    modifiedOn: '',
   };
 
-  // add meeting api
-  const addMeeting = async (values) => {
+  const EditMeeting = async (values) => {
     const data = values;
-    const result = await addmeeting('/api/meeting', data);
-    setUserAction(result);
+    console.log('data123456', data);
 
+    const result = await apieditmeeting(`/api/meeting`, data);
+    setUserAction(result)
     if (result && result.status === 200) {
-      formik.resetForm();
-      handleClose();
       fetchApiMeeting();
-      toast.success(result.data.message);
+      handleCloseevent();
     }
   };
 
-  // formik
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: async (values, { resetForm }) => {
-      addMeeting(values);
-      resetForm();
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      const meetingData = {
+        _id: values._id,
+        title: values.title,
+        status: values.status,
+        start: values.start,
+        end: values.end,
+        duration: values.duration,
+        location: values.location,
+        backgroundColor: values.backgroundColor,
+        textColor: values.textColor,
+        note: values.note,
+        modifiedOn: new Date()
+
+      };
+      EditMeeting(meetingData);
     },
   });
 
+  const deleteData = async (id) => {
+    const result = await deletemeetingApi(`/api/meeting/${id}`)
+    setUserAction(result)
+    handleCloseDeleteModel();
+    handleCloseevent();
+    fetchApiMeeting();
+}
+
   return (
     <div>
-      <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+
+      <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} id={meetingsId} deleteData={deleteData}/>
+
+      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
         <DialogTitle
           id="scroll-dialog-title"
           style={{
@@ -91,9 +124,9 @@ const Addmeetings = (props) => {
             // color: "white",
           }}
         >
-          <Typography variant="h6">Add Meeting </Typography>
+          <Typography variant="h6">Edit Meeting </Typography>
           <Typography>
-            <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+            <ClearIcon onClick={handleCloseevent} style={{ cursor: 'pointer' }} />
           </Typography>
         </DialogTitle>
 
@@ -104,15 +137,15 @@ const Addmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Subject</FormLabel>
                   <TextField
-                    id="subject"
-                    name="subject"
+                    id="title"
+                    name="title"
                     size="small"
                     maxRows={10}
                     fullWidth
-                    value={formik.values.subject}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
-                    error={formik.touched.subject && Boolean(formik.errors.subject)}
-                    helperText={formik.touched.subject && formik.errors.subject}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -141,30 +174,29 @@ const Addmeetings = (props) => {
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>Start Date</FormLabel>
                   <TextField
-                    name="startDate"
+                    name="start"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.start).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
-                    error={formik.touched.startDate && Boolean(formik.errors.startDate)}
-                    helperText={formik.touched.startDate && formik.errors.startDate}
+                    error={formik.touched.start && Boolean(formik.errors.start)}
+                    helperText={formik.touched.start && formik.errors.start}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>End Date</FormLabel>
                   <TextField
-                    name="endDate"
+                    name="end"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.endDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.end).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
-                    error={formik.touched.endDate && Boolean(formik.errors.endDate)}
-                    helperText={formik.touched.endDate && formik.errors.endDate}
+                    error={formik.touched.end && Boolean(formik.errors.end)}
+                    helperText={formik.touched.end && formik.errors.end}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={12}>
                   <FormLabel>Duration</FormLabel>
                   <FormControl fullWidth>
@@ -270,16 +302,28 @@ const Addmeetings = (props) => {
             onClick={formik.handleSubmit}
             style={{ textTransform: 'capitalize' }}
             color="secondary"
+            startIcon={<FiSave />}
           >
             Save
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleOpenDeleteModel}
+            style={{ textTransform: 'capitalize' }}
+            color="error"
+            startIcon={<FiDelete />}
+          >
+            Delete
           </Button>
           <Button
             type="reset"
             variant="outlined"
             style={{ textTransform: 'capitalize' }}
+            startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
-              handleClose();
+              handleCloseevent();
             }}
             color="error"
           >
@@ -291,4 +335,4 @@ const Addmeetings = (props) => {
   );
 };
 
-export default Addmeetings;
+export default EditMeeting;

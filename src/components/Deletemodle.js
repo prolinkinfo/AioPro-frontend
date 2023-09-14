@@ -51,21 +51,22 @@ BootstrapDeleteModel.propTypes = {
 
 export default function CustomizedDialogs(props) {
   // eslint-disable-next-line react/prop-types
-  const {opendelete,handleClosedelete,deletedata,id } = props;
+  const {isOpenDeleteModel,handleCloseDeleteModel,deleteData,id } = props;
 
+  console.log(id,"meetingDeleteId")
   const Delete =()=>{
-    deletedata(id)
+    deleteData(id)
   }
 
   return (
     <div>
       <BootstrapDialog
         aria-labelledby="customized-dialog-title"
-        open={opendelete}
+        open={isOpenDeleteModel}
       >
         <BootstrapDeleteModel
           id="customized-dialog-title"
-          onClose={handleClosedelete}
+          onClose={handleCloseDeleteModel}
         >
           Delete
         </BootstrapDeleteModel>
@@ -77,7 +78,7 @@ export default function CustomizedDialogs(props) {
         <DialogActions>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" color="error" onClick={Delete}>Yes</Button>
-            <Button variant="contained" onClick={handleClosedelete}>No</Button>
+            <Button variant="contained" onClick={handleCloseDeleteModel}>No</Button>
           </Stack>
         </DialogActions>
       </BootstrapDialog>

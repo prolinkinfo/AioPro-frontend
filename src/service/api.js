@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { constant } from '../constant';
 
 export const apiget = async (path) => {
+  console.log(path,"path")
   try {
     // eslint-disable-next-line prefer-const
     let response = await axios.get(constant.baseUrl + path, {
@@ -261,9 +262,9 @@ export const getsingleuser = async (path, data) => {
 };
 
 
-export const deletemeetingApi=async(path,data)=>{
+export const deletemeetingApi=async(path)=>{
    try {
-    const response = await axios.delete(`${constant.baseUrl + path}/${data}`, {
+    const response = await axios.delete(constant.baseUrl + path, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     return response;
