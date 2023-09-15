@@ -33,7 +33,7 @@ export default function App() {
       <StyledChart />
       <ToastContainer />
       {token && user?.role ? (
-        user?.role === 'admin' ? (
+        user?.role === 'admin' || 'Hr' ? (
           <Routers />
         ) : user?.role === 'user' ? (
           <UserRoutes />

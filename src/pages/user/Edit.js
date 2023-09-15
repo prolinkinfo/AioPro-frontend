@@ -25,7 +25,7 @@ const Edit = (props) => {
   const { handleClose, open, id, fetchdata } = props;
   const [userDetails, setUserDetails] = useState({});
   const [Role, setrole] = useState(id?.row?.role);
-  console.log('Role', Role);
+
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('First Name is required'),
@@ -49,7 +49,6 @@ const Edit = (props) => {
     }
   };
 
-  console.log('id?.row?.role,', id?.row?.role);
   // edit api
   const EditUser = async (values) => {
     const data = {
