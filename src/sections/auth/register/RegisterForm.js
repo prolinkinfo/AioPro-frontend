@@ -1,17 +1,20 @@
-import { useState } from 'react';
+/* eslint-disable arrow-body-style */
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { apipost } from '../../../service/api';
+import { allusers, apipost } from '../../../service/api';
 import Iconify from '../../../components/iconify';
+import palette from '../../../theme/palette';
 
 export default function RgisterForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [alluser, setAllUser] = useState([]);
 
   const initialValues = {
     email: '',
@@ -19,13 +22,15 @@ export default function RgisterForm() {
     confirmPassword: '',
     lastName: '',
     firstName: '',
+    role:'',
+    parentId:''
   };
 
-  const pwVlidation ="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
+  const pwVlidation = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
   // validationSchema
   const validationSchema = yup.object({
-    lastName: yup.string().required('lastName is required'),
-    firstName: yup.string().required('firstName is required'),
+    lastName: yup.string().required('Last Name is required'),
+    firstName: yup.string().required('First Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup
       .string()
@@ -42,12 +47,14 @@ export default function RgisterForm() {
 
   const Adddata = async (values) => {
     const data = {
-      email: values?.email,
-      password: values?.password,
-      confirmPassword: values?.confirmPassword,
-      role: 'user',
       firstName: values?.firstName,
       lastName: values?.lastName,
+      email: values?.email,
+      // eslint-disable-next-line no-constant-condition
+      role: values?.role === "Hr" || "Admin" ? "National Manager" : values?.role === "National Manager" ? "Branch Manager" : values?.role === "Branch Manager" ? "Zonal Manager" : values?.role === "Zonal Manager" ? "Regional Manager" : values?.role === "Regional Manager" ? "Territory Manager" : "",
+      parentId:values?.parentId,
+      password: values?.password,
+      confirmPassword: values?.confirmPassword,
     };
     const result = await apipost('/api/auth/signup', data);
     if (result && result.status === 200) {
@@ -64,13 +71,35 @@ export default function RgisterForm() {
     },
   });
 
+  async function fetchdata() {
+    const result = await allusers('/api/users');
+    console.log('resultwwe', result);
+    if (result && result.status === 200) {
+      setAllUser(result?.data);
+    }
+  }
+
+
+  const admin = alluser?.filter(user => user?.role === "Admin");
+  const hr = alluser?.filter(user => user?.role === "Hr");
+  const nationalManager = alluser?.filter(user => user?.role === "National Manager");
+  const branchManager = alluser?.filter(user => user?.role === "Branch Manager");
+  const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
+  const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
+  const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
+    
+  
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
   return (
     <>
       <form>
         <Stack spacing={3} mb={2}>
           <TextField
             name="firstName"
-            label="first Name"
+            label="First Name"
             value={formik.values.firstName}
             onChange={formik.handleChange}
             error={formik.touched.firstName && Boolean(formik.errors.firstName)}
@@ -78,7 +107,7 @@ export default function RgisterForm() {
           />
           <TextField
             name="lastName"
-            label="last Name"
+            label="Last Name"
             value={formik.values.lastName}
             onChange={formik.handleChange}
             error={formik.touched.lastName && Boolean(formik.errors.lastName)}
@@ -92,6 +121,105 @@ export default function RgisterForm() {
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
           />
+            <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Role</InputLabel>
+              <Select               
+                labelId="demo-simple-select-label"
+                name="role"
+                label="Role"
+                fullWidth
+                value={formik.values.role || null}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.role &&
+                  Boolean(formik.errors.role)
+                }
+                helperText={
+                  formik.touched.role && formik.errors.role
+                }
+              >
+                <MenuItem value="Hr">Hr</MenuItem>
+                <MenuItem value="Admin">Admin </MenuItem>
+                <MenuItem value="National Manager">National Manager </MenuItem>
+                <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+              </Select>
+              <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+            </FormControl>
+            <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Manager</InputLabel>
+              <Select               
+                labelId="demo-simple-select-label"
+                name="parentId"
+                label="Manager"
+                fullWidth
+                value={formik.values.parentId }
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.parentId &&
+                  Boolean(formik.errors.parentId)
+                }
+                helperText={
+                  formik.touched.parentId && formik.errors.parentId
+                }
+              >
+                {
+                  formik?.values?.role === "Hr" ? 
+                  hr?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "Admin" ? 
+                  admin?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "National Manager" ? 
+                  nationalManager?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "Branch Manager" ? 
+                  branchManager?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "Zonal Manager" ?
+                  zonalManager?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "Regional Manager" ?
+                  regionalManager?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : formik?.values?.role === "Territory Manager" ?
+                  territoryManager?.map((item)=>{
+                    return (
+                      <MenuItem key={item?._id} value={item?._id}>
+                        {`${item?.firstName} ${item?.lastName}`}
+                      </MenuItem>
+                    );
+                  }) : ""
+                }
+              </Select>
+              <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+            </FormControl>
 
           <TextField
             name="password"
