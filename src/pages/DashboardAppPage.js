@@ -26,34 +26,38 @@ import { apiget } from '../service/api';
 export default function DashboardAppPage() {
   const theme = useTheme();
 
+  const user = JSON.parse(localStorage.getItem('user'));
 
   return (
     <>
-      <Helmet>
-        {/* <title> Dashboard | Minimal UI </title> */}
-      </Helmet>
+      <Helmet>{/* <title> Dashboard | Minimal UI </title> */}</Helmet>
 
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back 
+        <Typography variant="h4" sx={{ mb: 5 ,textTransform:"capitalize"}}>
+          Hi, {user?.userName}
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Leads" total={0} icon={'ic:baseline-leaderboard'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Contacts" total={0} color="info" icon={'fluent:book-contacts-24-filled'} />
+          <Grid item xs={12} sm={6} md={4}>
+            <AppWidgetSummary
+              title="Contacts"
+              total={0}
+              color="info"
+              icon={'fluent:book-contacts-24-filled'}
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Policies" total={0} color="warning" icon={'ic:baseline-policy'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tasks" total={0} color="error" icon={'mdi:events'} />
-          </Grid>
+          {/* <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="Tasks" total={totalEvent} color="error" icon={'mdi:events'} />
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
