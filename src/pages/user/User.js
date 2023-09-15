@@ -147,7 +147,6 @@ const User = () => {
         };
         return (
           <div>
-            {console.log('datarenderCell', params)}
             <Link to={`/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>

@@ -50,7 +50,8 @@ export default function RgisterForm() {
       firstName: values?.firstName,
       lastName: values?.lastName,
       email: values?.email,
-      role: values?.role,
+      // eslint-disable-next-line no-constant-condition
+      role: values?.role === "Hr" || "Admin" ? "National Manager" : values?.role === "National Manager" ? "Branch Manager" : values?.role === "Branch Manager" ? "Zonal Manager" : values?.role === "Zonal Manager" ? "Regional Manager" : values?.role === "Regional Manager" ? "Territory Manager" : "",
       parentId:values?.parentId,
       password: values?.password,
       confirmPassword: values?.confirmPassword,
