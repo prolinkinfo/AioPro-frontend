@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment/moment'
 import Actionbutton from '../../components/Actionbutton';
 import Header from '../../components/Header';
-import { apidelete, apiget } from '../../service/api';
+import { apidelete, apiget, getsingleuser } from '../../service/api';
 import AddUser from './Add'
 import EditUser from './Edit'
 import DeleteModel from '../../components/Deletemodle'
@@ -47,7 +47,7 @@ const View = () => {
 
     // fetch api
     const fetchdata = async () => {
-        const result = await apiget(`user/view/${params.id}`)
+        const result = await getsingleuser(`/api/users`,params.id)
         if (result && result.status === 200) {
             setUserDetails(result.data)
         }
