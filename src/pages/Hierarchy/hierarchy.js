@@ -1,9 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, { Background, useNodesState, useEdgesState, addEdge } from 'reactflow';
 import ContextMenu from './ContextMenu';
 import 'reactflow/dist/style.css';
 import './style.css';
+import { allusers } from '../../service/api';
 
+const initialNodes = [];
+
+const initialEdges = [];
 export const Hierarchy = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -31,48 +35,20 @@ export const Hierarchy = () => {
     [setMenu]
   );
 
-  const initialNodes = [
-    { id: '1', position: { x: 175, y: 0 }, data: { label: 'a' } },
-    { id: '2', position: { x: 0, y: 250 }, data: { label: 'b' } },
-    { id: '3', position: { x: 175, y: 250 }, data: { label: 'c' } },
-    { id: '4', position: { x: 250, y: 350 }, data: { label: 'd' } },
-    { id: '5', position: { x: 450, y: 350 }, data: { label: 'e' } },
-    { id: '6', position: { x: 550, y: 350 }, data: { label: 'f' } },
-    { id: '7', position: { x: 550, y: 350 }, data: { label: 'g' } },
-  ];
+  async function fetchdata() {
+    const result = await allusers('/api/users');
 
-  const initialEdges = [
-    {
-      id: 'e1-2',
-      source: '1',
-      target: '2',
-    },
-    {
-      id: 'e1-3',
-      source: '1',
-      target: '3',
-    },
-    {
-      id: 'e1-4',
-      source: '1',
-      target: '4',
-    },
-    {
-      id: 'e1-5',
-      source: '2',
-      target: '5',
-    },
-    {
-      id: 'e1-6',
-      source: '2',
-      target: '6',
-    },
-    {
-      id: 'e1-7',
-      source: '3',
-      target: '7',
-    },
-  ];
+    if (result && result.status === 200) {
+      result.data.forEach((item, index) => {
+        initialNodes.push({ id: item?._id, position: { x: 175, y: 0 }, data: { label: item?.firstName } });
+        initialEdges.push({ id: `e1-${index + 1}`, source: item?._id, target: item?.parentId, animated: true });
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchdata();
+  }, []);
 
   // Close the context menu if it's open whenever the window is clicked.
   const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
