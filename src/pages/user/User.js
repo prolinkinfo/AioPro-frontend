@@ -3,6 +3,7 @@ import { Card, Stack, Button, Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarContainer } from '@mui/x-data-grid';
 import { DeleteOutline } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
+import { FcFlowChart } from 'react-icons/fc';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useNavigate, Link } from 'react-router-dom';
 import Iconify from '../../components/iconify';
@@ -155,6 +156,26 @@ const User = () => {
         );
       },
     },
+    {
+      field: 'hierarchy',
+      headerName: 'Hierarchy',
+      flex: 1,
+      // eslint-disable-next-line arrow-body-style
+      renderCell: (params) => {
+        const handleClick = async (data) => {
+          setdata(data);
+          handleOpenevent();
+        };
+        return (
+          <div>
+            {console.log('datarenderCell', params)}
+            <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
+              <FcFlowChart color="black" size={22} />
+            </Link>
+          </div>
+        );
+      },
+    },
   ];
 
   async function fetchdata() {
@@ -172,7 +193,7 @@ const User = () => {
     <>
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
 
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">User</Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
@@ -181,7 +202,7 @@ const User = () => {
         </Stack>
         <TableStyle>
           <Box width="100%">
-            <Card style={{ height: '600px', paddingTop: '15px' }}>
+            <Card style={{ height: '700px', paddingTop: '15px' }}>
               <DataGrid
                 rows={alluser}
                 columns={columns}
