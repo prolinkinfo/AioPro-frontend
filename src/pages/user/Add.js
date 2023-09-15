@@ -12,8 +12,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { adduser, allusers } from '../../service/api';
+import palette from '../../theme/palette';
 
 const Add = (props) => {
   // eslint-disable-next-line react/prop-types
@@ -26,6 +27,7 @@ const Add = (props) => {
     lastName: yup.string().required('Last Name is required'),
     emailAddress: yup.string().email('Invalid email').required('Email is required'),
     role: yup.string().required('Role is required'),
+    parentId:yup.string().required('Manager is required'),
     password: yup
       .string()
       .required('Password is required')
@@ -177,6 +179,13 @@ const Add = (props) => {
                     size="small"
                     fullWidth
                     onChange={formik.handleChange}
+                    error={
+                      formik.touched.role &&
+                      Boolean(formik.errors.role)
+                    }
+                    helperText={
+                      formik.touched.role && formik.errors.role
+                    }
                   >
                     <MenuItem value="Hr">Hr</MenuItem>
                     <MenuItem value="Admin">Admin </MenuItem>
@@ -186,6 +195,7 @@ const Add = (props) => {
                     <MenuItem value="Regional Manager">Regional Manager </MenuItem>
                     <MenuItem value="Territory Manager">Territory Manager</MenuItem>
                   </Select>
+                  <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
@@ -259,6 +269,7 @@ const Add = (props) => {
                                   }) : ""
                     }
                   </Select>
+                  <FormHelperText style={{ color: palette.error.main }}>{formik.touched.parentId && formik.errors.parentId}</FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
@@ -276,7 +287,7 @@ const Add = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>confirmPassword</FormLabel>
+                <FormLabel>Confirm Password</FormLabel>
                 <TextField
                   id="confirmPassword"
                   name="confirmPassword"
