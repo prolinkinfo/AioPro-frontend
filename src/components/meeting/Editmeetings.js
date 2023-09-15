@@ -64,10 +64,8 @@ const Editmeetings = (props) => {
   // edit api
   const EditMeeting = async (values) => {
     const data = { ...values, _id: id?.row?._id };
-    console.log('data', data);
 
     const result = await apieditmeeting(`/api/meeting`, data);
-    console.log('data', result);
     if (result && result.status === 200) {
       handleClose();
       fetchdata();

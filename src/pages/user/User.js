@@ -30,9 +30,7 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
   };
 
   const deleteManyContact = async (data) => {
-    console.log('data12345', data.join(''));
     const response = await apidelete('/api/users', data.join('').toString());
-    console.log('responsedeleteuser', response);
     if (response?.status === 200) {
       fetchdata();
       handleCloseDelete();
@@ -41,7 +39,6 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
 
   return (
     <GridToolbarContainer>
-      {console.log('user?.id!==selectedRowIds', user?.id, selectedRowIds)}
       <GridToolbar />
       {selectedRowIds && selectedRowIds.length > 0 && user?.role === 'admin' && !selectedRowIds.includes(user?.id) && (
         <Button
@@ -167,7 +164,6 @@ const User = () => {
         };
         return (
           <div>
-            {console.log('datarenderCell', params)}
             <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
               <FcFlowChart color="black" size={22} />
             </Link>
@@ -179,7 +175,6 @@ const User = () => {
 
   async function fetchdata() {
     const result = await allusers('/api/users');
-    console.log('resultwwe', result);
     if (result && result.status === 200) {
       setAllUser(result?.data);
     }

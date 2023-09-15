@@ -33,7 +33,6 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
   };
 
   const deleteManyContact = async (data) => {
-    console.log('data12345', data);
     // await deleteManyApi('contact/deletemany', data);
     // fetchdata();
     handleCloseDelete();
@@ -197,7 +196,6 @@ const Contact = () => {
       renderCell: (params) => {
         const handleshowClick = async (data) => {
           setshowdata(data);
-          console.log('datarenderCell', data);
           handleOpendatashow();
         };
         return (

@@ -23,7 +23,6 @@ import Palette from '../../theme/palette';
 
 const Edit = (props) => {
   const { open, handleClose, showdata, id, fetchContact } = props;
-  console.log('showdata', showdata);
   const [contactData, setContactData] = useState({});
 
   // -----------  validationSchema
@@ -68,7 +67,6 @@ const Edit = (props) => {
   const editContact = async (values) => {
     const data = values;
 
-    console.log('editContact', data, id);
     const result = await apiput(`contact/edit/${id}`, data);
 
     if (result && result.status === 200) {

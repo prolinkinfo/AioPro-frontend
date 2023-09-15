@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import { constant } from '../constant';
 
 export const apiget = async (path) => {
-  console.log(path,"path")
   try {
     // eslint-disable-next-line prefer-const
     let response = await axios.get(constant.baseUrl + path, {

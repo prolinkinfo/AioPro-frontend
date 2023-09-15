@@ -68,7 +68,6 @@ const EditMeeting = (props) => {
 
   const EditMeeting = async (values) => {
     const data = values;
-    console.log('data123456', data);
 
     const result = await apieditmeeting(`/api/meeting`, data);
     setUserAction(result)

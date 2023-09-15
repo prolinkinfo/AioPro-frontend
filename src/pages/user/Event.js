@@ -28,7 +28,6 @@ const Event = () => {
 
   const getuser = async () => {
     const result = await getsingleuser(`/api/users`, id);
-    console.log('result', result.data);
     setUser(result.data);
   };
 

@@ -22,8 +22,8 @@ export default function RgisterForm() {
     confirmPassword: '',
     lastName: '',
     firstName: '',
-    role:'',
-    parentId:''
+    role: '',
+    parentId: ''
   };
 
   const pwVlidation = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
@@ -51,8 +51,19 @@ export default function RgisterForm() {
       lastName: values?.lastName,
       email: values?.email,
       // eslint-disable-next-line no-constant-condition
-      role: values?.role === "Hr" || "Admin" ? "National Manager" : values?.role === "National Manager" ? "Branch Manager" : values?.role === "Branch Manager" ? "Zonal Manager" : values?.role === "Zonal Manager" ? "Regional Manager" : values?.role === "Regional Manager" ? "Territory Manager" : "",
-      parentId:values?.parentId,
+      role:
+        values?.role === "Hr" || values?.role === "Admin"
+          ? "National Manager"
+          : values?.role === "National Manager"
+            ? "Branch Manager"
+            : values?.role === "Branch Manager"
+              ? "Zonal Manager"
+              : values?.role === "Zonal Manager"
+                ? "Regional Manager"
+                : values?.role === "Regional Manager"
+                  ? "Territory Manager"
+                  : "",
+      parentId: values?.parentId,
       password: values?.password,
       confirmPassword: values?.confirmPassword,
     };
@@ -73,7 +84,6 @@ export default function RgisterForm() {
 
   async function fetchdata() {
     const result = await allusers('/api/users');
-    console.log('resultwwe', result);
     if (result && result.status === 200) {
       setAllUser(result?.data);
     }
@@ -87,8 +97,8 @@ export default function RgisterForm() {
   const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
   const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
   const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
-    
-  
+
+
   useEffect(() => {
     fetchdata();
   }, []);
@@ -121,105 +131,105 @@ export default function RgisterForm() {
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
           />
-            <FormControl fullWidth>
+          <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Role</InputLabel>
-              <Select               
-                labelId="demo-simple-select-label"
-                name="role"
-                label="Role"
-                fullWidth
-                value={formik.values.role || null}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.role &&
-                  Boolean(formik.errors.role)
-                }
-                helperText={
-                  formik.touched.role && formik.errors.role
-                }
-              >
-                <MenuItem value="Hr">Hr</MenuItem>
-                <MenuItem value="Admin">Admin </MenuItem>
-                <MenuItem value="National Manager">National Manager </MenuItem>
-                <MenuItem value="Branch Manager">Branch Manager </MenuItem>
-                <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
-                <MenuItem value="Regional Manager">Regional Manager </MenuItem>
-                <MenuItem value="Territory Manager">Territory Manager</MenuItem>
-              </Select>
-              <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
-            </FormControl>
-            <FormControl fullWidth>
+            <Select
+              labelId="demo-simple-select-label"
+              name="role"
+              label="Role"
+              fullWidth
+              value={formik.values.role || null}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.role &&
+                Boolean(formik.errors.role)
+              }
+              helperText={
+                formik.touched.role && formik.errors.role
+              }
+            >
+              <MenuItem value="Hr">Hr</MenuItem>
+              <MenuItem value="Admin">Admin </MenuItem>
+              <MenuItem value="National Manager">National Manager </MenuItem>
+              <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+              <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+              <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+              <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+            </Select>
+            <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+          </FormControl>
+          <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Manager</InputLabel>
-              <Select               
-                labelId="demo-simple-select-label"
-                name="parentId"
-                label="Manager"
-                fullWidth
-                value={formik.values.parentId }
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.parentId &&
-                  Boolean(formik.errors.parentId)
-                }
-                helperText={
-                  formik.touched.parentId && formik.errors.parentId
-                }
-              >
-                {
-                  formik?.values?.role === "Hr" ? 
-                  hr?.map((item)=>{
+            <Select
+              labelId="demo-simple-select-label"
+              name="parentId"
+              label="Manager"
+              fullWidth
+              value={formik.values.parentId}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.parentId &&
+                Boolean(formik.errors.parentId)
+              }
+              helperText={
+                formik.touched.parentId && formik.errors.parentId
+              }
+            >
+              {
+                formik?.values?.role === "Hr" ?
+                  hr?.map((item) => {
                     return (
                       <MenuItem key={item?._id} value={item?._id}>
                         {`${item?.firstName} ${item?.lastName}`}
                       </MenuItem>
                     );
-                  }) : formik?.values?.role === "Admin" ? 
-                  admin?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : formik?.values?.role === "National Manager" ? 
-                  nationalManager?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : formik?.values?.role === "Branch Manager" ? 
-                  branchManager?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : formik?.values?.role === "Zonal Manager" ?
-                  zonalManager?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : formik?.values?.role === "Regional Manager" ?
-                  regionalManager?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : formik?.values?.role === "Territory Manager" ?
-                  territoryManager?.map((item)=>{
-                    return (
-                      <MenuItem key={item?._id} value={item?._id}>
-                        {`${item?.firstName} ${item?.lastName}`}
-                      </MenuItem>
-                    );
-                  }) : ""
-                }
-              </Select>
-              <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
-            </FormControl>
+                  }) : formik?.values?.role === "Admin" ?
+                    admin?.map((item) => {
+                      return (
+                        <MenuItem key={item?._id} value={item?._id}>
+                          {`${item?.firstName} ${item?.lastName}`}
+                        </MenuItem>
+                      );
+                    }) : formik?.values?.role === "National Manager" ?
+                      nationalManager?.map((item) => {
+                        return (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        );
+                      }) : formik?.values?.role === "Branch Manager" ?
+                        branchManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        }) : formik?.values?.role === "Zonal Manager" ?
+                          zonalManager?.map((item) => {
+                            return (
+                              <MenuItem key={item?._id} value={item?._id}>
+                                {`${item?.firstName} ${item?.lastName}`}
+                              </MenuItem>
+                            );
+                          }) : formik?.values?.role === "Regional Manager" ?
+                            regionalManager?.map((item) => {
+                              return (
+                                <MenuItem key={item?._id} value={item?._id}>
+                                  {`${item?.firstName} ${item?.lastName}`}
+                                </MenuItem>
+                              );
+                            }) : formik?.values?.role === "Territory Manager" ?
+                              territoryManager?.map((item) => {
+                                return (
+                                  <MenuItem key={item?._id} value={item?._id}>
+                                    {`${item?.firstName} ${item?.lastName}`}
+                                  </MenuItem>
+                                );
+                              }) : ""
+              }
+            </Select>
+            <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+          </FormControl>
 
           <TextField
             name="password"

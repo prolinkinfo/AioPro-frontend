@@ -65,7 +65,6 @@ const Add = (props) => {
 
   // add contact api
   const addContact = async (values) => {
-    console.log('values12345', values);
     const data = values;
     const result = await apipost('contact/add', data);
     setUserAction(result);

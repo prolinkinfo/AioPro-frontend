@@ -27,7 +27,7 @@ const Add = (props) => {
     lastName: yup.string().required('Last Name is required'),
     emailAddress: yup.string().email('Invalid email').required('Email is required'),
     role: yup.string().required('Role is required'),
-    parentId:yup.string().required('Manager is required'),
+    parentId: yup.string().required('Manager is required'),
     password: yup
       .string()
       .required('Password is required')
@@ -41,6 +41,17 @@ const Add = (props) => {
       .oneOf([yup.ref('password'), null], 'Password does not match'),
   });
 
+
+
+  const admin = alluser?.filter(user => user?.role === "Admin");
+  const hr = alluser?.filter(user => user?.role === "Hr");
+  const nationalManager = alluser?.filter(user => user?.role === "National Manager");
+  const branchManager = alluser?.filter(user => user?.role === "Branch Manager");
+  const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
+  const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
+  const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
+
+
   // -----------   initialValues
   const initialValues = {
     firstName: '',
@@ -49,17 +60,30 @@ const Add = (props) => {
     password: '',
     confirmPassword: '',
     role: '',
-    parentId:''
+    parentId: ''
   };
 
   // add user api
   const addUser = async (values) => {
+
     const data = {
       email: values?.emailAddress,
       password: values?.password,
       confirmPassword: values?.confirmPassword,
-      role: values?.role === "Hr" || "Admin" ? "National Manager" : values?.role === "National Manager" ? "Branch Manager" : values?.role === "Branch Manager" ? "Zonal Manager" : values?.role === "Zonal Manager" ? "Regional Manager" : values?.role === "Regional Manager" ? "Territory Manager" : "",
-      parentId:values?.parentId,
+      role:
+        values?.role === "Hr" || values?.role === "Admin"
+          ? "National Manager"
+          : values?.role === "National Manager"
+            ? "Branch Manager"
+            : values?.role === "Branch Manager"
+              ? "Zonal Manager"
+              : values?.role === "Zonal Manager"
+                ? "Regional Manager"
+                : values?.role === "Regional Manager"
+                  ? "Territory Manager"
+                  : "",
+
+      parentId: values?.parentId,
       firstName: values?.firstName,
       lastName: values?.lastName,
     };
@@ -75,15 +99,6 @@ const Add = (props) => {
     }
   };
 
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: async (values) => {
-      addUser(values);
-    },
-  });
-
-
   async function fetchdata() {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
@@ -91,15 +106,14 @@ const Add = (props) => {
     }
   }
 
-
-  const admin = alluser?.filter(user => user?.role === "Admin");
-  const hr = alluser?.filter(user => user?.role === "Hr");
-  const nationalManager = alluser?.filter(user => user?.role === "National Manager");
-  const branchManager = alluser?.filter(user => user?.role === "Branch Manager");
-  const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
-  const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
-  const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
-
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      addUser(values);
+      fetchdata();
+    },
+  });
 
   React.useEffect(() => {
     fetchdata();
@@ -232,41 +246,41 @@ const Add = (props) => {
                               </MenuItem>
                             );
                           }) : formik?.values?.role === "National Manager" ?
-                          nationalManager?.map((item) => {
-                            return (
-                              <MenuItem key={item?._id} value={item?._id}>
-                                {`${item?.firstName} ${item?.lastName}`}
-                              </MenuItem>
-                            );
-                          }) : formik?.values?.role === "Branch Manager" ?
-                            branchManager?.map((item) => {
+                            nationalManager?.map((item) => {
                               return (
                                 <MenuItem key={item?._id} value={item?._id}>
                                   {`${item?.firstName} ${item?.lastName}`}
                                 </MenuItem>
                               );
-                            }) : formik?.values?.role === "Zonal Manager" ?
-                              zonalManager?.map((item) => {
+                            }) : formik?.values?.role === "Branch Manager" ?
+                              branchManager?.map((item) => {
                                 return (
                                   <MenuItem key={item?._id} value={item?._id}>
                                     {`${item?.firstName} ${item?.lastName}`}
                                   </MenuItem>
                                 );
-                              }) : formik?.values?.role === "Regional Manager" ?
-                                regionalManager?.map((item) => {
+                              }) : formik?.values?.role === "Zonal Manager" ?
+                                zonalManager?.map((item) => {
                                   return (
                                     <MenuItem key={item?._id} value={item?._id}>
                                       {`${item?.firstName} ${item?.lastName}`}
                                     </MenuItem>
                                   );
-                                }) : formik?.values?.role === "Territory Manager" ?
-                                  territoryManager?.map((item) => {
+                                }) : formik?.values?.role === "Regional Manager" ?
+                                  regionalManager?.map((item) => {
                                     return (
                                       <MenuItem key={item?._id} value={item?._id}>
                                         {`${item?.firstName} ${item?.lastName}`}
                                       </MenuItem>
                                     );
-                                  }) : ""
+                                  }) : formik?.values?.role === "Territory Manager" ?
+                                    territoryManager?.map((item) => {
+                                      return (
+                                        <MenuItem key={item?._id} value={item?._id}>
+                                          {`${item?.firstName} ${item?.lastName}`}
+                                        </MenuItem>
+                                      );
+                                    }) : ""
                     }
                   </Select>
                   <FormHelperText style={{ color: palette.error.main }}>{formik.touched.parentId && formik.errors.parentId}</FormHelperText>

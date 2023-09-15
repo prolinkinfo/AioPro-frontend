@@ -44,7 +44,6 @@ const Add = (props) => {
       teamMember: values?.teamMember,
     };
 
-    console.log("datateam",data)
     // const result = await apipost('/api/auth/signup', data);
 
     // if (result && result.status === 200) {

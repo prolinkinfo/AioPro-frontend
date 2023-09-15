@@ -15,7 +15,6 @@ import Iconify from '../../../components/iconify';
 export default function Forgotpassword() {
   const { token } = useParams();
 
-  console.log('paraps', token);
 
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -47,9 +46,7 @@ export default function Forgotpassword() {
     setIsLogin(true);
     const data = { ...values, token };
 
-    console.log('data12345678', data);
     const result = await apiput('/api/auth/forgotPassword', data);
-    console.log('dataforget', result);
     if (result && result.status === 200) {
       alert('password updated successfully');
       navigate('/login');

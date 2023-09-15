@@ -25,7 +25,6 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
   const handleOpenDelete = () => setOpendelete(true);
 
   const deleteManyMettings = async (data) => {
-    console.log('data', data);
     if (data.length === 1) {
       const response = await deletemeetingApi('/api/meeting', data.join('').toString());
       if (response?.status === 200) {
@@ -34,7 +33,6 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
       }
     } else {
       const response = await deleteManymeeting('/api/meeting/deleteMany', data);
-      console.log('deleteMany', response);
       if (response?.status === 200) {
         fetchdata();
         handleCloseDelete();
@@ -151,7 +149,6 @@ const Meeting = () => {
       renderCell: (params) => {
         const handleFirstNameClick = async (data) => {
           setId(data);
-          console.log('datarenderCell', data);
           handleOpenEdit();
         };
         return (
@@ -172,10 +169,8 @@ const Meeting = () => {
     const result = await getmeeting('/api/meeting');
 
     if (result && result.status === 200) {
-      console.log('result', result?.data);
       const data = result?.data.filter((item) => item.userid === userid);
 
-      console.log('result', data);
       setAllMeeting(data);
     }
   };

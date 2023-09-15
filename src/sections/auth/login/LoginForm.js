@@ -34,7 +34,6 @@ export default function LoginForm() {
     const data = values;
     const result = await apipost('/api/auth/login', data);
 
-    console.log('userresult', result);
     if (result && result.status === 200) {
        localStorage.setItem('userName', JSON.stringify(result?.data?.userData?.userName));
       localStorage.setItem('user', JSON.stringify(result?.data?.userData));

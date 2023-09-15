@@ -65,7 +65,6 @@ const View = () => {
 
     const fetchData = async () => {
         const result = await apiget(`emailtemplate/view/${params.id}`)
-        console.log(result)
         if (result && result.status === 200) {
             setDesign(result?.data?.emailtemplate?.design)
             setName(result?.data?.emailtemplate?.name)

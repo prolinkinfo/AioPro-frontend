@@ -5,7 +5,6 @@ import Palette from '../../theme/palette'
 
 // eslint-disable-next-line arrow-body-style, react/prop-types
 const Overview = ({ data }) => {
-console.log(data,"datadata")
   return (
     <div>
       <Card style={{ borderTopLeftRadius: "0px", borderTopRightRadius: "0px" }}>
