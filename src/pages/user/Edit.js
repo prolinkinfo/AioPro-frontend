@@ -17,14 +17,15 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import { useEffect, useState } from 'react';
 
-import { apiget, apiput } from '../../service/api';
+import { allusers, apiget, apiput } from '../../service/api';
 // import { FiSave } from "react-icons/fi";
 // import { GiCancel } from "react-icons/gi";
 
 const Edit = (props) => {
-  const { handleClose, open, id, fetchdata } = props;
+  const { handleClose, open, user, fetchdata } = props;
   const [userDetails, setUserDetails] = useState({});
-  const [Role, setrole] = useState(id?.row?.role);
+  const [Role, setrole] = useState(user?.row?.role);
+  const [alluser, setAllUser] = React.useState([]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -35,15 +36,16 @@ const Edit = (props) => {
 
   // -----------   initialValues
   const initialValues = {
-    firstName: id?.row?.firstName,
-    lastName: id?.row?.firstName,
-    emailAddress: id?.row?.email,
-    role: id?.row?.role,
+    firstName: user?.row?.firstName,
+    lastName: user?.row?.firstName,
+    emailAddress: user?.row?.email,
+    role: user?.row?.role,
+    parentId: user?.row?.parentId,
   };
 
   // fetch api
   const fetch = async () => {
-    const result = await apiget(`user/view/${id}`);
+    const result = await apiget(`user/view/${user}`);
     if (result && result.status === 200) {
       setUserDetails(result.data);
     }
@@ -56,7 +58,8 @@ const Edit = (props) => {
       firstName: values?.firstName,
       lastName: values?.lastName,
       role: values?.role,
-      _id: id?.row?._id,
+      parentId: values?.parentId,
+      _id: user?.row?._id,
     };
     const result = await apiput(`/api/users`, data);
 
@@ -81,9 +84,27 @@ const Edit = (props) => {
     },
   });
 
+    async function fetchdatas() {
+    const result = await allusers('/api/users');
+    if (result && result.status === 200) {
+      setAllUser(result?.data);
+    }
+  }
+
+
   useEffect(() => {
     fetch();
+    fetchdatas()
   }, []);
+
+  const admin = alluser?.filter(user => user?.role === "Admin");
+  const hr = alluser?.filter(user => user?.role === "Hr");
+  const nationalManager = alluser?.filter(user => user?.role === "National Manager");
+  const branchManager = alluser?.filter(user => user?.role === "Branch Manager");
+  const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
+  const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
+  const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
+
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -145,7 +166,7 @@ const Edit = (props) => {
               </Grid>
               <FormLabel style={{ marginLeft: '30px', marginBottom: '-20px', marginTop: '20px' }}>Role</FormLabel>
               <Grid item xs={12} sm={12} md={12} style={{ display: 'flex' }}>
-                <TextField
+                {/* <TextField
                   id="role"
                   name="role"
                   size="small"
@@ -155,14 +176,102 @@ const Edit = (props) => {
                   fullWidth
                   error={formik.touched.role && Boolean(formik.errors.role)}
                   helperText={formik.touched.role && formik.errors.role}
-                />
+                /> */}
+                <FormControl fullWidth>
+                  <Select
+                    name="role"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={formik.values.role}
+                    size="small"
+                    fullWidth
+                    onChange={formik.handleChange}
+                  >
+                    <MenuItem value="Hr">Hr</MenuItem>
+                    <MenuItem value="Admin">Admin </MenuItem>
+                    <MenuItem value="National Manager">National Manager </MenuItem>
+                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+                  </Select>
+                </FormControl>
 
-                <Select id="role" name="role" size="small" value={formik.values.role} onChange={formik.handleChange}>
-                  <MenuItem value="admin">admin</MenuItem>
-                  <MenuItem value="user">user</MenuItem>
-                  <MenuItem value="superadmin">super admin</MenuItem>
-                </Select>
+
               </Grid>
+              {/* <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Manager</FormLabel>
+                <FormControl fullWidth>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    name="parentId"
+                    size="small"
+                    fullWidth
+                    value={formik.values.parentId}
+                    onChange={formik.handleChange}
+                    error={formik.touched.parentId && Boolean(formik.errors.parentId)}
+                    helperText={formik.touched.parentId && formik.errors.parentId}
+                  >
+                    {formik?.values?.role === 'Hr'
+                      ? hr?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Admin'
+                      ? admin?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'National Manager'
+                      ? nationalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Branch Manager'
+                      ? branchManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Zonal Manager'
+                      ? zonalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Regional Manager'
+                      ? regionalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Territory Manager'
+                      ? territoryManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : ''}
+                  </Select>
+                </FormControl>
+              </Grid> */}
             </Grid>
           </form>
         </DialogContent>

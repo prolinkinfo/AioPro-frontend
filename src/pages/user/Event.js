@@ -85,7 +85,7 @@ const Event = () => {
     }
   };
 
-  useEffect(async () => {
+  useEffect( () => {
     fetchApiMeeting();
   }, []);
 

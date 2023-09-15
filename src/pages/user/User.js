@@ -67,7 +67,7 @@ const User = () => {
   const [alluser, setAllUser] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [id, setId] = useState('');
+  const [editUser, setEditUser] = useState('');
   const [data, setdata] = useState({});
   const navigate = useNavigate();
   const [openEdit, setOpenEdit] = useState(false);
@@ -120,13 +120,13 @@ const User = () => {
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleFirstNameClick = async (data) => {
-          setId(data);
+          setEditUser(data);
           console.log('datarenderCell', data);
           handleOpenEdit();
         };
         return (
           <Box>
-            <EditContact open={openEdit} handleClose={handleCloseEdit} id={id} fetchdata={fetchdata} />
+            <EditContact open={openEdit} handleClose={handleCloseEdit} user={editUser} fetchdata={fetchdata} />
             <Stack direction={'row'} spacing={2}>
               <Button variant="text" size="small" color="primary" onClick={() => handleFirstNameClick(params)}>
                 <EditIcon />

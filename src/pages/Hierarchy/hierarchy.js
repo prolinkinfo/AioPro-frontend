@@ -41,7 +41,7 @@ export const Hierarchy = () => {
     if (result && result.status === 200) {
       result.data.forEach((item, index) => {
         initialNodes.push({ id: item?._id, position: { x: 175, y: 0 }, data: { label: item?.firstName } });
-        initialEdges.push({ id: `e1-${index + 1}`, source: item?._id, target: item?.parentId, animated: true });
+        initialEdges.push({ id: `e1-${index + 1}`, source: item?.parentId, target: item?._id, animated: true });
       });
     }
   }
