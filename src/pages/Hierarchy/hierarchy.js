@@ -4,6 +4,7 @@ import ContextMenu from './ContextMenu';
 import 'reactflow/dist/style.css';
 import './style.css';
 import { allusers } from '../../service/api';
+import { createGraphLayout } from './layout';
 
 const initialNodes = [];
 
@@ -11,6 +12,7 @@ const initialEdges = [];
 export const Hierarchy = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [allElements, setAllElements] = useState([]);
   const [menu, setMenu] = useState(null);
   const ref = useRef(null);
 
@@ -40,9 +42,14 @@ export const Hierarchy = () => {
 
     if (result && result.status === 200) {
       result.data.forEach((item, index) => {
-        initialNodes.push({ id: item?._id, position: { x: 175, y: 0 }, data: { label: item?.firstName } });
+        initialNodes.push({ id: item?._id, position: { x: 175 * index, y: 10 * index }, data: { label: item?.firstName } });
         initialEdges.push({ id: `e1-${index + 1}`, source: item?.parentId, target: item?._id, animated: true });
       });
+      createGraphLayout(initialNodes.concat(initialEdges))
+        .then((els) => {
+          setAllElements(els);
+        })
+        .catch((err) => console.error(err));
     }
   }
 
@@ -55,17 +62,19 @@ export const Hierarchy = () => {
   return (
     <ReactFlow
       ref={ref}
-      nodes={nodes}
-      edges={edges}
+      // elements={}
+      nodes={allElements.filter((data)=> data.position)}
+      edges={allElements.filter((data)=> !data.position)}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onPaneClick={onPaneClick}
       onNodeContextMenu={onNodeContextMenu}
+      defaultZoom={0.8}
       fitView
     >
-      <Background />
-      {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
+      {/* <Background /> */}
+      {/* {menu && <ContextMenu onClick={onPaneClick} {...menu} />} */}
     </ReactFlow>
   );
 };
