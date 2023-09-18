@@ -1,30 +1,144 @@
-import React, { useCallback } from 'react';
-import { useReactFlow } from 'reactflow';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactFlow, { Background, useNodesState, useEdgesState, addEdge, Handle, Position } from 'reactflow'
+import ContextMenu from './ContextMenu';
+import 'reactflow/dist/style.css';
+import './style.css';
+import './diagram.css'
+import { allusers } from '../../service/api';
+import EditModel from './Edit'
+// eslint-disable-next-line import/order
+import { useParams } from 'react-router-dom';
 
-export default function ContextMenu({ id, top, left, right, bottom, ...props }) {
-  const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
-  const duplicateNode = useCallback(() => {
-    const node = getNode(id);
-    const position = {
-      x: node.position.x + 50,
-      y: node.position.y + 50,
-    };
+let initialNodes = []
+let initialEdges = []
 
-    addNodes({ ...node, id: `${node.id}-copy`, position });
-  }, [id, getNode, addNodes]);
+export const Hierarchy = () => {
+  const [data, setData] = useState(null)
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [menu, setMenu] = useState(null);
+  const [isOpenModel, setIsOpenModel] = useState(false)
+ const [allElements, setAllElements] = useState([]);
 
-  const deleteNode = useCallback(() => {
-    setNodes((nodes) => nodes.filter((node) => node.id !== id));
-    setEdges((edges) => edges.filter((edge) => edge.source !== id));
-  }, [id, setNodes, setEdges]);
+  const params = useParams();
+
+  const ref = useRef(null);
+
+  const onConnect = useCallback((params) => setEdges((els) => addEdge(params, els)), [setEdges]);
+
+  const onNodeContextMenu = useCallback(
+    (event, node) => {
+      // Prevent native context menu from showing
+      event.preventDefault();
+
+      // Calculate position of the context menu. We want to make sure it
+      // doesn't get positioned off-screen.
+      const pane = ref.current.getBoundingClientRect();
+      setMenu({
+        id: node.id,
+        top: event.clientY < pane.height - 200 && event.clientY,
+        left: event.clientX < pane.width - 200 && event.clientX,
+        right: event.clientX >= pane.width - 200 && pane.width - event.clientX,
+        bottom: event.clientY >= pane.height - 200 && pane.height - event.clientY,
+      });
+    },
+    [setMenu]
+  );
+
+  // function findSourceById(array, targetId) {
+  //   // eslint-disable-next-line no-plusplus
+  //   for (let i = 0; i < array.length; i++) {
+  //     if (array[i].target === targetId) {
+  //       return array[i].source;
+  //     }
+  //   }
+  //   // If no matching item is found, you can return null or handle it as needed.
+  //   return null;
+  // }
+
+  const handleNodeDoubleClick = useCallback((event, node) => {
+    console.log(node, "node")
+    // const source = findSourceById(initialEdges, node?.id);
+    // setSelectedList(...selectedList, { sourceId: source })
+    // console.log(source, "source")
+
+
+    setIsOpenModel(true)
+  }, []);
+
+
+  const closeModal = () => {
+    setIsOpenModel(false)
+  };
+
+  function findItems(data, id) {
+    // Create a set to store unique parent IDs
+    const parentIds = new Set();
+
+    // Find items that match the first condition (_id === id)
+    const itemsMatchingId = data.filter(item => item._id === id);
+
+    // Find items that match the second condition (parentId === id)
+    const itemsMatchingParentId = data.filter(item => item.parentId === id);
+
+    // Add the parent IDs of items matching the second condition to the set
+    itemsMatchingParentId.forEach(item => parentIds.add(item._id));
+
+    // Find items that match the third condition (_id is the parent of another item's parentId)
+    const itemsMatchingParentInAnyItem = data.filter(item => parentIds.has(item.parentId));
+
+    // Combine the results of all three conditions
+    const combinedResults = [...itemsMatchingId, ...itemsMatchingParentId, ...itemsMatchingParentInAnyItem];
+
+    return combinedResults;
+  }
+
+  async function fetchdata() {
+    const result = await allusers('/api/users');
+    setData(findItems(result.data, params.id));
+  }
+
+  useEffect(() => {
+    fetchdata();
+  }, [params]);
+
+  useEffect(() => {
+    const newNodes = [];
+    const newEdges = [];
+    if (data && data.length > 0) {
+      data.forEach((item, index) => {
+        newNodes.push({ id: item?._id, position, data: { label: item?.firstName }, });
+        newEdges.push({ id: `e1-${index + 1}`, source: item?.parentId, target: item?._id, animated: true });
+      });
+    }
+
+    initialNodes = newNodes
+    initialEdges = newEdges
+  }, [data])
+
+  // Close the context menu if it's open whenever the window is clicked.
+  const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
+
 
   return (
-    <div style={{ top, left, right, bottom }} className="context-menu" {...props}>
-      <p style={{ margin: '0.5em' }}>
-        <small>node: {id}</small>
-      </p>
-      <button onClick={duplicateNode}>duplicate</button>
-      <button onClick={deleteNode}>delete</button>
-    </div>
+    <>
+      <EditModel isOpenModel={isOpenModel} closeModal={closeModal} />
+
+      <ReactFlow
+        ref={ref}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onPaneClick={onPaneClick}
+        onNodeContextMenu={onNodeContextMenu}
+        onNodeDoubleClick={handleNodeDoubleClick}
+        fitView
+      >
+        <Handle type="target" position={Position.Left} />
+        {/* {menu && <ContextMenu onClick={onPaneClick} {...menu} />} */}
+      </ReactFlow>
+    </>
   );
-}
+};

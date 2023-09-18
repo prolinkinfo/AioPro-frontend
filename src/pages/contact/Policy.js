@@ -7,7 +7,6 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import PolicyIcon from '@mui/icons-material/Policy';
 import AddIcon from "@mui/icons-material/Add";
 import TableStyleTwo from "../../components/TableStyleTwo";
-import AddPolicy from '../policy/Add'
 
 const Policy = ({ rows, toggleVisibilityPolicy, isVisiblePolicy, _id, setUserAction }) => {
 
@@ -71,10 +70,6 @@ const Policy = ({ rows, toggleVisibilityPolicy, isVisiblePolicy, _id, setUserAct
 
   return (
     <div>
-
-      {/* Add Claim */}
-      <AddPolicy open={openAdd} handleClose={handleCloseAdd} _id={_id} setUserAction={setUserAction} />
-
       <Box style={{ cursor: "pointer" }} p={2}>
         <Grid container display="flex" alignItems="center">
           <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>

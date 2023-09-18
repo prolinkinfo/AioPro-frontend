@@ -10,11 +10,9 @@ import AddContact from './Add'
 import EditContact from './Edit'
 import DeleteModel from '../../components/Deletemodle'
 import Lead from './Lead';
-import Claim from '../../components/claim/Claim';
 import Notes from '../../components/note/Note';
 import Calls from '../../components/call/Call';
 import Meetings from '../../components/meeting/Meeting';
-import Emails from '../../components/email/Email';
 import Task from '../../components/task/Task'
 import Header from '../../components/Header';
 import Overview from './Overview';
@@ -190,10 +188,7 @@ const View = () => {
                     <Policy toggleVisibilityPolicy={toggleVisibilityPolicy} isVisiblePolicy={isVisiblePolicy} rows={contactData?.policies} setUserAction={setUserAction} _id={params.id} />
                 </Card>
 
-                {/* Claim Table */}
-                <Card sx={{ marginTop: "20px" }}>
-                    <Claim toggleVisibilityClaim={toggleVisibilityClaim} isVisibleClaim={isVisibleClaim} rows={contactData?.claims} setUserAction={setUserAction} _id={params.id} />
-                </Card>
+              
 
                 {/* Lead Table */}
                 <Card sx={{ marginTop: "20px" }}>
@@ -221,10 +216,7 @@ const View = () => {
                     <Calls toggleVisibilityCall={toggleVisibilityCall} isVisibleCall={isVisibleCall} rows={contactData?.calls} setUserAction={setUserAction} _id={params.id} />
                 </Card>
 
-                {/* Emails Table */}
-                <Card sx={{ marginTop: "20px" }}>
-                    <Emails toggleVisibilityEmail={toggleVisibilityEmail} isVisibleEmail={isVisibleEmail} rows={contactData?.emails} setUserAction={setUserAction} _id={params.id} data={contactData} />
-                </Card>
+               
             </Container>
 
 

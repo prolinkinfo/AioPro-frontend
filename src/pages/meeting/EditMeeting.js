@@ -301,7 +301,7 @@ const EditMeeting = (props) => {
             onClick={formik.handleSubmit}
             style={{ textTransform: 'capitalize' }}
             color="secondary"
-            startIcon={<FiSave />}
+            // startIcon={<FiSave />}
           >
             Save
           </Button>
@@ -311,7 +311,7 @@ const EditMeeting = (props) => {
             onClick={handleOpenDeleteModel}
             style={{ textTransform: 'capitalize' }}
             color="error"
-            startIcon={<FiDelete />}
+            // startIcon={<FiDelete />}
           >
             Delete
           </Button>
@@ -319,7 +319,7 @@ const EditMeeting = (props) => {
             type="reset"
             variant="outlined"
             style={{ textTransform: 'capitalize' }}
-            startIcon={<GiCancel />}
+            // startIcon={<GiCancel />}
             onClick={() => {
               formik.resetForm();
               handleCloseevent();
