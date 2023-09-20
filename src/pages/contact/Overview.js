@@ -3,7 +3,6 @@ import { Box, Card, Grid, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import Palette from '../../theme/palette'
-import Addemail from '../../components/email/Addemail'
 
 // eslint-disable-next-line arrow-body-style
 const Overview = ({ data, setUserAction }) => {
@@ -14,8 +13,6 @@ const Overview = ({ data, setUserAction }) => {
 
   return (
     <div>
-      {/* Add Email Model */}
-      <Addemail open={open} handleClose={handleClose} _id={data?._id} receiver={data} setUserAction={setUserAction} />
 
       <Card style={{borderTopLeftRadius:"0px",borderTopRightRadius:"0px"}}>
         <Box p={3}>

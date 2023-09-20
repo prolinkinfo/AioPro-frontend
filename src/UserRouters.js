@@ -10,8 +10,6 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import LeadView from './pages/Lead/View';
 import Contact from './pages/contact/Contact';
 import ContactView from './pages/contact/View';
-import Policy from './pages/policy/Policy';
-import PolicyView from './pages/policy/View';
 import Calendar from './pages/Calendar/Calendar';
 import Document from './pages/documents/Documents';
 import Calls from './pages/calls/Call';
@@ -40,8 +38,7 @@ export default function Router() {
         { path: 'lead/view/:id', element: <LeadView /> },
         { path: 'contact', element: <Contact /> },
         { path: 'contact/view/:id', element: <ContactView /> },
-        { path: 'policy', element: <Policy /> },
-        { path: 'policy/view/:id', element: <PolicyView /> },
+ 
         { path: 'calendar', element: <Calendar /> },
         { path: 'document', element: <Document /> },
 

@@ -21,8 +21,8 @@ const Add = (props) => {
   const validationSchema = yup.object({
     name: yup.string().required('Name is required'),
     manager: yup.string().required('Manager is required'),
-    department: yup.string().required('department is required'),
-    teamMember: yup.string().required('teamMember is required'),
+    department: yup.string().required('Department is required'),
+    teamMember: yup.string().required('Team Member is required'),
   });
 
   // -----------   initialValues

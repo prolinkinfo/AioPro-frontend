@@ -17,7 +17,6 @@ import DeleteModel from '../../components/Deletemodle'
 import Notes from '../../components/note/Note';
 import Calls from '../../components/call/Call';
 import Meetings from '../../components/meeting/Meeting';
-import Emails from '../../components/email/Email';
 import Tasks from '../../components/task/Task';
 import Header from '../../components/Header';
 import Overview from './Overview';
@@ -212,10 +211,7 @@ const View = () => {
                     <Calls toggleVisibilityCall={toggleVisibilityCall} isVisibleCall={isVisibleCall} setUserAction={setUserAction} rows={leadData?.calls} _id={params.id} />
                 </Card>
 
-                {/* Emails Table */}
-                <Card sx={{ marginTop: "20px" }}>
-                    <Emails toggleVisibilityEmail={toggleVisibilityEmail} isVisibleEmail={isVisibleEmail} setUserAction={setUserAction} rows={leadData?.emails} _id={params.id} data={leadData} />
-                </Card>
+               
 
             </Container>
 
