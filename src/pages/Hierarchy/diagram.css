@@ -1,0 +1,298 @@
+.bi.bi-diagram {
+  background-color: white !important;
+  border: none !important;
+  border-style: none !important;
+  box-shadow: none !important
+}
+
+/* body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden
+} */
+
+.react-flow__edge.animated {
+  stroke-dasharray: 6 !important;
+}
+
+.node-box {
+  font-size: 16px !important;
+  border-style: none !important;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px 7px 7px 7px;
+  padding-bottom: 2px;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+}
+
+.react-flow__node {
+  font-size: 15px !important;
+  border: none;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px 7px 7px 7px;
+  /* padding-bottom: 2px; */
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+  /* width: 100px !important; */
+  /* line-height: 180%; */
+} */
+
+/* .tooltiptext {
+  margin-top: 37px;
+} */
+/* 
+.tooltip .tooltiptext {
+  margin-top: 28px;
+}
+
+.react-flow__node-default,
+.react-flow__node-input,
+.react-flow__node-output {
+  border-style: none;
+  border-radius: 10px;
+}
+
+.react-flow__handle {
+  font-size: 16px !important;
+}
+
+.connection-node {
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+}
+
+.react-flow__handle-left {
+  width: 10px;
+  height: 10px;
+  border-radius: 8px;
+  margin-left: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+  bottom: 0;
+  background-color: '#337ab7' !important
+} */
+/* 
+.react-flow__handle-right {
+  width: 10px;
+  height: 10px;
+  border-radius: 8px;
+  margin-right: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+} */
+
+/* .react-flow__node-default .react-flow__handle {
+  background: '#ffffff' !important;
+  background-color: 'white' !important;
+} */
+
+/* .react-flow__edge-path { */
+  /* stroke: #b1b1b7; */
+  /* stroke-width: 4px;
+} */
+
+/* .bi-diagram-link-label {
+  background-color: transparent !important;
+  color: #10414a !important;
+  font-size: 16px !important;
+  max-width: "40px" !important;
+  text-align: 'center' !important;
+}
+
+.react-flow__edge-path {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+} */
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  min-width: 120px;
+  background-color: #353535;
+  color: #c4c4c4;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  font-size: 11.0pt;
+  font-family: "Calibri", sans-serif;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+/* .treeView-node {
+  /* visibility: hidden; */
+  /* min-width: 120px; */
+  /* background-color: white; */
+  /* color: #c4c4c4; */
+  /* text-align: center; */
+  /* border-radius: 6px; */
+  /* padding: 5px 0; */
+  /* font-size: 11.0pt; */
+  /* font-family: "Calibri", sans-serif; */
+  /* Position the tooltip */
+  /* position: absolute; */
+  /* position: relative; */
+  /* z-index: 1;
+} */
+/* 
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+ */
+
+/* .react-flow__node-default,
+.react-flow__node-input,
+.react-flow__node-output {
+  width: min-content !important;
+}
+/* 
+
+.react-flow__edge-step .animated .path {
+  stroke-dasharray: 10 !important;
+  position: absolute;
+  top: -20px;
+  left: -20px
+}
+
+.react-flow__edge-step {
+  position: relative;
+  display: inline-block;
+  stroke-width: 10px !important;
+  cursor: pointer;
+}
+
+.react-flow__edge-text {
+  font-size: 10px !important;
+  width: 60px;
+} */
+
+/* .react-flow__edge { */
+  /* stroke-dasharray: 14 !important; */
+/* } */
+
+/* .react-flow__edge-step .react-flow__edge-textwrapper {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0; */
+
+  /* Position the tooltip */
+  /* position: absolute; */
+  /* z-index: 1; */
+/* } */
+
+/* .react-flow__edge:hover .react-flow__edge-textwrapper {
+  visibility: visible;
+  font-weight: 200;
+  color: white !important;
+}
+
+.react-flow__edge:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+  line-height: 22px !important;
+} */
+
+/*   
+  .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    margin-top: -40px;
+    /* Position the tooltip */
+/* position: absolute;
+    z-index: 1;
+  }
+  
+  .react-flow__edge-path:hover .tooltiptext {
+    visibility: visible;
+  } */
+/* .react-flow__nodes { */
+  /* z-index: 3; */
+/* } */
+
+/* .react-flow__edge-path {
+  stroke-width: 4px;
+  stroke-dasharray: 6;
+  position: absolute !important;
+  top: -20px !important;
+  left: -20px !important;
+} */
+
+/* .react-flow__edge:hover .react-flow__edge-path { */
+  /* stroke: #007bff !important; */
+  /* stroke-dasharray: 0 !important;
+  stroke-width: 4px !important;
+} */
+/* 
+.react-flow__edge:hover .react-flow__nodes { */
+  /* z-index: 2 !important; */
+  /* display: none !important;
+}
+
+p {
+  display: inline-block;
+  position: relative;
+} */
+
+/* .tooltip-right {
+  box-sizing: border-box;
+  font-size: 12px;
+  position: absolute;
+  text-align: center;
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  border-radius: 3px;
+  width: 250px;
+  padding: 7px 10px;
+  z-index: 1;
+  opacity: .8;
+  top: 50%;
+  right: 0; */
+  /* width + arrow width = 250 + 7 = 257 */
+  /* transform: translate3d(257px, -50%, 0);
+}
+
+.tooltip-right::after {
+  content: "";
+
+  border-right: 7px solid black;
+  border-bottom: 7px solid transparent;
+  border-top: 7px solid transparent;
+
+  position: absolute;
+  height: 0;
+  width: 0;
+  left: -7px;
+  top: 50%;
+
+  transform: translateY(-50%);
+}
+
+.css-1elwnq4-MuiPaper-root-MuiAccordion-root:last-of-type {
+  margin-left: 15px;
+  margin-top: 15px
+} */

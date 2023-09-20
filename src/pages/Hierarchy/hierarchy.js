@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, { addEdge, ConnectionLineType, Panel, useNodesState, useEdgesState } from 'reactflow';
 import dagre from 'dagre';
@@ -136,9 +137,9 @@ export const Hierarchy = () => {
       fitView
     >
       {/* <Panel position="top-right">
-        <button onClick={() => onLayout('TB')}>vertical layout</button>
-        <button onClick={() => onLayout('LR')}>horizontal layout</button>
-      </Panel> */}
+      <button onClick={() => onLayout('TB')}>vertical layout</button>
+      <button onClick={() => onLayout('LR')}>horizontal layout</button>
+    </Panel> */}
     </ReactFlow>
   );
 };
