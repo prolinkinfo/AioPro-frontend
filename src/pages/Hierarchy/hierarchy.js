@@ -8,9 +8,13 @@ import { allusers } from '../../service/api';
 import EditModel from './Edit'
 // eslint-disable-next-line import/order
 import { useParams } from 'react-router-dom';
+// eslint-disable-next-line import/order
+import dagre from 'dagre'
 
 let initialNodes = []
 let initialEdges = []
+
+
 
 export const Hierarchy = () => {
   // const [initialNodes, setInitialNodes] = useState([])
@@ -28,6 +32,8 @@ export const Hierarchy = () => {
   const ref = useRef(null);
 
   const onConnect = useCallback((params) => setEdges((els) => addEdge(params, els)), [setEdges]);
+
+
 
   const onNodeContextMenu = useCallback(
     (event, node) => {
@@ -48,24 +54,9 @@ export const Hierarchy = () => {
     [setMenu]
   );
 
-  // function findSourceById(array, targetId) {
-  //   // eslint-disable-next-line no-plusplus
-  //   for (let i = 0; i < array.length; i++) {
-  //     if (array[i].target === targetId) {
-  //       return array[i].source;
-  //     }
-  //   }
-  //   // If no matching item is found, you can return null or handle it as needed.
-  //   return null;
-  // }
-
+ 
   const handleNodeDoubleClick = useCallback((event, node) => {
     console.log(node, "node")
-    // const source = findSourceById(initialEdges, node?.id);
-    // setSelectedList(...selectedList, { sourceId: source })
-    // console.log(source, "source")
-
-
     setIsOpenModel(true)
   }, []);
 
@@ -95,6 +86,7 @@ export const Hierarchy = () => {
 
     return combinedResults;
   }
+
 
   useEffect(() => {
     const newNodes = [];

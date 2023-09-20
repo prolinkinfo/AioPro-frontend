@@ -130,7 +130,7 @@
   z-index: 1;
 }
 
-/* .treeView-node { */
+/* .treeView-node {
   /* visibility: hidden; */
   /* min-width: 120px; */
   /* background-color: white; */
@@ -149,14 +149,13 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+ */
 
-
-.react-flow__node-default,
+/* .react-flow__node-default,
 .react-flow__node-input,
 .react-flow__node-output {
   width: min-content !important;
 }
- */
 /* 
 
 .react-flow__edge-step .animated .path {
