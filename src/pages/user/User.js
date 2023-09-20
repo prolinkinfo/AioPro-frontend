@@ -118,7 +118,6 @@ const User = () => {
       renderCell: (params) => {
         const handleFirstNameClick = async (data) => {
           setEditUser(data);
-          console.log('datarenderCell', data);
           handleOpenEdit();
         };
         return (

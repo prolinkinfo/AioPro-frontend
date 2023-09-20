@@ -1,18 +1,19 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, { addEdge, ConnectionLineType, Panel, useNodesState, useEdgesState } from 'reactflow';
 import dagre from 'dagre';
 // import './diagram.css';
-import './style.css'
+import './style.css';
 import 'reactflow/dist/style.css';
 import { useParams } from 'react-router-dom';
 import { allusers } from '../../service/api';
 
-let initialNodes = [];
-let initialEdges = [];
+const initialNodes = [];
+const initialEdges = [];
 
 export const Hierarchy = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
+  const [nodesValue, setNodesValue] = useState([]);
+  const [edgesValue, setEdgesValue] = useState([]);
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -55,24 +56,15 @@ export const Hierarchy = () => {
     return { nodes, edges };
   };
 
-  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(initialNodes, initialEdges);
-
+  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodesValue, edgesValue);
+  
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
   const params = useParams();
-
+  
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.SmoothStep, animated: true }, eds)),
     []
-  );
-  const onLayout = useCallback(
-    (direction) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges, direction);
-
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    [nodes, edges]
   );
 
   function findItems(data, id) {
@@ -99,17 +91,22 @@ export const Hierarchy = () => {
 
   async function fetchdata() {
     const result = await allusers('/api/users');
-    setData(findItems(result.data, params.id));
+    setData(findItems(result?.data, params?.id));
   }
 
   useEffect(() => {
-    fetchdata();
-  }, [params]);
+    // alert("fetch Api data")
+    if (params?.id) {
+      fetchdata();
+    }
+  }, [params.id]);
 
   useEffect(() => {
     const newNodes = [];
     const newEdges = [];
+
     if (data && data.length > 0) {
+
       data.forEach((item, index) => {
         newNodes.push({ id: item?._id, position, data: { label: item?.firstName } });
         newEdges.push({
@@ -118,28 +115,25 @@ export const Hierarchy = () => {
           target: item?._id,
           type: edgeType,
           animated: true,
+          key: index
         });
-      });
+      }
+      );
     }
-
-    initialNodes = newNodes;
-    initialEdges = newEdges;
+    setNodesValue(newNodes)
+    setEdgesValue(newEdges)
   }, [data]);
 
   return (
     <ReactFlow
-      nodes={nodes}
-      edges={edges}
+      nodes={nodesValue}
+      edges={edgesValue}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       connectionLineType={ConnectionLineType.SmoothStep}
       fitView
-    >
-      {/* <Panel position="top-right">
-      <button onClick={() => onLayout('TB')}>vertical layout</button>
-      <button onClick={() => onLayout('LR')}>horizontal layout</button>
-    </Panel> */}
-    </ReactFlow>
+    />
+     
   );
 };

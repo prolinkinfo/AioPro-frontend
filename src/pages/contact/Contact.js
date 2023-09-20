@@ -172,7 +172,6 @@ const Contact = () => {
       renderCell: (params) => {
         const handleFirstNameClick = async (data) => {
           setId(data);
-          console.log('datarenderCell', data);
           handleOpenEdit();
         };
         return (
@@ -220,7 +219,6 @@ const Contact = () => {
   const fetchdata = async () => {
     // alert('fetchdata');
     const result = await apiget(userRole === 'admin' ? `/contact/list` : `/contact/list/?createdBy=${userid}`);
-    console.log('result1111', result, userRole);
     if (result && result.status === 200) {
       setContactList(result?.data?.result);
     }
