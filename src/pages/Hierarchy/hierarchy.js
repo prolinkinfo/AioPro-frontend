@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, { addEdge, ConnectionLineType, Panel, useNodesState, useEdgesState } from 'reactflow';
 import dagre from 'dagre';
 // import './diagram.css';
+import './style.css'
 import 'reactflow/dist/style.css';
 import { useParams } from 'react-router-dom';
 import { allusers } from '../../service/api';

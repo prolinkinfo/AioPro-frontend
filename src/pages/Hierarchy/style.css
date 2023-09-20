@@ -21,3 +21,16 @@
 .react-flow__panel > a {
   display: none !important;
 }
+.react-flow__node {
+  /* font-size: 15px !important; */
+  border: none;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px 7px 7px 7px;
+  border: none !important;
+  /* padding-bottom: 2px; */
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+  /* width: 100px !important; */
+  /* line-height: 180%; */
+}
