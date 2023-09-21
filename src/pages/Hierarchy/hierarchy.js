@@ -67,33 +67,46 @@ export const Hierarchy = () => {
     []
   );
 
-  function findItems(data, id) {
-    // Create a set to store unique parent IDs
-    const parentIds = new Set();
+  // hierarchy 
+  function findNodeById(id, data) {
+    const item = data.find((item) => item._id === id);
+    if (!item) {
+      return null;
+    }
 
-    // Find items that match the first condition (_id === id)
-    const itemsMatchingId = data.filter((item) => item._id === id);
+    const children = data.filter((child) => child.parentId === id);
+    const childNodes = children.map((child) => findNodeById(child._id, data)).filter(Boolean);
 
-    // Find items that match the second condition (parentId === id)
-    const itemsMatchingParentId = data.filter((item) => item.parentId === id);
+    return {
+      id: item._id,
+      data: item, // Include the data of the node
+      children: childNodes,
+    };
+  }
 
-    // Add the parent IDs of items matching the second condition to the set
-    itemsMatchingParentId.forEach((item) => parentIds.add(item._id));
+function extractNodes(node) {
+  const nodes = [];
 
-    // Find items that match the third condition (_id is the parent of another item's parentId)
-    const itemsMatchingParentInAnyItem = data.filter((item) => parentIds.has(item.parentId));
+  function traverse(node) {
+    nodes.push(node.data);
+    node.children.forEach((child) => traverse(child));
+  }
 
-    // Combine the results of all three conditions
-    const combinedResults = [...itemsMatchingId, ...itemsMatchingParentId, ...itemsMatchingParentInAnyItem];
+  traverse(node);
 
-    return combinedResults;
+  return nodes;
+}
+
+  function displayNodesFromId(data, startId) {
+    const rootNode = findNodeById(startId, data);
+    const nodes = extractNodes(rootNode);
+    return nodes;
   }
 
   async function fetchdata() {
     const result = await allusers('/api/users');
-    setData(findItems(result?.data, params?.id));
+    setData(displayNodesFromId(result?.data, params?.id));
   }
-
   useEffect(() => {
     // alert("fetch Api data")
     if (params?.id) {
