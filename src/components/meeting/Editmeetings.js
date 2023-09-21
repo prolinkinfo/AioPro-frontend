@@ -22,13 +22,10 @@ import { apiget, apiput, apieditmeeting } from '../../service/api';
 
 const Editmeetings = (props) => {
   const { handleClose, open, id, fetchMeeting, fetchdata } = props;
-  console.log('id11111', id);
-
   const [meetingDetails, setMeetingDetails] = useState({});
   const [leadData, setLeadData] = useState([]);
   const [contactData, setContactData] = useState([]);
   const params = useParams();
-
   const userid = localStorage.getItem('user_id');
   const userRole = localStorage.getItem('userRole');
 

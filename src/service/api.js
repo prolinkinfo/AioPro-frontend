@@ -66,7 +66,6 @@ export const apipost = async (path, data) => {
     }
     return response;
   } catch (error) {
-    console.log('errorresponse', error);
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
@@ -84,7 +83,6 @@ export const adduser = async (path, data) => {
     });
     return response;
   } catch (error) {
-    console.log('errorresponse', error);
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
@@ -165,7 +163,6 @@ export const deleteManyApi = async (path, data) => {
 };
 
 export const allusers = async (path) => {
-  console.log('allusers', path);
   try {
     const response = await axios.get(constant.baseUrl + path, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -305,7 +302,6 @@ export const apieditmeeting=async(path,data)=>{
 
 
 export const singleuser = async (path,data) => {
-  console.log('allusers', path);
   try {
     const response = await axios.get(`${constant.baseUrl + path}/${data}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

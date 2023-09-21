@@ -112,9 +112,6 @@ const Edit = (props) => {
     },
   });
 
-  console.log(formik?.values?.role)
-
-
   useEffect(() => {
     fetch();
     fetchdatas()
