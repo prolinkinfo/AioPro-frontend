@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable arrow-body-style */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel, Button, Paper, Typography, Avatar } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -9,14 +11,17 @@ import { allusers, apipost } from '../../../service/api';
 import Iconify from '../../../components/iconify';
 import palette from '../../../theme/palette';
 
+
 export default function RgisterForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [alluser, setAllUser] = useState([]);
+  const [avatarImage, setAvatarImage] = useState(null);
 
   const initialValues = {
+    avatar: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -25,7 +30,6 @@ export default function RgisterForm() {
     role: '',
     parentId: ''
   };
-
   const pwVlidation = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
   // validationSchema
   const validationSchema = yup.object({
@@ -46,27 +50,48 @@ export default function RgisterForm() {
   });
 
   const Adddata = async (values) => {
-    const data = {
-      firstName: values?.firstName,
-      lastName: values?.lastName,
-      email: values?.email,
-      // eslint-disable-next-line no-constant-condition
-      role:
-        values?.role === "Hr" || values?.role === "Admin"
-          ? "National Manager"
-          : values?.role === "National Manager"
-            ? "Branch Manager"
-            : values?.role === "Branch Manager"
-              ? "Zonal Manager"
-              : values?.role === "Zonal Manager"
-                ? "Regional Manager"
-                : values?.role === "Regional Manager"
-                  ? "Territory Manager"
-                  : "",
-      parentId: values?.parentId,
-      password: values?.password,
-      confirmPassword: values?.confirmPassword,
-    };
+    const data = new FormData()
+    data.append("avatar", values?.avatar)
+    data.append("firstName", values?.firstName)
+    data.append("lastName", values?.lastName)
+    data.append("email", values?.email)
+    data.append("role", values?.role)
+    data.append("firstName", values?.role === "Hr" || values?.role === "Admin"
+      ? "National Manager"
+      : values?.role === "National Manager"
+        ? "Branch Manager"
+        : values?.role === "Branch Manager"
+          ? "Zonal Manager"
+          : values?.role === "Zonal Manager"
+            ? "Regional Manager"
+            : values?.role === "Regional Manager"
+              ? "Territory Manager"
+              : "",)
+    data.append("parentId", values?.parentId)
+    data.append("password", values?.password)
+    data.append("confirmPassword", values?.confirmPassword)
+
+    // const data = {
+    //   firstName: values?.firstName,
+    //   lastName: values?.lastName,
+    //   email: values?.email,
+    //   // eslint-disable-next-line no-constant-condition
+    //   role:
+    // values?.role === "Hr" || values?.role === "Admin"
+    //   ? "National Manager"
+    //   : values?.role === "National Manager"
+    //     ? "Branch Manager"
+    //     : values?.role === "Branch Manager"
+    //       ? "Zonal Manager"
+    //       : values?.role === "Zonal Manager"
+    //         ? "Regional Manager"
+    //         : values?.role === "Regional Manager"
+    //           ? "Territory Manager"
+    //           : "",
+    //   parentId: values?.parentId,
+    //   password: values?.password,
+    //   confirmPassword: values?.confirmPassword,
+    // };
     const result = await apipost('/api/auth/signup', data);
     if (result && result.status === 200) {
       navigate('/login');
@@ -76,9 +101,10 @@ export default function RgisterForm() {
   // formik
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    // validationSchema,
     onSubmit: async (values) => {
-      Adddata(values);
+      // Adddata(values);
+      console.log(values)
     },
   });
 
@@ -103,10 +129,50 @@ export default function RgisterForm() {
     fetchdata();
   }, []);
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Read the selected file and set it in state.
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedFile(e.target.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Update the formik field value with the selected file.
+    }
+    formik.setFieldValue('avatar', file);
+  };
+
+
   return (
+
     <>
       <form>
         <Stack spacing={3} mb={2}>
+
+          <Paper style={{ textAlign: 'center' }}>
+            {selectedFile ?
+              <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto',borderRadius:"50%" }} />
+              :
+              <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto' ,borderRadius:"50%"}} />
+            }
+            <Typography variant="h6">Upload Avatar</Typography>
+            <input
+              accept="image/*"
+              type="file"
+              id="avatar-upload"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <label htmlFor="avatar-upload">
+              <Button component="span" variant="outlined" color="primary">
+                Upload
+              </Button>
+            </label>
+          </Paper>
           <TextField
             name="firstName"
             label="First Name"

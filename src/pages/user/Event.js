@@ -10,6 +10,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import Container from '@mui/material/Container';
 import { Button, Stack, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import CircleIcon from '@mui/icons-material/Circle';
 import Iconify from '../../components/iconify/Iconify';
 import { apiget, getsingleuser } from '../../service/api';
 import EditMeeting from '../meeting/EditMeeting';
@@ -21,10 +22,12 @@ const Event = () => {
   const [openViewEdit, setOpenViewEdit] = useState(false);
   const [meetingList, setMeetingList] = useState([]);
   const [dataByMeetingId, setDataByMeetingId] = useState(null);
-  const [meetingsId,setMeetingsId] = useState('') 
+  const [meetingsId, setMeetingsId] = useState('')
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [eventView, setEventView] = useState(false);
+
+  const userId = JSON.parse(localStorage.getItem('user'))
 
   const getuser = async () => {
     const result = await getsingleuser(`/api/users`, id);
@@ -68,6 +71,7 @@ const Event = () => {
 
   const renderEventContent = (eventInfo) => (
     <>
+      <p>{eventInfo.event.extendedProps.icon}</p>
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
     </>
@@ -80,11 +84,17 @@ const Event = () => {
   const fetchApiMeeting = async () => {
     const result = await apiget(`/api/meeting/?userid=${id}`);
     if (result?.statusText === "OK") {
-      setMeetingList(result?.data)
+      const meetingData = result?.data?.map(item => ({
+        _id: item._id,
+        title: item.subject,
+        start: item.startDate,
+        icon: item.status === 'not verified' ? <CircleIcon style={{ color: "red", fontSize: "15px" }} /> : <CircleIcon style={{ color: "green", fontSize: "15px" }} />
+      }));
+      setMeetingList(meetingData)
     }
   };
 
-  useEffect( () => {
+  useEffect(() => {
     fetchApiMeeting();
   }, []);
 
@@ -103,7 +113,7 @@ const Event = () => {
         id={id}
       />
 
-      <EditMeeting isOpen={eventView} handleCloseevent={handleCloseevent} dataByMeetingId={dataByMeetingId} fetchApiMeeting={fetchApiMeeting} setUserAction={setUserAction} meetingsId={meetingsId}/>
+      <EditMeeting isOpen={eventView} handleCloseevent={handleCloseevent} dataByMeetingId={dataByMeetingId} fetchApiMeeting={fetchApiMeeting} setUserAction={setUserAction} meetingsId={meetingsId} />
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={"space-between"}>
@@ -111,9 +121,14 @@ const Event = () => {
             Calendar
           </Typography>
           <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenMeeting}>
-              New Meeting
-            </Button>
+            {
+              userId?.id === id ?
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenMeeting}>
+                  New Meeting
+                </Button>
+                :
+                ""
+            }
           </Stack>
         </Stack>
         <FullCalendar
@@ -125,7 +140,7 @@ const Event = () => {
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            right: 'dayGridMonth',
           }}
           eventClick={handleEventClick}
           eventContent={renderEventContent}
@@ -140,8 +155,6 @@ const Event = () => {
           buttonText={{
             today: 'Today',
             dayGridMonth: 'Month',
-            timeGridWeek: 'Week',
-            timeGridDay: 'Day',
           }}
           eventClassNames="custom-fullcalendar"
         />

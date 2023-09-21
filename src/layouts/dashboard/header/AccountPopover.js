@@ -18,12 +18,17 @@ export default function AccountPopover() {
     {
       label: 'Profile',
       icon: 'eva:home-fill',
-      path: `/dashboard/profile/${user._id}`,
+      path: `/dashboard/profile/view/${user?.id}`,
     },
     {
       label: 'Setting',
       icon: 'eva:person-fill',
-      path: `/dashboard/user/view/${user._id}`,
+      path: `/dashboard/user/view/${user?.id}`,
+    },
+    {
+      label: 'Meeting',
+      icon: 'eva:person-fill',
+      path: `/dashboard/event/${user?.id}`,
     },
   ];
 
