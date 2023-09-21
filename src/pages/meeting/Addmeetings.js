@@ -17,11 +17,9 @@ import { useEffect, useState } from 'react';
 import { Autocomplete, Box, Chip, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
-import { City } from 'country-state-city';
 import { useTheme } from '@emotion/react';
 import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
-
-
+import City from './cities.json'
 
 const names = [
   'Oliver Hansen',
@@ -149,30 +147,24 @@ const Addmeetings = (props) => {
 
                 <Grid item xs={12} sm={6}>
                   <FormLabel>City</FormLabel>
-                  <TextField
-                    id="city"
-                    name="city"
-                    label=""
-                    size='small'
-                    maxRows={10}
-                    fullWidth
-                    value={formik.values.city}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.city &&
-                      Boolean(formik.errors.city)
-                    }
-                    helperText={
-                      formik.touched.city && formik.errors.city
-                    }
-                  />
-                  {/* <Autocomplete
+                  <Autocomplete
                     id="city-autocomplete"
-                    size="small" 
-                    options={cityOptions}
-                    getOptionLabel={(option) => option.name}
-                     renderInput={(params) => <TextField {...params}  />} 
-                  /> */}
+                    size="small"
+                    name="city"
+                    options={City}
+                    getOptionLabel={(option) => option?.name}
+                    value={City.find(city => city?.name === formik.values.city) || null}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('city', newValue?.name);
+                    }}
+                    renderInput={(params) =>
+                      <TextField
+                        {...params}
+                        name='city'
+                        error={formik.touched.city && Boolean(formik.errors.city)}
+                        helperText={formik.touched.city && formik.errors.city}
+                      />}
+                  />
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={6}>
@@ -226,7 +218,7 @@ const Addmeetings = (props) => {
                       disableCloseOnSelect
                       renderInput={(params) =>
                         <TextField
-                          {...params} 
+                          {...params}
                           error={formik.touched.doctors && Boolean(formik.errors.doctors)}
                           helperText={formik.touched.doctors && formik.errors.doctors}
                         />

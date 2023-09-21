@@ -33,6 +33,7 @@ import { FiDelete, FiSave } from 'react-icons/fi';
 import { useTheme } from '@emotion/react';
 import { adduser, apidelete, apieditmeeting, apiget, deletemeetingApi } from '../../service/api';
 import DeleteModel from '../../components/Deletemodle'
+import City from './cities.json'
 
 
 const names = [
@@ -116,6 +117,7 @@ const EditMeeting = (props) => {
     fetchApiMeeting();
   }
 
+
   return (
     <div>
 
@@ -151,7 +153,7 @@ const EditMeeting = (props) => {
                       label=""
                       size="small"
                       disabled={userId?.id !== dataByMeetingId?.userid}
-                      value={formik.values.subject}
+                      value={formik.values.subject || null}
                       onChange={formik.handleChange}
                       error={formik.touched.subject && Boolean(formik.errors.subject)}
                     >
@@ -168,31 +170,25 @@ const EditMeeting = (props) => {
 
                 <Grid item xs={12} sm={6}>
                   <FormLabel>City</FormLabel>
-                  <TextField
-                    id="city"
-                    name="city"
-                    label=""
-                    size='small'
-                    maxRows={10}
-                    fullWidth
-                    disabled={userId?.id !== dataByMeetingId?.userid}
-                    value={formik.values.city}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.city &&
-                      Boolean(formik.errors.city)
-                    }
-                    helperText={
-                      formik.touched.city && formik.errors.city
-                    }
-                  />
-                  {/* <Autocomplete
+                  <Autocomplete
                     id="city-autocomplete"
-                    size="small" 
-                    options={cityOptions}
-                    getOptionLabel={(option) => option.name}
-                     renderInput={(params) => <TextField {...params}  />} 
-                  /> */}
+                    size="small"
+                    options={City}
+                    name='city'
+                    disabled={userId?.id !== dataByMeetingId?.userid}
+                    getOptionLabel={(option) => option?.name}
+                    value={City.find(city => city?.name === formik.values.city) || null}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('city', newValue?.name);
+                    }}
+                    renderInput={(params) =>
+                      <TextField
+                        {...params}
+                        name='city'
+                        error={formik.touched.city && Boolean(formik.errors.city)}
+                        helperText={formik.touched.city && formik.errors.city}
+                      />}
+                  />
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={6}>
@@ -240,7 +236,7 @@ const EditMeeting = (props) => {
                       name="doctors"
                       multiple
                       size="small"
-                       disabled={userId?.id !== dataByMeetingId?.userid}
+                      disabled={userId?.id !== dataByMeetingId?.userid}
                       value={formik.values.doctors}
                       onChange={(event, newValue) => {
                         formik.setFieldValue('doctors', newValue);

@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable arrow-body-style */
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -14,7 +16,7 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Avatar, Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import { useEffect, useState } from 'react';
 
@@ -28,24 +30,27 @@ const Edit = (props) => {
   const [userDetails, setUserDetails] = useState({});
   const [Role, setrole] = useState(user?.row?.role);
   const [alluser, setAllUser] = React.useState([]);
+  const [selectedFile, setSelectedFile] = React.useState(null);
+  const [img, setImg] = useState(null);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('First Name is required'),
     lastName: yup.string().required('Last Name is required'),
-    emailAddress: yup.string().email('Invalid email').required('Email is required'),
+    email: yup.string().email('Invalid email').required('Email is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
+    avatar: user?.row?.avatar,
     firstName: user?.row?.firstName,
-    lastName: user?.row?.firstName,
-    emailAddress: user?.row?.email,
+    lastName: user?.row?.lastName,
+    email: user?.row?.email,
     role: user?.row?.role,
     parentId: user?.row?.parentId,
   };
 
-
+    // setSelectedFile(user?.row?.avatar)
 
   // fetch api
   const fetch = async () => {
@@ -58,9 +63,10 @@ const Edit = (props) => {
   // edit api
   const EditUser = async (values) => {
     const data = {
-      email: values?.emailAddress,
+      _id: user?.row?._id,
       firstName: values?.firstName,
       lastName: values?.lastName,
+      email: values?.emailAddress,
       role:
         values?.role === "Hr" || values?.role === "Admin"
           ? "National Manager"
@@ -74,7 +80,6 @@ const Edit = (props) => {
                   ? "Territory Manager"
                   : "",
       parentId: values?.parentId,
-      _id: user?.row?._id,
     };
 
 
@@ -96,18 +101,22 @@ const Edit = (props) => {
 
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    // validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      const userData = {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        emailAddress: values.emailAddress,
-        role: values?.role,
-        parentId: values.parentId,
-        modifiedOn: new Date(),
-      };
-      EditUser(userData);
+      console.log(values, "edit User")
+      // const userData = {
+      //   avatar: values.avatar,
+      //   firstName: values.firstName,
+      //   lastName: values.lastName,
+      //   emailAddress: values.emailAddress,
+      //   role: values?.role,
+      //   parentId: values.parentId,
+      //   modifiedAt: new Date(),
+      // };
+
+
+      // EditUser(userData);
       fetchdatas();
     },
   });
@@ -125,6 +134,25 @@ const Edit = (props) => {
   const zonalManager = alluser?.filter(user => { return user?.role === "Zonal Manager" });
   const regionalManager = alluser?.filter(user => { return user?.role === "Regional Manager" });
   const territoryManager = alluser?.filter(user => { return user?.role === "Territory Manager" });
+
+  const handleFileChange = (e) => {
+    const file = e.currentTarget.files[0];
+    if (file) {
+      // Read the selected file and set it in state.
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedFile(e.target.result);
+        // setSelectedFile(user?.row?.avatar)
+      };
+      reader.readAsDataURL(file);
+
+      // Update the formik field value with the selected file.
+    }
+    formik.setFieldValue('avatar', file);
+  };
+  
+  console.log(formik.values, "avatar888")
+
 
   return (
     <div>
@@ -145,6 +173,33 @@ const Edit = (props) => {
         <DialogContent dividers>
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+              <Grid item xs={12} sm={12} md={12}>
+                <Box style={{ textAlign: 'center' }}>
+                  {selectedFile ?
+                    <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                    :
+                    <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                  }
+                  <Typography variant="h6">Upload Avatar</Typography>
+                  <TextField
+                    accept="image/*"
+                    type="file"
+                    id="avatar-upload"
+                    name="avatar"
+                    style={{ display: 'none' }}
+                    // onChange={(event) => {
+                    //   console.log(event?.currentTarget?.files[0])
+                    //   formik.setFieldValue("avatar", event?.currentTarget?.files[0]);
+                    // }}
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="avatar-upload">
+                    <Button component="span" variant="outlined" color="primary">
+                      Upload
+                    </Button>
+                  </label>
+                </Box>
+              </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>First Name</FormLabel>
                 <TextField
@@ -175,14 +230,14 @@ const Edit = (props) => {
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Email</FormLabel>
                 <TextField
-                  id="emailAddress"
-                  name="emailAddress"
+                  id="email"
+                  name="email"
                   size="small"
-                  value={formik.values.emailAddress}
+                  value={formik.values.email}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.emailAddress && Boolean(formik.errors.emailAddress)}
-                  helperText={formik.touched.emailAddress && formik.errors.emailAddress}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <FormLabel style={{ marginLeft: '30px', marginBottom: '-20px', marginTop: '20px' }}>Role</FormLabel>
@@ -192,7 +247,7 @@ const Edit = (props) => {
                     name="role"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={formik.values.role}
+                    value={formik.values.role || null}
                     size="small"
                     fullWidth
                     onChange={formik.handleChange}
@@ -215,7 +270,7 @@ const Edit = (props) => {
                     name="parentId"
                     size="small"
                     fullWidth
-                    value={formik.values.parentId}
+                    value={formik.values.parentId || null}
                     onChange={formik.handleChange}
                     error={formik.touched.parentId && Boolean(formik.errors.parentId)}
                     helperText={formik.touched.parentId && formik.errors.parentId}
@@ -263,7 +318,7 @@ const Edit = (props) => {
                                         {`${item?.firstName} ${item?.lastName}`}
                                       </MenuItem>
                                     ))
-                                    : null 
+                                    : null
                     }
 
                   </Select>

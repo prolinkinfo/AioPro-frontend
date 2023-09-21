@@ -88,13 +88,13 @@ const View = () => {
                             {userdata.role === "admin" ?
                                 <Actionbutton
                                     handleOpen={handleOpenAdd}
-                                    handleOpenEdit={handleOpenEdit}
+                                    // handleOpenEdit={handleOpenEdit}
                                     handleOpenDelete={handleOpenDelete}
                                     back={back}
                                 />
                                 :
                                 <Actionbutton
-                                    handleOpenEdit={handleOpenEdit}
+                                    // handleOpenEdit={handleOpenEdit}
                                     handleOpenDelete={handleOpenDelete}
                                     back={back}
                                 />

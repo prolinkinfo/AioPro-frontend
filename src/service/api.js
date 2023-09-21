@@ -69,7 +69,8 @@ export const apipost = async (path, data) => {
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
-          return error?.response?.data;
+          console.log(error.response.data,"error.response.data")
+          // return error?.response?.data;
           // toast.error(error.response.data.message);
         }
       }
@@ -86,6 +87,7 @@ export const adduser = async (path, data) => {
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
+          console.log(error.response.data,"error.response.data")
           return error?.response?.data;
           // toast.error(error.response.data.message);
         }

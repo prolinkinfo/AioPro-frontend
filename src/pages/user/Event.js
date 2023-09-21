@@ -138,8 +138,6 @@ const Event = () => {
           height="600px"
           events={meetingList}
           headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
             right: 'dayGridMonth',
           }}
           eventClick={handleEventClick}

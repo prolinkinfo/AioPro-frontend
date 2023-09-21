@@ -3,7 +3,7 @@
 /* eslint-disable arrow-body-style */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel, Button, Paper, Typography, Avatar } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel, Button, Paper, Typography, Avatar, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -35,6 +35,8 @@ export default function RgisterForm() {
   const validationSchema = yup.object({
     lastName: yup.string().required('Last Name is required'),
     firstName: yup.string().required('First Name is required'),
+    role: yup.string().required('Role is required'),
+    parentId: yup.string().required('Manager is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup
       .string()
@@ -55,8 +57,7 @@ export default function RgisterForm() {
     data.append("firstName", values?.firstName)
     data.append("lastName", values?.lastName)
     data.append("email", values?.email)
-    data.append("role", values?.role)
-    data.append("firstName", values?.role === "Hr" || values?.role === "Admin"
+    data.append("role", values?.role === "Hr" || values?.role === "Admin"
       ? "National Manager"
       : values?.role === "National Manager"
         ? "Branch Manager"
@@ -101,9 +102,9 @@ export default function RgisterForm() {
   // formik
   const formik = useFormik({
     initialValues,
-    // validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
-      // Adddata(values);
+      Adddata(values);
       console.log(values)
     },
   });
@@ -132,7 +133,7 @@ export default function RgisterForm() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.currentTarget.files[0];
     if (file) {
       // Read the selected file and set it in state.
       const reader = new FileReader();
@@ -153,7 +154,7 @@ export default function RgisterForm() {
       <form>
         <Stack spacing={3} mb={2}>
 
-          <Paper style={{ textAlign: 'center' }}>
+          <Box style={{ textAlign: 'center' }}>
             {selectedFile ?
               <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto',borderRadius:"50%" }} />
               :
@@ -172,7 +173,7 @@ export default function RgisterForm() {
                 Upload
               </Button>
             </label>
-          </Paper>
+          </Box>
           <TextField
             name="firstName"
             label="First Name"
@@ -294,7 +295,7 @@ export default function RgisterForm() {
                               }) : ""
               }
             </Select>
-            <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+            <FormHelperText style={{ color: palette.error.main }}>{formik.touched.parentId && formik.errors.parentId}</FormHelperText>
           </FormControl>
 
           <TextField

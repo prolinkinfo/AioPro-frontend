@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable no-constant-condition */
 /* eslint-disable arrow-body-style */
 /* eslint-disable prefer-const */
@@ -12,20 +14,21 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import { adduser, allusers } from '../../service/api';
+import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel, FormHelperText, Paper, Avatar, Box } from '@mui/material';
+import { adduser, allusers, apipost } from '../../service/api';
 import palette from '../../theme/palette';
 
 const Add = (props) => {
   // eslint-disable-next-line react/prop-types
   const { handleClose, open } = props;
   const [alluser, setAllUser] = React.useState([]);
+  const [selectedFile, setSelectedFile] = React.useState(null);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('Frist Name is required'),
     lastName: yup.string().required('Last Name is required'),
-    emailAddress: yup.string().email('Invalid email').required('Email is required'),
+    email: yup.string().email('Invalid email').required('Email is required'),
     role: yup.string().required('Role is required'),
     parentId: yup.string().required('Manager is required'),
     password: yup
@@ -54,9 +57,10 @@ const Add = (props) => {
 
   // -----------   initialValues
   const initialValues = {
+    avatar: '',
     firstName: '',
     lastName: '',
-    emailAddress: '',
+    email: '',
     password: '',
     confirmPassword: '',
     role: '',
@@ -65,37 +69,57 @@ const Add = (props) => {
 
   // add user api
   const addUser = async (values) => {
+    const data = new FormData()
+    data.append("avatar", values?.avatar)
+    data.append("firstName", values?.firstName)
+    data.append("lastName", values?.lastName)
+    data.append("email", values?.email)
+    data.append("role", values?.role === "Hr" || values?.role === "Admin"
+      ? "National Manager"
+      : values?.role === "National Manager"
+        ? "Branch Manager"
+        : values?.role === "Branch Manager"
+          ? "Zonal Manager"
+          : values?.role === "Zonal Manager"
+            ? "Regional Manager"
+            : values?.role === "Regional Manager"
+              ? "Territory Manager"
+              : "",)
+    data.append("parentId", values?.parentId)
+    data.append("password", values?.password)
+    data.append("confirmPassword", values?.confirmPassword)
 
-    const data = {
-      email: values?.emailAddress,
-      password: values?.password,
-      confirmPassword: values?.confirmPassword,
-      role:
-        values?.role === "Hr" || values?.role === "Admin"
-          ? "National Manager"
-          : values?.role === "National Manager"
-            ? "Branch Manager"
-            : values?.role === "Branch Manager"
-              ? "Zonal Manager"
-              : values?.role === "Zonal Manager"
-                ? "Regional Manager"
-                : values?.role === "Regional Manager"
-                  ? "Territory Manager"
-                  : "",
+    // const data = {
+    //   email: values?.emailAddress,
+    //   password: values?.password,
+    //   confirmPassword: values?.confirmPassword,
+    //   role:
+    //     values?.role === "Hr" || values?.role === "Admin"
+    //       ? "National Manager"
+    //       : values?.role === "National Manager"
+    //         ? "Branch Manager"
+    //         : values?.role === "Branch Manager"
+    //           ? "Zonal Manager"
+    //           : values?.role === "Zonal Manager"
+    //             ? "Regional Manager"
+    //             : values?.role === "Regional Manager"
+    //               ? "Territory Manager"
+    //               : "",
 
-      parentId: values?.parentId,
-      firstName: values?.firstName,
-      lastName: values?.lastName,
-    };
+    //   parentId: values?.parentId,
+    //   firstName: values?.firstName,
+    //   lastName: values?.lastName,
+    // };
 
-    const result = await adduser('/api/auth/signup', data);
+    const result = await apipost('/api/auth/signup', data);
 
     if (result && result.status === 200) {
       formik.resetForm();
+      setSelectedFile('')
       handleClose();
       toast.success(result.data.message);
     } else {
-      alert(result.error);
+      // alert(result.error);
     }
   };
 
@@ -120,6 +144,25 @@ const Add = (props) => {
   }, []);
 
 
+  const handleFileChange = (e) => {
+    const file = e.currentTarget.files[0];
+    if (file) {
+      // Read the selected file and set it in state.
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedFile(e.target.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Update the formik field value with the selected file.
+    }
+    formik.setFieldValue('avatar', file);
+  };
+
+  const clear = () => {
+    setSelectedFile('')
+  }
+
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -140,13 +183,34 @@ const Add = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>First name</FormLabel>
+                <Box style={{ textAlign: 'center' }}>
+                  {selectedFile ?
+                    <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                    :
+                    <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                  }
+                  <Typography variant="h6">Upload Avatar</Typography>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    id="avatar-upload"
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="avatar-upload">
+                    <Button component="span" variant="outlined" color="primary">
+                      Upload
+                    </Button>
+                  </label>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>First Name</FormLabel>
                 <TextField
                   id="firstName"
                   name="firstName"
                   label=""
                   size="small"
-                  maxRows={10}
                   value={formik.values.firstName}
                   onChange={formik.handleChange}
                   fullWidth
@@ -155,7 +219,7 @@ const Add = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Last name</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <TextField
                   id="lastName"
                   name="lastName"
@@ -171,15 +235,15 @@ const Add = (props) => {
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Email</FormLabel>
                 <TextField
-                  id="emailAddress"
-                  name="emailAddress"
+                  id="email"
+                  name="email"
                   label=""
                   size="small"
-                  value={formik.values.emailAddress}
+                  value={formik.values.email}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.emailAddress && Boolean(formik.errors.emailAddress)}
-                  helperText={formik.touched.emailAddress && formik.errors.emailAddress}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
@@ -334,6 +398,7 @@ const Add = (props) => {
             onClick={() => {
               formik.resetForm();
               handleClose();
+              clear();
             }}
           >
             Cancle
