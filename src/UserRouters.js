@@ -3,6 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import User from './pages/user/User';
 import UserView from './pages/user/View';
 import Lead from './pages/Lead/Lead';
 import Page404 from './pages/Page404';
@@ -33,6 +34,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
+        { path: 'user', element: <User /> },
         { path: 'user/view/:id', element: <UserView /> },
         { path: 'lead', element: <Lead /> },
         { path: 'lead/view/:id', element: <LeadView /> },

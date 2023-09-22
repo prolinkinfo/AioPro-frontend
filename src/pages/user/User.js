@@ -79,6 +79,9 @@ const User = () => {
   };
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
+
+  const user = JSON.parse(localStorage.getItem('user'))
+
   const columns = [
     {
       field: 'firstName',
@@ -172,10 +175,46 @@ const User = () => {
     },
   ];
 
+  function findUserById(id, data) {
+    const item = data.find((item) => item._id === id);
+    if (!item) {
+      return null;
+    }
+
+    const children = data.filter((child) => child.parentId === id);
+    const childNodes = children.map((child) => findUserById(child._id, data)).filter(Boolean);
+
+    return {
+      id: item._id,
+      data: item, // Include the data of the node
+      children: childNodes,
+    };
+  }
+
+function extractUsers(parentUser) {
+  const users = [];
+
+  function traverse(parentUser) {
+    users.push(parentUser.data);
+    parentUser.children.forEach((child) => traverse(child));
+  }
+
+  traverse(parentUser);
+
+  return users;
+}
+
+  function displayUserFromId(data, parentId) {
+    const parentUser = findUserById(parentId, data);
+    const nodes = extractUsers(parentUser);
+    return nodes;
+  }
+
+
   async function fetchdata() {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
-      setAllUser(result?.data);
+      setAllUser(displayUserFromId(result?.data,user?.id));
     }
   }
   useEffect(() => {
