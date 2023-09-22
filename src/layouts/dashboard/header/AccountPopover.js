@@ -18,7 +18,7 @@ export default function AccountPopover() {
     {
       label: 'Profile',
       icon: 'eva:home-fill',
-      path: `/dashboard/profile/view/${user?.id}`,
+      path: `/dashboard/user/view/${user?.id}`,
     },
     {
       label: 'Setting',

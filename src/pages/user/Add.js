@@ -24,6 +24,9 @@ const Add = (props) => {
   const [alluser, setAllUser] = React.useState([]);
   const [selectedFile, setSelectedFile] = React.useState(null);
 
+  const user = JSON.parse(localStorage.getItem('user'));
+
+
   // -----------  validationSchema
   const validationSchema = yup.object({
     firstName: yup.string().required('Frist Name is required'),
@@ -63,8 +66,9 @@ const Add = (props) => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: '',
-    parentId: ''
+    role: user?.role,
+    parentId: user?.id,
+    createdBy: user?.id
   };
 
   // add user api
@@ -88,6 +92,7 @@ const Add = (props) => {
     data.append("parentId", values?.parentId)
     data.append("password", values?.password)
     data.append("confirmPassword", values?.confirmPassword)
+    data.append("createdBy", values?.createdBy)
 
     // const data = {
     //   email: values?.emailAddress,
@@ -246,35 +251,39 @@ const Add = (props) => {
                   helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Role</FormLabel>
-                <FormControl fullWidth>
-                  <Select
-                    name="role"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={formik.values.role}
-                    size="small"
-                    fullWidth
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.role &&
-                      Boolean(formik.errors.role)
-                    }
-                    helperText={
-                      formik.touched.role && formik.errors.role
-                    }
-                  >
-                    <MenuItem value="Hr">Hr</MenuItem>
-                    <MenuItem value="Admin">Admin </MenuItem>
-                    <MenuItem value="National Manager">National Manager </MenuItem>
-                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
-                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
-                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
-                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
-                  </Select>
-                  <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
-                </FormControl>
+                    <FormControl fullWidth>
+                      <Select
+                        name="role"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={formik.values.role}
+                        size="small"
+                        fullWidth
+                        disabled={user?.role !== "Admin"}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.role &&
+                          Boolean(formik.errors.role)
+                        }
+                        helperText={
+                          formik.touched.role && formik.errors.role
+                        }
+                      >
+                        <MenuItem value="Hr">Hr</MenuItem>
+                        <MenuItem value="Admin">Admin </MenuItem>
+                        <MenuItem value="National Manager">National Manager </MenuItem>
+                        <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                        <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                        <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                        <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+                      </Select>
+                      <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
+                    </FormControl>
+                    
+
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Manager</FormLabel>
@@ -284,6 +293,7 @@ const Add = (props) => {
                     name="parentId"
                     size='small'
                     fullWidth
+                    disabled={user?.role !== "Admin"}
                     value={formik.values.parentId}
                     onChange={formik.handleChange}
                     error={
