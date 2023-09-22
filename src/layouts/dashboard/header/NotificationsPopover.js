@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Box,
@@ -25,6 +25,7 @@ import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
+import { apiget } from '../../../service/api';
 
 // ----------------------------------------------------------------------
 
@@ -79,7 +80,8 @@ const NOTIFICATIONS = [
 export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const [notification, setNotification] = useState([]);
+  const totalUnRead = notification?.length;
 
   const [open, setOpen] = useState(null);
 
@@ -91,14 +93,27 @@ export default function NotificationsPopover() {
     setOpen(null);
   };
 
-  const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false,
-      }))
-    );
+  // const handleMarkAllAsRead = () => {
+  //   setNotifications(
+  //     notifications.map((notification) => ({
+  //       ...notification,
+  //       isUnRead: false,
+  //     }))
+  //   );
+  // };
+
+  const { id } = JSON.parse(localStorage.getItem('user'));
+
+  const notificationApi = async () => {
+    const result = await apiget(`/api/notification/?approvalBy=${id}`);
+    if (result && result.status === 200) {
+      setNotification(result?.data);
+    }
   };
+
+  useEffect(() => {
+    notificationApi();
+  }, []);
 
   return (
     <>
@@ -125,18 +140,7 @@ export default function NotificationsPopover() {
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
-            </Typography>
           </Box>
-
-          {totalUnRead > 0 && (
-            <Tooltip title=" Mark all as read">
-              <IconButton color="primary" onClick={handleMarkAllAsRead}>
-                <Iconify icon="eva:done-all-fill" />
-              </IconButton>
-            </Tooltip>
-          )}
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -150,12 +154,12 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+            {notification.slice(0, 2).map((notification) => (
+              <NotificationItem key={notification._id} notification={notification} />
             ))}
           </List>
 
-          <List
+          {/* <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
@@ -166,7 +170,7 @@ export default function NotificationsPopover() {
             {notifications.slice(2, 5).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
-          </List>
+          </List> */}
         </Scrollbar>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -183,20 +187,22 @@ export default function NotificationsPopover() {
 
 // ----------------------------------------------------------------------
 
-NotificationItem.propTypes = {
-  notification: PropTypes.shape({
-    createdAt: PropTypes.instanceOf(Date),
-    id: PropTypes.string,
-    isUnRead: PropTypes.bool,
-    title: PropTypes.string,
-    description: PropTypes.string,
-    type: PropTypes.string,
-    avatar: PropTypes.any,
-  }),
-};
+// NotificationItem.propTypes = {
+//   notification: PropTypes.shape({
+//     createdAt: PropTypes.instanceOf(Date),
+//     id: PropTypes.string,
+//     isUnRead: PropTypes.bool,
+//     title: PropTypes.string,
+//     description: PropTypes.string,
+//     type: PropTypes.string,
+//     avatar: PropTypes.any,
+//   }),
+// };
 
 function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
+  console.log("notification",notification);
+  const { avatar} = renderContent(notification);
+
 
   return (
     <ListItemButton
@@ -212,8 +218,11 @@ function NotificationItem({ notification }) {
       <ListItemAvatar>
         <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
       </ListItemAvatar>
+      {
+        
+      }
       <ListItemText
-        primary={title}
+        primary={`${notification?.createdBy?.firstName} create a new meeting`}
         secondary={
           <Typography
             variant="caption"
@@ -238,39 +247,21 @@ function NotificationItem({ notification }) {
 function renderContent(notification) {
   const title = (
     <Typography variant="subtitle2">
-      {notification.title}
-      <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+      {notification?.data?.subject}
+      {/* <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
         &nbsp; {noCase(notification.description)}
-      </Typography>
+      </Typography> */}
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'mail') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_mail.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'chat_message') {
+  if (notification?.type === 'meeting') {
     return {
       avatar: <img alt={notification.title} src="/assets/icons/ic_notification_chat.svg" />,
       title,
     };
   }
   return {
-    avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
+    avatar: notification?.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
     title,
   };
 }
