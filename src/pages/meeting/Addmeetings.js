@@ -36,8 +36,7 @@ const names = [
 
 const Addmeetings = (props) => {
   const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
-
-
+  const { parentID } = JSON.parse(localStorage.getItem('user'));
   const userName = localStorage.getItem('userName');
   const [singleuser, setsingleuser] = useState({});
 
@@ -45,16 +44,13 @@ const Addmeetings = (props) => {
     setsingleuser(user);
   }, [user]);
 
-
   // -----------  validationSchema
   const validationSchema = yup.object({
     subject: yup.string().required('Subject is required'),
     city: yup.string().required('City is required'),
     startDate: yup.string().required('Start Date is required'),
     bach: yup.string().required('Bach is required'),
-    // doctors: yup.array().required('Doctors is required'),
   });
-
 
   const initialValues = {
     subject: '',
@@ -62,8 +58,7 @@ const Addmeetings = (props) => {
     startDate: '',
     bach: '',
     doctors: [],
-    createdBy: singleuser?.firstName ? singleuser?.firstName : JSON.parse(userName),
-    userid: id,
+    createdBy: id,
   };
 
   // add meeting api
@@ -76,7 +71,7 @@ const Addmeetings = (props) => {
       doctors: values.doctors,
       status: 'not verified',
       createdBy: values.createdBy,
-      userid: values.userid
+      parentId: parentID,
     };
 
     const result = await addmeeting('/api/meeting', data);
@@ -99,7 +94,6 @@ const Addmeetings = (props) => {
   });
 
   // const cityOptions = City.getAllCities();
-
 
   return (
     <div>
@@ -153,17 +147,18 @@ const Addmeetings = (props) => {
                     name="city"
                     options={City}
                     getOptionLabel={(option) => option?.name}
-                    value={City.find(city => city?.name === formik.values.city) || null}
+                    value={City.find((city) => city?.name === formik.values.city) || null}
                     onChange={(event, newValue) => {
                       formik.setFieldValue('city', newValue?.name);
                     }}
-                    renderInput={(params) =>
+                    renderInput={(params) => (
                       <TextField
                         {...params}
-                        name='city'
+                        name="city"
                         error={formik.touched.city && Boolean(formik.errors.city)}
                         helperText={formik.touched.city && formik.errors.city}
-                      />}
+                      />
+                    )}
                   />
                 </Grid>
 
@@ -216,13 +211,13 @@ const Addmeetings = (props) => {
                       options={names}
                       getOptionLabel={(option) => option}
                       disableCloseOnSelect
-                      renderInput={(params) =>
+                      renderInput={(params) => (
                         <TextField
                           {...params}
                           error={formik.touched.doctors && Boolean(formik.errors.doctors)}
                           helperText={formik.touched.doctors && formik.errors.doctors}
                         />
-                      }
+                      )}
                     />
                   </FormControl>
                 </Grid>

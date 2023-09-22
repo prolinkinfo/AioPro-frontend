@@ -150,9 +150,6 @@ const Edit = (props) => {
     }
     formik.setFieldValue('avatar', file);
   };
-  
-  console.log(formik.values, "avatar888")
-
 
   return (
     <div>

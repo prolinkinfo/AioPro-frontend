@@ -82,7 +82,7 @@ const Event = () => {
   };
 
   const fetchApiMeeting = async () => {
-    const result = await apiget(`/api/meeting/?userid=${id}`);
+    const result = await apiget(`/api/meeting/?createdBy=${id}`);
     if (result?.statusText === "OK") {
       const meetingData = result?.data?.map(item => ({
         _id: item._id,
@@ -115,7 +115,7 @@ const Event = () => {
 
       <EditMeeting isOpen={eventView} handleCloseevent={handleCloseevent} dataByMeetingId={dataByMeetingId} fetchApiMeeting={fetchApiMeeting} setUserAction={setUserAction} meetingsId={meetingsId} />
 
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" mb={5} justifyContent={"space-between"}>
           <Typography variant="h4" >
             Calendar

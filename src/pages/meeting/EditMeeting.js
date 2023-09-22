@@ -56,7 +56,6 @@ const EditMeeting = (props) => {
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
 
   const userId = JSON.parse(localStorage.getItem('user'))
-  console.log(dataByMeetingId, "dataByMeetingId")
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
