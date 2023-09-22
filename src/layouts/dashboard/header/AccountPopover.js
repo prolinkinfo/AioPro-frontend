@@ -121,7 +121,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option, index) => (
-            <MenuItem key={index + 1}>
+            <MenuItem key={index + 1} onClick={handleClose}>
               <Link to={option.path} style={{ textDecoration: 'none', color: 'black' }}>
                 {option.label}
               </Link>
