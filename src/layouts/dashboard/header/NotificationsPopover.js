@@ -158,19 +158,6 @@ export default function NotificationsPopover() {
               <NotificationItem key={notification._id} notification={notification} />
             ))}
           </List>
-
-          {/* <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List> */}
         </Scrollbar>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
