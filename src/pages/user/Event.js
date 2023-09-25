@@ -150,10 +150,10 @@ const Event = () => {
               duration: { months: 4 },
             },
           }}
-          buttonText={{
-            today: 'Today',
-            dayGridMonth: 'Month',
-          }}
+          // buttonText={{
+          //   today: 'Today',
+          //   dayGridMonth: 'Month',
+          // }}
           eventClassNames="custom-fullcalendar"
         />
       </Container>

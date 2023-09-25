@@ -151,7 +151,7 @@ const EditMeeting = (props) => {
                       name="subject"
                       label=""
                       size="small"
-                      disabled={userId?.id !== dataByMeetingId?.userid}
+                      disabled={userId?.id !== dataByMeetingId?.createdBy}
                       value={formik.values.subject || null}
                       onChange={formik.handleChange}
                       error={formik.touched.subject && Boolean(formik.errors.subject)}
@@ -174,7 +174,7 @@ const EditMeeting = (props) => {
                     size="small"
                     options={City}
                     name='city'
-                    disabled={userId?.id !== dataByMeetingId?.userid}
+                    disabled={userId?.id !== dataByMeetingId?.createdBy}
                     getOptionLabel={(option) => option?.name}
                     value={City.find(city => city?.name === formik.values.city) || null}
                     onChange={(event, newValue) => {
@@ -197,7 +197,7 @@ const EditMeeting = (props) => {
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    disabled={userId?.id !== dataByMeetingId?.userid}
+                    disabled={userId?.id !== dataByMeetingId?.createdBy}
                     value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
                     onChange={formik.handleChange}
                     error={formik.touched.startDate && Boolean(formik.errors.startDate)}
@@ -213,7 +213,7 @@ const EditMeeting = (props) => {
                       id=""
                       name="bach"
                       label=""
-                      disabled={userId?.id !== dataByMeetingId?.userid}
+                      disabled={userId?.id !== dataByMeetingId?.createdBy}
                       size="small"
                       value={formik.values.bach || null}
                       onChange={formik.handleChange}
@@ -235,7 +235,7 @@ const EditMeeting = (props) => {
                       name="doctors"
                       multiple
                       size="small"
-                      disabled={userId?.id !== dataByMeetingId?.userid}
+                      disabled={userId?.id !== dataByMeetingId?.createdBy}
                       value={formik.values.doctors}
                       onChange={(event, newValue) => {
                         formik.setFieldValue('doctors', newValue);
@@ -257,7 +257,7 @@ const EditMeeting = (props) => {
           </form>
         </DialogContent>
         {
-          userId?.id === dataByMeetingId?.userid ?
+          userId?.id === dataByMeetingId?.createdBy ?
             <>
               <DialogActions>
                 <Button
