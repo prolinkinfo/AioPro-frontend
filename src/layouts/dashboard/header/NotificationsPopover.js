@@ -25,7 +25,8 @@ import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import { apiget } from '../../../service/api';
+import { apiget, apiput } from '../../../service/api';
+import ApprovalModel from './ApprovalModel';
 
 // ----------------------------------------------------------------------
 
@@ -81,7 +82,10 @@ export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
   const [notification, setNotification] = useState([]);
-  const totalUnRead = notification?.length;
+
+  const activeNotifications = notification?.filter(notification => notification?.status === 'active');
+
+  const totalUnRead = activeNotifications?.length;
 
   const [open, setOpen] = useState(null);
 
@@ -106,8 +110,9 @@ export default function NotificationsPopover() {
 
   const notificationApi = async () => {
     const result = await apiget(`/api/notification/?approvalBy=${id}`);
-    if (result && result.status === 200) {
-      setNotification(result?.data);
+    if (result) {
+      const filteredNotifications = result?.data?.filter(notification => notification?.status === 'active');
+      setNotification(filteredNotifications);
     }
   };
 
@@ -134,6 +139,7 @@ export default function NotificationsPopover() {
             mt: 1.5,
             ml: 0.75,
             width: 360,
+            height:300
           },
         }}
       >
@@ -149,13 +155,15 @@ export default function NotificationsPopover() {
           <List
             disablePadding
             subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline', textAlign: "center",textTransform:"capitalize" }}>
+                {
+                  notification?.length > 0 ? "" : 'No Notification Found'
+                }
               </ListSubheader>
             }
           >
             {notification?.map((notification) => (
-              <NotificationItem key={notification._id} notification={notification} />
+              <NotificationItem key={notification._id} notification={notification} handleClose={handleClose} notificationApi={notificationApi} />
             ))}
           </List>
         </Scrollbar>
@@ -186,45 +194,77 @@ export default function NotificationsPopover() {
 //   }),
 // };
 
-function NotificationItem({ notification }) {
-  const { avatar} = renderContent(notification);
+function NotificationItem({ notification, handleClose, notificationApi }) {
+  const { avatar } = renderContent(notification);
+
+  const [meetingData, setMeetingData] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleOpenModel = () => {
+    setIsOpen(true)
+    // handleClose();
+  }
+  const handleCloseModel = () => setIsOpen(false)
+
+  const editNotification = async () => {
+    const data = {
+      _id: meetingData?._id,
+      status: "deActive"
+    };
+    const result = await apiput(`/api/notification`, data);
+    if (result && result.status === 200) {
+      handleCloseModel();
+      notificationApi();
+      handleClose();
+    }
+  };
+
+  const handleClick = (data) => {
+    setMeetingData(data)
+    handleOpenModel();
+  }
 
 
   return (
-    <ListItemButton
-      sx={{
-        py: 1.5,
-        px: 2.5,
-        mt: '1px',
-        ...(notification.isUnRead && {
-          bgcolor: 'action.selected',
-        }),
-      }}
-    >
-      <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
-      </ListItemAvatar>
-      {
-        
-      }
-      <ListItemText
-        primary={`${notification?.createdBy?.firstName} create a new meeting`}
-        secondary={
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 0.5,
-              display: 'flex',
-              alignItems: 'center',
-              color: 'text.disabled',
-            }}
-          >
-            <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {fToNow(notification?.createdOn)}
-          </Typography>
+    <>
+      <ApprovalModel open={isOpen} handleClose={handleCloseModel} meetingData={meetingData} editNotification={editNotification} />
+      <ListItemButton
+        sx={{
+          py: 1.5,
+          px: 2.5,
+          mt: '1px',
+          ...(notification.isUnRead && {
+            bgcolor: 'action.selected',
+          }),
+        }}
+        onClick={() => handleClick(notification)}
+      >
+        <ListItemAvatar>
+          <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+        </ListItemAvatar>
+        {
+
         }
-      />
-    </ListItemButton>
+        <ListItemText
+          primary={`${notification?.createdBy?.firstName} create a new meeting`}
+          style={{textTransform:"capitalize"}}
+          secondary={
+            <Typography
+              variant="caption"
+              sx={{
+                mt: 0.5,
+                display: 'flex',
+                alignItems: 'center',
+                color: 'text.disabled',
+              }}
+            >
+              <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
+              {fToNow(notification?.createdOn)}
+            </Typography>
+          }
+        />
+      </ListItemButton>
+    </>
   );
 }
 

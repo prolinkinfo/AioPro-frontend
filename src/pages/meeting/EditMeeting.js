@@ -197,8 +197,11 @@ const EditMeeting = (props) => {
                     type={'datetime-local'}
                     size="small"
                     fullWidth
+                    inputProps={{
+                      min: dayjs().format('YYYY-MM-DD HH:mm')
+                    }}
                     disabled={userId?.id !== dataByMeetingId?.createdBy}
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm')}
                     onChange={formik.handleChange}
                     error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                     helperText={formik.touched.startDate && formik.errors.startDate}

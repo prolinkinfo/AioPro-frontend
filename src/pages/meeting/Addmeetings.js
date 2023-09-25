@@ -169,7 +169,10 @@ const Addmeetings = (props) => {
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm:ss')}
+                    inputProps={{
+                      min: dayjs().format('YYYY-MM-DD HH:mm')
+                    }}
+                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm')}
                     onChange={formik.handleChange}
                     error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                     helperText={formik.touched.startDate && formik.errors.startDate}
