@@ -154,7 +154,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notification.slice(0, 2).map((notification) => (
+            {notification?.map((notification) => (
               <NotificationItem key={notification._id} notification={notification} />
             ))}
           </List>
@@ -187,7 +187,6 @@ export default function NotificationsPopover() {
 // };
 
 function NotificationItem({ notification }) {
-  console.log("notification",notification);
   const { avatar} = renderContent(notification);
 
 
@@ -221,7 +220,7 @@ function NotificationItem({ notification }) {
             }}
           >
             <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {fToNow(notification.createdAt)}
+            {fToNow(notification?.createdOn)}
           </Typography>
         }
       />
