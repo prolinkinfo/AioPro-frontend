@@ -105,18 +105,18 @@ const Edit = (props) => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       console.log(values, "edit User")
-      // const userData = {
-      //   avatar: values.avatar,
-      //   firstName: values.firstName,
-      //   lastName: values.lastName,
-      //   emailAddress: values.emailAddress,
-      //   role: values?.role,
-      //   parentId: values.parentId,
-      //   modifiedAt: new Date(),
-      // };
+      const userData = {
+        avatar: values.avatar,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        emailAddress: values.emailAddress,
+        role: values?.role,
+        parentId: values.parentId,
+        modifiedAt: new Date(),
+      };
 
 
-      // EditUser(userData);
+      EditUser(userData);
       fetchdatas();
     },
   });
@@ -137,6 +137,7 @@ const Edit = (props) => {
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
+    console.log("file",file);
     if (file) {
       // Read the selected file and set it in state.
       const reader = new FileReader();
