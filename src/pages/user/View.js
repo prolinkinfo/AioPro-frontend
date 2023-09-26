@@ -106,7 +106,7 @@ const View = () => {
                         <General />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <Security />
+                        <Security email={userDetails?.email} />
                     </CustomTabPanel>
                 </Box>
             </Container>
