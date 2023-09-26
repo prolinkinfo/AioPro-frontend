@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Card, Container, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Container, FormLabel, Grid, Paper, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment/moment'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Actionbutton from '../../components/Actionbutton';
 import Header from '../../components/Header';
 import { apidelete, apiget, getsingleuser } from '../../service/api';
@@ -11,8 +14,8 @@ import EditUser from './Edit'
 import DeleteModel from '../../components/Deletemodle'
 import Palette from '../../theme/palette'
 import { CustomTabPanel, a11yProps } from '../../components/CustomTabPanel';
-import Overview from './Overview';
-import Other from './Other';
+import General from './General';
+import Security from './Security';
 
 const View = () => {
 
@@ -47,7 +50,7 @@ const View = () => {
 
     // fetch api
     const fetchdata = async () => {
-        const result = await getsingleuser(`/api/users`,params.id)
+        const result = await getsingleuser(`/api/users`, params.id)
         if (result && result.status === 200) {
             setUserDetails(result.data)
         }
@@ -64,6 +67,7 @@ const View = () => {
     }, [openAdd])
 
 
+
     return (
         <div>
 
@@ -76,7 +80,7 @@ const View = () => {
             {/* open Delete Model */}
             <DeleteModel opendelete={opendelete} handleClosedelete={handleCloseDelete} deletedata={deletedata} id={params.id} />
 
-            <Container maxWidth="xl">
+            <Container>
                 <Grid container display="flex" alignItems="center">
                     <Stack direction="row" alignItems="center" mb={3} justifyContent={"space-between"} width={"100%"}>
                         <Header
@@ -84,21 +88,9 @@ const View = () => {
                             subtitle="Profile Details"
                         />
                         <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-                            {/* Action Butoon */}
-                            {userdata.role === "admin" ?
-                                <Actionbutton
-                                    handleOpen={handleOpenAdd}
-                                    // handleOpenEdit={handleOpenEdit}
-                                    handleOpenDelete={handleOpenDelete}
-                                    back={back}
-                                />
-                                :
-                                <Actionbutton
-                                    // handleOpenEdit={handleOpenEdit}
-                                    handleOpenDelete={handleOpenDelete}
-                                    back={back}
-                                />
-                            }
+                            <Button variant="contained" color="secondary" onClick={back} startIcon={<ArrowBackIosIcon />}>
+                                Back
+                            </Button>
                         </Stack>
                     </Stack>
                 </Grid>
@@ -106,15 +98,15 @@ const View = () => {
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: "0px" }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="OVERVIEW" {...a11yProps(0)} />
-                            <Tab label="OTHER" {...a11yProps(1)} />
+                            <Tab label="General" {...a11yProps(0)} />
+                            <Tab label="Security" {...a11yProps(1)} />
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <Overview data={userDetails}/>
+                        <General />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <Other data={userDetails} />
+                        <Security />
                     </CustomTabPanel>
                 </Box>
             </Container>

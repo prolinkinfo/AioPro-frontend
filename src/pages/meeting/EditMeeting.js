@@ -116,7 +116,6 @@ const EditMeeting = (props) => {
     fetchApiMeeting();
   }
 
-
   return (
     <div>
 
@@ -241,10 +240,10 @@ const EditMeeting = (props) => {
                       disabled={userId?.id !== dataByMeetingId?.createdBy}
                       value={formik.values.doctors}
                       onChange={(event, newValue) => {
-                        formik.setFieldValue('doctors', newValue);
+                        formik.setFieldValue('doctors', newValue || null);
                       }}
                       options={names}
-                      getOptionLabel={(option) => option}
+                      getOptionLabel={(option) => option || null}
                       disableCloseOnSelect
                       renderInput={(params) =>
                         <TextField
