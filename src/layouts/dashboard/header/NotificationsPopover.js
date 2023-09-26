@@ -208,8 +208,11 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
   const editNotification = async () => {
     const data = {
       _id: meetingData?._id,
-      status: "deActive"
+      status: "deActive",
+      createdBy:meetingData?.approvalBy,
+      approvalBy:meetingData?.createdBy?._id
     };
+    console.log("data---------------",data);
     const result = await apiput(`/api/notification`, data);
     if (result && result.status === 200) {
       handleCloseModel();
@@ -218,11 +221,13 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
     }
   };
 
+  console.log("meetingData",meetingData);
   const handleClick = (data) => {
     setMeetingData(data)
     handleOpenModel();
   }
 
+  
 
   return (
     <>

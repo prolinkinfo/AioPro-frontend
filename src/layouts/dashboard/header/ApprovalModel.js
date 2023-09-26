@@ -17,7 +17,6 @@ const ApprovalModel = ({ open, handleClose, meetingData,editNotification }) => {
             status: "verified"
         };
         const result = await apieditmeeting(`/api/meeting`, data);
-        console.log(result)
         if (result && result.status === 200) {
             editNotification();
             fetchdata();
