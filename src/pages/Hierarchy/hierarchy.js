@@ -6,14 +6,25 @@ import './style.css';
 import 'reactflow/dist/style.css';
 import { useParams } from 'react-router-dom';
 import { allusers } from '../../service/api';
+import Edit from './Edit';
 
 const initialNodes = [];
 const initialEdges = [];
 
 export const Hierarchy = () => {
+
+  const [isOpen, setIsOpen] = useState(false)
   const [data, setData] = useState([]);
   const [nodesValue, setNodesValue] = useState([]);
   const [edgesValue, setEdgesValue] = useState([]);
+
+  const handleOpenModel = () => setIsOpen(true)
+  const handleCloseModel = () => setIsOpen(false)
+
+  const handleNodeDoubleClick = (event,node) => {
+    console.log(node, "node")
+    handleOpenModel();
+  }
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -57,11 +68,11 @@ export const Hierarchy = () => {
   };
 
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodesValue, edgesValue);
-  
+
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
   const params = useParams();
-  
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.SmoothStep, animated: true }, eds)),
     []
@@ -84,18 +95,18 @@ export const Hierarchy = () => {
     };
   }
 
-function extractNodes(node) {
-  const nodes = [];
+  function extractNodes(node) {
+    const nodes = [];
 
-  function traverse(node) {
-    nodes.push(node.data);
-    node.children.forEach((child) => traverse(child));
+    function traverse(node) {
+      nodes.push(node.data);
+      node.children.forEach((child) => traverse(child));
+    }
+
+    traverse(node);
+
+    return nodes;
   }
-
-  traverse(node);
-
-  return nodes;
-}
 
   function displayNodesFromId(data, startId) {
     const rootNode = findNodeById(startId, data);
@@ -138,15 +149,19 @@ function extractNodes(node) {
   }, [data]);
 
   return (
-    <ReactFlow
-      nodes={nodesValue}
-      edges={edgesValue}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      connectionLineType={ConnectionLineType.SmoothStep}
-      fitView
-    />
-     
+    <>
+      <Edit isOpenModel={isOpen} handleCloseModel={handleCloseModel} />
+      <ReactFlow
+        nodes={nodesValue}
+        edges={edgesValue}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeDoubleClick={handleNodeDoubleClick}
+        connectionLineType={ConnectionLineType.SmoothStep}
+        fitView
+      />
+    </>
+
   );
 };

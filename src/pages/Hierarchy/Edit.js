@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteModel from '../../components/Deletemodle'
 
-const Edit = ({ isOpenModel, closeModal }) => {
+const Edit = ({ isOpenModel, handleCloseModel }) => {
 
     const [isOpenDelete, setIsOpenDelete] = useState(false)
 
@@ -25,7 +25,7 @@ const Edit = ({ isOpenModel, closeModal }) => {
                 >
                     <Typography variant="h6">Edit</Typography>
                     <Typography>
-                        <ClearIcon onClick={closeModal} style={{ cursor: 'pointer' }} />
+                        <ClearIcon onClick={handleCloseModel} style={{ cursor: 'pointer' }} />
                     </Typography>
                 </DialogTitle>
 
@@ -79,7 +79,7 @@ const Edit = ({ isOpenModel, closeModal }) => {
                         variant="outlined"
                         color="error"
                         style={{ textTransform: 'capitalize' }}
-                        onClick={closeModal}
+                        onClick={handleCloseModel}
                     >
                         Cancle
                     </Button>

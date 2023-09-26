@@ -139,7 +139,6 @@ export default function NotificationsPopover() {
             mt: 1.5,
             ml: 0.75,
             width: 360,
-            height:300
           },
         }}
       >
@@ -246,7 +245,7 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
 
         }
         <ListItemText
-          primary={`${notification?.createdBy?.firstName} create a new meeting`}
+          primary={`${notification?.createdBy?.firstName} (${notification?.createdBy?.role}) create a new meeting`}
           style={{textTransform:"capitalize"}}
           secondary={
             <Typography
