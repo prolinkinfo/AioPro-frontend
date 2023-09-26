@@ -18,23 +18,23 @@ const General = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const { id } = useParams();
 
-  console.log(id, "id")
   // -----------   initialValues
   const initialValues = {
-    avatar: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
-    country: '',
-    state: '',
-    city: '',
-    zipCode: '',
-    role: '',
-    parentId: '',
+    avatar: userDetails?.avatar,
+    firstName: userDetails?.firstName,
+    lastName: userDetails?.lastName,
+    email: userDetails?.email,
+    phoneNumber: userDetails?.phoneNumber,
+    address: userDetails?.address,
+    country: userDetails?.country,
+    state: userDetails?.state,
+    city: userDetails?.city,
+    zipCode: userDetails?.zipCode,
+    role: userDetails?.role,
+    about:userDetails?.about,
+    parentId: ""
   };
-
+console.log(userDetails?.role,"userDetails?.role")
   const formik = useFormik({
     initialValues,
     // validationSchema,
@@ -72,6 +72,7 @@ const General = () => {
               ? "Territory Manager"
               : "",)
     data.append("parentId", values?.parentId)
+    data.append("about", values?.about)
     
 
     const result = await apiput(`/api/users`, data);
@@ -90,7 +91,7 @@ const General = () => {
 
       // Update the formik field value with the selected file.
     }
-    // formik.setFieldValue('avatar', file);
+    formik.setFieldValue('avatar', file);
   };
 
   const clear = () => {
@@ -125,7 +126,6 @@ const General = () => {
   useEffect(() => {
     fetchdata();
     if (id) {
-
       fetchUserData()
     }
   }, [id]);
@@ -137,11 +137,11 @@ const General = () => {
           <Grid item xs={12} sm={4} md={4}>
             <Card style={{ padding: "182px 0px 181px 0px" }}>
               <Box style={{ textAlign: 'center' }}>
-                {selectedFile ?
-                  <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                  :
-                  <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                }
+                {/* {selectedFile ? */}
+                  <Avatar alt="Avatar" src={userDetails?.avatar} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                  {/* : */}
+                  {/* <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} /> */}
+                {/* } */}
                 <Typography variant="h6">Upload Avatar</Typography>
                 <input
                   accept="image/*"
@@ -193,6 +193,7 @@ const General = () => {
                     id="email"
                     name="email"
                     label="Email"
+                    disabled
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     fullWidth
@@ -279,7 +280,7 @@ const General = () => {
                       name="role"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={formik.values.role}
+                      value={formik.values.role || null}
                       label="Role"
                       fullWidth
                       onChange={formik.handleChange}
@@ -312,6 +313,7 @@ const General = () => {
                       fullWidth
                       value={formik.values.parentId}
                       onChange={formik.handleChange}
+                      style={{textTransform:"capitalize"}}
                       error={
                         formik.touched.parentId &&
                         Boolean(formik.errors.parentId)
@@ -382,7 +384,7 @@ const General = () => {
                     name="about"
                     label="About"
                     multiline
-                    rows={5}
+                    rows={4}
                     value={formik.values.about}
                     onChange={formik.handleChange}
                     fullWidth
