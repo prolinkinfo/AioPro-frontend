@@ -3,7 +3,7 @@
 /* eslint-disable arrow-body-style */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormLabel, FormControl, InputLabel, Button, Paper, Typography, Avatar, Box } from '@mui/material';
+import { Stack, IconButton, InputAdornment, TextField, FormHelperText, MenuItem, Select, FormControl, InputLabel, Button, Typography, Avatar, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -18,7 +18,6 @@ export default function RgisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [alluser, setAllUser] = useState([]);
-  const [avatarImage, setAvatarImage] = useState(null);
 
   const initialValues = {
     avatar: '',
@@ -30,7 +29,7 @@ export default function RgisterForm() {
     role: '',
     parentId: ''
   };
-  const pwVlidation = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
+
   // validationSchema
   const validationSchema = yup.object({
     lastName: yup.string().required('Last Name is required'),
@@ -71,28 +70,6 @@ export default function RgisterForm() {
     data.append("parentId", values?.parentId)
     data.append("password", values?.password)
     data.append("confirmPassword", values?.confirmPassword)
-
-    // const data = {
-    //   firstName: values?.firstName,
-    //   lastName: values?.lastName,
-    //   email: values?.email,
-    //   // eslint-disable-next-line no-constant-condition
-    //   role:
-    // values?.role === "Hr" || values?.role === "Admin"
-    //   ? "National Manager"
-    //   : values?.role === "National Manager"
-    //     ? "Branch Manager"
-    //     : values?.role === "Branch Manager"
-    //       ? "Zonal Manager"
-    //       : values?.role === "Zonal Manager"
-    //         ? "Regional Manager"
-    //         : values?.role === "Regional Manager"
-    //           ? "Territory Manager"
-    //           : "",
-    //   parentId: values?.parentId,
-    //   password: values?.password,
-    //   confirmPassword: values?.confirmPassword,
-    // };
     const result = await apipost('/api/auth/signup', data);
     if (result && result.status === 200) {
       navigate('/login');
@@ -103,10 +80,7 @@ export default function RgisterForm() {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: async (values) => {
-      Adddata(values);
-      console.log(values)
-    },
+    onSubmit: async (values) => Adddata(values),
   });
 
   async function fetchdata() {
@@ -115,7 +89,6 @@ export default function RgisterForm() {
       setAllUser(result?.data);
     }
   }
-
 
   const admin = alluser?.filter(user => user?.role === "Admin");
   const hr = alluser?.filter(user => user?.role === "Hr");
@@ -135,14 +108,12 @@ export default function RgisterForm() {
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
     if (file) {
-      // Read the selected file and set it in state.
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedFile(e.target.result);
       };
       reader.readAsDataURL(file);
-
-      // Update the formik field value with the selected file.
     }
     formik.setFieldValue('avatar', file);
   };

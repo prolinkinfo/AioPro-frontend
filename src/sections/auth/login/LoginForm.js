@@ -19,13 +19,13 @@ export default function LoginForm() {
   const [isLoading, setIsLogin] = useState(false);
 
   const initialValues = {
-    email: '',
+    login: '',
     password: '',
   };
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    email: yup.string().email('Invalid email').required('Email is required'),
+    // email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
   });
 
@@ -61,13 +61,21 @@ export default function LoginForm() {
       <form onSubmit={formik.handleSubmit}>
         <Stack spacing={3} mb={2}>
           <TextField
-            name="email"
-            label="Email"
-            value={formik.values.email}
+            name="login"
+            label="Email or EmployeId"
+            value={formik.values.login}
             onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
+            error={formik.touched.login && Boolean(formik.errors.login)}
+            helperText={formik.touched.login && formik.errors.login}
           />
+          {/* <TextField
+            name="employeId"
+            label="EmployeId"
+            value={formik.values.employeId}
+            onChange={formik.handleChange}
+            error={formik.touched.employeId && Boolean(formik.errors.employeId)}
+            helperText={formik.touched.employeId && formik.errors.employeId}
+          /> */}
 
           <TextField
             name="password"
