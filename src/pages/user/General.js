@@ -2,12 +2,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/prop-types */
-import { Avatar, Box, Button, Card, FormControl, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, FormControl, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useParams } from 'react-router-dom';
 import { CopyAllOutlined, Label } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 import Palette from '../../theme/palette';
 import { allusers, apiget, apiput, getsingleuser } from '../../service/api';
 
@@ -35,7 +36,7 @@ const General = () => {
     about: userDetails?.about,
     parentId: ""
   };
-  console.log(userDetails?.role, "userDetails?.role")
+
   const formik = useFormik({
     initialValues,
     // validationSchema,
@@ -112,7 +113,7 @@ const General = () => {
       setAllUser(result?.data);
     }
   }
-  console.log(userDetails?.firstName)
+
   const admin = alluser?.filter(user => user?.role === "Admin");
   const hr = alluser?.filter(user => user?.role === "Hr");
   const nationalManager = alluser?.filter(user => user?.role === "National Manager");
@@ -120,6 +121,17 @@ const General = () => {
   const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
   const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
   const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
+
+  const copyEmployeId = () => {
+    const employeIdText = document.getElementById('box').innerText;
+    const tempInput = document.createElement('input');
+    tempInput.value = employeIdText;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    alert(`Copied to clipboard: ${employeIdText}`);
+  }
 
 
   useEffect(() => {
@@ -158,7 +170,7 @@ const General = () => {
                   Clear
                 </Button>
                 <div style={{ marginTop: "25px" }}>
-                  EmployeId : {userDetails?.employeId} <CopyAllOutlined />
+                  EmployeId :  <Tooltip title="DoubleClick to Copy" arrow> <span id='box' style={{ cursor: "pointer" }} onDoubleClick={copyEmployeId}>{userDetails?.employeId}</span>{userDetails?.employeId ? <CopyAllOutlined onDoubleClick={copyEmployeId} style={{ cursor: "pointer" }} /> : ' N/A'} </Tooltip>
                 </div>
               </Box>
             </Card>

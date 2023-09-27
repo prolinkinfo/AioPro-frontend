@@ -70,11 +70,11 @@ const Event = () => {
 
 
   const renderEventContent = (eventInfo) => (
-    <>
-      <p>{eventInfo.event.extendedProps.icon}</p>
+    <div style={{ background: eventInfo.event.extendedProps.status === "not verified" ? "#e9a2a2" : "#68af68", width: "100%", height: "35px",display:"flex",justifyContent:"center", alignItems:"center",borderRadius:"10px" }}>
+      {/* <p>{eventInfo.event.extendedProps.icon}</p> */}
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
-    </>
+    </div>
   );
 
   const handleCloseevent = () => {
@@ -88,6 +88,7 @@ const Event = () => {
         _id: item._id,
         title: item.subject,
         start: item.startDate,
+        status: item.status,
         icon: item.status === 'not verified' ? <CircleIcon style={{ color: "red", fontSize: "15px" }} /> : <CircleIcon style={{ color: "green", fontSize: "15px" }} />
       }));
       setMeetingList(meetingData)
