@@ -1,30 +1,29 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, { addEdge, ConnectionLineType, Panel, useNodesState, useEdgesState } from 'reactflow';
 import dagre from 'dagre';
-// import './diagram.css';
 import './style.css';
 import 'reactflow/dist/style.css';
 import { useParams } from 'react-router-dom';
 import { allusers } from '../../service/api';
 import Edit from './Edit';
 
-const initialNodes = [];
-const initialEdges = [];
-
 export const Hierarchy = () => {
-
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState([]);
   const [nodesValue, setNodesValue] = useState([]);
   const [edgesValue, setEdgesValue] = useState([]);
+  const [editId, setEditId] = useState('');
 
-  const handleOpenModel = () => setIsOpen(true)
-  const handleCloseModel = () => setIsOpen(false)
+  const handleOpenModel = () => setIsOpen(true);
+  const handleCloseModel = () => {
+    fetchdata();
+    setIsOpen(false);
+  };
 
-  const handleNodeDoubleClick = (event,node) => {
-    console.log(node, "node")
+  const handleNodeDoubleClick = (event, node) => {
+    setEditId(node?.id);
     handleOpenModel();
-  }
+  };
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -78,7 +77,7 @@ export const Hierarchy = () => {
     []
   );
 
-  // hierarchy 
+  // hierarchy
   function findNodeById(id, data) {
     const item = data.find((item) => item._id === id);
     if (!item) {
@@ -130,7 +129,6 @@ export const Hierarchy = () => {
     const newEdges = [];
 
     if (data && data.length > 0) {
-
       data.forEach((item, index) => {
         newNodes.push({ id: item?._id, position, data: { label: item?.firstName } });
         newEdges.push({
@@ -139,18 +137,17 @@ export const Hierarchy = () => {
           target: item?._id,
           type: edgeType,
           animated: true,
-          key: index
+          key: index,
         });
-      }
-      );
+      });
     }
-    setNodesValue(newNodes)
-    setEdgesValue(newEdges)
+    setNodesValue(newNodes);
+    setEdgesValue(newEdges);
   }, [data]);
 
   return (
     <>
-      <Edit isOpenModel={isOpen} handleCloseModel={handleCloseModel} />
+      <Edit isOpenModel={isOpen} handleCloseModel={handleCloseModel} id={editId} />
       <ReactFlow
         nodes={nodesValue}
         edges={edgesValue}
@@ -162,6 +159,5 @@ export const Hierarchy = () => {
         fitView
       />
     </>
-
   );
 };

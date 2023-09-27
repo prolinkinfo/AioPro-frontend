@@ -104,7 +104,6 @@ const Edit = (props) => {
     // validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log(values, "edit User")
       const userData = {
         avatar: values.avatar,
         firstName: values.firstName,
