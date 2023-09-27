@@ -113,8 +113,8 @@ export const apiput = async (path, data) => {
   } catch (error) {
     if (error && error.response) {
       if (error && error.response && error.response.status === 400) {
-        if (error.response.data.message) {
-          toast.error(error.response.data.message);
+        if (error.response.data.error) {
+          toast.error(error.response.data.error);
         }
       }
     }

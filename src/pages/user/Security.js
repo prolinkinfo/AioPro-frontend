@@ -51,20 +51,24 @@ const Security = (props) => {
           <Card style={{ padding: '20px' }}>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 4, md: 3 }}>
               <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Old Password</FormLabel>
                 <TextField
                   name="oldPassword"
-                  label="Old Password"
+                  type='password'
                   value={formik.values.oldPassword}
                   onChange={formik.handleChange}
                   fullWidth
+                  size='small'
                   error={formik.touched.oldPassword && Boolean(formik.errors.oldPassword)}
                   helperText={formik.touched.oldPassword && formik.errors.oldPassword}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>New Password</FormLabel>
                 <TextField
                   name="password"
-                  label="New Password"
+                  type='password'
+                  size='small'
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   fullWidth
@@ -73,9 +77,11 @@ const Security = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
+              <FormLabel>Confirm Password</FormLabel>
                 <TextField
                   name="confirmPassword"
-                  label="Confirm Password"
+                  size='small'
+                  type='password'
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange}
                   fullWidth

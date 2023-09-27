@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useParams } from 'react-router-dom';
+import { CopyAllOutlined, Label } from '@mui/icons-material';
 import Palette from '../../theme/palette';
 import { allusers, apiget, apiput, getsingleuser } from '../../service/api';
 
@@ -31,10 +32,10 @@ const General = () => {
     city: userDetails?.city,
     zipCode: userDetails?.zipCode,
     role: userDetails?.role,
-    about:userDetails?.about,
+    about: userDetails?.about,
     parentId: ""
   };
-console.log(userDetails?.role,"userDetails?.role")
+  console.log(userDetails?.role, "userDetails?.role")
   const formik = useFormik({
     initialValues,
     // validationSchema,
@@ -73,10 +74,8 @@ console.log(userDetails?.role,"userDetails?.role")
               : "",)
     data.append("parentId", values?.parentId)
     data.append("about", values?.about)
-    
 
     const result = await apiput(`/api/users`, data);
-    console.log(result, "editUser")
   };
 
   const handleFileChange = (e) => {
@@ -137,11 +136,11 @@ console.log(userDetails?.role,"userDetails?.role")
           <Grid item xs={12} sm={4} md={4}>
             <Card style={{ padding: "182px 0px 181px 0px" }}>
               <Box style={{ textAlign: 'center' }}>
-                {/* {selectedFile ? */}
-                  <Avatar alt="Avatar" src={userDetails?.avatar} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                  {/* : */}
-                  {/* <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} /> */}
-                {/* } */}
+                {selectedFile ?
+                  <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                  :
+                  <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                }
                 <Typography variant="h6">Upload Avatar</Typography>
                 <input
                   accept="image/*"
@@ -155,9 +154,12 @@ console.log(userDetails?.role,"userDetails?.role")
                     Upload
                   </Button>
                 </label>
-                <Button component="span" variant="outlined" color="primary" style={{ marginTop: "20px", marginLeft: "10px" }} onClick={clear}>
+                <Button component="span" variant="outlined" color="error" style={{ marginTop: "20px", marginLeft: "10px" }} onClick={clear}>
                   Clear
                 </Button>
+                <div style={{ marginTop: "25px" }}>
+                  EmployeId : {userDetails?.employeId} <CopyAllOutlined />
+                </div>
               </Box>
             </Card>
           </Grid>
@@ -165,10 +167,11 @@ console.log(userDetails?.role,"userDetails?.role")
             <Card style={{ padding: "20px" }}>
               <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 4, md: 3 }}>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>First Name</FormLabel>
                   <TextField
                     id="firstName"
                     name="firstName"
-                    label="First Name"
+                    size='small'
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     fullWidth
@@ -177,10 +180,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>Last Name</FormLabel>
                   <TextField
                     id="lastName"
                     name="lastName"
-                    label="Last Name"
+                    size='small'
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
                     fullWidth
@@ -189,10 +193,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>Email</FormLabel>
                   <TextField
                     id="email"
                     name="email"
-                    label="Email"
+                    size='small'
                     disabled
                     value={formik.values.email}
                     onChange={formik.handleChange}
@@ -202,10 +207,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>Phone Number</FormLabel>
                   <TextField
                     id="phoneNumber"
                     name="phoneNumber"
-                    label="Phone Number"
+                    size='small'
                     value={formik.values.phoneNumber}
                     onChange={formik.handleChange}
                     fullWidth
@@ -214,10 +220,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>Address</FormLabel>
                   <TextField
                     id="address"
                     name="address"
-                    label="Address"
+                    size='small'
                     value={formik.values.address}
                     onChange={formik.handleChange}
                     fullWidth
@@ -226,10 +233,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
+                  <FormLabel>Country</FormLabel>
                   <TextField
                     id="country"
                     name="country"
-                    label="Country"
+                    size='small'
                     value={formik.values.country}
                     onChange={formik.handleChange}
                     fullWidth
@@ -238,10 +246,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
+                  <FormLabel>State</FormLabel>
                   <TextField
                     id="state"
                     name="state"
-                    label="State"
+                    size='small'
                     value={formik.values.state}
                     onChange={formik.handleChange}
                     fullWidth
@@ -250,10 +259,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
+                  <FormLabel>City</FormLabel>
                   <TextField
                     id="city"
                     name="city"
-                    label="City"
+                    size='small'
                     value={formik.values.city}
                     onChange={formik.handleChange}
                     fullWidth
@@ -262,10 +272,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
+                  <FormLabel>Zip Code</FormLabel>
                   <TextField
                     id="zipCode"
                     name="zipCode"
-                    label="Zip Code"
+                    size='small'
                     value={formik.values.zipCode}
                     onChange={formik.handleChange}
                     fullWidth
@@ -275,13 +286,13 @@ console.log(userDetails?.role,"userDetails?.role")
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                    <FormLabel>Role</FormLabel>
                     <Select
                       name="role"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       value={formik.values.role || null}
-                      label="Role"
+                      size='small'
                       fullWidth
                       onChange={formik.handleChange}
                       error={
@@ -305,15 +316,15 @@ console.log(userDetails?.role,"userDetails?.role")
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Manager</InputLabel>
+                    <FormLabel>Manager</FormLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       name="parentId"
-                      label="Manager"
+                      size='small'
                       fullWidth
                       value={formik.values.parentId}
                       onChange={formik.handleChange}
-                      style={{textTransform:"capitalize"}}
+                      style={{ textTransform: "capitalize" }}
                       error={
                         formik.touched.parentId &&
                         Boolean(formik.errors.parentId)
@@ -379,10 +390,11 @@ console.log(userDetails?.role,"userDetails?.role")
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>About</FormLabel>
                   <TextField
                     id="about"
                     name="about"
-                    label="About"
+                    size='small'
                     multiline
                     rows={4}
                     value={formik.values.about}
