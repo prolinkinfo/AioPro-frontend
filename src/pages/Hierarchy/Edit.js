@@ -74,6 +74,7 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
         _id: id,
         role: values?.role,
         parentId: values?.parentId,
+        oldParentId:user?.parentId?._id ? user?.parentId?._id :''
       };
       resetForm({ values: '' });
       const result = await apiput(`/api/users`, data);

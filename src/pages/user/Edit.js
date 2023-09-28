@@ -26,7 +26,6 @@ import { allusers, apiget, apiput } from '../../service/api';
 
 const Edit = (props) => {
   const { handleClose, open, user, fetchdata } = props;
-
   const [userDetails, setUserDetails] = useState({});
   const [Role, setrole] = useState(user?.row?.role);
   const [alluser, setAllUser] = React.useState([]);
@@ -50,8 +49,6 @@ const Edit = (props) => {
     parentId: user?.row?.parentId,
   };
 
-    // setSelectedFile(user?.row?.avatar)
-
   // fetch api
   const fetch = async () => {
     const result = await apiget(`user/view/${user}`);
@@ -68,20 +65,19 @@ const Edit = (props) => {
       lastName: values?.lastName,
       email: values?.emailAddress,
       role:
-        values?.role === "Hr" || values?.role === "Admin"
-          ? "National Manager"
-          : values?.role === "National Manager"
-            ? "Branch Manager"
-            : values?.role === "Branch Manager"
-              ? "Zonal Manager"
-              : values?.role === "Zonal Manager"
-                ? "Regional Manager"
-                : values?.role === "Regional Manager"
-                  ? "Territory Manager"
-                  : "",
+        values?.role === 'Hr' || values?.role === 'Admin'
+          ? 'National Manager'
+          : values?.role === 'National Manager'
+          ? 'Branch Manager'
+          : values?.role === 'Branch Manager'
+          ? 'Zonal Manager'
+          : values?.role === 'Zonal Manager'
+          ? 'Regional Manager'
+          : values?.role === 'Regional Manager'
+          ? 'Territory Manager'
+          : '',
       parentId: values?.parentId,
     };
-
 
     const result = await apiput(`/api/users`, data);
 
@@ -97,8 +93,6 @@ const Edit = (props) => {
     }
   }
 
-
-
   const formik = useFormik({
     initialValues,
     // validationSchema,
@@ -113,8 +107,6 @@ const Edit = (props) => {
         parentId: values.parentId,
         modifiedAt: new Date(),
       };
-
-
       EditUser(userData);
       fetchdatas();
     },
@@ -122,21 +114,33 @@ const Edit = (props) => {
 
   useEffect(() => {
     fetch();
-    fetchdatas()
+    fetchdatas();
   }, []);
 
-
-  const hr = alluser?.filter(user => { return user?.role === "Hr" });
-  const admin = alluser?.filter(user => { return user?.role === "Admin" });
-  const nationalManager = alluser?.filter(user => { return user?.role === "National Manager" });
-  const branchManager = alluser?.filter(user => { return user?.role === "Branch Manager" });
-  const zonalManager = alluser?.filter(user => { return user?.role === "Zonal Manager" });
-  const regionalManager = alluser?.filter(user => { return user?.role === "Regional Manager" });
-  const territoryManager = alluser?.filter(user => { return user?.role === "Territory Manager" });
+  const hr = alluser?.filter((user) => {
+    return user?.role === 'Hr';
+  });
+  const admin = alluser?.filter((user) => {
+    return user?.role === 'Admin';
+  });
+  const nationalManager = alluser?.filter((user) => {
+    return user?.role === 'National Manager';
+  });
+  const branchManager = alluser?.filter((user) => {
+    return user?.role === 'Branch Manager';
+  });
+  const zonalManager = alluser?.filter((user) => {
+    return user?.role === 'Zonal Manager';
+  });
+  const regionalManager = alluser?.filter((user) => {
+    return user?.role === 'Regional Manager';
+  });
+  const territoryManager = alluser?.filter((user) => {
+    return user?.role === 'Territory Manager';
+  });
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    console.log("file",file);
     if (file) {
       // Read the selected file and set it in state.
       const reader = new FileReader();
@@ -172,11 +176,18 @@ const Edit = (props) => {
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
                 <Box style={{ textAlign: 'center' }}>
-                  {selectedFile ?
-                    <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                    :
-                    <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                  }
+                  {selectedFile ? (
+                    <Avatar
+                      alt="Avatar"
+                      src={selectedFile}
+                      sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                    />
+                  ) : (
+                    <img
+                      src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
+                      style={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                    />
+                  )}
                   <Typography variant="h6">Upload Avatar</Typography>
                   <TextField
                     accept="image/*"
@@ -272,52 +283,49 @@ const Edit = (props) => {
                     error={formik.touched.parentId && Boolean(formik.errors.parentId)}
                     helperText={formik.touched.parentId && formik.errors.parentId}
                   >
-                    {
-                      formik.values.role === "Hr"
-                        ? hr.map((item) => (
+                    {formik.values.role === 'Hr'
+                      ? hr.map((item) => (
                           <MenuItem key={item?._id} value={item?._id}>
                             {`${item?.firstName} ${item?.lastName}`}
                           </MenuItem>
                         ))
-                        : formik.values.role === "Admin"
-                          ? admin.map((item) => (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          ))
-                          : formik.values.role === "National Manager"
-                            ? nationalManager.map((item) => (
-                              <MenuItem key={item?._id} value={item?._id}>
-                                {`${item?.firstName} ${item?.lastName}`}
-                              </MenuItem>
-                            ))
-                            : formik.values.role === "Branch Manager"
-                              ? branchManager.map((item) => (
-                                <MenuItem key={item?._id} value={item?._id}>
-                                  {`${item?.firstName} ${item?.lastName}`}
-                                </MenuItem>
-                              ))
-                              : formik.values.role === "Zonal Manager"
-                                ? zonalManager.map((item) => (
-                                  <MenuItem key={item?._id} value={item?._id}>
-                                    {`${item?.firstName} ${item?.lastName}`}
-                                  </MenuItem>
-                                ))
-                                : formik.values.role === "Regional Manager"
-                                  ? regionalManager.map((item) => (
-                                    <MenuItem key={item?._id} value={item?._id}>
-                                      {`${item?.firstName} ${item?.lastName}`}
-                                    </MenuItem>
-                                  ))
-                                  : formik.values.role === "Territory Manager"
-                                    ? territoryManager.map((item) => (
-                                      <MenuItem key={item?._id} value={item?._id}>
-                                        {`${item?.firstName} ${item?.lastName}`}
-                                      </MenuItem>
-                                    ))
-                                    : null
-                    }
-
+                      : formik.values.role === 'Admin'
+                      ? admin.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : formik.values.role === 'National Manager'
+                      ? nationalManager.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : formik.values.role === 'Branch Manager'
+                      ? branchManager.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : formik.values.role === 'Zonal Manager'
+                      ? zonalManager.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : formik.values.role === 'Regional Manager'
+                      ? regionalManager.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : formik.values.role === 'Territory Manager'
+                      ? territoryManager.map((item) => (
+                          <MenuItem key={item?._id} value={item?._id}>
+                            {`${item?.firstName} ${item?.lastName}`}
+                          </MenuItem>
+                        ))
+                      : null}
                   </Select>
                 </FormControl>
               </Grid>

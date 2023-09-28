@@ -79,12 +79,12 @@ export const Hierarchy = () => {
 
   // hierarchy
   function findNodeById(id, data) {
-    const item = data.find((item) => item._id === id);
+    const item = data?.find((item) => item._id === id);
     if (!item) {
       return null;
     }
 
-    const children = data.filter((child) => child.parentId === id);
+    const children = data?.filter((child) => child.parentId === id);
     const childNodes = children.map((child) => findNodeById(child._id, data)).filter(Boolean);
 
     return {
