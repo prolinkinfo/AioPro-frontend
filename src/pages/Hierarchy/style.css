@@ -18,9 +18,10 @@
   background: white;
 }
 
-.react-flow__panel > a {
+.react-flow__panel>a {
   display: none !important;
 }
+
 .react-flow__node {
   /* font-size: 15px !important; */
   border: none;
@@ -33,4 +34,23 @@
   box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
   /* width: 100px !important; */
   /* line-height: 180%; */
+}
+
+.react-flow__edge-text {
+  font-size: 10px !important;
+  width: 60px;
+  text-transform: capitalize;
+}
+
+.react-flow__edge {
+  stroke-dasharray: 14 !important;
+  text-transform: capitalize;
+}
+
+.react-flow__node-default {
+  text-transform: capitalize;
+}
+
+.react-flow__node-default:hover {
+  border: 2px solid rgb(8, 8, 8) !important;
 }

@@ -145,6 +145,7 @@ export const Hierarchy = () => {
     setEdgesValue(newEdges);
   }, [data]);
 
+  
   return (
     <>
       <Edit isOpenModel={isOpen} handleCloseModel={handleCloseModel} id={editId} />
@@ -157,6 +158,7 @@ export const Hierarchy = () => {
         onNodeDoubleClick={handleNodeDoubleClick}
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
+        style={{backgroundColor:"#e8ebee"}}
       />
     </>
   );
