@@ -27,7 +27,7 @@ const View = () => {
     const navigate = useNavigate()
     const params = useParams()
 
-    const userdata = JSON.parse(localStorage.getItem('user'));
+    const userId = JSON.parse(localStorage.getItem('user'));
 
     // open add model
     const handleOpenAdd = () => setOpenAdd(true);
@@ -96,17 +96,26 @@ const View = () => {
                 </Grid>
 
                 <Box sx={{ width: '100%' }}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: "0px" }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="General" {...a11yProps(0)} />
-                            <Tab label="Security" {...a11yProps(1)} />
-                        </Tabs>
-                    </Box>
+                    {
+                        userId?.id === userDetails?._id ?
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: "0px" }}>
+                                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                                    <Tab label="General" {...a11yProps(0)} />
+                                    <Tab label="Security" {...a11yProps(1)} />
+                                </Tabs>
+                            </Box>
+                            :
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: "0px" }}>
+                                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                                    <Tab label="General" {...a11yProps(0)} />
+                                </Tabs>
+                            </Box>
+                    }
                     <CustomTabPanel value={value} index={0}>
                         <General />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <Security email={userDetails?.email} />
+                        <Security />
                     </CustomTabPanel>
                 </Box>
             </Container>

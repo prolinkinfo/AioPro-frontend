@@ -2,12 +2,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/prop-types */
-import { Avatar, Box, Button, Card, FormControl, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, FormControl, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-    import * as yup from 'yup';
+import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useParams } from 'react-router-dom';
 import { CopyAllOutlined, Label } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 import Palette from '../../theme/palette';
 import { allusers, apiget, apiput, getsingleuser } from '../../service/api';
 
@@ -16,8 +17,19 @@ const General = () => {
   const [alluser, setAllUser] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [userDetails, setUserDetails] = useState({});
-  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = JSON.parse(localStorage.getItem('user'));
   const { id } = useParams();
+
+  // -----------  validationSchema
+  const validationSchema = yup.object({
+    firstName: yup.string().required('Frist Name is required'),
+    lastName: yup.string().required('Last Name is required'),
+    phoneNumber: yup.string().matches(/^[0-9]{10}$/, 'Phone number is invalid'),
+    zipCode: yup.string().matches(/^[0-6]{6}$/, 'Zip Code is invalid'),
+    parentId: yup.string().required('Manager is required'),
+    role: yup.string().required('Role is required'),
+  });
+
 
   // -----------   initialValues
   const initialValues = {
@@ -25,20 +37,20 @@ const General = () => {
     firstName: userDetails?.firstName,
     lastName: userDetails?.lastName,
     email: userDetails?.email,
-    phoneNumber: userDetails?.phoneNumber,
-    address: userDetails?.address,
-    country: userDetails?.country,
-    state: userDetails?.state,
-    city: userDetails?.city,
-    zipCode: userDetails?.zipCode,
+    phoneNumber: userDetails?.phoneNumber ? userDetails?.phoneNumber : "",
+    address: userDetails?.address ? userDetails?.address : "",
+    country: userDetails?.country ? userDetails?.country : "",
+    state: userDetails?.state ? userDetails?.state : "",
+    city: userDetails?.city ? userDetails?.city : "",
+    zipCode: userDetails?.zipCode ? userDetails?.zipCode : "",
     role: userDetails?.role,
-    about: userDetails?.about,
+    about: userDetails?.about ? userDetails?.about : "",
     parentId: ""
   };
-  console.log(userDetails?.role, "userDetails?.role")
+
   const formik = useFormik({
     initialValues,
-    // validationSchema,
+    validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
       EditUser(values);
@@ -61,17 +73,7 @@ const General = () => {
     data.append("state", values?.state)
     data.append("city", values?.city)
     data.append("zipCode", values?.zipCode)
-    data.append("role", values?.role === "Hr" || values?.role === "Admin"
-      ? "National Manager"
-      : values?.role === "National Manager"
-        ? "Branch Manager"
-        : values?.role === "Branch Manager"
-          ? "Zonal Manager"
-          : values?.role === "Zonal Manager"
-            ? "Regional Manager"
-            : values?.role === "Regional Manager"
-              ? "Territory Manager"
-              : "",)
+    data.append("role", values?.role)
     data.append("parentId", values?.parentId)
     data.append("about", values?.about)
 
@@ -112,7 +114,7 @@ const General = () => {
       setAllUser(result?.data);
     }
   }
-  console.log(userDetails?.firstName)
+
   const admin = alluser?.filter(user => user?.role === "Admin");
   const hr = alluser?.filter(user => user?.role === "Hr");
   const nationalManager = alluser?.filter(user => user?.role === "National Manager");
@@ -120,6 +122,17 @@ const General = () => {
   const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
   const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
   const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
+
+  const copyEmployeId = () => {
+    const employeIdText = document.getElementById('box').innerText;
+    const tempInput = document.createElement('input');
+    tempInput.value = employeIdText;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    alert(`Copied to clipboard: ${employeIdText}`);
+  }
 
 
   useEffect(() => {
@@ -148,17 +161,18 @@ const General = () => {
                   id="avatar-upload"
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
+                  disabled={userId?.id !== userDetails?._id}
                 />
                 <label htmlFor="avatar-upload">
-                  <Button component="span" variant="outlined" color="primary" style={{ marginTop: "20px" }}>
+                  <Button component="span" variant="outlined" color="primary" style={{ marginTop: "20px" }} disabled={userId?.id !== userDetails?._id}>
                     Upload
                   </Button>
                 </label>
-                <Button component="span" variant="outlined" color="error" style={{ marginTop: "20px", marginLeft: "10px" }} onClick={clear}>
+                <Button component="span" variant="outlined" color="error" style={{ marginTop: "20px", marginLeft: "10px" }} onClick={clear} disabled={userId?.id !== userDetails?._id}>
                   Clear
                 </Button>
                 <div style={{ marginTop: "25px" }}>
-                  EmployeId : {userDetails?.employeId} <CopyAllOutlined />
+                  EmployeId :  <Tooltip title="DoubleClick to Copy" arrow> <span id='box' style={{ cursor: "pointer" }} onDoubleClick={copyEmployeId}>{userDetails?.employeId}</span>{userDetails?.employeId ? <CopyAllOutlined onDoubleClick={copyEmployeId} style={{ cursor: "pointer" }} /> : ' N/A'} </Tooltip>
                 </div>
               </Box>
             </Card>
@@ -172,11 +186,12 @@ const General = () => {
                     id="firstName"
                     name="firstName"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                    helperText={formik.touched.firstName && formik.errors.firstName}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -185,11 +200,12 @@ const General = () => {
                     id="lastName"
                     name="lastName"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+                    helperText={formik.touched.lastName && formik.errors.lastName}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -202,8 +218,8 @@ const General = () => {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -212,11 +228,12 @@ const General = () => {
                     id="phoneNumber"
                     name="phoneNumber"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.phoneNumber}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                    helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -225,11 +242,12 @@ const General = () => {
                     id="address"
                     name="address"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.address}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.address && Boolean(formik.errors.address)}
+                    helperText={formik.touched.address && formik.errors.address}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -238,11 +256,12 @@ const General = () => {
                     id="country"
                     name="country"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.country}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.country && Boolean(formik.errors.country)}
+                    helperText={formik.touched.country && formik.errors.country}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
@@ -251,11 +270,12 @@ const General = () => {
                     id="state"
                     name="state"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.state}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.state && Boolean(formik.errors.state)}
+                    helperText={formik.touched.state && formik.errors.state}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
@@ -264,11 +284,12 @@ const General = () => {
                     id="city"
                     name="city"
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.city}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.city && Boolean(formik.errors.city)}
+                    helperText={formik.touched.city && formik.errors.city}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={4}>
@@ -276,12 +297,14 @@ const General = () => {
                   <TextField
                     id="zipCode"
                     name="zipCode"
+                    type='number'
                     size='small'
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.zipCode}
                     onChange={formik.handleChange}
                     fullWidth
-                  // error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                  // helperText={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.zipCode && Boolean(formik.errors.zipCode)}
+                    helperText={formik.touched.zipCode && formik.errors.zipCode}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -294,6 +317,7 @@ const General = () => {
                       value={formik.values.role || null}
                       size='small'
                       fullWidth
+                      disabled={userId?.id !== userDetails?._id}
                       onChange={formik.handleChange}
                       error={
                         formik.touched.role &&
@@ -324,6 +348,7 @@ const General = () => {
                       fullWidth
                       value={formik.values.parentId}
                       onChange={formik.handleChange}
+                      disabled={userId?.id !== userDetails?._id}
                       style={{ textTransform: "capitalize" }}
                       error={
                         formik.touched.parentId &&
@@ -333,58 +358,56 @@ const General = () => {
                         formik.touched.parentId && formik.errors.parentId
                       }
                     >
-                      {
-                        formik?.values?.role === "Hr" ?
-                          hr?.map((item) => {
+                      {formik?.values?.role === 'Hr'
+                        ? hr?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                        : formik?.values?.role === 'National Manager'
+                          ? admin?.map((item) => {
                             return (
                               <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
                                 {`${item?.firstName} ${item?.lastName}`}
                               </MenuItem>
                             );
-                          }) : formik?.values?.role === "Admin" ?
-                            admin?.map((item) => {
+                          })
+                          : formik?.values?.role === 'Branch Manager'
+                            ? nationalManager?.map((item) => {
                               return (
                                 <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
                                   {`${item?.firstName} ${item?.lastName}`}
                                 </MenuItem>
                               );
-                            }) : formik?.values?.role === "National Manager" ?
-                              nationalManager?.map((item) => {
+                            })
+                            : formik?.values?.role === 'Zonal Manager'
+                              ? branchManager?.map((item) => {
                                 return (
                                   <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
                                     {`${item?.firstName} ${item?.lastName}`}
                                   </MenuItem>
                                 );
-                              }) : formik?.values?.role === "Branch Manager" ?
-                                branchManager?.map((item) => {
+                              })
+                              : formik?.values?.role === 'Regional Manager'
+                                ? zonalManager?.map((item) => {
                                   return (
                                     <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
                                       {`${item?.firstName} ${item?.lastName}`}
                                     </MenuItem>
                                   );
-                                }) : formik?.values?.role === "Zonal Manager" ?
-                                  zonalManager?.map((item) => {
+                                })
+                                : formik?.values?.role === 'Territory Manager'
+                                  ? regionalManager?.map((item) => {
                                     return (
                                       <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
                                         {`${item?.firstName} ${item?.lastName}`}
                                       </MenuItem>
                                     );
-                                  }) : formik?.values?.role === "Regional Manager" ?
-                                    regionalManager?.map((item) => {
-                                      return (
-                                        <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
-                                          {`${item?.firstName} ${item?.lastName}`}
-                                        </MenuItem>
-                                      );
-                                    }) : formik?.values?.role === "Territory Manager" ?
-                                      territoryManager?.map((item) => {
-                                        return (
-                                          <MenuItem key={item?._id} value={item?._id} style={{ textTransform: "capitalize" }}>
-                                            {`${item?.firstName} ${item?.lastName}`}
-                                          </MenuItem>
-                                        );
-                                      }) : ""
-                      }
+                                  })
+                                  : ''}
+
                     </Select>
                     <FormHelperText style={{ color: Palette.error.main }}>{formik.touched.parentId && formik.errors.parentId}</FormHelperText>
                   </FormControl>
@@ -397,13 +420,14 @@ const General = () => {
                     size='small'
                     multiline
                     rows={4}
+                    disabled={userId?.id !== userDetails?._id}
                     value={formik.values.about}
                     onChange={formik.handleChange}
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} textAlign={"right"}>
-                  <Button variant='contained' onClick={formik.handleSubmit}>Save Changes</Button>
+                  <Button variant='contained' onClick={formik.handleSubmit} disabled={userId?.id !== userDetails?._id}>Save Changes</Button>
                 </Grid>
               </Grid>
             </Card>

@@ -1,9 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable arrow-body-style */
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prefer-const */
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -19,7 +13,6 @@ import * as yup from 'yup';
 import { Avatar, Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import { useEffect, useState } from 'react';
-
 import { allusers, apiget, apiput } from '../../service/api';
 // import { FiSave } from "react-icons/fi";
 // import { GiCancel } from "react-icons/gi";
@@ -64,18 +57,7 @@ const Edit = (props) => {
       firstName: values?.firstName,
       lastName: values?.lastName,
       email: values?.emailAddress,
-      role:
-        values?.role === 'Hr' || values?.role === 'Admin'
-          ? 'National Manager'
-          : values?.role === 'National Manager'
-          ? 'Branch Manager'
-          : values?.role === 'Branch Manager'
-          ? 'Zonal Manager'
-          : values?.role === 'Zonal Manager'
-          ? 'Regional Manager'
-          : values?.role === 'Regional Manager'
-          ? 'Territory Manager'
-          : '',
+      role: values?.role,
       parentId: values?.parentId,
     };
 
@@ -283,49 +265,55 @@ const Edit = (props) => {
                     error={formik.touched.parentId && Boolean(formik.errors.parentId)}
                     helperText={formik.touched.parentId && formik.errors.parentId}
                   >
-                    {formik.values.role === 'Hr'
-                      ? hr.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'Admin'
-                      ? admin.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'National Manager'
-                      ? nationalManager.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'Branch Manager'
-                      ? branchManager.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'Zonal Manager'
-                      ? zonalManager.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'Regional Manager'
-                      ? regionalManager.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : formik.values.role === 'Territory Manager'
-                      ? territoryManager.map((item) => (
-                          <MenuItem key={item?._id} value={item?._id}>
-                            {`${item?.firstName} ${item?.lastName}`}
-                          </MenuItem>
-                        ))
-                      : null}
+                    {formik?.values?.role === 'Hr'
+                      ? hr?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'National Manager'
+                      ? admin?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Branch Manager'
+                      ? nationalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Zonal Manager'
+                      ? branchManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Regional Manager'
+                      ? zonalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Territory Manager'
+                      ? regionalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : ''}
                   </Select>
                 </FormControl>
               </Grid>
