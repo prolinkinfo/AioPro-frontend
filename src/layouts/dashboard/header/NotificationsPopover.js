@@ -21,6 +21,7 @@ import {
   ListItemButton,
 } from '@mui/material';
 // utils
+import { Link } from 'react-router-dom';
 import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/iconify';
@@ -154,7 +155,7 @@ export default function NotificationsPopover() {
           <List
             disablePadding
             subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline', textAlign: "center",textTransform:"capitalize" }}>
+              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline', textAlign: "center", textTransform: "capitalize" }}>
                 {
                   notification?.length > 0 ? "" : 'No Notification Found'
                 }
@@ -170,8 +171,8 @@ export default function NotificationsPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            View All
+          <Button fullWidth disableRipple onClick={handleClose}>
+            <Link to={"/dashboard/notification"} style={{textDecoration:"none"}}>View All</Link>
           </Button>
         </Box>
       </Popover>
@@ -209,10 +210,10 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
     const data = {
       _id: meetingData?._id,
       status: "deActive",
-      createdBy:meetingData?.approvalBy,
-      approvalBy:meetingData?.createdBy?._id
+      createdBy: meetingData?.approvalBy,
+      approvalBy: meetingData?.createdBy?._id
     };
-    console.log("data---------------",data);
+    console.log("data---------------", data);
     const result = await apiput(`/api/notification`, data);
     if (result && result.status === 200) {
       handleCloseModel();
@@ -221,13 +222,13 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
     }
   };
 
-  console.log("meetingData",meetingData);
+  console.log("meetingData", meetingData);
   const handleClick = (data) => {
     setMeetingData(data)
     handleOpenModel();
   }
 
-  
+
 
   return (
     <>
@@ -251,7 +252,7 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
         }
         <ListItemText
           primary={`${notification?.createdBy?.firstName} (${notification?.createdBy?.role}) create a new meeting`}
-          style={{textTransform:"capitalize"}}
+          style={{ textTransform: "capitalize" }}
           secondary={
             <Typography
               variant="caption"
