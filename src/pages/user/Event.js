@@ -1,4 +1,3 @@
-
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -22,12 +21,13 @@ const Event = () => {
   const [openViewEdit, setOpenViewEdit] = useState(false);
   const [meetingList, setMeetingList] = useState([]);
   const [dataByMeetingId, setDataByMeetingId] = useState(null);
-  const [meetingsId, setMeetingsId] = useState('')
+  const [currLocation, setCurrLocation] = useState({});
+  const [meetingsId, setMeetingsId] = useState('');
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [eventView, setEventView] = useState(false);
 
-  const userId = JSON.parse(localStorage.getItem('user'))
+  const userId = JSON.parse(localStorage.getItem('user'));
 
   const getuser = async () => {
     const result = await getsingleuser(`/api/users`, id);
@@ -38,7 +38,6 @@ const Event = () => {
     getuser();
   }, [id]);
 
-
   // open meeting model
   const handleOpenMeeting = () => setOpenMeeting(true);
   const handleCloseMeeting = () => setOpenMeeting(false);
@@ -46,16 +45,15 @@ const Event = () => {
   const fetchApByMeetingd = async (meetingId) => {
     if (meetingId) {
       const result = await apiget(`/api/meeting/${meetingId}`);
-      if (result?.statusText === "OK") {
-        setDataByMeetingId(result?.data)
+      if (result?.statusText === 'OK') {
+        setDataByMeetingId(result?.data);
       }
     }
-
   };
   const handleOpenViewEdit = (meetingId) => {
-    fetchApByMeetingd(meetingId)
-    setOpenViewEdit(true)
-    setMeetingsId(meetingId)
+    fetchApByMeetingd(meetingId);
+    setOpenViewEdit(true);
+    setMeetingsId(meetingId);
   };
   const handleCloseViewEdit = () => setOpenViewEdit(false);
 
@@ -68,9 +66,30 @@ const Event = () => {
     }
   };
 
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.log(position);
+      const { latitude, longitude } = position.coords;
+      setCurrLocation({ latitude, longitude });
+    });
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   const renderEventContent = (eventInfo) => (
-    <div style={{ background: eventInfo.event.extendedProps.status === "not verified" ? "#e9a2a2" : "#68af68", width: "100%", height: "35px",display:"flex",justifyContent:"center", alignItems:"center",borderRadius:"10px" }}>
+    <div
+      style={{
+        background: eventInfo.event.extendedProps.status === 'not verified' ? '#e9a2a2' : '#68af68',
+        width: '100%',
+        height: '35px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '10px',
+      }}
+    >
       {/* <p>{eventInfo.event.extendedProps.icon}</p> */}
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
@@ -83,15 +102,20 @@ const Event = () => {
 
   const fetchApiMeeting = async () => {
     const result = await apiget(`/api/meeting/?createdBy=${id}`);
-    if (result?.statusText === "OK") {
-      const meetingData = result?.data?.map(item => ({
+    if (result?.statusText === 'OK') {
+      const meetingData = result?.data?.map((item) => ({
         _id: item._id,
         title: item.subject,
         start: item.startDate,
         status: item.status,
-        icon: item.status === 'not verified' ? <CircleIcon style={{ color: "red", fontSize: "15px" }} /> : <CircleIcon style={{ color: "green", fontSize: "15px" }} />
+        icon:
+          item.status === 'not verified' ? (
+            <CircleIcon style={{ color: 'red', fontSize: '15px' }} />
+          ) : (
+            <CircleIcon style={{ color: 'green', fontSize: '15px' }} />
+          ),
       }));
-      setMeetingList(meetingData)
+      setMeetingList(meetingData);
     }
   };
 
@@ -99,11 +123,8 @@ const Event = () => {
     fetchApiMeeting();
   }, []);
 
-
-
   return (
     <div>
-
       {/* Add Meeting Model */}
       <AddMeeting
         open={openMeeting}
@@ -114,22 +135,26 @@ const Event = () => {
         id={id}
       />
 
-      <EditMeeting isOpen={eventView} handleCloseevent={handleCloseevent} dataByMeetingId={dataByMeetingId} fetchApiMeeting={fetchApiMeeting} setUserAction={setUserAction} meetingsId={meetingsId} />
+      <EditMeeting
+        isOpen={eventView}
+        handleCloseevent={handleCloseevent}
+        dataByMeetingId={dataByMeetingId}
+        fetchApiMeeting={fetchApiMeeting}
+        setUserAction={setUserAction}
+        meetingsId={meetingsId}
+      />
 
       <Container maxWidth="xl">
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={"space-between"}>
-          <Typography variant="h4" >
-            Calendar
-          </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-            {
-              userId?.id === id ?
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenMeeting}>
-                  New Meeting
-                </Button>
-                :
-                ""
-            }
+        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
+          <Typography variant="h4">Calendar</Typography>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
+            {userId?.id === id ? (
+              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenMeeting}>
+                New Meeting
+              </Button>
+            ) : (
+              ''
+            )}
           </Stack>
         </Stack>
         <FullCalendar
