@@ -69,7 +69,7 @@ export const apipost = async (path, data) => {
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
-          console.log(error.response.data,"error.response.data")
+          console.log(error.response.data, "error.response.data")
           // return error?.response?.data;
           // toast.error(error.response.data.message);
         }
@@ -87,7 +87,7 @@ export const adduser = async (path, data) => {
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 400) {
         if (error.response.data) {
-          console.log(error.response.data,"error.response.data")
+          console.log(error.response.data, "error.response.data")
           return error?.response?.data;
           // toast.error(error.response.data.message);
         }
@@ -140,19 +140,20 @@ export const apidelete = async (path, data) => {
 
 export const deleteManyApi = async (path, data) => {
   try {
+    console.log(data)
     const response = await axios.post(constant.baseUrl + path, data, {
-      headers: {
-        Authorization: localStorage.getItem('token'),
-      },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+
     });
     if (response.data.token && response.data.token !== null) {
-      localStorage.setItem('token', response?.data?.token);
+      localStorage.setItem('token', response?.data?.token)
     }
 
     if (response && response.status === 200) {
       toast.success(response.data.message);
     }
     return response;
+
   } catch (error) {
     if (error && error.response) {
       if (error && error.response.data && error.response.status === 401) {
@@ -188,11 +189,11 @@ export const allusers = async (path) => {
   }
 };
 
-export const addmeeting= async (path, data) => {
+export const addmeeting = async (path, data) => {
   try {
     const response = await axios.post(constant.baseUrl + path, data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+
     });
     if (response.data.token && response.data.token !== null) {
       localStorage.setItem('token', response?.data?.token)
@@ -220,7 +221,7 @@ export const addmeeting= async (path, data) => {
 export const getmeeting = async (path) => {
   try {
     const response = await axios.get(constant.baseUrl + path, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     if (response.data.token && response.data.token !== null) {
       localStorage.setItem('token', response?.data?.token);
@@ -260,8 +261,8 @@ export const getsingleuser = async (path, data) => {
 };
 
 
-export const deletemeetingApi=async(path)=>{
-   try {
+export const deletemeetingApi = async (path) => {
+  try {
     const response = await axios.delete(constant.baseUrl + path, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
@@ -277,7 +278,7 @@ export const deletemeetingApi=async(path)=>{
   }
 }
 
-export const apieditmeeting=async(path,data)=>{
+export const apieditmeeting = async (path, data) => {
   try {
     const response = await axios.put(constant.baseUrl + path, data, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -303,7 +304,7 @@ export const apieditmeeting=async(path,data)=>{
 
 
 
-export const singleuser = async (path,data) => {
+export const singleuser = async (path, data) => {
   try {
     const response = await axios.get(`${constant.baseUrl + path}/${data}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -327,8 +328,8 @@ export const singleuser = async (path,data) => {
   }
 };
 
-export const deleteManymeeting=async(path,data)=>{
-try {
+export const deleteManymeeting = async (path, data) => {
+  try {
     const response = await axios.delete(constant.baseUrl + path, data, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });

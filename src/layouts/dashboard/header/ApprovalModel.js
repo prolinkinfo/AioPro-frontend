@@ -5,7 +5,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import moment from 'moment';
 import { apieditmeeting, getmeeting, apiput } from '../../../service/api';
 
-const ApprovalModel = ({ open, handleClose, meetingData, editNotification }) => {
+const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notification }) => {
   const fetchdata = async () => {
     const result = await getmeeting('/api/meeting');
   };
@@ -15,20 +15,6 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification }) => 
       _id: id,
       status: 'verified',
     };
-
-    if (meetingData.type === 'user_update') {
-      const data = {
-        id: meetingData?.data?._id,
-        role: meetingData?.data?.role,
-        parentId: meetingData?.data?.parentId,
-      };
-      const result = await apiput(`/api/users`, data);
-      if (result && result.status === 200) {
-        editNotification();
-        fetchdata();
-        handleClose();
-      }
-    }
     const result = await apieditmeeting(`/api/meeting`, data);
     if (result && result.status === 200) {
       editNotification();
@@ -37,6 +23,26 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification }) => 
     }
   };
 
+  console.log("meetingData",meetingData);
+
+  
+  const userEdit = async (notification) => {
+    const data = {
+      _id: notification?.data?.id,
+      role: notification?.role,
+      parentId: notification?.data?.parentId
+    };
+    const result = await apiput(`/api/users/update`, data);
+    console.log(result,"data")
+
+    if (result && result.status === 200) {
+
+      editNotification();
+      fetchdata();
+      handleClose();
+    }
+  };
+ 
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -47,7 +53,7 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification }) => 
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Meeting Approval</Typography>
+          <Typography variant="h6">{notification.type === "user_update" ? "User Position Change Approval" : "Meeting Approval"}</Typography>
           {/* <Typography>
                         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
                     </Typography> */}
