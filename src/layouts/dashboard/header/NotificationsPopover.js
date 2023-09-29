@@ -121,6 +121,8 @@ export default function NotificationsPopover() {
     notificationApi();
   }, []);
 
+  console.log(notification, "notification")
+
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
@@ -172,7 +174,7 @@ export default function NotificationsPopover() {
 
         <Box sx={{ p: 1 }}>
           <Button fullWidth disableRipple onClick={handleClose}>
-            <Link to={"/dashboard/notification"} style={{textDecoration:"none"}}>View All</Link>
+            <Link to={"/dashboard/notification"} style={{ textDecoration: "none" }}>View All</Link>
           </Button>
         </Box>
       </Popover>
@@ -210,11 +212,25 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
     const data = {
       _id: meetingData?._id,
       status: "deActive",
-      createdBy: meetingData?.approvalBy,
-      approvalBy: meetingData?.createdBy?._id
+      createdBy: meetingData?.createdBy?._id,
+      approvalBy: meetingData?.approvalBy
     };
-    console.log("data---------------", data);
     const result = await apiput(`/api/notification`, data);
+    if (result && result.status === 200) {
+      handleCloseModel();
+      notificationApi();
+      handleClose();
+    }
+  }
+
+
+
+  const editNotificationApproval = async () => {
+    const data = {
+      _id: meetingData?._id,
+      status: "deActive",
+    };
+    const result = await apiput(`/api/notification/approvel`, data);
     if (result && result.status === 200) {
       handleCloseModel();
       notificationApi();
@@ -222,17 +238,19 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
     }
   };
 
-  console.log("meetingData", meetingData);
   const handleClick = (data) => {
     setMeetingData(data)
     handleOpenModel();
   }
 
-
+console.log(meetingData,"meetingData")
 
   return (
     <>
-      <ApprovalModel open={isOpen} handleClose={handleCloseModel} meetingData={meetingData} editNotification={editNotification} />
+      {
+        meetingData?.type !== "meeting_approvel" &&
+        <ApprovalModel open={isOpen} handleClose={handleCloseModel} meetingData={meetingData} editNotification={editNotification} notification={notification} />
+      }
       <ListItemButton
         sx={{
           py: 1.5,
@@ -242,7 +260,13 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
             bgcolor: 'action.selected',
           }),
         }}
-        onClick={() => handleClick(notification)}
+        onClick={() => {
+          if (meetingData?.type === "meeting_approvel") {
+            editNotificationApproval();
+          } else {
+            handleClick(notification);
+          }
+        }}
       >
         <ListItemAvatar>
           <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
@@ -251,7 +275,7 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
 
         }
         <ListItemText
-          primary={`${notification?.createdBy?.firstName} (${notification?.createdBy?.role}) create a new meeting`}
+          primary={notification?.data?.message}
           style={{ textTransform: "capitalize" }}
           secondary={
             <Typography
@@ -268,7 +292,7 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
             </Typography>
           }
         />
-      </ListItemButton>
+      </ListItemButton >
     </>
   );
 }
