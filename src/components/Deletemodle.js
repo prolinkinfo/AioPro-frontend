@@ -52,7 +52,7 @@ BootstrapDeleteModel.propTypes = {
 export default function CustomizedDialogs(props) {
   // eslint-disable-next-line react/prop-types
   const {isOpenDeleteModel,handleCloseDeleteModel,deleteData,id } = props;
-
+console.log(id)
   const Delete =()=>{
     deleteData(id)
   }
