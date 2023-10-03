@@ -27,6 +27,7 @@ import ViewEmailTemplate from './pages/settings/View';
 import { Hierarchy } from './pages/Hierarchy/hierarchy';
 import Notification from './layouts/dashboard/header/Notification';
 import Location from './pages/location';
+import Opd from './pages/opd/Opd'
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -60,6 +61,7 @@ export default function Router() {
         { path: 'hierarchy/:id', element: <Hierarchy /> },
         { path: 'notification', element: <Notification /> },
         { path: 'location', element: <Location /> },
+        { path: 'opdcapmreport', element: <Opd /> },
       ],
     },
     {

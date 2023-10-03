@@ -64,7 +64,7 @@ const navConfig = [
   {
     title: 'Opd Camp Report',
     path: '/dashboard/opdcapmreport',
-    icon: icon('ic_user'),
+    icon: icon('ic_opd'),
   },
 ];
 
