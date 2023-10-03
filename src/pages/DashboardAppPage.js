@@ -19,40 +19,78 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
-import { apiget } from '../service/api';
+import { allusers, apiget } from '../service/api';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
 
+  const [allUserList, setAllUserList] = useState([])
+  const [opdList, setOpdList] = useState([])
+  const [meetingList, setMeetingList] = useState([])
+
   const user = JSON.parse(localStorage.getItem('user'));
+
+  async function fetchUserData() {
+    const result = await apiget('/api/users');
+    if (result && result.status === 200) {
+      const filter = result?.data?.filter((user) => user?.role !== "Dr")
+      setAllUserList(filter)
+    }
+  }
+
+  async function fetchOpdData() {
+    const result = await apiget('/api/opd');
+    if (result && result.status === 200) {
+      setOpdList(result?.data)
+    }
+  }
+
+  async function fetchMeetingData() {
+    const result = await apiget(`/api/meeting/?createdBy=${user?.id}`);
+    if (result && result.status === 200) {
+      // Get the current date as a string in "YYYY-MM-DD" format
+      const today = new Date().toISOString().split('T')[0];
+
+      // Filter meetings created today
+      const meetingsCreatedToday = result?.data?.filter(meeting => meeting?.createdOn?.split('T')[0] === today);
+      setMeetingList(meetingsCreatedToday);
+    }
+  }
+  
+  console.log(meetingList, "startDate")
+  useEffect(() => {
+    fetchUserData();
+    fetchOpdData();
+    fetchMeetingData();
+  }, []);
 
   return (
     <>
       <Helmet>{/* <title> Dashboard | Minimal UI </title> */}</Helmet>
 
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 ,textTransform:"capitalize"}}>
+        <Typography variant="h4" sx={{ mb: 5, textTransform: "capitalize" }}>
           Hi, {user?.userName}
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Leads" total={0} icon={'ic:baseline-leaderboard'} />
+            <AppWidgetSummary title="Users" total={allUserList.length} icon={'mdi:users'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary
-              title="Contacts"
-              total={0}
+              title="Opds"
+              total={opdList?.length}
               color="info"
-              icon={'fluent:book-contacts-24-filled'}
+              icon={'healthicons:health'}
             />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Policies" total={0} color="warning" icon={'ic:baseline-policy'} />
+            <AppWidgetSummary title="Today Meetings" total={meetingList?.length} color="warning" icon={'healthicons:group-discussion-meetingx3'} />
           </Grid>
 
           {/* <Grid item xs={12} sm={6} md={3}>
