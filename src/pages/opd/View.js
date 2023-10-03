@@ -18,12 +18,13 @@ import { Autocomplete, Box, Chip, FormControl, FormHelperText, FormLabel, MenuIt
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { useTheme } from '@emotion/react';
-import { apiget, apipost, addmeeting, getsingleuser, allusers } from '../../service/api';
+import { allusers } from '../../service/api';
 
-const Add = (props) => {
-    const { isOpen, handleClose, fetchOpd } = props;
 
+const View = (props) => {
+    const { isOpenView, handleCloseView, opdData } = props;
     const [allUser, setAllUser] = useState([]);
+
     const { id } = JSON.parse(localStorage.getItem('user'));
 
     // -----------  validationSchema
@@ -33,37 +34,19 @@ const Add = (props) => {
     });
 
     const initialValues = {
-        date: '',
-        location: '',
-        doctors: [],
-        notes: '',
+        date: opdData?.date,
+        location: opdData?.location,
+        doctors:opdData?.doctors,
+        notes: opdData?.notes,
         createdBy: id,
-    };
-
-    // add opd api
-    const addOpd = async (values) => {
-        const data = {
-            date: values.date,
-            location: values.location,
-            doctors: values.doctors,
-            notes: values.notes,
-            createdBy: values.createdBy
-        }
-
-        const result = await apipost('/api/opd', data);
-        if (result && result.status === 200) {
-            formik.resetForm();
-            handleClose();
-            fetchOpd();
-        }
     };
 
     // formik
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values, { resetForm }) => {
-            addOpd(values);
             resetForm();
         },
     });
@@ -91,7 +74,7 @@ const Add = (props) => {
 
     return (
         <div>
-            <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+            <Dialog open={isOpenView} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
                 <DialogTitle
                     id="scroll-dialog-title"
                     style={{
@@ -99,9 +82,9 @@ const Add = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Opd </Typography>
+                    <Typography variant="h6">View Opd </Typography>
                     <Typography>
-                        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+                        <ClearIcon onClick={handleCloseView} style={{ cursor: 'pointer' }} />
                     </Typography>
                 </DialogTitle>
 
@@ -116,7 +99,7 @@ const Add = (props) => {
                                         type={'datetime-local'}
                                         size="small"
                                         fullWidth
-                                        value={formik.values.date}
+                                        value={dayjs(formik.values.date).format('YYYY-MM-DD HH:mm')}
                                         onChange={formik.handleChange}
                                         error={formik.touched.date && Boolean(formik.errors.date)}
                                         helperText={formik.touched.date && formik.errors.date}
@@ -138,7 +121,7 @@ const Add = (props) => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12}>
                                     <FormLabel>Doctors</FormLabel>
-                                    <FormControl fullWidth style={{ textTransform: "capitalize" }}>
+                                    <FormControl fullWidth>
                                         <Autocomplete
                                             multiple
                                             size="small"
@@ -153,7 +136,6 @@ const Add = (props) => {
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
-                                                    style={{ textTransform: "capitalize" }}
                                                     error={formik.touched.doctors && Boolean(formik.errors.doctors)}
                                                     helperText={formik.touched.doctors && formik.errors.doctors}
                                                 />
@@ -181,7 +163,7 @@ const Add = (props) => {
                         </DialogContentText>
                     </form>
                 </DialogContent>
-                <DialogActions>
+                {/* <DialogActions>
                     <Button
                         type="submit"
                         variant="contained"
@@ -197,16 +179,16 @@ const Add = (props) => {
                         style={{ textTransform: 'capitalize' }}
                         onClick={() => {
                             formik.resetForm();
-                            handleClose();
+                            handleCloseView();
                         }}
                         color="error"
                     >
                         Cancle
                     </Button>
-                </DialogActions>
+                </DialogActions> */}
             </Dialog>
         </div>
     );
 };
 
-export default Add;
+export default View;

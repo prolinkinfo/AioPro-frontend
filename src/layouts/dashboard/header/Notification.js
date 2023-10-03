@@ -328,8 +328,7 @@ export default function NotificationTable() {
                                 sx={{ background: "#F2F6F8" }}
                                 className='ml-5px'
                             >
-                                <DeleteIcon fontSize="small" onClick={deleteMany}
-                                />
+                                <DeleteIcon fontSize="small" onClick={() => rows.length > 0 && ids.length > 0 && deleteMany()} />
                             </IconButton>
                         </Tooltip>
 

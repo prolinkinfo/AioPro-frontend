@@ -26,7 +26,7 @@ const General = () => {
     lastName: yup.string().required('Last Name is required'),
     phoneNumber: yup.string().matches(/^[0-9]{10}$/, 'Phone number is invalid'),
     zipCode: yup.string().matches(/^[0-6]{6}$/, 'Zip Code is invalid'),
-    parentId: yup.string().required('Manager is required'),
+    // parentId: yup.string().required('Manager is required'),
     role: yup.string().required('Role is required'),
   });
 

@@ -7,7 +7,7 @@ import { apiput } from '../../service/api';
 
 const Security = (props) => {
   const Validations = yup.object({
-    oldPassword: yup.string().required("old Password is required"),
+    oldPassword: yup.string().required("Old Password is required"),
     password: yup
       .string()
       .required('Password is required')
