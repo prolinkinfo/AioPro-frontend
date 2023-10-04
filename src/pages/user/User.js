@@ -176,13 +176,13 @@ const User = () => {
   ];
 
   function findUserById(id, data) {
-    const item = data.find((item) => item._id === id);
+    const item = data?.find((item) => item._id === id);
     if (!item) {
       return null;
     }
 
-    const children = data.filter((child) => child.parentId === id);
-    const childNodes = children.map((child) => findUserById(child._id, data)).filter(Boolean);
+    const children = data?.filter((child) => child?.parentId === id);
+    const childNodes = children?.map((child) => findUserById(child?._id, data)).filter(Boolean);
 
     return {
       id: item._id,

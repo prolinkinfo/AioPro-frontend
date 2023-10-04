@@ -121,11 +121,18 @@ export const apiput = async (path, data) => {
   }
 };
 
-export const apidelete = async (path, data) => {
+export const apidelete = async (path) => {
   try {
-    const response = await axios.delete(`${constant.baseUrl + path}/${data}`, {
+    const response = await axios.delete(constant.baseUrl + path, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
+    if (response.data.token && response.data.token !== null) {
+      localStorage.setItem('token', response?.data?.token)
+    }
+
+    if (response && response.status === 200) {
+      toast.success(response.data.message);
+    }
     return response;
   } catch (error) {
     if (error && error.response) {
@@ -143,7 +150,6 @@ export const deleteManyApi = async (path, data) => {
     console.log(data)
     const response = await axios.post(constant.baseUrl + path, data, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-
     });
     if (response.data.token && response.data.token !== null) {
       localStorage.setItem('token', response?.data?.token)

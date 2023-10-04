@@ -56,15 +56,20 @@ const navConfig = [
     path: '/dashboard/user',
     icon: icon('ic_user'),
   },
-  {
-    title: 'System Settings',
-    path: '/dashboard/settings',
-    icon: icon('ic_user'),
-  },
+  // {
+  //   title: 'System Settings',
+  //   path: '/dashboard/settings',
+  //   icon: icon('ic_user'),
+  // },
   {
     title: 'Opd Camp Report',
     path: '/dashboard/opdcapmreport',
     icon: icon('ic_opd'),
+  },
+  {
+    title: 'Greeting Card Template',
+    path: '/dashboard/greetingcardtemplate',
+    icon: icon('ic_greetingcard'),
   },
 ];
 

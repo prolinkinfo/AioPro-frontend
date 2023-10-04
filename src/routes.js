@@ -28,6 +28,9 @@ import { Hierarchy } from './pages/Hierarchy/hierarchy';
 import Notification from './layouts/dashboard/header/Notification';
 import Location from './pages/location';
 import Opd from './pages/opd/Opd'
+import Card from './pages/card/CardTemplate'
+import AddCard from './pages/card/Add'
+import GreetingCardView from './pages/card/View'
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -62,6 +65,9 @@ export default function Router() {
         { path: 'notification', element: <Notification /> },
         { path: 'location', element: <Location /> },
         { path: 'opdcapmreport', element: <Opd /> },
+        { path: 'greetingcardtemplate', element: <Card /> },
+        { path: 'greetingcardtemplate/add', element: <AddCard /> },
+        { path: 'greetingcardtemplate/:id', element: <GreetingCardView /> },
       ],
     },
     {
