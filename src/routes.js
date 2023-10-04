@@ -65,9 +65,9 @@ export default function Router() {
         { path: 'notification', element: <Notification /> },
         { path: 'location', element: <Location /> },
         { path: 'opdcapmreport', element: <Opd /> },
-        { path: 'greetingcardtemplate', element: <Card /> },
-        { path: 'greetingcardtemplate/add', element: <AddCard /> },
-        { path: 'greetingcardtemplate/:id', element: <GreetingCardView /> },
+        { path: 'greetingcard', element: <Card /> },
+        { path: 'greetingcard/add', element: <AddCard /> },
+        { path: 'greetingcard/:id', element: <GreetingCardView /> },
       ],
     },
     {

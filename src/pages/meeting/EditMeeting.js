@@ -31,10 +31,9 @@ import dayjs from 'dayjs';
 import { GiCancel } from 'react-icons/gi';
 import { FiDelete, FiSave } from 'react-icons/fi';
 import { useTheme } from '@emotion/react';
-import { adduser, apidelete, apieditmeeting, apiget, deletemeetingApi } from '../../service/api';
-import DeleteModel from '../../components/Deletemodle'
-import City from './cities.json'
-
+import { adduser, allusers, apidelete, apieditmeeting, apiget, deletemeetingApi } from '../../service/api';
+import DeleteModel from '../../components/Deletemodle';
+import City from './cities.json';
 
 const names = [
   'Oliver Hansen',
@@ -49,15 +48,15 @@ const names = [
   'Kelly Snyder',
 ];
 
-
 const EditMeeting = (props) => {
   const { isOpen, meetingsId, fetchApiMeeting, handleCloseevent, dataByMeetingId, setUserAction } = props;
 
-  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
+  const [allUser, setAllUser] = useState([]);
 
-  const userId = JSON.parse(localStorage.getItem('user'))
-  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
-  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+  const userId = JSON.parse(localStorage.getItem('user'));
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true);
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false);
 
   // -----------   initialValues
   const validationSchema = yup.object({
@@ -82,7 +81,7 @@ const EditMeeting = (props) => {
     const data = values;
 
     const result = await apieditmeeting(`/api/meeting`, data);
-    setUserAction(result)
+    setUserAction(result);
     if (result && result.status === 200) {
       fetchApiMeeting();
       handleCloseevent();
@@ -101,25 +100,48 @@ const EditMeeting = (props) => {
         startDate: values?.startDate,
         bach: values?.bach,
         doctors: values?.doctors,
-        modifiedOn: new Date()
-
+        modifiedOn: new Date(),
       };
       EditMeeting(meetingData);
     },
   });
 
   const deleteData = async (id) => {
-    const result = await deletemeetingApi(`/api/meeting/${id}`)
-    setUserAction(result)
+    const result = await deletemeetingApi(`/api/meeting/${id}`);
+    setUserAction(result);
     handleCloseDeleteModel();
     handleCloseevent();
     fetchApiMeeting();
+  };
+
+  function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
+  async function fetchdata() {
+    const result = await allusers('/api/users');
+    if (result && result.status === 200) {
+      const filterRole = result.data.filter((user) => user?.role === 'Dr');
+      const names = filterRole.map((user) => {
+        const firstName = capitalize(user?.firstName);
+        const lastName = capitalize(user?.lastName);
+        return `${firstName} ${lastName}`;
+      });
+      setAllUser(names);
+    }
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
   return (
     <div>
-
-      <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} id={meetingsId} deleteData={deleteData} />
+      <DeleteModel
+        isOpenDeleteModel={isOpenDeleteModel}
+        handleCloseDeleteModel={handleCloseDeleteModel}
+        id={meetingsId}
+        deleteData={deleteData}
+      />
 
       <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
         <DialogTitle
@@ -172,20 +194,21 @@ const EditMeeting = (props) => {
                     id="city-autocomplete"
                     size="small"
                     options={City}
-                    name='city'
+                    name="city"
                     disabled={userId?.id !== dataByMeetingId?.createdBy}
                     getOptionLabel={(option) => option?.name}
-                    value={City.find(city => city?.name === formik.values.city) || null}
+                    value={City.find((city) => city?.name === formik.values.city) || null}
                     onChange={(event, newValue) => {
                       formik.setFieldValue('city', newValue?.name);
                     }}
-                    renderInput={(params) =>
+                    renderInput={(params) => (
                       <TextField
                         {...params}
-                        name='city'
+                        name="city"
                         error={formik.touched.city && Boolean(formik.errors.city)}
                         helperText={formik.touched.city && formik.errors.city}
-                      />}
+                      />
+                    )}
                   />
                 </Grid>
 
@@ -197,7 +220,7 @@ const EditMeeting = (props) => {
                     size="small"
                     fullWidth
                     inputProps={{
-                      min: dayjs().format('YYYY-MM-DD HH:mm')
+                      min: dayjs().format('YYYY-MM-DD HH:mm'),
                     }}
                     disabled={userId?.id !== dataByMeetingId?.createdBy}
                     value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm')}
@@ -234,23 +257,24 @@ const EditMeeting = (props) => {
                   <FormLabel>Doctors</FormLabel>
                   <FormControl fullWidth>
                     <Autocomplete
-                      name="doctors"
                       multiple
                       size="small"
-                      disabled={userId?.id !== dataByMeetingId?.createdBy}
                       value={formik.values.doctors}
                       onChange={(event, newValue) => {
-                        formik.setFieldValue('doctors', newValue || null);
+                        formik.setFieldValue('doctors', newValue);
                       }}
-                      options={names}
-                      getOptionLabel={(option) => option || null}
+                      options={allUser}
+                      getOptionLabel={(option) => option}
                       disableCloseOnSelect
-                      renderInput={(params) =>
+                      style={{ textTransform: 'capitalize' }}
+                      renderInput={(params) => (
                         <TextField
                           {...params}
+                          style={{ textTransform: 'capitalize' }}
                           error={formik.touched.doctors && Boolean(formik.errors.doctors)}
                           helperText={formik.touched.doctors && formik.errors.doctors}
-                        />}
+                        />
+                      )}
                     />
                   </FormControl>
                 </Grid>
@@ -258,50 +282,49 @@ const EditMeeting = (props) => {
             </DialogContentText>
           </form>
         </DialogContent>
-        {
-          userId?.id === dataByMeetingId?.createdBy ?
-            <>
-              <DialogActions>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  onClick={formik.handleSubmit}
-                  style={{ textTransform: 'capitalize' }}
-                  color="secondary"
+        {userId?.id === dataByMeetingId?.createdBy ? (
+          <>
+            <DialogActions>
+              <Button
+                type="submit"
+                variant="contained"
+                onClick={formik.handleSubmit}
+                style={{ textTransform: 'capitalize' }}
+                color="secondary"
                 // startIcon={<FiSave />}
-                >
-                  Save
-                </Button>
+              >
+                Save
+              </Button>
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  onClick={handleOpenDeleteModel}
-                  style={{ textTransform: 'capitalize' }}
-                  color="error"
+              <Button
+                type="submit"
+                variant="contained"
+                onClick={handleOpenDeleteModel}
+                style={{ textTransform: 'capitalize' }}
+                color="error"
                 // startIcon={<FiDelete />}
-                >
-                  Delete
-                </Button>
+              >
+                Delete
+              </Button>
 
-                <Button
-                  type="reset"
-                  variant="outlined"
-                  style={{ textTransform: 'capitalize' }}
-                  // startIcon={<GiCancel />}
-                  onClick={() => {
-                    formik.resetForm();
-                    handleCloseevent();
-                  }}
-                  color="error"
-                >
-                  Cancle
-                </Button>
-              </DialogActions>
-            </>
-            :
-            " "
-        }
+              <Button
+                type="reset"
+                variant="outlined"
+                style={{ textTransform: 'capitalize' }}
+                // startIcon={<GiCancel />}
+                onClick={() => {
+                  formik.resetForm();
+                  handleCloseevent();
+                }}
+                color="error"
+              >
+                Cancle
+              </Button>
+            </DialogActions>
+          </>
+        ) : (
+          ' '
+        )}
       </Dialog>
     </div>
   );

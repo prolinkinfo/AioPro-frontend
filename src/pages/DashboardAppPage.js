@@ -54,7 +54,7 @@ export default function DashboardAppPage() {
       const today = new Date().toISOString().split('T')[0];
 
       // Filter meetings created today
-      const meetingsCreatedToday = result?.data?.filter(meeting => meeting?.createdOn?.split('T')[0] === today);
+      const meetingsCreatedToday = result?.data?.filter(meeting => meeting?.createdOn?.split('T')[0] === today && meeting?.status === 'verified');
       setMeetingList(meetingsCreatedToday);
     }
   }

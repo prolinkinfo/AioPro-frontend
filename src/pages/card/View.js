@@ -39,7 +39,7 @@ const View = () => {
         const result = await apiput(`/api/greetingCard`, data);
 
         if (result && result.status === 200) {
-          navigate('/dashboard/greetingcardtemplate');
+          navigate('/dashboard/greetingcard');
         }
       });
     } else {
@@ -68,11 +68,11 @@ const View = () => {
 
   const remove = async () => {
     await apidelete(`/api/greetingCard/${params.id}`);
-    navigate('/dashboard/greetingcardtemplate');
+    navigate('/dashboard/greetingcard');
   };
 
   const back = () => {
-    navigate('/dashboard/greetingcardtemplate');
+    navigate('/dashboard/greetingcard');
   };
 
   useEffect(() => {

@@ -18,8 +18,8 @@ import { Autocomplete, Box, Chip, FormControl, FormHelperText, FormLabel, MenuIt
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { useTheme } from '@emotion/react';
-import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
-import City from './cities.json'
+import { apiget, allusers, addmeeting, getsingleuser } from '../../service/api';
+import City from './cities.json';
 
 const names = [
   'Oliver Hansen',
@@ -39,6 +39,7 @@ const Addmeetings = (props) => {
   const { parentID } = JSON.parse(localStorage.getItem('user'));
   const userName = localStorage.getItem('userName');
   const [singleuser, setsingleuser] = useState({});
+  const [allUser, setAllUser] = useState([]);
 
   useEffect(() => {
     setsingleuser(user);
@@ -79,7 +80,6 @@ const Addmeetings = (props) => {
       formik.resetForm();
       fetchApiMeeting();
       handleClose();
-      toast.success(result.data.message);
     }
   };
 
@@ -93,8 +93,26 @@ const Addmeetings = (props) => {
     },
   });
 
-  // const cityOptions = City.getAllCities();
+  function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
+  async function fetchdata() {
+    const result = await allusers('/api/users');
+    if (result && result.status === 200) {
+        const filterRole = result.data.filter(user => user?.role === "Dr")
+        const names = filterRole.map(user => {
+            const firstName = capitalize(user?.firstName);
+            const lastName = capitalize(user?.lastName);
+            return `${firstName} ${lastName}`;
+        });
+        setAllUser(names)
+    }
+}
+useEffect(() => {
+    fetchdata()
+}, [])
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -170,7 +188,7 @@ const Addmeetings = (props) => {
                     size="small"
                     fullWidth
                     inputProps={{
-                      min: dayjs().format('YYYY-MM-DD HH:mm')
+                      min: dayjs().format('YYYY-MM-DD HH:mm'),
                     }}
                     value={dayjs(formik.values.startDate).format('YYYY-MM-DD HH:mm')}
                     onChange={formik.handleChange}
@@ -211,12 +229,14 @@ const Addmeetings = (props) => {
                       onChange={(event, newValue) => {
                         formik.setFieldValue('doctors', newValue);
                       }}
-                      options={names}
+                      options={allUser}
                       getOptionLabel={(option) => option}
                       disableCloseOnSelect
+                      style={{ textTransform: 'capitalize' }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
+                          style={{ textTransform: 'capitalize' }}
                           error={formik.touched.doctors && Boolean(formik.errors.doctors)}
                           helperText={formik.touched.doctors && formik.errors.doctors}
                         />

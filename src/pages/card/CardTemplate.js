@@ -5,11 +5,56 @@ import { Link, useNavigate } from 'react-router-dom';
 import { DeleteOutline } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SendIcon from '@mui/icons-material/Send';
+import moment from 'moment';
 import TableStyle from '../../components/TableStyle';
 import Iconify from '../../components/iconify/Iconify';
 import { apiget, deleteManyApi } from '../../service/api';
 import DeleteModel from '../../components/Deletemodle';
 import SendTemplate from './sendTemplate';
+
+function CustomToolbar({ selectedRowIds, fetchdata }) {
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const handleCloseDelete = () => {
+    setIsOpenDeleteModel(false);
+  };
+
+  const handleOpenDelete = () => {
+    setIsOpenDeleteModel(true);
+  };
+
+  const deleteManyGreetingCard = async (data) => {
+    const response = await deleteManyApi('/api/greetingCard/deleteMany', data);
+    if (response?.status === 200) {
+      fetchdata();
+      handleCloseDelete();
+    }
+  };
+
+  return (
+    <GridToolbarContainer>
+      <GridToolbar />
+      {selectedRowIds && selectedRowIds.length > 0 && (
+        <Button
+          variant="text"
+          sx={{ textTransform: 'capitalize' }}
+          startIcon={<DeleteOutline />}
+          onClick={handleOpenDelete}
+        >
+          Delete
+        </Button>
+      )}
+      <DeleteModel
+        isOpenDeleteModel={isOpenDeleteModel}
+        handleCloseDeleteModel={handleCloseDelete}
+        deleteData={deleteManyGreetingCard}
+        id={selectedRowIds}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 
 const CardTemplate = () => {
   const [designList, setDesignList] = useState([]);
@@ -47,8 +92,7 @@ const CardTemplate = () => {
       headerName: 'CreatedOn',
       flex: 1,
       valueFormatter: (params) => {
-        const date = new Date(params.value);
-        return date.toLocaleString();
+        return moment(params.value).format('LLL');
       },
     },
     {
@@ -56,8 +100,7 @@ const CardTemplate = () => {
       headerName: 'ModifiedOn',
       flex: 1,
       valueFormatter: (params) => {
-        const date = new Date(params.value);
-        return date.toLocaleString();
+        return moment(params.value).format('LLL');
       },
     },
     {
@@ -67,7 +110,7 @@ const CardTemplate = () => {
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleFirstNameClick = async (data) => {
-          navigate(`/dashboard/greetingcardtemplate/${params.row._id}`);
+          navigate(`/dashboard/greetingcard/${params.row._id}`);
         };
         return (
           <Box>
@@ -117,7 +160,7 @@ const CardTemplate = () => {
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4">Card Templates</Typography>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              <Link to="/dashboard/greetingcardtemplate/add" style={{ textDecoration: 'none', color: 'white' }}>
+              <Link to="/dashboard/greetingcard/add" style={{ textDecoration: 'none', color: 'white' }}>
                 New Template
               </Link>
             </Button>
@@ -127,7 +170,7 @@ const CardTemplate = () => {
               <DataGrid
                 rows={designList}
                 columns={columns}
-                // components={{ Toolbar: () => CustomToolbar({ selectedRowIds }) }}
+                components={{ Toolbar: () => CustomToolbar({ selectedRowIds,fetchdata }) }}
                 checkboxSelection
                 onRowSelectionModelChange={handleSelectionChange}
                 rowSelectionModel={selectedRowIds}

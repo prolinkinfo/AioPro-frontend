@@ -67,8 +67,8 @@ const navConfig = [
     icon: icon('ic_opd'),
   },
   {
-    title: 'Greeting Card Template',
-    path: '/dashboard/greetingcardtemplate',
+    title: 'Greeting Card',
+    path: '/dashboard/greetingcard',
     icon: icon('ic_greetingcard'),
   },
 ];

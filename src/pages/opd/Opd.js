@@ -7,12 +7,12 @@ import { FcFlowChart } from 'react-icons/fc';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useNavigate, Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import moment from 'moment';
 import Iconify from '../../components/iconify';
-
 import { allusers, apidelete, apiget, deleteManyApi } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
-import OpdAdd from './Add'
+import OpdAdd from './Add';
 import View from './View';
 
 // ----------------------------------------------------------------------
@@ -64,31 +64,29 @@ const Opd = () => {
   const [opdList, setOpdList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [isOpenView, setIsOpenView] = useState(false)
-  const [opdData, setOpdData] = useState({})
+  const [isOpenView, setIsOpenView] = useState(false);
+  const [opdData, setOpdData] = useState({});
   const navigate = useNavigate();
-
 
   const handleSelectionChange = (selectionModel) => {
     setSelectedRowIds(selectionModel);
   };
 
-  const handleOpen = () => setIsOpen(true)
-  const handleClose = () => setIsOpen(false)
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
-  const handleOpenView = () => setIsOpenView(true)
-  const handleCloseView = () => setIsOpenView(false)
+  const handleOpenView = () => setIsOpenView(true);
+  const handleCloseView = () => setIsOpenView(false);
 
-  const user = JSON.parse(localStorage.getItem('user'))
-
+  const user = JSON.parse(localStorage.getItem('user'));
+  const dateFormat = 'MMM DD, YYYY';
   const columns = [
     {
       field: 'date',
       headerName: 'Date',
       flex: 2,
       valueFormatter: (params) => {
-        const date = new Date(params.value);
-        return date.toLocaleString();
+        return moment(params.value).format('LLL');
       },
     },
     {
@@ -103,13 +101,9 @@ const Opd = () => {
       cellClassName: 'name-column--cell--capitalize',
       flex: 2,
       renderCell: (params) => {
-        const doctorsArray = params.row.doctors; 
+        const doctorsArray = params.row.doctors;
         const doctorsCount = doctorsArray.length;
-        return (
-          <Box>
-            {doctorsCount}
-          </Box>
-        );
+        return <Box>{doctorsCount}</Box>;
       },
     },
     {
@@ -135,20 +129,18 @@ const Opd = () => {
         );
       },
     },
-
   ];
 
   const fetchOpd = async () => {
-    const result = await apiget('/api/opd')
+    const result = await apiget('/api/opd');
     if (result && result.status === 200) {
-      setOpdList(result?.data)
+      setOpdList(result?.data);
     }
-  }
+  };
 
   useEffect(() => {
     fetchOpd();
-  }, [])
-
+  }, []);
 
   return (
     <>

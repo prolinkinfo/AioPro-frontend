@@ -42,7 +42,7 @@ const Add = () => {
           toast.success(result.data.message);
           setName('');
         }
-        navigate('/dashboard/greetingcardtemplate');
+        navigate('/dashboard/greetingcard');
       });
     } else {
       toast.error('Template Name is required');
@@ -50,7 +50,7 @@ const Add = () => {
   };
 
   const back = () => {
-    navigate('/dashboard/greetingcardtemplate');
+    navigate('/dashboard/greetingcard');
   };
 
   return (

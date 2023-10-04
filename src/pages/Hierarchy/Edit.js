@@ -74,7 +74,7 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
         _id: id,
         role: values?.role,
         parentId: values?.parentId,
-        oldParentId:user?.parentId?._id ? user?.parentId?._id :''
+        oldParentId: user?.parentId?._id ? user?.parentId?._id : '',
       };
       resetForm({ values: '' });
       const result = await apiput(`/api/users`, data);
@@ -102,8 +102,8 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
         </DialogTitle>
 
         <DialogContent dividers>
-          <Grid columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <form>
+          <form>
+            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
                 <InputLabel id="demo-simple-select-label">Role</InputLabel>
                 <FormControl fullWidth style={{ minWidth: '500px' }}>
@@ -111,6 +111,7 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
                     labelId="demo-simple-select-label"
                     name="role"
                     fullWidth
+                    size="small"
                     value={formik.values.role || null}
                     onChange={formik.handleChange}
                     error={formik.touched.role && Boolean(formik.errors.role)}
@@ -136,6 +137,7 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
                     labelId="demo-simple-select-label"
                     name="parentId"
                     fullWidth
+                    size="small"
                     value={formik.values.parentId}
                     onChange={formik.handleChange}
                     error={formik.touched.parentId && Boolean(formik.errors.parentId)}
@@ -196,8 +198,8 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
                   </FormHelperText>
                 </FormControl>
               </Grid>
-            </form>
-          </Grid>
+            </Grid>
+          </form>
         </DialogContent>
         <DialogActions>
           <Button
@@ -207,15 +209,6 @@ const Edit = ({ isOpenModel, handleCloseModel, id }) => {
             onClick={formik.handleSubmit}
           >
             Save
-          </Button>
-          <Button
-            type="reset"
-            variant="contained"
-            color="error"
-            style={{ textTransform: 'capitalize' }}
-            onClick={handleOpenDelete}
-          >
-            Delete
           </Button>
           <Button
             type="reset"
