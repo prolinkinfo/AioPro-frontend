@@ -23,9 +23,6 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
     }
   };
 
-  console.log("meetingData",meetingData);
-
-  
   const userEdit = async (notification) => {
     const data = {
       _id: notification?.data?.id,
@@ -33,10 +30,8 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
       parentId: notification?.data?.parentId
     };
     const result = await apiput(`/api/users/update`, data);
-    console.log(result,"data")
 
     if (result && result.status === 200) {
-
       editNotification();
       fetchdata();
       handleClose();

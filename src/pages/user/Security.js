@@ -30,7 +30,6 @@ const Security = (props) => {
     enableReinitialize: true,
     validationSchema: Validations,
     onSubmit: async (values, { resetForm }) => {
-      console.log('values', values);
       const data = {
         oldPassword: values?.oldPassword,
         password: values?.password,
@@ -39,8 +38,6 @@ const Security = (props) => {
       };
       resetForm({ values: '' });
       const result = await apiput(`/api/users/updatePassword`, data);
-
-      console.log('result', result);
     },
   });
 

@@ -68,7 +68,6 @@ const Event = () => {
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position);
       const { latitude, longitude } = position.coords;
       setCurrLocation({ latitude, longitude });
     });

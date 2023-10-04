@@ -58,8 +58,7 @@ export default function DashboardAppPage() {
       setMeetingList(meetingsCreatedToday);
     }
   }
-  
-  console.log(meetingList, "startDate")
+
   useEffect(() => {
     fetchUserData();
     fetchOpdData();

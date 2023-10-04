@@ -70,7 +70,6 @@ const Opd = () => {
 
 
   const handleSelectionChange = (selectionModel) => {
-    console.log(selectedRowIds, "selectionModel")
     setSelectedRowIds(selectionModel);
   };
 

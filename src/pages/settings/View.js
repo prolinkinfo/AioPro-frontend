@@ -87,7 +87,7 @@ const View = () => {
         <div>
             <DeleteModel opendelete={opendelete} handleClosedelete={handleCloseDelete} deletedata={remove} id={params.id} />
 
-            <Container>
+            <Container maxWidth="xl">
                 <Grid container display="flex" alignItems="center">
                     <Grid container display="flex" alignItems="center">
                         <Stack direction="row" alignItems="center" mb={3} justifyContent={"space-between"} width={"100%"}>

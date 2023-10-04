@@ -24,8 +24,8 @@ const General = () => {
   const validationSchema = yup.object({
     firstName: yup.string().required('Frist Name is required'),
     lastName: yup.string().required('Last Name is required'),
-    phoneNumber: yup.string().matches(/^[0-9]{10}$/, 'Phone number is invalid'),
-    zipCode: yup.string().matches(/^[0-6]{6}$/, 'Zip Code is invalid'),
+    phoneNumber: yup.string().matches(/^\d{10}$/, 'Phone number is invalid'),
+    zipCode: yup.string().matches(/^\d{6}$/, 'Zip Code is invalid'),
     // parentId: yup.string().required('Manager is required'),
     role: yup.string().required('Role is required'),
   });
@@ -149,8 +149,8 @@ const General = () => {
           <Grid item xs={12} sm={4} md={4}>
             <Card style={{ padding: "182px 0px 181px 0px" }}>
               <Box style={{ textAlign: 'center' }}>
-                {selectedFile ?
-                  <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
+                {userDetails?.avatar ? 
+                  <Avatar alt="Avatar" src={selectedFile || userDetails?.avatar} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
                   :
                   <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
                 }

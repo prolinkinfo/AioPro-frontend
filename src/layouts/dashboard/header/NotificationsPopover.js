@@ -121,8 +121,6 @@ export default function NotificationsPopover() {
     notificationApi();
   }, []);
 
-  console.log(notification, "notification")
-
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
