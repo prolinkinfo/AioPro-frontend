@@ -22,12 +22,13 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
       handleClose();
     }
   };
+  console.log('meetingData', meetingData);
 
   const userEdit = async (notification) => {
     const data = {
       _id: notification?.data?.id,
       role: notification?.role,
-      parentId: notification?.data?.parentId
+      parentId: notification?.data?.parentId,
     };
     const result = await apiput(`/api/users/update`, data);
 
@@ -37,7 +38,7 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
       handleClose();
     }
   };
- 
+
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -48,7 +49,9 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">{notification.type === "user_update" ? "User Position Change Approval" : "Meeting Approval"}</Typography>
+          <Typography variant="h6">
+            {notification.type === 'user_update' ? 'User Position Change Approval' : 'Meeting Approval'}
+          </Typography>
           {/* <Typography>
                         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
                     </Typography> */}
@@ -58,17 +61,28 @@ const ApprovalModel = ({ open, handleClose, meetingData, editNotification, notif
           <Typography textTransform={'capitalize'}>
             {`${meetingData?.createdBy?.firstName} (${meetingData?.createdBy?.role})`},
           </Typography>
-          <Typography>
-            I am pleased to confirm my approval for the upcoming meeting scheduled for{' '}
-            <b>{moment(meetingData?.data?.startDate).format('lll')}</b> to discuss <b>{meetingData?.data?.subject}</b>.
-          </Typography>
+          {meetingData?.type === 'meeting' ? (
+            <Typography>
+              I am pleased to confirm my approval for the upcoming meeting scheduled for
+              <b>{moment(meetingData?.data?.startDate).format('lll')}</b> to discuss <b>{meetingData?.data?.subject}</b>
+              .
+            </Typography>
+          ) : (
+            <Typography>
+              chenge user 
+              {/* <b>{moment(meetingData?.data?.startDate).format('lll')}</b> to discuss <b>{meetingData?.data?.subject}</b> */}
+              .
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button
             type="submit"
             variant="contained"
             style={{ textTransform: 'capitalize' }}
-            onClick={() => EditMeeting(meetingData?.data?.id)}
+            onClick={() =>
+              meetingData?.type === 'meeting' ? EditMeeting(meetingData?.data?.id) : userEdit(meetingData)
+            }
           >
             Approval
           </Button>
