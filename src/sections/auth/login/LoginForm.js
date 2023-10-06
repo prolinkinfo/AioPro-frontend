@@ -32,18 +32,22 @@ export default function LoginForm() {
   const Adddata = async (values) => {
     setIsLogin(true);
     const data = values;
-    const result = await apipost('/api/auth/login', data);
 
-    if (result && result.status === 200) {
-       localStorage.setItem('userName', JSON.stringify(result?.data?.userData?.userName));
-      localStorage.setItem('user', JSON.stringify(result?.data?.userData));
-      localStorage.setItem('user_id', result?.data?.userData?.id);
-      localStorage.setItem('userRole', result?.data?.userData?.role);
-      navigate('/dashboard/app');
-    } else {
-      toast.error('Email or password are incorrect');
+    try {
+      const result = await apipost('/api/auth/login', data);
+      console.log('result', result);
+      if (result && result.status === 200) {
+        localStorage.setItem('userName', JSON.stringify(result?.data?.userData?.userName));
+        localStorage.setItem('user', JSON.stringify(result?.data?.userData));
+        localStorage.setItem('user_id', result?.data?.userData?.id);
+        localStorage.setItem('userRole', result?.data?.userData?.role);
+        navigate('/dashboard/app');
+        return;
+      }
+    } catch (error) {
+      console.log('error', error);
+      toast.error(error.message || 'Email or password are incorrect');
     }
-
     setIsLogin(false);
   };
 
