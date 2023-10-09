@@ -43,12 +43,11 @@ const Event = () => {
   const handleCloseMeeting = () => setOpenMeeting(false);
 
   const fetchApByMeetingd = async (meetingId) => {
-    alert("api call ")
     if (meetingId) {
       const result = await apiget(`/api/meeting/${meetingId}`);
-      console.log("result",result);
+      console.log(result,"result")
       if (result?.statusText === 'OK') {
-        setDataByMeetingId(result?.data?.result);
+        setDataByMeetingId(result?.data);
       }
     }
   };

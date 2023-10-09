@@ -76,7 +76,7 @@ const SendTemplate = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>subject</FormLabel>
+                <FormLabel>Subject</FormLabel>
                 <TextField
                   name="subject"
                   size="small"
@@ -101,7 +101,7 @@ const SendTemplate = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Form</FormLabel>
+                <FormLabel>From</FormLabel>
                 <TextField
                   name="form"
                   size="small"

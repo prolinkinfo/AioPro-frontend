@@ -19,7 +19,6 @@ import View from './View';
 
 function CustomToolbar({ selectedRowIds, fetchOpd }) {
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleCloseDelete = () => {
     setIsOpenDeleteModel(false);
@@ -67,6 +66,7 @@ const Opd = () => {
   const [isOpenView, setIsOpenView] = useState(false);
   const [opdData, setOpdData] = useState({});
   const navigate = useNavigate();
+  const { id } = JSON.parse(localStorage.getItem('user'));
 
   const handleSelectionChange = (selectionModel) => {
     setSelectedRowIds(selectionModel);
@@ -132,7 +132,7 @@ const Opd = () => {
   ];
 
   const fetchOpd = async () => {
-    const result = await apiget('/api/opd');
+    const result = await apiget(`/api/opd/?createdBy=${id}`);
     if (result && result.status === 200) {
       setOpdList(result?.data);
     }
