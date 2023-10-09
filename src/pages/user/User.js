@@ -80,9 +80,18 @@ const User = () => {
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
 
-  const user = JSON.parse(localStorage.getItem('user'))
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const columns = [
+    {
+      field: 'employeId',
+      headerName: 'Emp code',
+      flex: 2,
+      cellClassName: 'name-column--cell--capitalize',
+      renderCell: (params) => {
+        return <Box>{params.value}</Box>;
+      },
+    },
     {
       field: 'firstName',
       headerName: 'First Name',
@@ -114,23 +123,25 @@ const User = () => {
       flex: 2,
     },
     {
-      field: 'action',
-      headerName: 'Action',
+      field: 'status',
+      headerName: 'Status',
       flex: 1,
-      // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleFirstNameClick = async (data) => {
-          setEditUser(data);
-          handleOpenEdit();
-        };
+
+        const chengStatus = () => {};
+
         return (
           <Box>
-            <EditContact open={openEdit} handleClose={handleCloseEdit} user={editUser} fetchdata={fetchdata} />
-            <Stack direction={'row'} spacing={2}>
-              <Button variant="text" size="small" color="primary" onClick={() => handleFirstNameClick(params)}>
-                <EditIcon />
-              </Button>
-            </Stack>
+            <Button
+              variant="outlined"
+              style={{
+                color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                border: 'none',
+              }}
+            >
+              {params.value}
+            </Button>
           </Box>
         );
       },
@@ -191,18 +202,18 @@ const User = () => {
     };
   }
 
-function extractUsers(parentUser) {
-  const users = [];
+  function extractUsers(parentUser) {
+    const users = [];
 
-  function traverse(parentUser) {
-    users.push(parentUser.data);
-    parentUser.children.forEach((child) => traverse(child));
+    function traverse(parentUser) {
+      users.push(parentUser.data);
+      parentUser.children.forEach((child) => traverse(child));
+    }
+
+    traverse(parentUser);
+
+    return users;
   }
-
-  traverse(parentUser);
-
-  return users;
-}
 
   function displayUserFromId(data, parentId) {
     const parentUser = findUserById(parentId, data);
@@ -210,11 +221,10 @@ function extractUsers(parentUser) {
     return nodes;
   }
 
-
   async function fetchdata() {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
-      setAllUser(displayUserFromId(result?.data,user?.id));
+      setAllUser(displayUserFromId(result?.data, user?.id));
     }
   }
   useEffect(() => {
@@ -228,9 +238,14 @@ function extractUsers(parentUser) {
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">User</Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-            New User
-          </Button>
+          <Box>
+            <Button variant="contained" style={{marginRight:"10px"}} startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Doctor
+            </Button>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              New User
+            </Button>
+          </Box>
         </Stack>
         <TableStyle>
           <Box width="100%">

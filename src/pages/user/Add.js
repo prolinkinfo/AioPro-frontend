@@ -14,7 +14,19 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Select, MenuItem, FormControl, InputLabel, FormHelperText, Paper, Avatar, Box } from '@mui/material';
+import {
+  FormLabel,
+  Dialog,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  Paper,
+  Avatar,
+  Box,
+} from '@mui/material';
 import { adduser, allusers, apipost } from '../../service/api';
 import palette from '../../theme/palette';
 
@@ -25,7 +37,6 @@ const Add = (props) => {
   const [selectedFile, setSelectedFile] = React.useState(null);
 
   const user = JSON.parse(localStorage.getItem('user'));
-
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -47,16 +58,13 @@ const Add = (props) => {
       .oneOf([yup.ref('password'), null], 'Password does not match'),
   });
 
-
-
-  const admin = alluser?.filter(user => user?.role === "Admin");
-  const hr = alluser?.filter(user => user?.role === "Hr");
-  const nationalManager = alluser?.filter(user => user?.role === "National Manager");
-  const branchManager = alluser?.filter(user => user?.role === "Branch Manager");
-  const zonalManager = alluser?.filter(user => user?.role === "Zonal Manager");
-  const regionalManager = alluser?.filter(user => user?.role === "Regional Manager");
-  const territoryManager = alluser?.filter(user => user?.role === "Territory Manager");
-
+  const admin = alluser?.filter((user) => user?.role === 'Admin');
+  const hr = alluser?.filter((user) => user?.role === 'Hr');
+  const nationalManager = alluser?.filter((user) => user?.role === 'National Manager');
+  const branchManager = alluser?.filter((user) => user?.role === 'Branch Manager');
+  const zonalManager = alluser?.filter((user) => user?.role === 'Zonal Manager');
+  const regionalManager = alluser?.filter((user) => user?.role === 'Regional Manager');
+  const territoryManager = alluser?.filter((user) => user?.role === 'Territory Manager');
 
   // -----------   initialValues
   const initialValues = {
@@ -68,59 +76,40 @@ const Add = (props) => {
     confirmPassword: '',
     role: user?.role,
     parentId: user?.id,
-    createdBy: user?.id
+    createdBy: user?.id,
   };
 
   // add user api
   const addUser = async (values) => {
-    const data = new FormData()
-    data.append("avatar", values?.avatar)
-    data.append("firstName", values?.firstName)
-    data.append("lastName", values?.lastName)
-    data.append("email", values?.email)
-    data.append("role", values?.role === "Hr" || values?.role === "Admin"
-      ? "National Manager"
-      : values?.role === "National Manager"
-        ? "Branch Manager"
-        : values?.role === "Branch Manager"
-          ? "Zonal Manager"
-          : values?.role === "Zonal Manager"
-            ? "Regional Manager"
-            : values?.role === "Regional Manager"
-              ? "Territory Manager"
-              : "",)
-    data.append("parentId", values?.parentId)
-    data.append("password", values?.password)
-    data.append("confirmPassword", values?.confirmPassword)
-    data.append("createdBy", values?.createdBy)
-
-    // const data = {
-    //   email: values?.emailAddress,
-    //   password: values?.password,
-    //   confirmPassword: values?.confirmPassword,
-    //   role:
-    //     values?.role === "Hr" || values?.role === "Admin"
-    //       ? "National Manager"
-    //       : values?.role === "National Manager"
-    //         ? "Branch Manager"
-    //         : values?.role === "Branch Manager"
-    //           ? "Zonal Manager"
-    //           : values?.role === "Zonal Manager"
-    //             ? "Regional Manager"
-    //             : values?.role === "Regional Manager"
-    //               ? "Territory Manager"
-    //               : "",
-
-    //   parentId: values?.parentId,
-    //   firstName: values?.firstName,
-    //   lastName: values?.lastName,
-    // };
+    const data = new FormData();
+    data.append('avatar', values?.avatar);
+    data.append('firstName', values?.firstName);
+    data.append('lastName', values?.lastName);
+    data.append('email', values?.email);
+    data.append(
+      'role',
+      values?.role === 'Hr' || values?.role === 'Admin'
+        ? 'National Manager'
+        : values?.role === 'National Manager'
+        ? 'Branch Manager'
+        : values?.role === 'Branch Manager'
+        ? 'Zonal Manager'
+        : values?.role === 'Zonal Manager'
+        ? 'Regional Manager'
+        : values?.role === 'Regional Manager'
+        ? 'Territory Manager'
+        : ''
+    );
+    data.append('parentId', values?.parentId);
+    data.append('password', values?.password);
+    data.append('confirmPassword', values?.confirmPassword);
+    data.append('createdBy', values?.createdBy);
 
     const result = await apipost('/api/auth/signup', data);
 
     if (result && result.status === 200) {
       formik.resetForm();
-      setSelectedFile('')
+      setSelectedFile('');
       handleClose();
       toast.success(result.data.message);
     } else {
@@ -148,7 +137,6 @@ const Add = (props) => {
     fetchdata();
   }, []);
 
-
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
     if (file) {
@@ -165,8 +153,8 @@ const Add = (props) => {
   };
 
   const clear = () => {
-    setSelectedFile('')
-  }
+    setSelectedFile('');
+  };
 
   return (
     <div>
@@ -189,11 +177,18 @@ const Add = (props) => {
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
                 <Box style={{ textAlign: 'center' }}>
-                  {selectedFile ?
-                    <Avatar alt="Avatar" src={selectedFile} sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                    :
-                    <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} style={{ width: 100, height: 100, margin: '16px auto', borderRadius: "50%" }} />
-                  }
+                  {selectedFile ? (
+                    <Avatar
+                      alt="Avatar"
+                      src={selectedFile}
+                      sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                    />
+                  ) : (
+                    <img
+                      src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
+                      style={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                    />
+                  )}
                   <Typography variant="h6">Upload Avatar</Typography>
                   <input
                     accept="image/*"
@@ -254,36 +249,31 @@ const Add = (props) => {
 
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Role</FormLabel>
-                    <FormControl fullWidth>
-                      <Select
-                        name="role"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={formik.values.role}
-                        size="small"
-                        fullWidth
-                        disabled={user?.role !== "Admin"}
-                        onChange={formik.handleChange}
-                        error={
-                          formik.touched.role &&
-                          Boolean(formik.errors.role)
-                        }
-                        helperText={
-                          formik.touched.role && formik.errors.role
-                        }
-                      >
-                        <MenuItem value="Hr">Hr</MenuItem>
-                        <MenuItem value="Admin">Admin </MenuItem>
-                        <MenuItem value="National Manager">National Manager </MenuItem>
-                        <MenuItem value="Branch Manager">Branch Manager </MenuItem>
-                        <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
-                        <MenuItem value="Regional Manager">Regional Manager </MenuItem>
-                        <MenuItem value="Territory Manager">Territory Manager</MenuItem>
-                      </Select>
-                      <FormHelperText style={{ color: palette.error.main }}>{formik.touched.role && formik.errors.role}</FormHelperText>
-                    </FormControl>
-                    
-
+                <FormControl fullWidth>
+                  <Select
+                    name="role"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={formik.values.role}
+                    size="small"
+                    fullWidth
+                    disabled={user?.role !== 'Admin'}
+                    onChange={formik.handleChange}
+                    error={formik.touched.role && Boolean(formik.errors.role)}
+                    helperText={formik.touched.role && formik.errors.role}
+                  >
+                    <MenuItem value="Hr">Hr</MenuItem>
+                    <MenuItem value="Admin">Admin </MenuItem>
+                    <MenuItem value="National Manager">National Manager </MenuItem>
+                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
+                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
+                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
+                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
+                  </Select>
+                  <FormHelperText style={{ color: palette.error.main }}>
+                    {formik.touched.role && formik.errors.role}
+                  </FormHelperText>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Manager</FormLabel>
@@ -291,73 +281,75 @@ const Add = (props) => {
                   <Select
                     labelId="demo-simple-select-label"
                     name="parentId"
-                    size='small'
+                    size="small"
                     fullWidth
-                    disabled={user?.role !== "Admin"}
+                    disabled={user?.role !== 'Admin'}
                     value={formik.values.parentId}
                     onChange={formik.handleChange}
-                    error={
-                      formik.touched.parentId &&
-                      Boolean(formik.errors.parentId)
-                    }
-                    helperText={
-                      formik.touched.parentId && formik.errors.parentId
-                    }
+                    error={formik.touched.parentId && Boolean(formik.errors.parentId)}
+                    helperText={formik.touched.parentId && formik.errors.parentId}
                   >
-                    {
-                      formik?.values?.role === "Hr" ?
-                        hr?.map((item) => {
+                    {formik?.values?.role === 'Hr'
+                      ? hr?.map((item) => {
                           return (
                             <MenuItem key={item?._id} value={item?._id}>
                               {`${item?.firstName} ${item?.lastName}`}
                             </MenuItem>
                           );
-                        }) : formik?.values?.role === "Admin" ?
-                          admin?.map((item) => {
-                            return (
-                              <MenuItem key={item?._id} value={item?._id}>
-                                {`${item?.firstName} ${item?.lastName}`}
-                              </MenuItem>
-                            );
-                          }) : formik?.values?.role === "National Manager" ?
-                            nationalManager?.map((item) => {
-                              return (
-                                <MenuItem key={item?._id} value={item?._id}>
-                                  {`${item?.firstName} ${item?.lastName}`}
-                                </MenuItem>
-                              );
-                            }) : formik?.values?.role === "Branch Manager" ?
-                              branchManager?.map((item) => {
-                                return (
-                                  <MenuItem key={item?._id} value={item?._id}>
-                                    {`${item?.firstName} ${item?.lastName}`}
-                                  </MenuItem>
-                                );
-                              }) : formik?.values?.role === "Zonal Manager" ?
-                                zonalManager?.map((item) => {
-                                  return (
-                                    <MenuItem key={item?._id} value={item?._id}>
-                                      {`${item?.firstName} ${item?.lastName}`}
-                                    </MenuItem>
-                                  );
-                                }) : formik?.values?.role === "Regional Manager" ?
-                                  regionalManager?.map((item) => {
-                                    return (
-                                      <MenuItem key={item?._id} value={item?._id}>
-                                        {`${item?.firstName} ${item?.lastName}`}
-                                      </MenuItem>
-                                    );
-                                  }) : formik?.values?.role === "Territory Manager" ?
-                                    territoryManager?.map((item) => {
-                                      return (
-                                        <MenuItem key={item?._id} value={item?._id}>
-                                          {`${item?.firstName} ${item?.lastName}`}
-                                        </MenuItem>
-                                      );
-                                    }) : ""
-                    }
+                        })
+                      : formik?.values?.role === 'Admin'
+                      ? admin?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'National Manager'
+                      ? nationalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Branch Manager'
+                      ? branchManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Zonal Manager'
+                      ? zonalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Regional Manager'
+                      ? regionalManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : formik?.values?.role === 'Territory Manager'
+                      ? territoryManager?.map((item) => {
+                          return (
+                            <MenuItem key={item?._id} value={item?._id}>
+                              {`${item?.firstName} ${item?.lastName}`}
+                            </MenuItem>
+                          );
+                        })
+                      : ''}
                   </Select>
-                  <FormHelperText style={{ color: palette.error.main }}>{formik.touched.parentId && formik.errors.parentId}</FormHelperText>
+                  <FormHelperText style={{ color: palette.error.main }}>
+                    {formik.touched.parentId && formik.errors.parentId}
+                  </FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
