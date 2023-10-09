@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import User from './pages/user/User';
+import User from './pages/user';
 import Event from './pages/user/Event';
 import UserView from './pages/user/View';
 import Lead from './pages/Lead/Lead';
