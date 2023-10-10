@@ -29,6 +29,7 @@ import Notification from './layouts/dashboard/header/Notification';
 import Location from './pages/location';
 import Opd from './pages/opd/Opd'
 import Card from './pages/greetingCard/Card'
+import BirthdayCard from './pages/greetingCard/birthday card/BirthdayCard';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -67,6 +68,7 @@ export default function Router() {
         { path: 'location', element: <Location /> },
         { path: 'opdcapmreport', element: <Opd /> },
         { path: 'greetingcard', element: <Card /> },
+        { path: 'greetingcard/birthdaycard', element: <BirthdayCard /> },
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
         // { path: 'greetingcard/:id', element: <GreetingCardView /> },
