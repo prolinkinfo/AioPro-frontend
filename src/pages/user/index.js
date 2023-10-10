@@ -14,6 +14,7 @@ import { allusers, apidelete } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
 import EditContact from './Edit';
+import AddDocter from './AddDocter';
 
 // ----------------------------------------------------------------------
 
@@ -62,15 +63,20 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
 
 const User = () => {
   const [alluser, setAllUser] = useState([]);
+  const [allDocter, setDocter] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
+  const [tab, setTab] = useState(1);
+  const [openAddDocter, setOpenAddDocter] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [editUser, setEditUser] = useState('');
   const [data, setdata] = useState({});
   const navigate = useNavigate();
   const [openEdit, setOpenEdit] = useState(false);
+  const [openevent, setOpenevent] = useState(false);
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
-  const [openevent, setOpenevent] = useState(false);
+  const handleOpenAddDocter = () => setOpenAddDocter(true);
+  const handleCloseAddDocter = () => setOpenAddDocter(false);
   const handleOpenevent = () => setOpenevent(true);
   const handleCloseevent = () => setOpenevent(false);
 
@@ -82,7 +88,7 @@ const User = () => {
 
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const columns = [
+  const users = [
     {
       field: 'employeId',
       headerName: 'Emp code',
@@ -127,7 +133,6 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-
         const chengStatus = () => {};
 
         return (
@@ -186,6 +191,109 @@ const User = () => {
     },
   ];
 
+  const docters = [
+    {
+      field: 'employeId',
+      headerName: 'Emp code',
+      flex: 2,
+      cellClassName: 'name-column--cell--capitalize',
+      renderCell: (params) => {
+        return <Box>{params.value}</Box>;
+      },
+    },
+    {
+      field: 'firstName',
+      headerName: 'First Name',
+      flex: 2,
+      cellClassName: 'name-column--cell name-column--cell--capitalize',
+      renderCell: (params) => {
+        const handleFirstNameClick = () => {
+          navigate(`/dashboard/user/view/${params.row._id}`);
+        };
+
+        return <Box onClick={handleFirstNameClick}>{params.value}</Box>;
+      },
+    },
+    {
+      field: 'lastName',
+      headerName: 'Last Name',
+      cellClassName: 'name-column--cell--capitalize',
+      flex: 2,
+    },
+    {
+      field: 'email',
+      headerName: 'Email Address',
+      flex: 2,
+    },
+    {
+      field: 'role',
+      headerName: 'Role',
+      cellClassName: 'name-column--cell--capitalize',
+      flex: 2,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 1,
+      renderCell: (params) => {
+        const chengStatus = () => {};
+
+        return (
+          <Box>
+            <Button
+              variant="outlined"
+              style={{
+                color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                border: 'none',
+              }}
+            >
+              {params.value}
+            </Button>
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'event',
+      headerName: 'Event',
+      flex: 1,
+      // eslint-disable-next-line arrow-body-style
+      renderCell: (params) => {
+        const handleClick = async (data) => {
+          setdata(data);
+          handleOpenevent();
+        };
+        return (
+          <div>
+            <Link to={`/dashboard/event/${params?.row?._id}`}>
+              <EventNoteIcon />
+            </Link>
+          </div>
+        );
+      },
+    },
+    // {
+    //   field: 'hierarchy',
+    //   headerName: 'Hierarchy',
+    //   flex: 1,
+    //   // eslint-disable-next-line arrow-body-style
+    //   renderCell: (params) => {
+    //     const handleClick = async (data) => {
+    //       setdata(data);
+    //       handleOpenevent();
+    //     };
+    //     return (
+    //       <div>
+    //         <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
+    //           <FcFlowChart color="black" size={22} />
+    //         </Link>
+    //       </div>
+    //     );
+    //   },
+    // },
+  ];
+
   function findUserById(id, data) {
     const item = data?.find((item) => item._id === id);
     if (!item) {
@@ -224,44 +332,91 @@ const User = () => {
   async function fetchdata() {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
-      setAllUser(displayUserFromId(result?.data, user?.id));
+      const userData = displayUserFromId(result?.data, user?.id);
+
+      console.log('result', result.data);
+      setDocter(result?.data?.filter((user) => user?.role === 'Dr'));
+      setAllUser(userData);
     }
   }
   useEffect(() => {
     fetchdata();
   }, [openAdd, openEdit]);
 
+  console.log('allDocterallDocter', allDocter);
+
   return (
     <>
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
+      <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} />
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4">User</Typography>
           <Box>
-            <Button variant="contained" style={{marginRight:"10px"}} startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+            <Button
+              variant="outlined"
+              style={{ border: 'none', color: tab === 1 ? '#000' : 'grey', fontSize: '25px', padding: '0px' }}
+              onClick={() => setTab(1)}
+            >
+              Users
+            </Button>
+
+            <span style={{ margin: '0px 10px' }}>/</span>
+
+            <Button
+              variant="outlined"
+              style={{ border: 'none', color: tab === 2 ? '#000' : 'grey', fontSize: '25px', padding: '0px' }}
+              onClick={() => setTab(2)}
+            >
               Doctor
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              New User
-            </Button>
+          </Box>
+          <Box>
+            {tab === 1 ? (
+              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                New User
+              </Button>
+            ) : (
+              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAddDocter}>
+                Doctor
+              </Button>
+            )}
           </Box>
         </Stack>
-        <TableStyle>
-          <Box width="100%">
-            <Card style={{ height: '700px', paddingTop: '15px' }}>
-              <DataGrid
-                rows={alluser}
-                columns={columns}
-                components={{ Toolbar: () => CustomToolbar({ selectedRowIds, fetchdata }) }}
-                checkboxSelection
-                onRowSelectionModelChange={handleSelectionChange}
-                rowSelectionModel={selectedRowIds}
-                getRowId={(row) => row._id}
-              />
-            </Card>
-          </Box>
-        </TableStyle>
+
+        {tab === 1 ? (
+          <TableStyle>
+            <Box width="100%">
+              <Card style={{ height: '72vh', paddingTop: '15px' }}>
+                <DataGrid
+                  rows={alluser}
+                  columns={users}
+                  components={{ Toolbar: () => CustomToolbar({ selectedRowIds, fetchdata }) }}
+                  checkboxSelection
+                  onRowSelectionModelChange={handleSelectionChange}
+                  rowSelectionModel={selectedRowIds}
+                  getRowId={(row) => row._id}
+                />
+              </Card>
+            </Box>
+          </TableStyle>
+        ) : (
+          <TableStyle>
+            <Box width="100%">
+              <Card style={{ height: '72vh', paddingTop: '15px' }}>
+                <DataGrid
+                  rows={allDocter}
+                  columns={docters}
+                  components={{ Toolbar: () => CustomToolbar({ selectedRowIds, fetchdata }) }}
+                  checkboxSelection
+                  onRowSelectionModelChange={handleSelectionChange}
+                  rowSelectionModel={selectedRowIds}
+                  getRowId={(row) => row._id}
+                />
+              </Card>
+            </Box>
+          </TableStyle>
+        )}
       </Container>
     </>
   );
