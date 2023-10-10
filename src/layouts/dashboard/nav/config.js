@@ -66,9 +66,10 @@ const navConfig = [
     path: '/dashboard/opdcapmreport',
     icon: icon('ic_opd'),
   },
+  
   {
-    title: 'Greeting Card',
-    path: '/dashboard/greetingcard',
+    title: 'Sells',
+    path: '/dashboard/sells',
     icon: icon('ic_greetingcard'),
   },
 ];
