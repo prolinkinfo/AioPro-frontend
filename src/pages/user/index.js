@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Card, Stack, Button, Container, Typography, Box } from '@mui/material';
+import { Card, Stack, Button, Container, Box } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarContainer } from '@mui/x-data-grid';
 import { DeleteOutline } from '@mui/icons-material';
-import EditIcon from '@mui/icons-material/Edit';
 import { FcFlowChart } from 'react-icons/fc';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useNavigate, Link } from 'react-router-dom';
 import Iconify from '../../components/iconify';
 import AddUser from './Add';
-
-import Event from './Event';
 import { allusers, apidelete } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
-import EditContact from './Edit';
 import AddDocter from './AddDocter';
 
 // ----------------------------------------------------------------------
@@ -333,8 +329,6 @@ const User = () => {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
       const userData = displayUserFromId(result?.data, user?.id);
-
-      console.log('result', result.data);
       setDocter(result?.data?.filter((user) => user?.role === 'Dr'));
       setAllUser(userData);
     }
@@ -343,7 +337,6 @@ const User = () => {
     fetchdata();
   }, [openAdd, openEdit]);
 
-  console.log('allDocterallDocter', allDocter);
 
   return (
     <>
