@@ -27,11 +27,9 @@ import ViewEmailTemplate from './pages/settings/View';
 import { Hierarchy } from './pages/Hierarchy/hierarchy';
 import Notification from './layouts/dashboard/header/Notification';
 import Location from './pages/location';
-import Opd from './pages/opd/Opd';
 import Card from './pages/greetingCard/Card';
 import { Sells } from './pages/Sells';
 import Opd from './pages/opd/Opd'
-import Card from './pages/greetingCard/Card'
 import BirthdayCard from './pages/greetingCard/birthday card/BirthdayCard';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
