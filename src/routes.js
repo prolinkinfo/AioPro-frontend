@@ -31,6 +31,9 @@ import Card from './pages/greetingCard/Card';
 import { Sells } from './pages/Sells';
 import Opd from './pages/opd/Opd'
 import BirthdayCard from './pages/greetingCard/birthday card/BirthdayCard';
+import DoctordayCard from './pages/greetingCard/doctorday card/DoctordayCard'
+import NewYearCard from './pages/greetingCard/NewYearCard/NewYearCard';
+import AnniversaryCard from './pages/greetingCard/AnniversaryCard/AnniversaryCard';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -71,6 +74,9 @@ export default function Router() {
         { path: 'greetingcard', element: <Card /> },
         { path: 'sells', element: <Sells /> },
         { path: 'greetingcard/birthdaycard', element: <BirthdayCard /> },
+        { path: 'greetingcard/doctordaycard', element: <DoctordayCard /> },
+        { path: 'greetingcard/newyearcard', element: <NewYearCard /> },
+        { path: 'greetingcard/anniversarycard', element: <AnniversaryCard /> },
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
         // { path: 'greetingcard/:id', element: <GreetingCardView /> },
