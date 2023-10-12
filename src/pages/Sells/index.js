@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Card, Stack, Button, Container, Typography, Box } from '@mui/material';
-import { DataGrid, GridToolbar, GridToolbarContainer } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridToolbarContainer, nbNO } from '@mui/x-data-grid';
 import { DeleteOutline } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import { FcFlowChart } from 'react-icons/fc';
 import { useNavigate, Link } from 'react-router-dom';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Iconify from '../../components/iconify';
 import { allusers, apidelete } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
-import AddDocter from './AddProduct';
-import EditProduct from './EditProduct';
+import AddSells from './AddSells';
+import EditSells from './EditSells';
 
 // ----------------------------------------------------------------------
 
@@ -77,33 +78,36 @@ export const Sells = () => {
 
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const products = [
+  const columns = [
     {
       field: 'name',
       headerName: 'Product Name',
       flex: 2,
       cellClassName: 'name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box>{params.value}</Box>;
-      },
-    },
-    {
-      field: 'category',
-      headerName: 'Category',
-      flex: 2,
-      cellClassName: ' name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box>{params.value}</Box>;
-      },
     },
     {
       field: 'price',
-      headerName: 'Price',
+      headerName: 'MRP',
       flex: 2,
       cellClassName: ' name-column--cell--capitalize',
       renderCell: (params) => {
-        return <Box>{params.value}</Box>;
+        return <Box display={"flex"} justifyContent={"center"} alignItems={"center"}><CurrencyRupeeIcon fontSize='9px' />{params.value}</Box>;
       },
+    },
+    {
+      field: 'pts',
+      headerName: 'PTS',
+      flex: 2,
+    },
+    {
+      field: 'ptr',
+      headerName: 'PTR',
+      flex: 2,
+    },
+    {
+      field: 'ptd',
+      headerName: 'PTD',
+      flex: 2,
     },
     {
       field: 'action',
@@ -144,8 +148,8 @@ export const Sells = () => {
 
   return (
     <>
-      <AddDocter open={openAdd} handleClose={handleCloseAdd} />
-      <EditProduct open={openEditModel} handleClose={handleCloseEditModel} productData={data} />
+      <AddSells open={openAdd} handleClose={handleCloseAdd} />
+      <EditSells open={openEditModel} handleClose={handleCloseEditModel} productData={data} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Box>
@@ -154,12 +158,12 @@ export const Sells = () => {
               style={{ border: 'none', color: '#000', fontSize: '25px', padding: '0px' }}
               onClick={() => setTab(1)}
             >
-              Product
+              Sells
             </Button>
           </Box>
           <Box>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Product
+              Add
             </Button>
           </Box>
         </Stack>
@@ -168,8 +172,8 @@ export const Sells = () => {
           <Box width="100%">
             <Card style={{ height: '72vh', paddingTop: '15px' }}>
               <DataGrid
-                rows={alluser}
-                columns={products}
+                rows={nbNO}
+                columns={columns}
                 components={{ Toolbar: () => CustomToolbar({ selectedRowIds, fetchdata }) }}
                 checkboxSelection
                 onRowSelectionModelChange={handleSelectionChange}

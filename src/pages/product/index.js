@@ -78,18 +78,12 @@ const Products = () => {
       headerName: 'Product Name',
       flex: 2,
       cellClassName: 'name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box>{params.value}</Box>;
-      },
     },
     {
       field: 'category',
       headerName: 'Category',
       flex: 2,
       cellClassName: ' name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box>{params.value}</Box>;
-      },
     },
     {
       field: 'price',
@@ -105,9 +99,6 @@ const Products = () => {
       headerName: 'Quantity',
       flex: 2,
       cellClassName: ' name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box>{params.value}</Box>;
-      },
     },
     {
       field: 'action',

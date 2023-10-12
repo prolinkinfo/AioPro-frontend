@@ -1,9 +1,8 @@
-/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable no-constant-condition */
-/* eslint-disable arrow-body-style */
-/* eslint-disable prefer-const */
+/* eslint-disable jsx-a11y/alt-text */
 import * as React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -13,13 +12,11 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button } from '@mui/material';
-import { apipost } from '../../service/api';
+import FormLabel from '@mui/material/FormLabel';
+import { apiput } from '../../service/api';
 
-const AddDocter = (props) => {
-  const { handleClose, open } = props;
-  const user = JSON.parse(localStorage.getItem('user'));
+const EditSells = (props) => {
+  const { handleClose, open, productData } = props;
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -30,37 +27,39 @@ const AddDocter = (props) => {
 
   // -----------   initialValues
   const initialValues = {
-    name: '',
-    category: '',
-    price: '',
-    description: '',
-    createdBy: user?.id,
+    name: productData?.row?.name,
+    category: productData?.row?.category,
+    price: productData?.row?.price,
+    description: productData?.row?.description,
+    createdBy: productData?.row?.createdBy,
   };
 
-  // add user api
-
+  // -----------  formik
   const formik = useFormik({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
-      const result = await apipost('/api/product', values);
-      if (result && result.status === 200) {
-        handleClose();
-      }
+      const data = {
+        _id: productData?.row?._id,
+        name: values?.name,
+        category: values?.category,
+        price: values?.price,
+        description: values?.description,
+        createdBy: values?.createdBy,
+        modifiedAt: new Date(),
+      };
+
+      const result = await apiput(`/api/product`, data);
+      if (result && result.status === 200) handleClose();
     },
   });
 
   return (
     <div>
       <Dialog open={open} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
-        <DialogTitle
-          id="scroll-dialog-title"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography variant="h6">Add Product </Typography>
+        <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h6">Edit Product </Typography>
           <Typography>
             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -72,7 +71,6 @@ const AddDocter = (props) => {
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Product Name</FormLabel>
                 <TextField
-                  id="firstName"
                   name="name"
                   size="small"
                   value={formik.values.name}
@@ -148,4 +146,4 @@ const AddDocter = (props) => {
   );
 };
 
-export default AddDocter;
+export default EditSells;

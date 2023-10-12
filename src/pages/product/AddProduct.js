@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button } from '@mui/material';
 import { apipost } from '../../service/api';
 
-const AddDocter = (props) => {
+const AddProduct = (props) => {
   const { handleClose, open } = props;
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -34,7 +34,7 @@ const AddDocter = (props) => {
     name: '',
     category: '',
     price: '',
-    quantity:'',
+    quantity: '',
     description: '',
     createdBy: user?.id,
   };
@@ -165,4 +165,4 @@ const AddDocter = (props) => {
   );
 };
 
-export default AddDocter;
+export default AddProduct;

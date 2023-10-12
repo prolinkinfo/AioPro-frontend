@@ -32,7 +32,7 @@ const EditProduct = (props) => {
     category: productData?.row?.category,
     price: productData?.row?.price,
     description: productData?.row?.description,
-    quantity:productData?.row?.quantity,
+    quantity: productData?.row?.quantity,
     createdBy: productData?.row?.createdBy,
   };
 
@@ -47,7 +47,7 @@ const EditProduct = (props) => {
         name: values?.name,
         category: values?.category,
         price: values?.price,
-        quantity:values?.quantity,
+        quantity: values?.quantity,
         description: values?.description,
         createdBy: values?.createdBy,
         modifiedAt: new Date(),

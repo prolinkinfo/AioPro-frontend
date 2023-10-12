@@ -34,6 +34,7 @@ import DoctordayCard from './pages/greetingCard/doctorday card/DoctordayCard'
 import NewYearCard from './pages/greetingCard/NewYearCard/NewYearCard';
 import AnniversaryCard from './pages/greetingCard/AnniversaryCard/AnniversaryCard';
 import Product from './pages/product';
+import { Sells } from './pages/Sells'
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -77,6 +78,7 @@ export default function Router() {
         { path: 'greetingcard/newyearcard', element: <NewYearCard /> },
         { path: 'greetingcard/anniversarycard', element: <AnniversaryCard /> },
         { path: 'products', element: <Product /> },
+        { path: 'sells', element: <Sells /> },
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
