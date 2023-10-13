@@ -7,7 +7,7 @@ import { FcFlowChart } from 'react-icons/fc';
 import { useNavigate, Link } from 'react-router-dom';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Iconify from '../../components/iconify';
-import { allusers, apidelete } from '../../service/api';
+import { allusers, apidelete, apiget, deleteManyApi } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
 import AddSells from './AddSells';
@@ -16,19 +16,18 @@ import EditSells from './EditSells';
 // ----------------------------------------------------------------------
 
 function CustomToolbar({ selectedRowIds, fetchdata }) {
-  const [opendelete, setOpendelete] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
 
   const handleCloseDelete = () => {
-    setOpendelete(false);
+    setIsOpenDeleteModel(false);
   };
 
   const handleOpenDelete = () => {
-    setOpendelete(true);
+    setIsOpenDeleteModel(true);
   };
 
-  const deleteManyContact = async (data) => {
-    const response = await apidelete('/api/users', data.join('').toString());
+  const deleteManyOpd = async (data) => {
+    const response = await deleteManyApi('/api/seles/deleteMany', data);
     if (response?.status === 200) {
       fetchdata();
       handleCloseDelete();
@@ -38,7 +37,7 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
   return (
     <GridToolbarContainer>
       <GridToolbar />
-      {selectedRowIds && selectedRowIds.length > 0 && user?.role === 'admin' && !selectedRowIds.includes(user?.id) && (
+      {selectedRowIds && selectedRowIds.length > 0 && (
         <Button
           variant="text"
           sx={{ textTransform: 'capitalize' }}
@@ -49,9 +48,9 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
         </Button>
       )}
       <DeleteModel
-        opendelete={opendelete}
-        handleClosedelete={handleCloseDelete}
-        deletedata={deleteManyContact}
+        isOpenDeleteModel={isOpenDeleteModel}
+        handleCloseDeleteModel={handleCloseDelete}
+        deleteData={deleteManyOpd}
         id={selectedRowIds}
       />
     </GridToolbarContainer>
@@ -59,7 +58,7 @@ function CustomToolbar({ selectedRowIds, fetchdata }) {
 }
 
 export const Sells = () => {
-  const [alluser, setAllUser] = useState([]);
+  const [sellsList, setSellsList] = useState([]);
   const [allDocter, setDocter] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const [tab, setTab] = useState(1);
@@ -80,16 +79,34 @@ export const Sells = () => {
 
   const columns = [
     {
-      field: 'name',
+      field: 'productId',
       headerName: 'Product Name',
+      flex: 2,
+      cellClassName: 'name-column--cell--capitalize',
+      renderCell: (params) => {
+        return <Box >{params?.row?.productId?.name}</Box>;
+      },
+    },
+    {
+      field: 'price',
+      headerName: 'Product Price',
+      flex: 2,
+      cellClassName: ' name-column--cell--capitalize',
+      renderCell: (params) => {
+        return <Box display={"flex"} justifyContent={"center"} alignItems={"center"}><CurrencyRupeeIcon fontSize='9px' />{params?.row?.productId?.price}</Box>;
+      },
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
       flex: 2,
       cellClassName: 'name-column--cell--capitalize',
     },
     {
-      field: 'price',
-      headerName: 'MRP',
+      field: 'totalAmount',
+      headerName: 'Total Amount',
       flex: 2,
-      cellClassName: ' name-column--cell--capitalize',
+      cellClassName: 'name-column--cell--capitalize',
       renderCell: (params) => {
         return <Box display={"flex"} justifyContent={"center"} alignItems={"center"}><CurrencyRupeeIcon fontSize='9px' />{params.value}</Box>;
       },
@@ -137,9 +154,9 @@ export const Sells = () => {
   };
 
   async function fetchdata() {
-    const result = await allusers('/api/product');
+    const result = await apiget('/api/seles');
     if (result && result.status === 200) {
-      setAllUser(result?.data);
+      setSellsList(result?.data);
     }
   }
   useEffect(() => {
@@ -172,7 +189,7 @@ export const Sells = () => {
           <Box width="100%">
             <Card style={{ height: '72vh', paddingTop: '15px' }}>
               <DataGrid
-                rows={nbNO}
+                rows={sellsList}
                 columns={columns}
                 components={{ Toolbar: () => CustomToolbar({ selectedRowIds, fetchdata }) }}
                 checkboxSelection

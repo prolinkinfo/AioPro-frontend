@@ -20,43 +20,57 @@ import { allusers, apiget, apipost } from '../../service/api';
 const AddSells = (props) => {
   const { handleClose, open } = props;
   const [productList, setProductList] = React.useState([]);
+  const [userList, setUserList] = React.useState([]);
   const [productPrice, setProductPrice] = React.useState("");
   const [productQty, setProductQty] = React.useState("");
   const user = JSON.parse(localStorage.getItem('user'));
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    name: yup.string().required('Product Name is required'),
-    category: yup.string().required('Product Category is required'),
-    price: yup.string().required('Price is required'),
+    productName: yup.string().required('Product Name is required'),
+    // quantity: yup.string().required('Quantity is required'),
+    // price: yup.string().required('Price is required'),
+    userName: yup.string().required('User Name is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
     productName: '',
     quantity: '',
-    price: '',
-    description: '',
+    totalAmount: '',
+    userName: '',
     createdBy: user?.id,
   };
 
-  // add user api
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      const result = await apipost('/api/product', values);
+      const payload = {
+        productId: values.productName,
+        quantity: values.quantity,
+        productPrice,
+        totalAmount: values.totalAmount,
+        userId: values.userName
+      }
+      const result = await apipost('/api/seles', payload);
       if (result && result.status === 200) {
         handleClose();
+        formik.resetForm();
       }
     },
   });
 
+  const reset = () => {
+    setProductQty("")
+    setProductPrice("")
+  }
+
   const handleChange = (quantity) => {
     formik.setFieldValue("quantity", quantity)
     const totalPrice = quantity * productPrice
-    formik.setFieldValue("price", totalPrice || 0)
+    formik.setFieldValue("totalAmount", totalPrice || 0)
   }
 
   async function fetchData() {
@@ -69,12 +83,13 @@ const AddSells = (props) => {
   async function fetchUserData() {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
-      // setUserLI(result?.data?.filter((user) => user?.role !== 'Dr'));
+      setUserList(result?.data?.filter((user) => user?.role !== 'Dr'));
     }
   }
 
   React.useEffect(() => {
     fetchData();
+    fetchUserData();
   }, []);
 
 
@@ -109,6 +124,7 @@ const AddSells = (props) => {
                     setProductPrice(newValue?.price)
                     setProductQty(newValue?.quantity)
                   }}
+                  error={formik.touched.productName && Boolean(formik.errors.productName)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -136,35 +152,32 @@ const AddSells = (props) => {
                 <OutlinedInput
                   name="price"
                   size="small"
-                  value={formik.values.price}
+                  value={formik.values.totalAmount}
                   onChange={formik.handleChange}
                   fullWidth
                   endAdornment={
                     <InputAdornment position="end">&#8377;</InputAdornment>
                   }
-                  error={formik.touched.price && Boolean(formik.errors.price)}
+                  error={formik.touched.totalAmount && Boolean(formik.errors.totalAmount)}
                 />
                 <FormHelperText>{productPrice && `Per Product : ${productPrice}`} {productPrice && <span>&#8377;</span>} </FormHelperText>
-
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>User Name</FormLabel>
                 <Autocomplete
-                  id="product-autocomplete"
-                  options={productList}
-                  getOptionLabel={(product) => product.name}
-                  value={productList.find(product => product._id === formik.values.productName) || null}
+                  id="userName-autocomplete"
+                  options={userList}
+                  getOptionLabel={(user) => `${user.firstName} ${user.lastName}`}
+                  value={userList.find(user => user._id === formik.values.userName) || null}
                   onChange={(event, newValue) => {
-                    formik.setFieldValue("productName", newValue ? newValue._id : "");
-                    setProductPrice(newValue?.price)
-                    setProductQty(newValue?.quantity)
+                    formik.setFieldValue("userName", newValue ? newValue._id : "");
                   }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       size="small"
-                      error={formik.touched.productName && Boolean(formik.errors.productName)}
-                      helperText={formik.touched.productName && formik.errors.productName}
+                      error={formik.touched.userName && Boolean(formik.errors.userName)}
+                      helperText={formik.touched.userName && formik.errors.userName}
                     />
                   )}
                 />
@@ -177,7 +190,10 @@ const AddSells = (props) => {
           <Button
             type="submit"
             variant="contained"
-            onClick={formik.handleSubmit}
+            onClick={() => {
+              formik.handleSubmit();
+              reset();
+            }}
             style={{ textTransform: 'capitalize' }}
           >
             Save
@@ -190,6 +206,7 @@ const AddSells = (props) => {
             onClick={() => {
               formik.resetForm();
               handleClose();
+              reset();
             }}
           >
             Cancle
