@@ -45,6 +45,10 @@ const AddDocter = (props) => {
     firstName: yup.string().required('Frist Name is required'),
     lastName: yup.string().required('Last Name is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
+    address:yup.string().required('Address is required'),
+    city:yup.string().required('City is required'),
+    state:yup.string().required('State is required'),
+    special:yup.string(),
     role: yup.string().required('Role is required'),
     parentId: yup.string().required('Manager is required'),
     password: yup
@@ -75,8 +79,12 @@ const AddDocter = (props) => {
     lastName: '',
     email: '',
     password: '',
+    address:'',
+    city:'',
+    state:'',
+    special:'',
     confirmPassword: '',
-    role: user?.role,
+    role: 'Dr',
     parentId: user?.id,
     createdBy: user?.id,
   };
@@ -88,6 +96,10 @@ const AddDocter = (props) => {
     data.append('firstName', values?.firstName);
     data.append('lastName', values?.lastName);
     data.append('email', values?.email);
+    data.append('address', values?.address);
+    data.append('city', values?.city);
+    data.append('state', values?.state);
+    data.append('special', values?.special);
     data.append(
       'role',
       values?.role === 'Hr' || values?.role === 'Admin'
@@ -168,7 +180,7 @@ const AddDocter = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add New Docter </Typography>
+          <Typography variant="h6">Add New Doctor </Typography>
           <Typography>
             <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -206,6 +218,7 @@ const AddDocter = (props) => {
                   </label>
                 </Box>
               </Grid>
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>First Name</FormLabel>
                 <TextField
@@ -220,6 +233,7 @@ const AddDocter = (props) => {
                   helperText={formik.touched.firstName && formik.errors.firstName}
                 />
               </Grid>
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Last Name</FormLabel>
                 <TextField
@@ -234,6 +248,7 @@ const AddDocter = (props) => {
                   helperText={formik.touched.lastName && formik.errors.lastName}
                 />
               </Grid>
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Email</FormLabel>
                 <TextField
@@ -249,111 +264,72 @@ const AddDocter = (props) => {
                 />
               </Grid>
 
-              {/* <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Role</FormLabel>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Address</FormLabel>
                 <FormControl fullWidth>
-                  <Select
-                    name="role"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={formik.values.role}
-                    size="small"
-                    fullWidth
-                    disabled={user?.role !== 'Admin'}
-                    onChange={formik.handleChange}
-                    error={formik.touched.role && Boolean(formik.errors.role)}
-                    helperText={formik.touched.role && formik.errors.role}
-                  >
-                    <MenuItem value="Hr">Hr</MenuItem>
-                    <MenuItem value="Admin">Admin </MenuItem>
-                    <MenuItem value="National Manager">National Manager </MenuItem>
-                    <MenuItem value="Branch Manager">Branch Manager </MenuItem>
-                    <MenuItem value="Zonal Manager">Zonal Manager </MenuItem>
-                    <MenuItem value="Regional Manager">Regional Manager </MenuItem>
-                    <MenuItem value="Territory Manager">Territory Manager</MenuItem>
-                  </Select>
-                  <FormHelperText style={{ color: palette.error.main }}>
-                    {formik.touched.role && formik.errors.role}
-                  </FormHelperText>
+                <TextField
+                  name="address"
+                  label=""
+                  multiline
+                  rows={3}
+                  size="small"
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.address && Boolean(formik.errors.address)}
+                  helperText={formik.touched.address && formik.errors.address}
+                />
                 </FormControl>
-              </Grid> */}
-              {/* <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Manager</FormLabel>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6}>
+                <FormLabel>City</FormLabel>
                 <FormControl fullWidth>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    name="parentId"
-                    size="small"
-                    fullWidth
-                    disabled={user?.role !== 'Admin'}
-                    value={formik.values.parentId}
-                    onChange={formik.handleChange}
-                    error={formik.touched.parentId && Boolean(formik.errors.parentId)}
-                    helperText={formik.touched.parentId && formik.errors.parentId}
-                  >
-                    {formik?.values?.role === 'Hr'
-                      ? hr?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'Admin'
-                      ? admin?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'National Manager'
-                      ? nationalManager?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'Branch Manager'
-                      ? branchManager?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'Zonal Manager'
-                      ? zonalManager?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'Regional Manager'
-                      ? regionalManager?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : formik?.values?.role === 'Territory Manager'
-                      ? territoryManager?.map((item) => {
-                          return (
-                            <MenuItem key={item?._id} value={item?._id}>
-                              {`${item?.firstName} ${item?.lastName}`}
-                            </MenuItem>
-                          );
-                        })
-                      : ''}
-                  </Select>
-                  <FormHelperText style={{ color: palette.error.main }}>
-                    {formik.touched.parentId && formik.errors.parentId}
-                  </FormHelperText>
+                <TextField
+                  name="city"
+                  label=""
+                  size="small"
+                  value={formik.values.city}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.city && Boolean(formik.errors.city)}
+                  helperText={formik.touched.city && formik.errors.city}
+                />
                 </FormControl>
-              </Grid> */}
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6}>
+                <FormLabel>State</FormLabel>
+                <FormControl fullWidth>
+                <TextField
+                  name="state"
+                  label=""
+                  size="small"
+                  value={formik.values.state}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.state && Boolean(formik.errors.state)}
+                  helperText={formik.touched.state && formik.errors.state}
+                />
+                </FormControl>
+              </Grid>
+             
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Special</FormLabel>
+                <FormControl fullWidth>
+                <TextField
+                  name="special"
+                  label=""
+                  size="small"
+                  value={formik.values.special}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.special && Boolean(formik.errors.special)}
+                  helperText={formik.touched.special && formik.errors.special}
+                />
+                </FormControl>
+              </Grid>
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Password</FormLabel>
                 <TextField
@@ -368,6 +344,7 @@ const AddDocter = (props) => {
                   helperText={formik.touched.password && formik.errors.password}
                 />
               </Grid>
+              
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Confirm Password</FormLabel>
                 <TextField
