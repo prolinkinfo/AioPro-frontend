@@ -49,13 +49,11 @@
   
   #name1 {
     position: absolute;
-    top: 75%;
+    top: 87%;
     left: 50%;
     transform: translate(-50%, -75%);
     z-index: 6;
-  
     font-family: "Salsa", cursive;
-  
     font-size: 2rem;
     font-weight: 1400;
   }

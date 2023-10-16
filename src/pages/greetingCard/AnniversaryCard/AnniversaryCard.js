@@ -291,20 +291,17 @@ const AnniversaryCard = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={8} md={8}>
-            <Card style={{ padding: '10px' }}>
-              {console.log("formData",formData)}
-              {formData  ? (
+            {formData ? (
+              <Card style={{ padding: '10px' }}>
                 <div id="section-to-print" className="template_body">
-                  <img id={selectedImageIndex === 0 ? 'img_input1':"img_input2"} src={selectedFile} alt="profile" />
+                  <img id={selectedImageIndex === 0 ? 'img_input1' : 'img_input2'} src={selectedFile} alt="profile" />
                   <img id="img_template" src={selectedImage} alt="template" />
-                  {/* <h1 id="name1">{`Dear Dr ${name || 'Your name'} `}</h1> */}
+                  <h1 id="name1">{`Dear Dr ${name || 'Your name'} `}</h1>
                 </div>
-              ) : (
-                ''
-              )}
-
-              {/* <img src={selectedImage} height={'auto'} width={'500px'} style={{ margin: 'auto' }} /> */}
-            </Card>
+              </Card>
+            ) : (
+              ''
+            )}
           </Grid>
         </Grid>
       </Container>
