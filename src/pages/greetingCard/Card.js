@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const Card = () => {
   return (
-    <div>
+    <div style={{margin:"0px 40px"}}>
       <h1>
         <FormLabel>Please Select</FormLabel>
         <FormControl fullWidth>
