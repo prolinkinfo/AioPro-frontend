@@ -101,6 +101,31 @@ const Products = () => {
       cellClassName: ' name-column--cell--capitalize',
     },
     {
+      field: 'gst',
+      headerName: 'GST',
+      flex: 2,
+    },
+    {
+      field: 'pts',
+      headerName: 'PTS',
+      flex: 2,
+    },
+    {
+      field: 'ptr',
+      headerName: 'PTR',
+      flex: 2,
+    },
+    // {
+    //   field: 'ptd',
+    //   headerName: 'PTD',
+    //   flex: 2,
+    // },
+    {
+      field: 'nvr',
+      headerName: 'NRV',
+      flex: 2,
+    },
+    {
       field: 'action',
       headerName: 'Action',
       flex: 1,
