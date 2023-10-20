@@ -31,7 +31,9 @@ import Header from '../../../components/Header';
 import Card1 from './images/card1.png';
 import Card2 from './images/card2.png';
 import Card3 from './images/card3.png';
-import BirthdayCard1 from './Catd1';
+import { apipost } from '../../../service/api';
+import BirthdayCards from './Catd';
+
 
 // eslint-disable-next-line arrow-body-style
 const BirthdayCard = () => {
@@ -63,7 +65,7 @@ const BirthdayCard = () => {
     },
   ];
 
-  const generateCard = () => {
+  const generateCard = async() => {
     const data = {
       name,
       img,
@@ -71,10 +73,18 @@ const BirthdayCard = () => {
       dob,
       theme: selectedImage,
       userImg: selectUserImg === 'yes' ? user?.avatar : null,
-      userName: user.userName,
+      // userName: user.userName,
       occupation: 'Docter',
+      createdBy:user?.id
     };
     setCard(data);
+
+
+    const result = await apipost('/api/greetingCard', data);
+    if (result && result.status === 200) {
+      navigate(`/dashboard/greetingcard/birthdaycard/card/${result?.data?.result?._id}`);
+    }
+    
     console.log(data, 'data');
   };
 
@@ -160,6 +170,7 @@ const BirthdayCard = () => {
                         accept="image/*"
                         type="file"
                         id="avatar-upload"
+                        name='img'
                         style={{ display: 'none' }}
                         onChange={handleFileChange}
                       />
@@ -297,16 +308,16 @@ const BirthdayCard = () => {
               </Grid>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={8} md={8}>
+          {/* <Grid item xs={12} sm={8} md={8}>
             {card ? (
               <Card style={{ padding: '10px' }}>
-                <BirthdayCard1 name={card?.name} msg={msg} />
-                {/* <img src={selectedImage} height={"auto"} width={"500px"} style={{ margin: "auto" }} /> */}
+                <BirthdayCards name={card?.name} msg={msg} />
+                <img src={selectedImage} height={"auto"} width={"500px"} style={{ margin: "auto" }} />
               </Card>
             ) : (
               ''
             )}
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </div>

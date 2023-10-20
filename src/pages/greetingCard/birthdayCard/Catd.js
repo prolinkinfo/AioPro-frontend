@@ -1,6 +1,6 @@
 import './style.css'
 
-const BirthdayCard1 = ({name,msg}) => {
+const BirthdayCards = ({name,msg}) => {
   return (
     <div className="body">
       <div className="birthdayCard">
@@ -42,4 +42,4 @@ const BirthdayCard1 = ({name,msg}) => {
     </div>
   );
 };
-export default BirthdayCard1;
+export default BirthdayCards;
