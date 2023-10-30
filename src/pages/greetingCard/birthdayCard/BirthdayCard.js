@@ -46,6 +46,7 @@ const BirthdayCard = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [card, setCard] = useState(null);
+  const [cardImg, setCardImg] = useState('');
 
   const navigate = useNavigate();
 
@@ -68,7 +69,7 @@ const BirthdayCard = () => {
   const generateCard = async() => {
     const data = {
       name,
-      img,
+      img :cardImg,
       wise,
       dob,
       theme: selectedImage,
@@ -84,16 +85,14 @@ const BirthdayCard = () => {
     if (result && result.status === 200) {
       navigate(`/dashboard/greetingcard/birthdaycard/card/${result?.data?.result?._id}`);
     }
-    
-    console.log(data, 'data');
   };
 
-  console.log('card', card);
-  const back = () => {
-    navigate('/dashboard/greetingcard');
-  };
+  const back = () => navigate('/dashboard/greetingcard');
+
+  console.log("selectedImageIndex",selectedImageIndex);
 
   const handleFileChange = (e) => {
+    setCardImg(e.currentTarget.files)
     const file = e.currentTarget.files[0];
     if (file) {
       // Read the selected file and set it in state.
@@ -115,8 +114,6 @@ const BirthdayCard = () => {
     setSelectedFile(null);
   };
 
-  const msg =
-    'Happy birthday!! I hope your day is filled with lots of love and laughter! May all of your birthday wishes come true';
 
   return (
     <div>
@@ -133,7 +130,7 @@ const BirthdayCard = () => {
           </Stack>
         </Grid>
         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-          <Grid item xs={12} sm={4} md={4}>
+          <Grid item xs={12} sm={12} md={6}>
             <Card style={{ padding: '10px' }}>
               <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} textAlign={'center'}>
                 <Grid item xs={12} sm={12} md={12}>
@@ -158,12 +155,12 @@ const BirthdayCard = () => {
                       {selectedFile ? (
                         <img
                           src={selectedFile}
-                          style={{ width: 100, height: 100, margin: '16px auto', border: '1px solid' }}
+                          style={{ width: 100, margin: '16px auto', border: '1px solid' }}
                         />
                       ) : (
                         <img
                           src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
-                          style={{ width: 100, height: 100, margin: '16px auto', border: '1px solid' }}
+                          style={{ width: 100, margin: '16px auto', border: '1px solid' }}
                         />
                       )}
                       <input
@@ -268,7 +265,7 @@ const BirthdayCard = () => {
                     {images?.map((img, index) => {
                       return (
                         <>
-                          <div style={{ padding: '10px', position: 'relative' }}>
+                          <div style={{ padding: '10px', position: 'relative',cursor:"pointer" }}>
                             <input
                               type="radio"
                               name="selectedImage"
@@ -281,6 +278,7 @@ const BirthdayCard = () => {
                                 width: ' 100px',
                                 height: '100px',
                                 left: '0',
+                                cursor:"pointer"
                               }}
                             />
                             <img
@@ -292,6 +290,7 @@ const BirthdayCard = () => {
                                 marginRight: '12px',
                                 border: selectedImageIndex !== index ? '' : '1px solid blue',
                                 padding: '5px',
+                                cursor:"pointer"
                               }}
                             />
                           </div>
@@ -308,10 +307,10 @@ const BirthdayCard = () => {
               </Grid>
             </Card>
           </Grid>
-          {/* <Grid item xs={12} sm={8} md={8}>
+          {/* <Grid item xs={12} sm={12} md={6}>
             {card ? (
               <Card style={{ padding: '10px' }}>
-                <BirthdayCards name={card?.name} msg={msg} />
+                <BirthdayCards/>
                 <img src={selectedImage} height={"auto"} width={"500px"} style={{ margin: "auto" }} />
               </Card>
             ) : (

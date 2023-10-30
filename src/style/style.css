@@ -1,75 +1,83 @@
-.css-1byr0tz{
-    padding: 90px !important;
+.css-1byr0tz {
+  padding: 90px !important;
 }
 .template_container {
-    flex-grow: 2;
-    height: 100%;
-  
-    overflow: hidden;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  flex-grow: 2;
+  height: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#img_input1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-46%, -67%);
+  width: 80%;
+  object-fit: cover;
+}
+
+#img_input2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -72%);
+  width: 100%;
+  object-fit: cover;
+}
+
+.template_body {
+  width: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+#img_template {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  z-index: 5;
+}
+
+#name1 {
+  position: absolute;
+  top: 87%;
+  left: 50%;
+  transform: translate(-50%, -75%);
+  z-index: 6;
+  font-family: 'Salsa', cursive;
+  font-size: 2rem;
+  font-weight: 1400;
+}
+
+@media print {
+  body {
+    visibility: hidden;
   }
-  
-  #img_input1 {
+  #section-to-print {
+    visibility: visible;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-46%, -67%);
-    width: 80%;
-    object-fit: cover;
+    left: 0;
+    top: 0;
   }
-  
-  #img_input2 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -72%);
-    width: 100%;
-    object-fit: cover;
-  }
-  
-  .template_body {
-    width: auto;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-  }
-  
-  #img_template {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    z-index: 5;
-  }
-  
-  #name1 {
-    position: absolute;
-    top: 87%;
-    left: 50%;
-    transform: translate(-50%, -75%);
-    z-index: 6;
-    font-family: "Salsa", cursive;
-    font-size: 2rem;
-    font-weight: 1400;
-  }
-  
-  @media print {
-    body {
-      visibility: hidden;
-    }
-    #section-to-print {
-      visibility: visible;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-  }
-  .css-1byr0tz{
-    padding: 90px 0px !important;
-  }
-  
+}
+.css-1byr0tz {
+  padding: 90px 0px !important;
+}
+.share-btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.share-btn-text {
+  margin: 0px;
+  text-align: center;
+}
