@@ -29,12 +29,13 @@ import Notification from './layouts/dashboard/header/Notification';
 import Location from './pages/location';
 import Card from './pages/greetingCard/Card';
 import Opd from './pages/opd/Opd'
-import BirthdayCard from './pages/greetingCard/birthday card/BirthdayCard';
+import BirthdayCard from './pages/greetingCard/birthdayCard/BirthdayCard';
 import DoctordayCard from './pages/greetingCard/doctorday card/DoctordayCard'
 import NewYearCard from './pages/greetingCard/NewYearCard/NewYearCard';
 import AnniversaryCard from './pages/greetingCard/AnniversaryCard/AnniversaryCard';
 import Product from './pages/product';
 import { Sells } from './pages/Sells'
+import BirthdayCards from './pages/greetingCard/birthdayCard/Catd';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -79,6 +80,7 @@ export default function Router() {
         { path: 'greetingcard/anniversarycard', element: <AnniversaryCard /> },
         { path: 'products', element: <Product /> },
         { path: 'sells', element: <Sells /> },
+        { path: 'greetingcard/birthdaycard/card/:id', element: <BirthdayCards /> },
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },

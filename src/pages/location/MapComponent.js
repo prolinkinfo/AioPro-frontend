@@ -16,7 +16,7 @@ const MapComponent = (props) => {
       <Marker position={location1} name="Location 1" />
       <Marker position={location2} name="Location 2" />
 
-      {/* <InfoWindow position={location1}>
+      <InfoWindow position={location1}>
         <div>
           <h2>Location 1</h2>
           <p>Latitude: {location1.lat}</p>
@@ -30,7 +30,7 @@ const MapComponent = (props) => {
           <p>Latitude: {location2.lat}</p>
           <p>Longitude: {location2.lng}</p>
         </div>
-      </InfoWindow> */}
+      </InfoWindow>
 
       <InfoWindow position={{
         lat: (location1.lat + location2.lat) / 2,

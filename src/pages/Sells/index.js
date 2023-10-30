@@ -93,7 +93,12 @@ export const Sells = () => {
       flex: 2,
       cellClassName: ' name-column--cell--capitalize',
       renderCell: (params) => {
-        return <Box display={"flex"} justifyContent={"center"} alignItems={"center"}><CurrencyRupeeIcon fontSize='9px' />{params?.row?.productId?.price}</Box>;
+        return (
+          <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+            <CurrencyRupeeIcon fontSize="9px" />
+            {params?.row?.productId?.price}
+          </Box>
+        );
       },
     },
     {
@@ -102,15 +107,7 @@ export const Sells = () => {
       flex: 2,
       cellClassName: 'name-column--cell--capitalize',
     },
-    {
-      field: 'totalAmount',
-      headerName: 'Total Amount',
-      flex: 2,
-      cellClassName: 'name-column--cell--capitalize',
-      renderCell: (params) => {
-        return <Box display={"flex"} justifyContent={"center"} alignItems={"center"}><CurrencyRupeeIcon fontSize='9px' />{params.value}</Box>;
-      },
-    },
+
     {
       field: 'pts',
       headerName: 'PTS',
@@ -127,21 +124,35 @@ export const Sells = () => {
       flex: 2,
     },
     {
-      field: 'action',
-      headerName: 'Action',
-      flex: 1,
+      field: 'totalAmount',
+      headerName: 'Total Amount',
+      flex: 2,
+      cellClassName: 'name-column--cell--capitalize',
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          setdata(data);
-          setEditModel(true);
-        };
         return (
-          <Button variant="outlined" style={{ color: '#000', border: 'none' }} onClick={() => handleClick(params)}>
-            <EditIcon />
-          </Button>
+          <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+            <CurrencyRupeeIcon fontSize="9px" />
+            {params.value}
+          </Box>
         );
       },
     },
+    // {
+    //   field: 'action',
+    //   headerName: 'Action',
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     const handleClick = async (data) => {
+    //       setdata(data);
+    //       setEditModel(true);
+    //     };
+    //     return (
+    //       <Button variant="outlined" style={{ color: '#000', border: 'none' }} onClick={() => handleClick(params)}>
+    //         <EditIcon />
+    //       </Button>
+    //     );
+    //   },
+    // },
   ];
 
   const handleCloseAdd = () => {
@@ -198,6 +209,7 @@ export const Sells = () => {
                 getRowId={(row) => row._id}
               />
             </Card>
+            {/* <div style={{ textAlign: 'right', padding: '10px', height: '100p' }}>Total:- 5000</div> */}
           </Box>
         </TableStyle>
       </Container>
