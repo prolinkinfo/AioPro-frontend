@@ -129,7 +129,7 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => {};
+        const chengStatus = () => { };
 
         return (
           <Box>
@@ -197,6 +197,7 @@ const User = () => {
         return <Box>{params.value}</Box>;
       },
     },
+    
     {
       field: 'firstName',
       headerName: 'First Name',
@@ -232,7 +233,7 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => {};
+        const chengStatus = () => { };
 
         return (
           <Box>
@@ -325,7 +326,7 @@ const User = () => {
     return nodes;
   }
 
-  async function fetchdata() {
+  const fetchdata = async () => {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
       const userData = displayUserFromId(result?.data, user?.id);
@@ -341,7 +342,7 @@ const User = () => {
   return (
     <>
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
-      <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} />
+      <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} fetchdata={fetchdata} />
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
