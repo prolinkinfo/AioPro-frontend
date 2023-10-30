@@ -197,7 +197,7 @@ const User = () => {
         return <Box>{params.value}</Box>;
       },
     },
-    
+
     {
       field: 'firstName',
       headerName: 'First Name',
