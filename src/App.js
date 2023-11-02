@@ -3,9 +3,12 @@ import React from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 // routes
 import { ToastContainer } from 'react-toastify';
-import Routers from './routes';
-import UserRoutes from './UserRouters';
-
+import Routers from './routes/routes';
+import NmRouters from './routes/nmRouters';
+import BmRouters from './routes/bmRouters';
+import ZmRouters from './routes/zmRouters';
+import RmRouters from './routes/rmRouters';
+import TmRouters from './routes/tmRouters';
 // theme
 // components
 import { StyledChart } from './components/chart';
@@ -33,11 +36,19 @@ export default function App() {
       <StyledChart />
       <ToastContainer />
       {token && user?.role ? (
-        user?.role === 'admin' || 'Hr' ? (
+        user?.role === 'Hr' || user?.role === 'Admin' ? (
           <Routers />
-        ) : user?.role === 'user' ? (
-          <UserRoutes />
-        ) : undefined
+        ) : user?.role === 'National Manager' ? (
+          <NmRouters />
+        ) : user?.role === 'Branch Manager' ? (
+          <BmRouters />
+        ) : user?.role === 'Zonal Manager' ? (
+          <ZmRouters />
+        ) : user?.role === 'Regional Manager' ? (
+          <RmRouters />
+        ) : user?.role === 'Territory Manager' ? (
+          <TmRouters />
+        ) : null
       ) : (
         <Routes>
           <Route path="/login" element={<LoginPage />} />

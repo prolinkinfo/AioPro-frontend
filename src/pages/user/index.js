@@ -84,6 +84,8 @@ const User = () => {
 
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const userRole = user?.role.toLowerCase();
+
   const users = [
     {
       field: 'employeId',
@@ -101,7 +103,7 @@ const User = () => {
       cellClassName: 'name-column--cell name-column--cell--capitalize',
       renderCell: (params) => {
         const handleFirstNameClick = () => {
-          navigate(`/dashboard/user/view/${params.row._id}`);
+          navigate(`/${userRole}/dashboard/user/view/${params.row._id}`);
         };
 
         return <Box onClick={handleFirstNameClick}>{params.value}</Box>;
@@ -129,7 +131,7 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => { };
+        const chengStatus = () => {};
 
         return (
           <Box>
@@ -205,7 +207,7 @@ const User = () => {
       cellClassName: 'name-column--cell name-column--cell--capitalize',
       renderCell: (params) => {
         const handleFirstNameClick = () => {
-          navigate(`/dashboard/user/view/${params.row._id}`);
+          navigate(`/${userRole}/dashboard/user/view/${params.row._id}`);
         };
 
         return <Box onClick={handleFirstNameClick}>{params.value}</Box>;
@@ -233,7 +235,7 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => { };
+        const chengStatus = () => {};
 
         return (
           <Box>
@@ -333,11 +335,10 @@ const User = () => {
       setDocter(result?.data?.filter((user) => user?.role === 'Dr'));
       setAllUser(userData);
     }
-  }
+  };
   useEffect(() => {
     fetchdata();
   }, [openAdd, openEdit]);
-
 
   return (
     <>

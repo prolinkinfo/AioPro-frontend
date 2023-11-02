@@ -5,83 +5,99 @@ import SvgColor from '../../../components/svg-color';
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
-const navConfig = [
+const user = JSON.parse(localStorage.getItem('user'));
+const userRole = user?.role.toLowerCase();
+
+export const adminConfig = [
   {
     title: 'Dashboard',
-    path: '/dashboard/app',
+    path: `/${userRole}/dashboard/app`,
     icon: icon('ic_analytics'),
   },
-  // {
-  //   title: 'Lead Management',
-  //   path: '/dashboard/lead',
-  //   icon: icon('ic_lead'),
-  // },
-  // {
-  //   title: 'Contact Management',
-  //   path: '/dashboard/contact',
-  //   icon: icon('ic_contact'),
-  // },
-  // {
-  //   title: 'Policy Management',
-  //   path: '/dashboard/policy',
-  //   icon: icon('ic_policy'),
-  // },
-  // {
-  //   title: 'Tasks',
-  //   path: '/dashboard/task',
-  //   icon: icon('ic_task'),
-  // },
-  // {
-  //   title: 'Meetings',
-  //   path: '/dashboard/meeting',
-  //   icon: icon('ic_meeting'),
-  // },
-  // {
-  //   title: 'Calls',
-  //   path: '/dashboard/call',
-  //   icon: icon('ic_call'),
-  // },
-  // {
-  //   title: 'Calendar',
-  //   path: '/dashboard/calendar',
-  //   icon: icon('ic_calendar'),
-  // },
-  // {
-  //   title: 'Document Management',
-  //   path: '/dashboard/document',
-  //   icon: icon('ic_document'),
-  // },
+
   {
     title: 'User Management',
-    path: '/dashboard/user',
+    path: `/${userRole}/dashboard/user`,
     icon: icon('ic_user'),
   },
-  // {
-  //   title: 'System Settings',
-  //   path: '/dashboard/settings',
-  //   icon: icon('ic_user'),
-  // },
+
   {
     title: 'Opd Camp Report',
-    path: '/dashboard/opdcapmreport',
+    path: `/${userRole}/dashboard/opdcapmreport`,
     icon: icon('ic_opd'),
   },
-  
   {
     title: 'Greeting card',
-    path: '/dashboard/greetingcard',
+    path: `/${userRole}/dashboard/greetingcard`,
     icon: icon('ic_greetingcard'),
   },
   {
     title: 'Products',
-    path: '/dashboard/products',
+    path: `/${userRole}/dashboard/products`,
     icon: icon('ic_product'),
   },
   {
     title: 'Sells',
-    path: '/dashboard/sells',
+    path: `/${userRole}/dashboard/sells`,
     icon: icon('ic_sell'),
   },
 ];
 
-export default navConfig;
+export const nmConfig = [
+  {
+    title: 'Dashboard',
+    path: '/nm/dashboard/app',
+    icon: icon('ic_analytics'),
+  },
+  {
+    title: 'User Management',
+    path: `/nm/dashboard/user`,
+    icon: icon('ic_user'),
+  },
+];
+
+export const bmConfig = [
+  {
+    title: 'Dashboard',
+    path: '/bm/dashboard/app',
+    icon: icon('ic_analytics'),
+  },
+  {
+    title: 'User Management',
+    path: `/bm/dashboard/user`,
+    icon: icon('ic_user'),
+  },
+];
+
+export const zmConfig = [
+  {
+    title: 'Dashboard',
+    path: '/zm/dashboard/app',
+    icon: icon('ic_analytics'),
+  },
+  {
+    title: 'User Management',
+    path: `/zm/dashboard/user`,
+    icon: icon('ic_user'),
+  },
+];
+
+export const rmConfig = [
+  {
+    title: 'Dashboard',
+    path: '/rm/dashboard/app',
+    icon: icon('ic_analytics'),
+  },
+  {
+    title: 'User Management',
+    path: `/rm/dashboard/user`,
+    icon: icon('ic_user'),
+  },
+];
+export const tmConfig = [
+  {
+    title: 'Dashboard',
+    path: '/tm/dashboard/app',
+    icon: icon('ic_analytics'),
+  },
+];
