@@ -5,6 +5,7 @@ import { DeleteOutline } from '@mui/icons-material';
 import { FcFlowChart } from 'react-icons/fc';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useNavigate, Link } from 'react-router-dom';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Iconify from '../../components/iconify';
 import AddUser from './Add';
 import { allusers, apidelete } from '../../service/api';
@@ -83,6 +84,11 @@ const User = () => {
   const handleCloseEdit = () => setOpenEdit(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
+
+  const openGoogleMaps = (latitude, longitude) => {
+    const url = `https://www.google.com/maps/place/${latitude}N+${longitude}E/@${latitude},${longitude},15z`;
+    window.open(url, '_blank');
+  };
 
   const users = [
     {
@@ -265,29 +271,13 @@ const User = () => {
             <Link to={`/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>
+            <button style={{padding:"0px 10px",cursor:"pointer",border:"none",backgroundColor:'transparent'}} onClick={()=>openGoogleMaps(21.229395,72.897493)}>
+              <LocationOnIcon />
+            </button>
           </div>
         );
       },
     },
-    // {
-    //   field: 'hierarchy',
-    //   headerName: 'Hierarchy',
-    //   flex: 1,
-    //   // eslint-disable-next-line arrow-body-style
-    //   renderCell: (params) => {
-    //     const handleClick = async (data) => {
-    //       setdata(data);
-    //       handleOpenevent();
-    //     };
-    //     return (
-    //       <div>
-    //         <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
-    //           <FcFlowChart color="black" size={22} />
-    //         </Link>
-    //       </div>
-    //     );
-    //   },
-    // },
   ];
 
   function findUserById(id, data) {
