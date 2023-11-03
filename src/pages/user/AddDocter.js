@@ -3,7 +3,7 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable arrow-body-style */
 /* eslint-disable prefer-const */
-import * as React  from 'react';
+import * as React from 'react';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -34,7 +34,7 @@ import palette from '../../theme/palette';
 
 const AddDocter = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { handleClose, open } = props;
+  const { handleClose, open, fetchdata } = props;
   const [alluser, setAllUser] = React.useState([]);
   const [selectedFile, setSelectedFile] = React.useState(null);
 
@@ -100,54 +100,40 @@ const AddDocter = (props) => {
     data.append('city', values?.city);
     data.append('state', values?.state);
     data.append('special', values?.special);
-    data.append(
-      'role',
-      values?.role === 'Hr' || values?.role === 'Admin'
-        ? 'National Manager'
-        : values?.role === 'National Manager'
-        ? 'Branch Manager'
-        : values?.role === 'Branch Manager'
-        ? 'Zonal Manager'
-        : values?.role === 'Zonal Manager'
-        ? 'Regional Manager'
-        : values?.role === 'Regional Manager'
-        ? 'Territory Manager'
-        : ''
-    );
+    data.append('role', "Dr");
     data.append('parentId', values?.parentId);
     data.append('password', values?.password);
     data.append('confirmPassword', values?.confirmPassword);
     data.append('createdBy', values?.createdBy);
 
     const result = await apipost('/api/auth/signup', data);
-
     if (result && result.status === 200) {
       formik.resetForm();
       setSelectedFile('');
       handleClose();
+      fetchdata();
       toast.success(result.data.message);
     } else {
       // alert(result.error);
     }
   };
 
-  async function fetchdata() {
-    const result = await allusers('/api/users');
-    if (result && result.status === 200) {
-      setAllUser(result?.data);
-    }
-  }
+  // async function fetchdata() {
+  //   const result = await allusers('/api/users');
+  //   if (result && result.status === 200) {
+  //     setAllUser(result?.data);
+  //   }
+  // }
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
       addUser(values);
-      fetchdata();
     },
   });
 
- useEffect(() => {
+  useEffect(() => {
     fetchdata();
   }, []);
 

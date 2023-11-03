@@ -4,15 +4,13 @@ import PropTypes from 'prop-types';
 // hooks
 import { useEffect } from 'react';
 // @mui
-import { Box, Drawer, } from '@mui/material';
+import { Box, Drawer } from '@mui/material';
 
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useResponsive from '../../../hooks/useResponsive';
 
-import navConfig from './config';
-import UserConfig from './userconfig';
-
+import { adminConfig, nmConfig, bmConfig, zmConfig, rmConfig, tmConfig } from './config';
 
 // components
 import Scrollbar from '../../../components/scrollbar';
@@ -31,15 +29,16 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
   const user = JSON.parse(localStorage.getItem('user'));
-const navigate = useNavigate()
+  const userRole = user?.role.toLowerCase();
+  const navigate = useNavigate();
 
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
 
-  const home =()=>{
-    navigate('/dashboard/app')
-  }
+  const home = () => {
+    navigate(`${userRole}/dashboard/app`);
+  };
 
   useEffect(() => {
     if (openNav) {
@@ -55,59 +54,25 @@ const navigate = useNavigate()
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex', cursor: "pointer" }} onClick={home}>
-        {/* <img src="/assets/logo prolink.png" width={150}  /> */}
+      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex', cursor: 'pointer' }} onClick={home}>
         <h2>AioPro</h2>
       </Box>
 
-      {/* <Box sx={{ mb: 5, mx: 2.5 }}> */}
-      {/* <Link underline="none"> */}
-      {/* <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
-
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
-              </Typography>
-
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
-              </Typography>
-            </Box>
-          </StyledAccount> */}
-      {/* </Link> */}
-      {/* </Box> */}
-
-      {
-        user.role === "user" ? <NavSection data={UserConfig} /> : <NavSection data={navConfig} />
-      }
-
+      {user.role === 'Hr' || user.role === 'Admin' ? (
+        <NavSection data={adminConfig} />
+      ) : user.role === 'National Manager' ? (
+        <NavSection data={nmConfig} />
+      ) : user.role === 'Branch Manager' ? (
+        <NavSection data={bmConfig} />
+      ) : user.role === 'Zonal Manager' ? (
+        <NavSection data={zmConfig} />
+      ) : user.role === 'Regional Manager' ? (
+        <NavSection data={rmConfig} />
+      ) : user.role === 'Territory Manager' ? (
+        <NavSection data={tmConfig} />
+      ) : null}
 
       <Box sx={{ flexGrow: 1 }} />
-
-      {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-          <Box
-            component="img"
-            src="/assets/illustrations/illustration_avatar.png"
-            sx={{ width: 100, position: 'absolute', top: -50 }}
-          />
-
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography gutterBottom variant="h6">
-              Get more?
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              From only $69
-            </Typography>
-          </Box>
-
-          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="contained">
-            Upgrade to Pro
-          </Button>
-        </Stack>
-      </Box> */}
     </Scrollbar>
   );
 

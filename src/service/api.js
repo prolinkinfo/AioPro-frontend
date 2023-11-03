@@ -68,11 +68,11 @@ export const apipost = async (path, data) => {
   } catch (error) {
     if (error && error.response) {
       console.log(error.response.data, 'error.response.data');
-      // return error?.response?.data;
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.error);
     }
   }
 };
+
 export const adduser = async (path, data) => {
   try {
     const response = await axios.post(constant.baseUrl + path, data, {

@@ -41,7 +41,11 @@ export default function LoginForm() {
         localStorage.setItem('user', JSON.stringify(result?.data?.userData));
         localStorage.setItem('user_id', result?.data?.userData?.id);
         localStorage.setItem('userRole', result?.data?.userData?.role);
-        navigate('/dashboard/app');
+
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userRole = user?.role.toLowerCase();
+
+        navigate(`/${userRole}/dashboard/app`);
         return;
       }
     } catch (error) {

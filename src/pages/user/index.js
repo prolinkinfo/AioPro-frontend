@@ -90,6 +90,8 @@ const User = () => {
     window.open(url, '_blank');
   };
 
+  const userRole = user?.role.toLowerCase();
+
   const users = [
     {
       field: 'employeId',
@@ -107,7 +109,7 @@ const User = () => {
       cellClassName: 'name-column--cell name-column--cell--capitalize',
       renderCell: (params) => {
         const handleFirstNameClick = () => {
-          navigate(`/dashboard/user/view/${params.row._id}`);
+          navigate(`/${userRole}/dashboard/user/view/${params.row._id}`);
         };
 
         return <Box onClick={handleFirstNameClick}>{params.value}</Box>;
@@ -203,6 +205,7 @@ const User = () => {
         return <Box>{params.value}</Box>;
       },
     },
+
     {
       field: 'firstName',
       headerName: 'First Name',
@@ -210,7 +213,7 @@ const User = () => {
       cellClassName: 'name-column--cell name-column--cell--capitalize',
       renderCell: (params) => {
         const handleFirstNameClick = () => {
-          navigate(`/dashboard/user/view/${params.row._id}`);
+          navigate(`/${userRole}/dashboard/user/view/${params.row._id}`);
         };
 
         return <Box onClick={handleFirstNameClick}>{params.value}</Box>;
@@ -315,23 +318,22 @@ const User = () => {
     return nodes;
   }
 
-  async function fetchdata() {
+  const fetchdata = async () => {
     const result = await allusers('/api/users');
     if (result && result.status === 200) {
       const userData = displayUserFromId(result?.data, user?.id);
       setDocter(result?.data?.filter((user) => user?.role === 'Dr'));
       setAllUser(userData);
     }
-  }
+  };
   useEffect(() => {
     fetchdata();
   }, [openAdd, openEdit]);
 
-
   return (
     <>
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
-      <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} />
+      <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} fetchdata={fetchdata} />
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
