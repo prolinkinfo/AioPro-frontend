@@ -1,22 +1,18 @@
 // MapComponent.js
 import React from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import VaccinesIcon from '@mui/icons-material/Vaccines';
 
 const MapComponent = (props) => {
   const { google, location1, location2 } = props;
   const distance = calculateDistance(location1, location2);
 
   return (
-    <Map
-      google={google}
-      initialCenter={location1}
-      center={location1}
-      zoom={10}
-    >
-      <Marker position={location1} name="Location 1" />
-      <Marker position={location2} name="Location 2" />
+    <Map google={google} initialCenter={location1} center={location1} zoom={10}>
+      <Marker position={location1} name="Location 1" icon={<VaccinesIcon />} />
+      <Marker position={location2} name="Location 2" icon={<VaccinesIcon />} />
 
-      <InfoWindow position={location1}>
+      {/* <InfoWindow position={location1}>
         <div>
           <h2>Location 1</h2>
           <p>Latitude: {location1.lat}</p>
@@ -30,17 +26,19 @@ const MapComponent = (props) => {
           <p>Latitude: {location2.lat}</p>
           <p>Longitude: {location2.lng}</p>
         </div>
-      </InfoWindow>
+      </InfoWindow> */}
 
-      <InfoWindow position={{
-        lat: (location1.lat + location2.lat) / 2,
-        lng: (location1.lng + location2.lng) / 2
-      }}>
+      {/* <InfoWindow
+        position={{
+          lat: (location1.lat + location2.lat) / 2,
+          lng: (location1.lng + location2.lng) / 2,
+        }}
+      >
         <div>
           <h2>Distance</h2>
           <p>{distance.toFixed(2)} km</p>
         </div>
-      </InfoWindow>
+      </InfoWindow> */}
     </Map>
   );
 };
@@ -67,4 +65,4 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-export default GoogleApiWrapper({apiKey: 'AIzaSyAIYlAu07QNv-0ZXEN0NPwtzX9VtOXm1yQ'})(MapComponent);
+export default GoogleApiWrapper({ apiKey: 'AIzaSyAIYlAu07QNv-0ZXEN0NPwtzX9VtOXm1yQ' })(MapComponent);

@@ -22,9 +22,9 @@ const ChemistAdd = (props) => {
   // eslint-disable-next-line react/prop-types
   const { isOpen, handleClose } = props;
   const [alluser, setAllUser] = useState([]);
-  const [tab, setTab] = useState(2);
+  const [tab, setTab] = useState(1);
   const [userLocation, setUserLocation] = useState({});
-
+  const [chemistData, setChemistData] = useState({});
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -58,8 +58,6 @@ const ChemistAdd = (props) => {
     chemistLandMark: '',
     contactPersonName: '',
     contactPersonNumber: '',
-    log: '',
-    lat: '',
   };
 
   // add user api
@@ -75,7 +73,7 @@ const ChemistAdd = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      console.log('values', values);
+      setChemistData(values);
       setTab(2);
 
       // fetchdata();
@@ -86,14 +84,34 @@ const ChemistAdd = (props) => {
     fetchdata();
   }, []);
 
+  const onSave = async() => {
+    const data = {
+      ...chemistData,
+      lat: userLocation?.lat,
+      lng: userLocation?.lng,
+    };
 
-  const LocationGet=(e)=>{
-    setUserLocation({lat:e?.lat() ,lng :e?.lng()})
-  }
+    const result = await apipost('/api/chemist',data);
+    if (result && result.status === 200) {
+      toast.success("chemist creat successfully")
+      // setAllUser(result?.data);
+    }
+
+    console.log("data",data);
+  };
+
+  const LocationGet = (e) => {
+    setUserLocation({ lat: e?.lat(), lng: e?.lng() });
+  };
 
   return (
     <div>
-      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description" style={{overflow:"hidden"}}>
+      <Dialog
+        open={isOpen}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+        style={{ overflow: 'hidden' }}
+      >
         <DialogTitle
           id="scroll-dialog-title"
           style={{
@@ -302,7 +320,7 @@ const ChemistAdd = (props) => {
               </Grid>
             </form>
           ) : (
-            <form style={{height:"650px",overflow:"hidden"}}>
+            <form style={{ height: '650px', overflow: 'hidden' }}>
               <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                 <Grid item xs={12} sm={12} md={6}>
                   <FormLabel>lat</FormLabel>
@@ -334,16 +352,14 @@ const ChemistAdd = (props) => {
                     helperText={formik.touched.lat && formik.errors.lat}
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                  <div style={{ width: '100px', height: '100px' }}>
-                    <GoogleMap locatio={LocationGet} />
-                  </div>
+                <Grid style={{ overflow: 'hidden', width: '200px', height: '200px' }}>
+                  <GoogleMap locatio={LocationGet} />
                 </Grid>
               </Grid>
             </form>
           )}
         </DialogContent>
-        <DialogActions style={{zIndex:'1'}}>
+        <DialogActions style={{ zIndex: '1' }}>
           {tab === 1 ? (
             <Button
               type="submit"
@@ -354,12 +370,22 @@ const ChemistAdd = (props) => {
               Next
             </Button>
           ) : (
-            <div className='p-5' style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: '0px 10px',backgroundColor:"#ffffff",zIndex:'1' }}>
+            <div
+              className="p-5"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%',
+                padding: '0px 10px',
+                backgroundColor: '#ffffff',
+                zIndex: '1',
+              }}
+            >
               <div>
                 <Button
                   type="submit"
                   variant="contained"
-                  onClick={formik.handleSubmit}
+                  onClick={()=>setTab(1)}
                   style={{ textTransform: 'capitalize' }}
                 >
                   Back
@@ -369,7 +395,7 @@ const ChemistAdd = (props) => {
                 <Button
                   type="submit"
                   variant="contained"
-                  onClick={formik.handleSubmit}
+                  onClick={onSave}
                   style={{ textTransform: 'capitalize' }}
                 >
                   Save

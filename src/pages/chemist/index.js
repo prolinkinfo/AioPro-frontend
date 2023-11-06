@@ -8,6 +8,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useNavigate, Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import moment from 'moment';
+import MapIcon from '@mui/icons-material/Map';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Iconify from '../../components/iconify';
 import { allusers, apidelete, apiget, deleteManyApi } from '../../service/api';
@@ -86,24 +87,22 @@ export const Chemist = () => {
     const url = `https://www.google.com/maps/place/${latitude}N+${longitude}E/@${latitude},${longitude},15z`;
     window.open(url, '_blank');
   };
+  const userRole = user?.role.toLowerCase();
 
   const columns = [
     {
       field: 'event',
       headerName: 'Event',
       flex: 1,
+
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          // setdata(data);
-          // handleOpenevent();
-        };
         return (
           <div>
-            {/* <Link to={`/dashboard/event/${params?.row?._id}`}>
-              <EventNoteIcon />
-            </Link> */}
-            <button style={{padding:"0px 10px",cursor:"pointer",border:"none",backgroundColor:'transparent'}} onClick={()=>openGoogleMaps(21.229395,72.897493)}>
+            <button
+              style={{ padding: '0px 10px', cursor: 'pointer', border: 'none', backgroundColor: 'transparent' }}
+              onClick={() => openGoogleMaps(params?.row?.lat, params?.row?.lng)}
+            >
               <LocationOnIcon />
             </button>
           </div>
@@ -174,21 +173,21 @@ export const Chemist = () => {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      renderCell: (params) =>  (
-          <Box>
-            <Button
-              variant="outlined"
-              style={{
-                color: params.value === 'active' ? '#22C55E' : '#B61D18',
-                // background: params.value === 'active' ? '#22c55e29' : '#ff563029',
-                border: 'none',
-                padding:'0px'
-              }}
-            >
-              {params.value}
-            </Button>
-          </Box>
-        )
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="outlined"
+            style={{
+              color: params.value === 'active' ? '#22C55E' : '#B61D18',
+              // background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+              border: 'none',
+              padding: '0px',
+            }}
+          >
+            {params.value}
+          </Button>
+        </Box>
+      ),
     },
   ];
 
@@ -210,14 +209,17 @@ export const Chemist = () => {
     chemistGetApi();
   }, []);
 
-
   return (
     <>
       <ChemistAdd isOpen={isOpen} handleClose={handleClose} />
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4">Chemist List</Typography>
+          <Box>
+            <Typography variant="h4">Chemist List</Typography>
+            <Link to={`/${userRole}/dashboard/location`}> <MapIcon /></Link>
+          </Box>
+
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
             Add new
           </Button>
