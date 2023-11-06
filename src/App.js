@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 // routes

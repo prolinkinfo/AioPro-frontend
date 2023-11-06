@@ -1,5 +1,7 @@
+import BiotechIcon from '@mui/icons-material/Biotech';
 // component
 import SvgColor from '../../../components/svg-color';
+
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +32,11 @@ export const adminConfig = [
     title: 'Greeting card',
     path: `/${userRole}/dashboard/greetingcard`,
     icon: icon('ic_greetingcard'),
+  },
+  {
+    title: 'Chemist',
+    path: `/${userRole}/dashboard/chemist`,
+    icon: <BiotechIcon/>,
   },
   {
     title: 'Products',
