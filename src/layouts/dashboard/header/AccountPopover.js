@@ -13,22 +13,24 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
   const user = JSON.parse(localStorage.getItem('user'));
+  const role = user?.role.toLowerCase();
+  const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
 
   const MENU_OPTIONS = [
     {
       label: 'Profile',
       icon: 'eva:home-fill',
-      path: `/dashboard/user/view/${user?.id}`,
+      path: `/${userRole}/dashboard/user/view/${user?.id}`,
     },
     {
       label: 'Setting',
       icon: 'eva:person-fill',
-      path: `/dashboard/user/view/${user?.id}`,
+      path: `/${userRole}/dashboard/user/view/${user?.id}`,
     },
     {
       label: 'Meeting',
       icon: 'eva:person-fill',
-      path: `/dashboard/event/${user?.id}`,
+      path: `/${userRole}/dashboard/event/${user?.id}`,
     },
   ];
 

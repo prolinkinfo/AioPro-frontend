@@ -7,7 +7,7 @@ import { apiput } from '../../service/api';
 
 const Security = (props) => {
   const Validations = yup.object({
-    oldPassword: yup.string().required("Old Password is required"),
+    oldPassword: yup.string().required('Old Password is required'),
     password: yup
       .string()
       .required('Password is required')
@@ -51,11 +51,11 @@ const Security = (props) => {
                 <FormLabel>Old Password</FormLabel>
                 <TextField
                   name="oldPassword"
-                  type='password'
+                  type="password"
                   value={formik.values.oldPassword}
                   onChange={formik.handleChange}
                   fullWidth
-                  size='small'
+                  size="small"
                   error={formik.touched.oldPassword && Boolean(formik.errors.oldPassword)}
                   helperText={formik.touched.oldPassword && formik.errors.oldPassword}
                 />
@@ -64,8 +64,8 @@ const Security = (props) => {
                 <FormLabel>New Password</FormLabel>
                 <TextField
                   name="password"
-                  type='password'
-                  size='small'
+                  type="password"
+                  size="small"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   fullWidth
@@ -74,11 +74,11 @@ const Security = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-              <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Confirm Password</FormLabel>
                 <TextField
                   name="confirmPassword"
-                  size='small'
-                  type='password'
+                  size="small"
+                  type="password"
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange}
                   fullWidth
@@ -86,9 +86,10 @@ const Security = (props) => {
                   helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                 />
               </Grid>
-
               <Grid item xs={12} sm={12} md={12} textAlign={'right'}>
-                <Button variant="contained" type='submit' onClick={formik.handleSubmit}>Save Changes</Button>
+                <Button variant="contained" type="submit" onClick={formik.handleSubmit}>
+                  Save Changes
+                </Button>
               </Grid>
             </Grid>
           </Card>

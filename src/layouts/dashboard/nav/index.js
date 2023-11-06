@@ -30,6 +30,7 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
+
   const navigate = useNavigate();
 
   const { pathname } = useLocation();

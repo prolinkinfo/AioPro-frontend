@@ -83,8 +83,9 @@ const User = () => {
   const handleCloseEdit = () => setOpenEdit(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
-
-  const userRole = user?.role.toLowerCase();
+  const role = user?.role.toLowerCase();
+  const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
+  console.log(userRole);
 
   const users = [
     {
@@ -161,7 +162,7 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/event/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>
           </div>
@@ -180,7 +181,7 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/hierarchy/${params?.row?._id}`}>
               <FcFlowChart color="black" size={22} />
             </Link>
           </div>
@@ -265,7 +266,7 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/event/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>
           </div>

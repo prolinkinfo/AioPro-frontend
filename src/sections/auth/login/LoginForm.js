@@ -25,7 +25,7 @@ export default function LoginForm() {
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    // email: yup.string().email('Invalid email').required('Email is required'),
+    login: yup.string().required('Email or Employeld is required'),
     password: yup.string().required('Password is required'),
   });
 
@@ -46,6 +46,7 @@ export default function LoginForm() {
         const userRole = user?.role.toLowerCase();
 
         navigate(`/${userRole}/dashboard/app`);
+
         return;
       }
     } catch (error) {
@@ -76,14 +77,6 @@ export default function LoginForm() {
             error={formik.touched.login && Boolean(formik.errors.login)}
             helperText={formik.touched.login && formik.errors.login}
           />
-          {/* <TextField
-            name="employeId"
-            label="EmployeId"
-            value={formik.values.employeId}
-            onChange={formik.handleChange}
-            error={formik.touched.employeId && Boolean(formik.errors.employeId)}
-            helperText={formik.touched.employeId && formik.errors.employeId}
-          /> */}
 
           <TextField
             name="password"
