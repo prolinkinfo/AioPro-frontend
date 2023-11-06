@@ -41,6 +41,9 @@ const View = () => {
   const params = useParams();
 
   const userId = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
+  const role = user?.role.toLowerCase();
+  const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
 
   // open add model
   const handleOpenAdd = () => setOpenAdd(true);
@@ -57,8 +60,7 @@ const View = () => {
   // tab
   const handleChange = (event, newValue) => setValue(newValue);
 
-  const back = () =>navigate('/dashboard/user');
- 
+  const back = () => navigate(`/${userRole}/dashboard/user`);
 
   // fetch api
   const fetchdata = async () => {

@@ -84,13 +84,14 @@ const User = () => {
   const handleCloseEdit = () => setOpenEdit(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
+  const role = user?.role.toLowerCase();
+  const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
+  console.log(userRole);
 
   const openGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/place/${latitude}N+${longitude}E/@${latitude},${longitude},15z`;
     window.open(url, '_blank');
   };
-
-  const userRole = user?.role.toLowerCase();
 
   const users = [
     {
@@ -167,7 +168,7 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/event/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>
           </div>
@@ -186,7 +187,7 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/hierarchy/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/hierarchy/${params?.row?._id}`}>
               <FcFlowChart color="black" size={22} />
             </Link>
           </div>
@@ -271,10 +272,13 @@ const User = () => {
         };
         return (
           <div>
-            <Link to={`/dashboard/event/${params?.row?._id}`}>
+            <Link to={`/${userRole}/dashboard/event/${params?.row?._id}`}>
               <EventNoteIcon />
             </Link>
-            <button style={{padding:"0px 10px",cursor:"pointer",border:"none",backgroundColor:'transparent'}} onClick={()=>openGoogleMaps(21.229395,72.897493)}>
+            <button
+              style={{ padding: '0px 10px', cursor: 'pointer', border: 'none', backgroundColor: 'transparent' }}
+              onClick={() => openGoogleMaps(21.229395, 72.897493)}
+            >
               <LocationOnIcon />
             </button>
           </div>

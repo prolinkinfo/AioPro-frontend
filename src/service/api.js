@@ -67,8 +67,7 @@ export const apipost = async (path, data) => {
     return response;
   } catch (error) {
     if (error && error.response) {
-      console.log(error.response.data, 'error.response.data');
-      toast.error(error?.response?.data?.error);
+      toast.error(error?.response?.data?.message);
     }
   }
 };

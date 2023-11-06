@@ -84,12 +84,14 @@ export default function NotificationsPopover() {
 
   const [notification, setNotification] = useState([]);
 
-  const activeNotifications = notification?.filter(notification => notification?.status === 'active');
+  const activeNotifications = notification?.filter((notification) => notification?.status === 'active');
 
   const totalUnRead = activeNotifications?.length;
 
   const [open, setOpen] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem('user'));
+  const role = user?.role.toLowerCase();
+  const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -112,7 +114,7 @@ export default function NotificationsPopover() {
   const notificationApi = async () => {
     const result = await apiget(`/api/notification/?approvalBy=${id}`);
     if (result) {
-      const filteredNotifications = result?.data?.filter(notification => notification?.status === 'active');
+      const filteredNotifications = result?.data?.filter((notification) => notification?.status === 'active');
       setNotification(filteredNotifications);
     }
   };
@@ -155,15 +157,21 @@ export default function NotificationsPopover() {
           <List
             disablePadding
             subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline', textAlign: "center", textTransform: "capitalize" }}>
-                {
-                  notification?.length > 0 ? "" : 'No Notification Found'
-                }
+              <ListSubheader
+                disableSticky
+                sx={{ py: 1, px: 2.5, typography: 'overline', textAlign: 'center', textTransform: 'capitalize' }}
+              >
+                {notification?.length > 0 ? '' : 'No Notification Found'}
               </ListSubheader>
             }
           >
             {notification?.map((notification) => (
-              <NotificationItem key={notification._id} notification={notification} handleClose={handleClose} notificationApi={notificationApi} />
+              <NotificationItem
+                key={notification._id}
+                notification={notification}
+                handleClose={handleClose}
+                notificationApi={notificationApi}
+              />
             ))}
           </List>
         </Scrollbar>
@@ -172,7 +180,9 @@ export default function NotificationsPopover() {
 
         <Box sx={{ p: 1 }}>
           <Button fullWidth disableRipple onClick={handleClose}>
-            <Link to={"/dashboard/notification"} style={{ textDecoration: "none" }}>View All</Link>
+            <Link to={`/${userRole}/dashboard/notification`} style={{ textDecoration: 'none' }}>
+              View All
+            </Link>
           </Button>
         </Box>
       </Popover>
@@ -197,21 +207,21 @@ export default function NotificationsPopover() {
 function NotificationItem({ notification, handleClose, notificationApi }) {
   const { avatar } = renderContent(notification);
 
-  const [meetingData, setMeetingData] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const [meetingData, setMeetingData] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModel = () => {
-    setIsOpen(true)
+    setIsOpen(true);
     // handleClose();
-  }
-  const handleCloseModel = () => setIsOpen(false)
+  };
+  const handleCloseModel = () => setIsOpen(false);
 
   const editNotification = async () => {
     const data = {
       _id: meetingData?._id,
-      status: "deActive",
+      status: 'deActive',
       createdBy: meetingData?.createdBy?._id,
-      approvalBy: meetingData?.approvalBy
+      approvalBy: meetingData?.approvalBy,
     };
     const result = await apiput(`/api/notification`, data);
     if (result && result.status === 200) {
@@ -219,14 +229,12 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
       notificationApi();
       handleClose();
     }
-  }
-
-
+  };
 
   const editNotificationApproval = async () => {
     const data = {
       _id: meetingData?._id,
-      status: "deActive",
+      status: 'deActive',
     };
     const result = await apiput(`/api/notification/approvel`, data);
     if (result && result.status === 200) {
@@ -237,18 +245,23 @@ function NotificationItem({ notification, handleClose, notificationApi }) {
   };
 
   const handleClick = (data) => {
-    setMeetingData(data)
+    setMeetingData(data);
     handleOpenModel();
-  }
+  };
 
-console.log(meetingData,"meetingData")
+  console.log(meetingData, 'meetingData');
 
   return (
     <>
-      {
-        meetingData?.type !== "meeting_approvel" &&
-        <ApprovalModel open={isOpen} handleClose={handleCloseModel} meetingData={meetingData} editNotification={editNotification} notification={notification} />
-      }
+      {meetingData?.type !== 'meeting_approvel' && (
+        <ApprovalModel
+          open={isOpen}
+          handleClose={handleCloseModel}
+          meetingData={meetingData}
+          editNotification={editNotification}
+          notification={notification}
+        />
+      )}
       <ListItemButton
         sx={{
           py: 1.5,
@@ -259,7 +272,7 @@ console.log(meetingData,"meetingData")
           }),
         }}
         onClick={() => {
-          if (meetingData?.type === "meeting_approvel") {
+          if (meetingData?.type === 'meeting_approvel') {
             editNotificationApproval();
           } else {
             handleClick(notification);
@@ -269,12 +282,10 @@ console.log(meetingData,"meetingData")
         <ListItemAvatar>
           <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
         </ListItemAvatar>
-        {
-
-        }
+        {}
         <ListItemText
           primary={notification?.data?.message}
-          style={{ textTransform: "capitalize" }}
+          style={{ textTransform: 'capitalize' }}
           secondary={
             <Typography
               variant="caption"
@@ -290,7 +301,7 @@ console.log(meetingData,"meetingData")
             </Typography>
           }
         />
-      </ListItemButton >
+      </ListItemButton>
     </>
   );
 }
