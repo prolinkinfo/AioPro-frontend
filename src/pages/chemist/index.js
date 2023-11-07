@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Stack, Button, Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarContainer, nbNO } from '@mui/x-data-grid';
-import { DeleteOutline } from '@mui/icons-material';
+import { DeleteOutline, Edit } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import { FcFlowChart } from 'react-icons/fc';
 import EventNoteIcon from '@mui/icons-material/EventNote';
@@ -15,7 +15,7 @@ import { allusers, apidelete, apiget, deleteManyApi } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
 import ChemistAdd from './addChemist';
-
+import EditChemist from './editChemist';
 // ----------------------------------------------------------------------
 
 function CustomToolbar({ selectedRowIds, chemistGetApi }) {
@@ -29,7 +29,7 @@ function CustomToolbar({ selectedRowIds, chemistGetApi }) {
     setIsOpenDeleteModel(true);
   };
 
-  const deleteManyOpd = async (data) => {
+  const deleteManyChemist = async (data) => {
     const response = await deleteManyApi('/api/chemist/deleteMany', data);
     if (response?.status === 200) {
       chemistGetApi();
@@ -53,7 +53,7 @@ function CustomToolbar({ selectedRowIds, chemistGetApi }) {
       <DeleteModel
         isOpenDeleteModel={isOpenDeleteModel}
         handleCloseDeleteModel={handleCloseDelete}
-        deleteData={deleteManyOpd}
+        deleteData={deleteManyChemist}
         id={selectedRowIds}
       />
     </GridToolbarContainer>
@@ -65,8 +65,8 @@ export const Chemist = () => {
   const [chemistList, setChemistList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [isOpenView, setIsOpenView] = useState(false);
-  const [opdData, setOpdData] = useState({});
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [chemistData, setChemistData] = useState({});
   const navigate = useNavigate();
   const { id } = JSON.parse(localStorage.getItem('user'));
 
@@ -77,8 +77,8 @@ export const Chemist = () => {
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const handleOpenView = () => setIsOpenView(true);
-  const handleCloseView = () => setIsOpenView(false);
+  const handleOpenEdit = () => setIsOpenEdit(true);
+  const handleCloseEdit = () => setIsOpenEdit(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const dateFormat = 'MMM DD, YYYY';
@@ -91,8 +91,8 @@ export const Chemist = () => {
 
   const columns = [
     {
-      field: 'event',
-      headerName: 'Event',
+      field: 'map',
+      headerName: 'Map',
       flex: 1,
 
       // eslint-disable-next-line arrow-body-style
@@ -105,6 +105,32 @@ export const Chemist = () => {
             >
               <LocationOnIcon />
             </button>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'edit',
+      headerName: 'Edit',
+      flex: 1,
+      renderCell: (params) => {
+        const handleFirstNameClick = async (data) => {
+          console.log(data, 'data');
+          setChemistData(data?.row);
+          handleOpenEdit();
+        };
+
+        return (
+          <div>
+            <Box>
+              <EditChemist isOpen={isOpenEdit} handleClose={handleCloseEdit} chemistData={chemistData} />
+
+              <Stack direction={'row'} spacing={2}>
+                <Button variant="text" size="small" onClick={() => handleFirstNameClick(params)}>
+                  <Edit />
+                </Button>
+              </Stack>
+            </Box>
           </div>
         );
       },
@@ -128,8 +154,8 @@ export const Chemist = () => {
       flex: 2,
     },
     {
-      field: 'chemisContactNumber',
-      headerName: 'Chemis Contact Number',
+      field: 'chemistContactNumber',
+      headerName: 'Chemist Contact Number',
       cellClassName: 'name-column--cell--capitalize',
       flex: 2,
     },
@@ -211,13 +237,16 @@ export const Chemist = () => {
 
   return (
     <>
-      <ChemistAdd isOpen={isOpen} handleClose={handleClose} />
+      <ChemistAdd isOpen={isOpen} handleClose={handleClose} chemistGetApi={chemistGetApi} />
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Box>
             <Typography variant="h4">Chemist List</Typography>
-            <Link to={`/${userRole}/dashboard/location`}> <MapIcon /></Link>
+            <Link to={`/${userRole}/dashboard/location`}>
+              {' '}
+              <MapIcon />
+            </Link>
           </Box>
 
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
