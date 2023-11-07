@@ -66,7 +66,6 @@ export const Chemist = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [isOpenView, setIsOpenView] = useState(false);
-  const [opdData, setOpdData] = useState({});
   const navigate = useNavigate();
   const { id } = JSON.parse(localStorage.getItem('user'));
 
@@ -208,6 +207,8 @@ export const Chemist = () => {
   useEffect(() => {
     chemistGetApi();
   }, []);
+
+
 
   return (
     <>
