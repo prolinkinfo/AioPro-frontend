@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 import { Grid } from '@mui/material';
 
-const GoogleMap = ({ google, location }) => {
+const GoogleMap = ({ google, location, stateLocation }) => {
   const [latLng, setLatLng] = useState({});
-  console.log(location, 'location');
+
   const onMarkerDragEnd = ({ latLng }, event) => {
     // const { latLng } = coord;
     const newLatLng = {
-      lat: latLng?.lat() ,
+      lat: latLng?.lat(),
       lng: latLng?.lng(),
     };
     location(latLng);
@@ -23,7 +23,12 @@ const GoogleMap = ({ google, location }) => {
   };
 
   useEffect(() => {
-    getLocations();
+    if (!stateLocation) {
+      getLocations();
+    }
+    if (stateLocation) {
+      setLatLng(stateLocation)
+    }
   }, []);
   console.log('latLng', latLng);
 

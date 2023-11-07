@@ -50,7 +50,6 @@ const EditChemist = (props) => {
       .required('Contact Person Number is required'),
   });
 
-  console.log('chemistData', chemistData);
   // -----------   initialValues
   const initialValues = {
     doctorName: chemistData?.doctorName,
@@ -342,7 +341,7 @@ const EditChemist = (props) => {
                   />
                 </Grid>
                 <Grid style={{ overflow: 'hidden', width: '200px', height: '200px' }}>
-                  <GoogleMap location={LocationGet} />
+                  <GoogleMap location={LocationGet} stateLocation={{lat :chemistData?.lat ,lng:chemistData?.lng} } />
                 </Grid>
               </Grid>
             </form>

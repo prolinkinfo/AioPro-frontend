@@ -53,7 +53,6 @@ const ChemistAdd = (props) => {
       .required('Contact Person Number is required'),
   });
 
-  console.log('userLocation', userLocation);
   // -----------   initialValues
   const initialValues = {
     doctorName: '',

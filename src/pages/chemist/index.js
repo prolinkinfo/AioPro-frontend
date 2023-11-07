@@ -243,9 +243,9 @@ export const Chemist = () => {
 
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Box>
+          <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">Chemist List</Typography>
-            <Link to={`/${userRole}/dashboard/location`}>
+            <Link to={`/${userRole}/dashboard/location`} style={{margin:'7px 0px 0px 15px'}}>
               {' '}
               <MapIcon />
             </Link>
