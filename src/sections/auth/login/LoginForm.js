@@ -35,7 +35,6 @@ export default function LoginForm() {
 
     try {
       const result = await apipost('/api/auth/login', data);
-      console.log('result', result);
       if (result && result.status === 200) {
         localStorage.setItem('userName', JSON.stringify(result?.data?.userData?.userName));
         localStorage.setItem('user', JSON.stringify(result?.data?.userData));
@@ -45,7 +44,9 @@ export default function LoginForm() {
         const user = JSON.parse(localStorage.getItem('user'));
         const userRole = user?.role.toLowerCase();
 
-        navigate(`/${userRole}/dashboard/app`);
+        if (window.location.reload()) {
+          navigate(`/${userRole}/dashboard/app`);
+        }
 
         return;
       }

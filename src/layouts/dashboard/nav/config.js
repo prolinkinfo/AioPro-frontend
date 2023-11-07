@@ -2,7 +2,6 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 // component
 import SvgColor from '../../../components/svg-color';
 
-
 // ----------------------------------------------------------------------
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
@@ -36,7 +35,7 @@ export const adminConfig = [
   {
     title: 'Chemist',
     path: `/${userRole}/dashboard/chemist`,
-    icon: <BiotechIcon/>,
+    icon: <BiotechIcon />,
   },
   {
     title: 'Products',

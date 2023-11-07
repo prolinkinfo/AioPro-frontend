@@ -7,6 +7,7 @@ import { apiget } from '../../service/api';
 
 const MapComponent = (props) => {
   const [chemistList, setChemistList] = useState([]);
+
   const { google, location1, location2 } = props;
   // const distance = calculateDistance(location1, location2);
 
@@ -22,16 +23,15 @@ const MapComponent = (props) => {
   }, []);
 
   const customIcon = {
-    url: 'http://localhost:8080/public/syringe.png', // Replace with the path to your custom icon image
+    url: 'http://localhost:8080/public/medicine.png', // Replace with the path to your custom icon image
     scaledSize: new google.maps.Size(32, 32), // Specify the desired width and height for the icon
   };
 
   return (
     <>
-
       <Map google={google} initialCenter={location1} center={location1} zoom={10}>
         {chemistList?.map((item, index) => (
-          <Marker position={{ lat: item?.lat, lng: item?.lng }} icon={customIcon}  />
+          <Marker position={{ lat: item?.lat, lng: item?.lng }} icon={customIcon} />
         ))}
       </Map>
     </>

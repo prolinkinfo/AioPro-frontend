@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
@@ -7,11 +7,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import Jwt from 'jwt-decode';
 import { toast } from 'react-toastify';
 import account from '../../../_mock/account';
+import { getsingleuser } from '../../../service/api';
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-
+  const [userDetails, setUserDetails] = useState({});
+  const [userAction, setUserAction] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
   const role = user?.role.toLowerCase();
   const userRole = role === 'admin' ? 'admin' : role === 'hr' ? 'hr' : role === 'national manager' ? 'nm' : '';
@@ -69,6 +71,18 @@ export default function AccountPopover() {
   }
   // };
 
+  const fetchdata = async () => {
+    const result = await getsingleuser(`/api/users`, user?.id);
+    setUserAction(result);
+    if (result && result.status === 200) {
+      setUserDetails(result.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchdata();
+  }, [userAction]);
+
   return (
     <>
       <IconButton
@@ -88,7 +102,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={user?.avatar} alt="photoURL" />
+        <Avatar src={userDetails?.avatar} alt="photoURL" />
       </IconButton>
 
       <Popover
