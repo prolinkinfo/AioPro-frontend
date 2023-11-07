@@ -15,18 +15,15 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { Dialog, Button, Avatar, Box, FormLabel, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { allusers, apipost } from '../../service/api';
+import { allusers, apiget, apipost, apiput } from '../../service/api';
 import GoogleMap from './GoogleMap';
 
-const ChemistAdd = (props) => {
+const EditChemist = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpen, handleClose, chemistGetApi } = props;
-  const [alluser, setAllUser] = useState([]);
+  const { isOpen, handleClose, chemistData } = props;
   const [tab, setTab] = useState(1);
   const [userLocation, setUserLocation] = useState({});
-  const [chemistData, setChemistData] = useState({});
-
-  const user = JSON.parse(localStorage.getItem('user'));
+  //   const [chemistData, setChemistData] = useState({});
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -53,46 +50,33 @@ const ChemistAdd = (props) => {
       .required('Contact Person Number is required'),
   });
 
-  console.log('userLocation', userLocation);
+  console.log('chemistData', chemistData);
   // -----------   initialValues
   const initialValues = {
-    doctorName: '',
-    doctorMslNumber: '',
-    shopName: '',
-    chemistContactNumber: '',
-    pincode: '',
-    state: '',
-    city: '',
-    chemistArea: '',
-    chemistAddress: '',
-    chemistLandMark: '',
-    contactPersonName: '',
-    contactPersonNumber: '',
+    doctorName: chemistData?.doctorName,
+    doctorMslNumber: chemistData?.doctorMslNumber,
+    shopName: chemistData?.shopName,
+    chemistContactNumber: chemistData?.chemistContactNumber,
+    pincode: chemistData?.pincode,
+    state: chemistData?.state,
+    city: chemistData?.city,
+    chemistArea: chemistData?.chemistArea,
+    chemistAddress: chemistData?.chemistAddress,
+    chemistLandMark: chemistData?.chemistLandMark,
+    contactPersonName: chemistData?.contactPersonName,
+    contactPersonNumber: chemistData?.contactPersonNumber,
   };
 
   // add user api
 
-  async function fetchdata() {
-    const result = await allusers('/api/users');
-    if (result && result.status === 200) {
-      setAllUser(result?.data);
-    }
-  }
-
   const formik = useFormik({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
-      setChemistData(values);
       setTab(2);
-
-      // fetchdata();
     },
   });
-
-  useEffect(() => {
-    fetchdata();
-  }, []);
 
   const onSave = async () => {
     const data = {
@@ -101,11 +85,10 @@ const ChemistAdd = (props) => {
       lng: userLocation?.lng,
     };
 
-    const result = await apipost('/api/chemist', data);
+    const result = await apiput(`/api/chemist`, data);
     if (result && result.status === 200) {
       handleClose();
       setTab(1);
-      chemistGetApi();
     }
   };
 
@@ -115,7 +98,7 @@ const ChemistAdd = (props) => {
   };
 
   const LocationGet = (e) => {
-    setUserLocation({ lat: e?.lat(), lng: e?.lng() });
+    setUserLocation({ lat: e?.lat() || chemistData?.lat, lng: e?.lng() || chemistData?.lat });
   };
 
   return (
@@ -161,7 +144,6 @@ const ChemistAdd = (props) => {
                   <TextField
                     name="doctorMslNumber"
                     label=""
-                    type="number"
                     size="small"
                     value={formik.values.doctorMslNumber}
                     onChange={formik.handleChange}
@@ -339,11 +321,25 @@ const ChemistAdd = (props) => {
               <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                 <Grid item xs={12} sm={12} md={6}>
                   <FormLabel>lat</FormLabel>
-                  <TextField name="lat" label="" size="small" value={userLocation.lat} fullWidth disabled />
+                  <TextField
+                    name="lat"
+                    label=""
+                    size="small"
+                    value={userLocation.lat || chemistData?.lat}
+                    fullWidth
+                    disabled
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                   <FormLabel>lng</FormLabel>
-                  <TextField name="lng" label="" size="small" value={userLocation.lng} disabled fullWidth />
+                  <TextField
+                    name="lng"
+                    label=""
+                    size="small"
+                    value={userLocation.lng || chemistData?.lng}
+                    disabled
+                    fullWidth
+                  />
                 </Grid>
                 <Grid style={{ overflow: 'hidden', width: '200px', height: '200px' }}>
                   <GoogleMap location={LocationGet} />
@@ -423,4 +419,4 @@ const ChemistAdd = (props) => {
   );
 };
 
-export default ChemistAdd;
+export default EditChemist;
