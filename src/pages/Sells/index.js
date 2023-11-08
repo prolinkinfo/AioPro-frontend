@@ -179,7 +179,7 @@ export const Sells = () => {
       <AddSells open={openAdd} handleClose={handleCloseAdd} />
       <EditSells open={openEditModel} handleClose={handleCloseEditModel} productData={data} />
       <Container maxWidth="xl">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Box>
             <Button
               variant="outlined"
@@ -197,7 +197,7 @@ export const Sells = () => {
         </Stack>
 
         <TableStyle>
-          <Box width="100%">
+          <Box width="100%" pt={3}>
             <Card style={{ height: '72vh', paddingTop: '15px' }}>
               <DataGrid
                 rows={sellsList}

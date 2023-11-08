@@ -147,15 +147,15 @@ const Opd = () => {
       <OpdAdd isOpen={isOpen} handleClose={handleClose} fetchOpd={fetchOpd} />
 
       <Container maxWidth="xl">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Opd List</Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
             New Opd
           </Button>
         </Stack>
         <TableStyle>
-          <Box width="100%">
-            <Card style={{ height: '700px', paddingTop: '15px' }}>
+          <Box width="100%" pt={3}>
+            <Card style={{ height: '72vh', paddingTop: '15px'}}>
               <DataGrid
                 rows={opdList}
                 columns={columns}

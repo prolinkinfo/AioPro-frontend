@@ -340,7 +340,7 @@ const User = () => {
       <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} fetchdata={fetchdata} />
 
       <Container maxWidth="xl">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Box>
             <Button
               variant="outlined"
@@ -375,7 +375,7 @@ const User = () => {
 
         {tab === 1 ? (
           <TableStyle>
-            <Box width="100%">
+            <Box width="100%" pt={3}>
               <Card style={{ height: '72vh', paddingTop: '15px' }}>
                 <DataGrid
                   rows={alluser}
@@ -391,7 +391,7 @@ const User = () => {
           </TableStyle>
         ) : (
           <TableStyle>
-            <Box width="100%">
+            <Box width="100%" pt={3}>
               <Card style={{ height: '72vh', paddingTop: '15px' }}>
                 <DataGrid
                   rows={allDocter}

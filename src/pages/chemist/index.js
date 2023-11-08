@@ -242,22 +242,21 @@ export const Chemist = () => {
       <ChemistAdd isOpen={isOpen} handleClose={handleClose} chemistGetApi={chemistGetApi} />
 
       <Container maxWidth="xl">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">Chemist List</Typography>
             <Link to={`/${userRole}/dashboard/location`} style={{margin:'7px 0px 0px 15px'}}>
-              {' '}
               <MapIcon />
             </Link>
           </Box>
 
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen} >
             Add new
           </Button>
         </Stack>
         <TableStyle>
-          <Box width="100%">
-            <Card style={{ height: '700px', paddingTop: '15px' }}>
+          <Box width="100%" pt={3}>
+            <Card style={{ height: '72vh', paddingTop: '15px' }}>
               <DataGrid
                 rows={chemistList}
                 columns={columns}
