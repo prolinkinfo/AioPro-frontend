@@ -81,7 +81,7 @@ export default function AccountPopover() {
 
   useEffect(() => {
     fetchdata();
-  }, [userAction]);
+  }, []);
 
   return (
     <>

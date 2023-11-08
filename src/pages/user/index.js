@@ -8,7 +8,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Iconify from '../../components/iconify';
 import AddUser from './Add';
-import { allusers, apidelete } from '../../service/api';
+import { allusers, apidelete, apiput } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
 import AddDocter from './AddDocter';
@@ -138,7 +138,16 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => {};
+        const chengStatus = async(data) => {
+          const pyload = {
+            _id: data?._id,
+            status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+          }
+          const result = await apiput(`/api/users/changeStatus`, pyload);
+          if (result && result.status === 200) {
+            fetchdata();
+          }
+        };
 
         return (
           <Box>
@@ -149,6 +158,7 @@ const User = () => {
                 background: params.value === 'active' ? '#22c55e29' : '#ff563029',
                 border: 'none',
               }}
+              onClick={()=>chengStatus(params?.row)}
             >
               {params.value}
             </Button>
@@ -242,7 +252,16 @@ const User = () => {
       headerName: 'Status',
       flex: 1,
       renderCell: (params) => {
-        const chengStatus = () => {};
+        const chengStatus = async(data) => {
+          const pyload = {
+            _id: data?._id,
+            status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+          }
+          const result = await apiput(`/api/users/changeStatus`, pyload);
+          if (result && result.status === 200) {
+            fetchdata();
+          }
+        };
 
         return (
           <Box>
@@ -253,6 +272,7 @@ const User = () => {
                 background: params.value === 'active' ? '#22c55e29' : '#ff563029',
                 border: 'none',
               }}
+              onClick={()=>chengStatus(params?.row)}
             >
               {params.value}
             </Button>

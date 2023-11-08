@@ -11,7 +11,7 @@ import moment from 'moment';
 import MapIcon from '@mui/icons-material/Map';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Iconify from '../../components/iconify';
-import { allusers, apidelete, apiget, deleteManyApi } from '../../service/api';
+import { allusers, apidelete, apiget, apiput, deleteManyApi } from '../../service/api';
 import TableStyle from '../../components/TableStyle';
 import DeleteModel from '../../components/Deletemodle';
 import ChemistAdd from './addChemist';
@@ -79,6 +79,7 @@ export const Chemist = () => {
 
   const handleOpenEdit = () => setIsOpenEdit(true);
   const handleCloseEdit = () => setIsOpenEdit(false);
+
 
   const user = JSON.parse(localStorage.getItem('user'));
   const dateFormat = 'MMM DD, YYYY';
@@ -165,18 +166,6 @@ export const Chemist = () => {
       cellClassName: 'name-column--cell--capitalize',
       flex: 2,
     },
-    // {
-    //   field: 'state',
-    //   headerName: 'state',
-    //   cellClassName: 'name-column--cell--capitalize',
-    //   flex: 2,
-    // },
-    // {
-    //   field: 'city',
-    //   headerName: 'city',
-    //   cellClassName: 'name-column--cell--capitalize',
-    //   flex: 2,
-    // },
     {
       field: 'chemistAddress',
       headerName: 'Chemist Address',
@@ -199,21 +188,36 @@ export const Chemist = () => {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      renderCell: (params) => (
-        <Box>
-          <Button
-            variant="outlined"
-            style={{
-              color: params.value === 'active' ? '#22C55E' : '#B61D18',
-              // background: params.value === 'active' ? '#22c55e29' : '#ff563029',
-              border: 'none',
-              padding: '0px',
-            }}
-          >
-            {params.value}
-          </Button>
-        </Box>
-      ),
+      renderCell: (params) => {
+        const handleFirstNameClick = async (data) => {
+          const pyload = {
+            _id: data?._id,
+            status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+          }
+          const result = await apiput(`/api/chemist/changeStatus`, pyload);
+          if (result && result.status === 200) {
+            chemistGetApi();
+          }
+        };
+        return (
+          <Box>
+            <Button
+              variant="outlined"
+              style={{
+                color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                // background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                border: 'none',
+                padding: '2px',
+              }}
+              onClick={() => {
+                handleFirstNameClick(params?.row)
+              }}
+            >
+              {params.value}
+            </Button>
+          </Box>
+        )
+      },
     },
   ];
 
@@ -245,7 +249,7 @@ export const Chemist = () => {
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">Chemist List</Typography>
-            <Link to={`/${userRole}/dashboard/location`} style={{margin:'7px 0px 0px 15px'}}>
+            <Link to={`/${userRole}/dashboard/location`} style={{ margin: '7px 0px 0px 15px' }}>
               <MapIcon />
             </Link>
           </Box>
