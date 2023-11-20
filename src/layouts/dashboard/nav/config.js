@@ -17,6 +17,11 @@ export const adminConfig = [
   },
 
   {
+    title: 'Visits',
+    path: `/${userRole}/dashboard/visits`,
+    icon: icon('ic_user'),
+  },
+  {
     title: 'User Management',
     path: `/${userRole}/dashboard/user`,
     icon: icon('ic_user'),

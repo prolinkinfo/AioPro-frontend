@@ -13,6 +13,7 @@ const MapComponent = (props) => {
 
   const chemistGetApi = async () => {
     const result = await apiget(`/api/chemist`);
+    console.log(result,"result")
     if (result && result.status === 200) {
       setChemistList(result?.data);
     }
