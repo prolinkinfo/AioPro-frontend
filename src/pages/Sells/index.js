@@ -165,7 +165,7 @@ export const Sells = () => {
   };
 
   async function fetchdata() {
-    const result = await apiget('/api/seles');
+    const result = await apiget('/api/seles');                            
     if (result && result.status === 200) {
       setSellsList(result?.data);
     }

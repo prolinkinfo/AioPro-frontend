@@ -37,7 +37,11 @@ const TableStyle = styled('div')({
   },
   ".css-1jiby6q-MuiDataGrid-root .MuiDataGrid-columnHeader:focus-within, .css-1jiby6q-MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
     outline: "none"
+  },
+ " .css-13bt8c4-MuiDataGrid-root .MuiDataGrid-menuIcon ":{
+    display: "none !important" 
   }
+  
 });
 
 export default TableStyle
