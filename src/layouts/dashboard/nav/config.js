@@ -22,36 +22,46 @@ export const adminConfig = [
     icon: icon('ic_user'),
   },
   {
-    title: 'User Management',
-    path: `/${userRole}/dashboard/user`,
+    title: 'firm Visit',
+    path: `/${userRole}/dashboard/visit/firmvisit`,
     icon: icon('ic_user'),
   },
+  {
+    title: 'Administrator',
+    path: `/${userRole}/dashboard/administrator`,
+    icon: icon('ic_user'),
+  },
+  // {
+  //   title: 'User Management',
+  //   path: `/${userRole}/dashboard/user`,
+  //   icon: icon('ic_user'),
+  // },
 
-  {
-    title: 'Opd Camp Report',
-    path: `/${userRole}/dashboard/opdcapmreport`,
-    icon: icon('ic_opd'),
-  },
-  {
-    title: 'Greeting card',
-    path: `/${userRole}/dashboard/greetingcard`,
-    icon: icon('ic_greetingcard'),
-  },
-  {
-    title: 'Chemist',
-    path: `/${userRole}/dashboard/chemist`,
-    icon: <BiotechIcon />,
-  },
-  {
-    title: 'Products',
-    path: `/${userRole}/dashboard/products`,
-    icon: icon('ic_product'),
-  },
-  {
-    title: 'Sells',
-    path: `/${userRole}/dashboard/sells`,
-    icon: icon('ic_sell'),
-  },
+  // {
+  //   title: 'Opd Camp Report',
+  //   path: `/${userRole}/dashboard/opdcapmreport`,
+  //   icon: icon('ic_opd'),
+  // },
+  // {
+  //   title: 'Greeting card',
+  //   path: `/${userRole}/dashboard/greetingcard`,
+  //   icon: icon('ic_greetingcard'),
+  // },
+  // {
+  //   title: 'Chemist',
+  //   path: `/${userRole}/dashboard/chemist`,
+  //   icon: <BiotechIcon />,
+  // },
+  // {
+  //   title: 'Products',
+  //   path: `/${userRole}/dashboard/products`,
+  //   icon: icon('ic_product'),
+  // },
+  // {
+  //   title: 'Sells',
+  //   path: `/${userRole}/dashboard/sells`,
+  //   icon: icon('ic_sell'),
+  // },
 ];
 
 export const nmConfig = [

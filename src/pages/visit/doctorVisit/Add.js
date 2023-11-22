@@ -18,7 +18,7 @@ import { Autocomplete, Box, Chip, FormControl, FormHelperText, FormLabel, MenuIt
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { useTheme } from '@emotion/react';
-import { apiget, apipost, addmeeting, getsingleuser, allusers } from '../../service/api';
+import { apiget, apipost, addmeeting, getsingleuser, allusers } from '../../../service/api';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -33,7 +33,7 @@ const top100Films = [
 const AddVisit = (props) => {
     const { isOpen, handleClose, fetchOpd } = props;
 
-    const [allUser, setAllUser] = useState([]);
+    const [doctorList, setDoctorList] = useState([]);
     const { id } = JSON.parse(localStorage.getItem('user'));
 
     // -----------  validationSchema
@@ -46,6 +46,7 @@ const AddVisit = (props) => {
     });
 
     const initialValues = {
+        doctorId: '',
         zone: '',
         city: '',
         doctor: '',
@@ -64,6 +65,18 @@ const AddVisit = (props) => {
         },
     });
 
+    const fetchDoctorList = async () => {
+        const result = await apiget(`/api/doctor`);
+        if (result && result.status === 200) {
+          setDoctorList(result?.data);
+        }
+      };
+
+    console.log(doctorList)
+      useEffect(() => {
+        fetchDoctorList();
+      }, []);
+    
 
 
     return (
@@ -125,8 +138,14 @@ const AddVisit = (props) => {
                                     <Autocomplete
                                         name="doctor"
                                         disablePortal
-                                        options={top100Films}
+                                        options={doctorList}
                                         fullWidth
+                                        getOptionLabel={(doctor) => doctor.doctorName}
+                                        value={doctorList.find(doctor => doctor._id === formik.values.doctor) || null}
+                                        onChange={(event, newValue) => {
+                                          formik.setFieldValue("doctor", newValue ? newValue._id : "");
+                                          formik.setFieldValue("doctorId", newValue ? newValue.doctorId : "");
+                                        }}
                                         size='small'
                                         renderInput={(params) =>
                                             <TextField

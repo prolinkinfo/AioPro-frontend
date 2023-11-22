@@ -38,7 +38,9 @@ import { Sells } from '../pages/Sells';
 import BirthdayCards from '../pages/greetingCard/birthdayCard/Catd';
 import { Chemist } from '../pages/chemist';
 import { ChemistView } from '../pages/chemist/view';
-import Visit from '../pages/visit';
+import Visit from '../pages/visit/doctorVisit';
+import FirmVisit from '../pages/visit/firmVisit';
+import Administrator from '../pages/administrator'
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -90,6 +92,8 @@ export default function Router() {
         { path: 'chemist', element: <Chemist /> },
         { path: 'chemist/:id', element: <ChemistView /> },
         { path: 'visits', element: <Visit /> },
+        { path: 'visit/firmvisit', element: <FirmVisit /> },
+        { path: 'administrator', element: < Administrator /> },
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
