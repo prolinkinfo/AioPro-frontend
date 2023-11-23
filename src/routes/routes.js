@@ -21,7 +21,7 @@ import Email from '../pages/email/Email';
 import EmailView from '../pages/email/View';
 import Task from '../pages/task/Task';
 import TaskView from '../pages/task/View';
-import Setting from '../pages/settings/Settings';
+// import Setting from '../pages/settings/Settings';
 import AddEmailTemplate from '../pages/settings/Add';
 import ViewEmailTemplate from '../pages/settings/View';
 import { Hierarchy } from '../pages/Hierarchy/hierarchy';
@@ -44,6 +44,9 @@ import Administrator from '../pages/people/administrator'
 import Doctor from '../pages/people/doctor';
 import AddDoctor from '../pages/people/doctor/Add'
 import EditDoctor from '../pages/people/doctor/Edit'
+import Holiday from '../pages/calender/holiday&work'
+import HolidayCalender from '../pages/calender';
+import Setting from '../pages/settings'
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -77,7 +80,7 @@ export default function Router() {
         { path: 'email/view/:id', element: <EmailView /> },
         { path: 'task', element: <Task /> },
         { path: 'task/view/:id', element: <TaskView /> },
-        { path: 'settings', element: <Setting /> },
+        // { path: 'settings', element: <Setting /> },
         { path: 'emailtemplate/add', element: <AddEmailTemplate /> },
         { path: 'emailtemplate/view/:id', element: <ViewEmailTemplate /> },
         { path: 'hierarchy/:id', element: <Hierarchy /> },
@@ -100,6 +103,8 @@ export default function Router() {
         { path: 'people/doctor', element: < Doctor /> },
         { path: 'people/doctor/add', element: < AddDoctor /> },
         { path: 'people/doctor/update_doctor', element: < EditDoctor /> },
+        { path: 'calendar/holiday&work', element: <HolidayCalender /> },
+        { path: 'settings/datasettings', element: <Setting /> },
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
