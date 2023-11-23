@@ -73,6 +73,7 @@ function NavItem({ item, active, isShow }) {
   const isActiveRoot = active(item?.path);
   const { title, path, icon, info, children } = item;
   const [open, setOpen] = useState(isActiveRoot);
+  const [openSub, setOpenSub] = useState(isActiveRoot);
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
@@ -88,6 +89,10 @@ function NavItem({ item, active, isShow }) {
   const activeSubStyle = {
     color: 'text.primary',
     fontWeight: 'fontWeightMedium',
+  };
+
+  const handleOpenSub = () => {
+    setOpenSub((prev) => !prev);
   };
 
   if (children) {
@@ -110,9 +115,67 @@ function NavItem({ item, active, isShow }) {
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {children?.map((item) => {
-              const { title, path } = item;
+              const { title, path, subLink } = item;
               const isActiveSub = active(path);
 
+              if (subLink) {
+                return (
+                  <>
+                    <ListItemStyle
+                      onClick={handleOpenSub}
+                      sx={{
+                        ...(isActiveRoot && activeRootStyle),
+                      }}
+                    >
+                      <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
+
+                      <ListItemText disableTypography primary={title} />
+                      {info && info}
+
+                      {openSub ? <ExpandMoreIcon /> : <KeyboardArrowRightIcon />}
+                    </ListItemStyle>
+
+                    <Collapse in={openSub} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {subLink?.map((items) => {
+                          const isActiveSub = active(path);
+                          return (
+                            <ListItemStyle
+                              key={items?.title}
+                              component={RouterLink}
+                              to={items?.path}
+                              sx={{
+                                ...(isActiveSub && activeSubStyle),
+                              }}
+                            >
+                              <ListItemIconStyle>
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    width: 4,
+                                    height: 4,
+                                    display: 'flex',
+                                    borderRadius: '50%',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'text.disabled',
+                                    transition: (theme) => theme.transitions.create('transform'),
+                                    ...(isActiveSub && {
+                                      transform: 'scale(2)',
+                                      bgcolor: 'primary.main',
+                                    }),
+                                  }}
+                                />
+                              </ListItemIconStyle>
+                              <ListItemText disableTypography primary={items?.title} />
+                            </ListItemStyle>
+                          );
+                        })}
+                      </List>
+                    </Collapse>
+                  </>
+                );
+              }
               return (
                 <ListItemStyle
                   key={title}
@@ -168,7 +231,6 @@ NavSection.propTypes = {
 export default function NavSection({ data = [], ...other }) {
   const { pathname } = useLocation();
   const match = (path) => (path ? !!matchPath({ path, end: false }, pathname) : false);
-
 
   return (
     <Box {...other}>

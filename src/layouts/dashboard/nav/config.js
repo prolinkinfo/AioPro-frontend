@@ -23,7 +23,8 @@ export const adminConfig = [
     children: [
       {
         title: 'Doctor Visit',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/visits`,
+        icon: icon('ic_product'),
       },
       {
         title: 'Firms Visit',
@@ -167,10 +168,144 @@ export const adminConfig = [
       {
         title: 'Application Master',
         path: `/${userRole}/dashboard`,
+        subLink: [
+          {
+            title: 'Activity Type',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Back Date Visit',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Call Objective',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Campaingn',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Designation',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Division',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Doctor Speciality',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Doctor Category',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'FAQ Master',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Firm Category',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Firm type',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Fixed Allowance',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Hospital Category',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Hospital Class',
+            path: `/${userRole}/dashboard`,
+          },
+
+          {
+            title: 'Hospital Speciality',
+            path: `/${userRole}/dashboard`,
+          },
+
+          {
+            title: 'Import Data',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Incharge Type',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Leave Reasons',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Mode Of Travel',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Others Reason',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Product',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Product Indication',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Product Samples',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Promotional Gifts',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Qualification',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Radius Settings',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Relation Master',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Sample Collection',
+            path: `/${userRole}/dashboard`,
+          },
+        ],
       },
       {
         title: 'Approval and Email Setting',
         path: `/${userRole}/dashboard`,
+        subLink: [
+          {
+            title: 'Branding',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Change Password',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'General Settings',
+            path: `/${userRole}/dashboard`,
+          },
+          {
+            title: 'Personal Settings',
+            path: `/${userRole}/dashboard`,
+          },
+        ],
       },
       {
         title: 'Company Settings',
@@ -179,6 +314,16 @@ export const adminConfig = [
       {
         title: 'Data Settings',
         path: `/${userRole}/dashboard`,
+        subLink: [
+          {
+            title: 'Data Management',
+            path: `${userRole}/dashboard`,
+          },
+          {
+            title: 'Less Call',
+            path: `${userRole}/dashboard`,
+          },
+        ],
       },
       {
         title: 'Tutorial Master',
@@ -186,7 +331,7 @@ export const adminConfig = [
       },
     ],
   },
-    {
+  {
     title: 'E-detailing',
     path: `/${userRole}/dashboard/user`,
     icon: icon('ic_user'),
@@ -201,7 +346,7 @@ export const adminConfig = [
       },
     ],
   },
-    {
+  {
     title: 'Business',
     path: `/${userRole}/dashboard/user`,
     icon: icon('ic_user'),
@@ -236,17 +381,6 @@ export const adminConfig = [
     title: 'Opd Camp Report',
     path: `/${userRole}/dashboard/opdcapmreport`,
     icon: icon('ic_opd'),
-
-    children: [
-      {
-        title: 'View Products',
-        path: `/${userRole}/dashboard`,
-      },
-      {
-        title: 'Add Product',
-        path: `/${userRole}/dashboard`,
-      },
-    ],
   },
   {
     title: 'Greeting card',

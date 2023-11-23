@@ -34,7 +34,7 @@ const Visit = () => {
         {
             field: 'clinicAddress',
             headerName: 'Clinic Address',
-            width: 200,
+            width: 250,
 
         },
         {
@@ -50,7 +50,7 @@ const Visit = () => {
         {
             field: 'employeeName',
             headerName: 'Employee Name',
-            width: 300,
+            width: 200,
         },
         {
             field: 'date',
@@ -90,7 +90,7 @@ const Visit = () => {
     return (
         <div>
             <AddVisit isOpen={isOpenAdd} handleClose={handleCloseAdd} />
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" style={{ height: '72vh', paddingTop: '15px' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Doctor Visit</Typography>
                     <Stack direction="row" spacing={2}>
