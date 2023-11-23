@@ -1,8 +1,8 @@
 import { Box, Button, Card, Container, Stack, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import React, { useState } from 'react'
-import TableStyle from '../../components/TableStyle'
-import Iconify from '../../components/iconify'
+import TableStyle from '../../../components/TableStyle'
+import Iconify from '../../../components/iconify'
 import AddAdministrator from './Add'
 
 const Administrator = () => {
