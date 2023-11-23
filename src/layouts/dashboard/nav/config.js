@@ -24,7 +24,7 @@ export const adminConfig = [
       {
         title: 'Doctor Visit',
         path: `/${userRole}/dashboard/visits/doctorvisit/visits`,
-        icon: icon('ic_user'),
+        // icon: icon('ic_user'),
         icon: icon('ic_product'),
       },
       {
