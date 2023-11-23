@@ -18,43 +18,44 @@ export const adminConfig = [
 
   {
     title: 'Visits',
-    path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    // path: `/${userRole}/dashboard/user`,
+    icon: icon('ic_visits'),
     children: [
       {
         title: 'Doctor Visit',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/visits/doctorvisit`,
+        icon: icon('ic_user'),
       },
       {
         title: 'Firms Visit',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/visits/firmvisit`,
       },
     ],
   },
 
   {
     title: 'People',
-    path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    // path: `/${userRole}/dashboard/user`,
+    icon: icon('ic_people'),
     children: [
       {
         title: 'Administrators',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/people/administrator`,
       },
       {
         title: 'Doctor',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/people/doctor`,
       },
       {
         title: 'Employees',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/people`,
       },
     ],
   },
   {
     title: 'Calendar',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_calendar'),
     children: [
       {
         title: 'Holiday & Work',
@@ -69,7 +70,7 @@ export const adminConfig = [
   {
     title: 'Expense',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_rupee'),
     children: [
       {
         title: 'Designation wise expense',
@@ -96,12 +97,12 @@ export const adminConfig = [
   {
     title: 'Report',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_report'),
   },
   {
     title: 'Sales',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_sales'),
     children: [
       {
         title: 'Firms',
@@ -132,22 +133,22 @@ export const adminConfig = [
   {
     title: 'Files',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_files'),
   },
   {
     title: 'Reminders',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_reminder'),
   },
   {
     title: 'Support',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_support'),
   },
   {
     title: 'HR Portal',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_portal'),
     children: [
       {
         title: 'Entitlements',
@@ -162,7 +163,7 @@ export const adminConfig = [
   {
     title: 'Setting',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_setting'),
     children: [
       {
         title: 'Application Master',
@@ -189,7 +190,7 @@ export const adminConfig = [
     {
     title: 'E-detailing',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_presentation'),
     children: [
       {
         title: 'Presentation',
@@ -204,7 +205,7 @@ export const adminConfig = [
     {
     title: 'Business',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_business'),
     children: [
       {
         title: 'Doctor Business',
@@ -219,55 +220,51 @@ export const adminConfig = [
   {
     title: 'Account & Billing',
     path: `/${userRole}/dashboard/user`,
-    icon: icon('ic_user'),
+    icon: icon('ic_invoice'),
   },
-  {
-    title: 'Administrator',
-    path: `/${userRole}/dashboard/administrator`,
-    icon: icon('ic_user'),
-  },
+
   // {
   //   title: 'User Management',
   //   path: `/${userRole}/dashboard/user`,
   //   icon: icon('ic_user'),
   // },
 
-  {
-    title: 'Opd Camp Report',
-    path: `/${userRole}/dashboard/opdcapmreport`,
-    icon: icon('ic_opd'),
+  // {
+  //   title: 'Opd Camp Report',
+  //   path: `/${userRole}/dashboard/opdcapmreport`,
+  //   icon: icon('ic_opd'),
 
-    children: [
-      {
-        title: 'View Products',
-        path: `/${userRole}/dashboard`,
-      },
-      {
-        title: 'Add Product',
-        path: `/${userRole}/dashboard`,
-      },
-    ],
-  },
-  {
-    title: 'Greeting card',
-    path: `/${userRole}/dashboard/greetingcard`,
-    icon: icon('ic_greetingcard'),
-  },
-  {
-    title: 'Chemist',
-    path: `/${userRole}/dashboard/chemist`,
-    icon: <BiotechIcon />,
-  },
-  {
-    title: 'Products',
-    path: `/${userRole}/dashboard/products`,
-    icon: icon('ic_product'),
-  },
-  {
-    title: 'Sells',
-    path: `/${userRole}/dashboard/sells`,
-    icon: icon('ic_sell'),
-  },
+  //   children: [
+  //     {
+  //       title: 'View Products',
+  //       path: `/${userRole}/dashboard`,
+  //     },
+  //     {
+  //       title: 'Add Product',
+  //       path: `/${userRole}/dashboard`,
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: 'Greeting card',
+  //   path: `/${userRole}/dashboard/greetingcard`,
+  //   icon: icon('ic_greetingcard'),
+  // },
+  // {
+  //   title: 'Chemist',
+  //   path: `/${userRole}/dashboard/chemist`,
+  //   icon: <BiotechIcon />,
+  // },
+  // {
+  //   title: 'Products',
+  //   path: `/${userRole}/dashboard/products`,
+  //   icon: icon('ic_product'),
+  // },
+  // {
+  //   title: 'Sells',
+  //   path: `/${userRole}/dashboard/sells`,
+  //   icon: icon('ic_sell'),
+  // },
 ];
 
 export const nmConfig = [

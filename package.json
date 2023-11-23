@@ -52,6 +52,7 @@
     "@mui/material": "^5.13.7",
     "@mui/x-data-grid": "^6.9.2",
     "@mui/x-date-pickers": "^6.9.2",
+    "@mui/x-date-pickers-pro": "^6.18.1",
     "@reduxjs/toolkit": "^1.9.5",
     "apexcharts": "^3.37.0",
     "axios": "^1.4.0",

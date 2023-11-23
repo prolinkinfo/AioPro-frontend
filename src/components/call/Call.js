@@ -70,7 +70,6 @@ const Call = ({ rows, toggleVisibilityCall, isVisibleCall, _id, setUserAction })
                             <Typography variant="h5">Calls</Typography>
                         </Stack>
                         <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-                            {isVisibleCall && (
                                 <Button
                                     variant="contained"
                                     color="secondary"
@@ -80,13 +79,10 @@ const Call = ({ rows, toggleVisibilityCall, isVisibleCall, _id, setUserAction })
                                 >
                                     Create call
                                 </Button>
-                            )}
                         </Stack>
                     </Stack>
                 </Grid>
             </Box>
-            {
-                isVisibleCall &&
                 <TableStyleTwo>
                     <Box width="100%" height="30vh">
                         <DataGrid
@@ -97,7 +93,6 @@ const Call = ({ rows, toggleVisibilityCall, isVisibleCall, _id, setUserAction })
                         />
                     </Box>
                 </TableStyleTwo>
-            }
         </div>
     )
 }

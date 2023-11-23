@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
-import { Grid } from '@mui/material';
 
 const GoogleMap = ({ google, location, stateLocation }) => {
   const [latLng, setLatLng] = useState({});

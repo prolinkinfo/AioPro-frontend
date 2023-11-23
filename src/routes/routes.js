@@ -38,9 +38,12 @@ import { Sells } from '../pages/Sells';
 import BirthdayCards from '../pages/greetingCard/birthdayCard/Catd';
 import { Chemist } from '../pages/chemist';
 import { ChemistView } from '../pages/chemist/view';
-import Visit from '../pages/visit/doctorVisit';
+import DoctorVisit from '../pages/visit/doctorVisit';
 import FirmVisit from '../pages/visit/firmVisit';
-import Administrator from '../pages/administrator'
+import Administrator from '../pages/people/administrator'
+import Doctor from '../pages/people/doctor';
+import AddDoctor from '../pages/people/doctor/Add'
+import EditDoctor from '../pages/people/doctor/Edit'
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -91,9 +94,12 @@ export default function Router() {
         { path: 'greetingcard/birthdaycard/card/:id', element: <BirthdayCards /> },
         { path: 'chemist', element: <Chemist /> },
         { path: 'chemist/:id', element: <ChemistView /> },
-        { path: 'visits', element: <Visit /> },
-        { path: 'visit/firmvisit', element: <FirmVisit /> },
-        { path: 'administrator', element: < Administrator /> },
+        { path: 'visits/doctorvisit', element: <DoctorVisit /> },
+        { path: 'visits/firmvisit', element: <FirmVisit /> },
+        { path: 'people/administrator', element: < Administrator /> },
+        { path: 'people/doctor', element: < Doctor /> },
+        { path: 'people/doctor/add', element: < AddDoctor /> },
+        { path: 'people/doctor/update_doctor', element: < EditDoctor /> },
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },
