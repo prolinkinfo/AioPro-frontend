@@ -48,6 +48,12 @@ import ActivityType from '../pages/settings/ActivityType'
 import BackDateVisit from '../pages/settings/BackDateVisit'
 import CallObjective from '../pages/settings/CallObjective'
 import Campaingn from '../pages/settings/Campaingn'
+import WorkAgenda from '../pages/settings/WorkAgenda';
+import Type from '../pages/settings/Type';
+import TestTypology from '../pages/settings/TestTypology';
+import TaxMaster from '../pages/settings/TaxMaster';
+import SkippedReason from '../pages/settings/SkippedReason';
+import LeaveReason from '../pages/settings/LeaveReason';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -108,6 +114,12 @@ export default function Router() {
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
         { path: 'setting/campaingn', element: <Campaingn /> },
+        { path: 'setting/workagenda', element: <WorkAgenda /> },
+        { path: 'setting/type', element: <Type /> },
+        { path: 'setting/testtypology', element: <TestTypology /> },
+        { path: 'setting/taxmaster', element: <TaxMaster /> },
+        { path: 'setting/skippedreason', element: <SkippedReason /> },
+        { path: 'setting/leavereason', element: <LeaveReason /> },
 
        
 
