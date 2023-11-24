@@ -21,7 +21,7 @@ import Email from '../pages/email/Email';
 import EmailView from '../pages/email/View';
 import Task from '../pages/task/Task';
 import TaskView from '../pages/task/View';
-import Setting from '../pages/settings/Settings';
+// import Setting from '../pages/settings/Settings';
 import AddEmailTemplate from '../pages/settings/Add';
 import ViewEmailTemplate from '../pages/settings/View';
 import { Hierarchy } from '../pages/Hierarchy/hierarchy';
@@ -81,7 +81,7 @@ export default function Router() {
         { path: 'email/view/:id', element: <EmailView /> },
         { path: 'task', element: <Task /> },
         { path: 'task/view/:id', element: <TaskView /> },
-        { path: 'settings', element: <Setting /> },
+        // { path: 'settings', element: <Setting /> },
         { path: 'emailtemplate/add', element: <AddEmailTemplate /> },
         { path: 'emailtemplate/view/:id', element: <ViewEmailTemplate /> },
         { path: 'hierarchy/:id', element: <Hierarchy /> },

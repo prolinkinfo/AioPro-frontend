@@ -24,6 +24,7 @@ export const adminConfig = [
       {
         title: 'Doctor Visit',
         path: `/${userRole}/dashboard/visits/doctorvisit`,
+        // icon: icon('ic_user'),
         icon: icon('ic_product'),
       },
       {
@@ -59,7 +60,7 @@ export const adminConfig = [
     children: [
       {
         title: 'Holiday & Work',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/calendar/holiday&work`,
       },
       {
         title: 'Leave Calendar',
@@ -162,12 +163,12 @@ export const adminConfig = [
   },
   {
     title: 'Setting',
-    path: `/${userRole}/dashboard/user`,
+    // path: `/${userRole}/dashboard/user`,
     icon: icon('ic_setting'),
     children: [
       {
         title: 'Application Master',
-        path: `/${userRole}/dashboard`,
+        // path: `/${userRole}/dashboard`,
         subLink: [
           {
             title: 'Activity Type',
@@ -287,7 +288,7 @@ export const adminConfig = [
       },
       {
         title: 'Approval and Email Setting',
-        path: `/${userRole}/dashboard`,
+        // path: `/${userRole}/dashboard`,
         subLink: [
           {
             title: 'Branding',
@@ -313,11 +314,10 @@ export const adminConfig = [
       },
       {
         title: 'Data Settings',
-        path: `/${userRole}/dashboard`,
         subLink: [
           {
             title: 'Data Management',
-            path: `${userRole}/dashboard`,
+            path: `${userRole}/dashboard/settings/datasettings`,
           },
           {
             title: 'Less Call',
