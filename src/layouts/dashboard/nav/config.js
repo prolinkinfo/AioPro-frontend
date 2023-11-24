@@ -23,8 +23,7 @@ export const adminConfig = [
     children: [
       {
         title: 'Doctor Visit',
-        path: `/${userRole}/dashboard/visits/doctorvisit/visits`,
-        // icon: icon('ic_user'),
+        path: `/${userRole}/dashboard/visits/doctorvisit`,
         icon: icon('ic_product'),
       },
       {
@@ -172,35 +171,35 @@ export const adminConfig = [
         subLink: [
           {
             title: 'Activity Type',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/manageActivityType`,
           },
           {
             title: 'Back Date Visit',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/backDateVisit`,
           },
           {
             title: 'Call Objective',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/callObjective`,
           },
           {
             title: 'Campaingn',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/campaingn`,
           },
           {
             title: 'Designation',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/designation`,
           },
           {
             title: 'Division',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/devision`,
           },
           {
             title: 'Doctor Speciality',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/doctorSpeciality`,
           },
           {
             title: 'Doctor Category',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/doctorCategory`,
           },
           {
             title: 'FAQ Master',

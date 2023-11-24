@@ -40,10 +40,14 @@ import { Chemist } from '../pages/chemist';
 import { ChemistView } from '../pages/chemist/view';
 import DoctorVisit from '../pages/visit/doctorVisit';
 import FirmVisit from '../pages/visit/firmVisit';
-import Administrator from '../pages/people/administrator'
+import Administrator from '../pages/people/administrator';
 import Doctor from '../pages/people/doctor';
-import AddDoctor from '../pages/people/doctor/Add'
-import EditDoctor from '../pages/people/doctor/Edit'
+import AddDoctor from '../pages/people/doctor/Add';
+import EditDoctor from '../pages/people/doctor/Edit';
+import ActivityType from '../pages/settings/ActivityType'
+import BackDateVisit from '../pages/settings/BackDateVisit'
+import CallObjective from '../pages/settings/CallObjective'
+import Campaingn from '../pages/settings/Campaingn'
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -96,10 +100,16 @@ export default function Router() {
         { path: 'chemist/:id', element: <ChemistView /> },
         { path: 'visits/doctorvisit', element: <DoctorVisit /> },
         { path: 'visits/firmvisit', element: <FirmVisit /> },
-        { path: 'people/administrator', element: < Administrator /> },
-        { path: 'people/doctor', element: < Doctor /> },
-        { path: 'people/doctor/add', element: < AddDoctor /> },
-        { path: 'people/doctor/update_doctor', element: < EditDoctor /> },
+        { path: 'people/administrator', element: <Administrator /> },
+        { path: 'people/doctor', element: <Doctor /> },
+        { path: 'people/doctor/add', element: <AddDoctor /> },
+        { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
+        { path: 'setting/manageActivityType', element: <ActivityType /> },
+        { path: 'setting/backDateVisit', element: <BackDateVisit /> },
+        { path: 'setting/callObjective', element: <CallObjective /> },
+        { path: 'setting/campaingn', element: <Campaingn /> },
+
+       
 
         // { path: 'greetingcard', element: <Card /> },
         // { path: 'greetingcard/add', element: <AddCard /> },

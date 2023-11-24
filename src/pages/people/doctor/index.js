@@ -22,7 +22,7 @@ const Doctor = () => {
                 };
                 return (
                     <Box onClick={handleClick}>
-                        <ActionBtn />
+                        <ActionBtn data={[{name:"View"},{name:"Edit"}]} />
                     </Box>
                 );
             },

@@ -23,7 +23,7 @@ const Visit = () => {
                 };
                 return (
                     <Box onClick={handleClick}>
-                        <ActionBtn />
+                        <ActionBtn data={[{name:"View"},{name:"Edit"}]} />
                     </Box>
                 );
             },
