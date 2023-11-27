@@ -53,7 +53,8 @@ export default function CustomizedDialogs(props) {
   // eslint-disable-next-line react/prop-types
   const {isOpenDeleteModel,handleCloseDeleteModel,deleteData,id } = props;
   const Delete =()=>{
-    deleteData(id)
+    deleteData(id);
+    handleCloseDeleteModel();
   }
 
   return (
