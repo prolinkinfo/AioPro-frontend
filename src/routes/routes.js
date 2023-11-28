@@ -54,6 +54,7 @@ import TestTypology from '../pages/settings/TestTypology';
 import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
+import Designations from '../pages/settings/Designations';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -120,6 +121,7 @@ export default function Router() {
         { path: 'setting/taxmaster', element: <TaxMaster /> },
         { path: 'setting/skippedreason', element: <SkippedReason /> },
         { path: 'setting/leavereason', element: <LeaveReason /> },
+        { path: 'setting/designations', element: <Designations /> },
 
        
 

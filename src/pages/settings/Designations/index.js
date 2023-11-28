@@ -1,25 +1,23 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
-import { DataGrid, nbNO } from '@mui/x-data-grid';
-import React, { useEffect, useState } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import React, { useState, useEffect } from 'react';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
-import AddType from './Add';
+import ActivityTypeAdd from './Add';
 import { apiget } from '../../../service/api';
 
-const Type = () => {
+const Designations = () => {
   const [typeList, setTypeList] = useState([]);
-
   const [isOpenAdd, setIsOpenAdd] = useState(false);
 
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
-
   const columns = [
     {
       headerName: 'Action',
       sortable: false,
-      flex: 1,
+      width: 180,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleClick = async (data) => {
@@ -27,25 +25,27 @@ const Type = () => {
         };
         return (
           <Box onClick={handleClick}>
-            <ActionBtn data={[{ name: 'Edit' }]} />
+            {/* <ActionBtn data={[{ name: 'Edit' }]} /> */}
+            <Button>Edit</Button>
+            <Button>Delete</Button>
           </Box>
         );
       },
     },
-    { field: 'typeName', headerName: 'Type Name', flex: 1 },
+    { field: 'designationName', headerName: 'Designation Name', width: 250 },
+    { field: 'abbreviation', headerName: 'Abbreviation', width: 250 },
+    { field: 'leval', headerName: 'Lavel', width: 250 },
+    { field: 'managerApproval', headerName: 'Manager Approval', width: 250 },
   ];
-
-  const rows = [{ id: 1, typeName: 'Prescriber' }];
 
   const fetchTypeData = async (e) => {
     const searchText = e?.target?.value;
-    const result = await apiget(`/api/type`);
+    const result = await apiget(`/api/activityType`);
     if (result && result.status === 200) {
-      const filteredBooks = result?.data?.result?.filter(({ typeName }) =>
-        typeName?.toLowerCase()?.includes(searchText?.toLowerCase())
+      const filteredBooks = result?.data.filter(({ activityName }) =>
+        activityName?.toLowerCase()?.includes(searchText?.toLowerCase())
       );
-
-      setTypeList(searchText?.length > 0 ? (filteredBooks?.length > 0 ? filteredBooks : []) : result?.data?.result);
+      setTypeList(searchText?.length > 0 ? (filteredBooks?.length > 0 ? filteredBooks : []) : result?.data);
     }
   };
 
@@ -55,12 +55,10 @@ const Type = () => {
 
   return (
     <div>
-      {/* Add Type */}
-      <AddType isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
-
+      <ActivityTypeAdd isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-          <Typography variant="h4">Type</Typography>
+          <Typography variant="h4">Designations</Typography>
         </Stack>
         <TableStyle>
           <Box width="100%" pt={3}>
@@ -68,7 +66,7 @@ const Type = () => {
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                 Add New
               </Button>
-              <TextField type="text" size="small" placeholder="Search" onChange={fetchTypeData} />
+              <TextField type="text" size="small" placeholder="Search" />
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid
@@ -80,7 +78,7 @@ const Type = () => {
                   },
                 }}
                 getRowId={(row) => row._id}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[5, 10, 25]}
               />
             </Card>
           </Box>
@@ -90,4 +88,4 @@ const Type = () => {
   );
 };
 
-export default Type;
+export default Designations;
