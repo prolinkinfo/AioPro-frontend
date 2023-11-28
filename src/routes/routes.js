@@ -55,9 +55,19 @@ import TestTypology from '../pages/settings/TestTypology';
 import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
+<<<<<<< HEAD
+import Designations from '../pages/settings/Designations';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
+=======
+import Zone from '../pages/settings/Zone'
+import DoctorCategory from '../pages/settings/DoctorCategory'
+import Division from '../pages/settings/Division';
+import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
+import RelationMaster from '../pages/settings/RelationMaster';
+import OtherReason from '../pages/settings/OtherReason';
+>>>>>>> f8bcc70b7a3d2d09d61326df117ed8dfb4e7b17e
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -121,12 +131,16 @@ export default function Router() {
         { path: 'setting/taxmaster', element: <TaxMaster /> },
         { path: 'setting/skippedreason', element: <SkippedReason /> },
         { path: 'setting/leavereason', element: <LeaveReason /> },
+        { path: 'setting/designations', element: <Designations /> },
+        { path: 'setting/zone', element: <Zone /> },
+        { path: 'setting/doctorcategory', element: <DoctorCategory /> },
+        { path: 'setting/division', element: <Division /> },
+        { path: 'setting/doctorspeciality', element: <DoctorSpeciality /> },
+        { path: 'setting/relationmaster', element: <RelationMaster /> },
+        { path: 'setting/otherreason', element: <OtherReason /> },
 
        
 
-        // { path: 'greetingcard', element: <Card /> },
-        // { path: 'greetingcard/add', element: <AddCard /> },
-        // { path: 'greetingcard/:id', element: <GreetingCardView /> },
       ],
     },
     {
