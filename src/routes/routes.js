@@ -55,19 +55,16 @@ import TestTypology from '../pages/settings/TestTypology';
 import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
-<<<<<<< HEAD
 import Designations from '../pages/settings/Designations';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
-=======
 import Zone from '../pages/settings/Zone'
 import DoctorCategory from '../pages/settings/DoctorCategory'
 import Division from '../pages/settings/Division';
 import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
 import RelationMaster from '../pages/settings/RelationMaster';
 import OtherReason from '../pages/settings/OtherReason';
->>>>>>> f8bcc70b7a3d2d09d61326df117ed8dfb4e7b17e
 // ----------------------------------------------------------------------
 
 export default function Router() {
