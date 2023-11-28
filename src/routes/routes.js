@@ -61,6 +61,15 @@ import Division from '../pages/settings/Division';
 import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
 import RelationMaster from '../pages/settings/RelationMaster';
 import OtherReason from '../pages/settings/OtherReason';
+import FirmCategory from '../pages/settings/FirmCategory'
+import HospitalCategory from '../pages/settings/HospitalCategory';
+import HospitalClass from '../pages/settings/HospitalClass'
+import HospitalSpeciality from '../pages/settings/HospitalSpeciality'
+import Qualification from '../pages/settings/Qualification'
+import InchargeType from '../pages/settings/InchargeType'
+import FirmType from '../pages/settings/FirmType'
+import ProductIndication from '../pages/settings/ProductIndication'
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -118,18 +127,26 @@ export default function Router() {
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
         { path: 'setting/campaingn', element: <Campaingn /> },
-        { path: 'setting/workagenda', element: <WorkAgenda /> },
+        { path: 'setting/workAgenda', element: <WorkAgenda /> },
         { path: 'setting/type', element: <Type /> },
-        { path: 'setting/testtypology', element: <TestTypology /> },
+        { path: 'setting/testTypology', element: <TestTypology /> },
         { path: 'setting/taxmaster', element: <TaxMaster /> },
-        { path: 'setting/skippedreason', element: <SkippedReason /> },
-        { path: 'setting/leavereason', element: <LeaveReason /> },
+        { path: 'setting/skippedReason', element: <SkippedReason /> },
+        { path: 'setting/leaveReason', element: <LeaveReason /> },
         { path: 'setting/zone', element: <Zone /> },
-        { path: 'setting/doctorcategory', element: <DoctorCategory /> },
+        { path: 'setting/doctorCategory', element: <DoctorCategory /> },
         { path: 'setting/division', element: <Division /> },
-        { path: 'setting/doctorspeciality', element: <DoctorSpeciality /> },
-        { path: 'setting/relationmaster', element: <RelationMaster /> },
-        { path: 'setting/otherreason', element: <OtherReason /> },
+        { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
+        { path: 'setting/relationMaster', element: <RelationMaster /> },
+        { path: 'setting/otherReason', element: <OtherReason /> },
+        { path: 'setting/firmCategory', element: <FirmCategory /> },
+        { path: 'setting/hospitalCategory', element: <HospitalCategory /> },
+        { path: 'setting/hospitalClass', element: <HospitalClass /> },
+        { path: 'setting/hospitalSpeciality', element: <HospitalSpeciality /> },
+        { path: 'setting/qualification', element: <Qualification /> },
+        { path: 'setting/inchargeType', element: <InchargeType /> },
+        { path: 'setting/firmType', element: <FirmType /> },
+        { path: 'setting/productindication', element: <ProductIndication /> },
 
        
 

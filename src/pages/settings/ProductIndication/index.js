@@ -1,24 +1,31 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCategory from './Add'
-import { apidelete, apiget } from '../../../service/api'
+import AddProductIndication from './Add';
+import EditProductIndication from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
+import { apidelete, apiget } from '../../../service/api'
 
-const DoctorCategory = () => {
+const ProductIndication = () => {
 
-    const [categoryList, setCategoryList] = useState([])
-    const [userAction,setUserAction] = useState('')
-    const [isOpenAdd, setIsOpenAdd] = useState(false)
-    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [productIndicationList, setProductIndicationList] = useState([])
+    const [productIndicationData, setProductIndicationData] = useState({})
+    const [userAction, setUserAction] = useState(null)
     const [id,setId] = useState('')
+    const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
 
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
+
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
@@ -32,46 +39,53 @@ const DoctorCategory = () => {
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data')
-                    setId(data?._id)
+                    setProductIndicationData(data);
+                    handleOpenEdit();
+                };
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={() => handleClick(params?.row)}>
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData}/>
-                        <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
+                    <Box>
+                        <EditProductIndication isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductIndicationData={fetchProductIndicationData} data={productIndicationData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteProductIndication} id={id}/>
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'categoryName', headerName: 'Category Name', flex: 1 },
-        { field: 'minimumPreference', headerName: 'Minimum Preference', flex: 1 },
-        { field: 'maximumPreference', headerName: 'Maximum Preference', flex: 1 },
+        { field: 'productName', headerName: 'Product Name', flex: 1, cellClassName: 'name-column--cell--capitalize', },
+        { field: 'indication', headerName: 'indication', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const deleteCategory = async(id) => {
-        const result = await apidelete(`/api/doctorcategory/${id}`);
+    const deleteProductIndication = async (id) => {
+        const result = await apidelete(`/api/productindication/${id}`);
         setUserAction(result)
     }
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/doctorcategory`);
+    const fetchProductIndicationData = async () => {
+        const result = await apiget(`/api/productindication`);
         if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
+            setProductIndicationList(result?.data?.result);
         }
     };
 
     useEffect(() => {
-        fetchCategoryData();
+        fetchProductIndicationData();
     }, [userAction])
 
     return (
         <div>
-            {/* Add Category */}
-            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
+            {/* Add Product Indication */}
+            <AddProductIndication isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchProductIndicationData={fetchProductIndicationData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Doctor Category</Typography>
+                    <Typography variant="h4">Product Indication</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -88,7 +102,7 @@ const DoctorCategory = () => {
                         </Stack>
                         <Card style={{ height: '72vh' }}>
                             <DataGrid
-                                rows={categoryList}
+                                rows={productIndicationList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -106,4 +120,4 @@ const DoctorCategory = () => {
     )
 }
 
-export default DoctorCategory
+export default ProductIndication
