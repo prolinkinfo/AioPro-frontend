@@ -44,6 +44,7 @@ import Administrator from '../pages/people/administrator';
 import Doctor from '../pages/people/doctor';
 import AddDoctor from '../pages/people/doctor/Add';
 import EditDoctor from '../pages/people/doctor/Edit';
+import Holiday from '../pages/calender'
 import ActivityType from '../pages/settings/ActivityType'
 import BackDateVisit from '../pages/settings/BackDateVisit'
 import CallObjective from '../pages/settings/CallObjective'
@@ -54,7 +55,6 @@ import TestTypology from '../pages/settings/TestTypology';
 import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
-import Designations from '../pages/settings/Designations';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -88,7 +88,6 @@ export default function Router() {
         { path: 'email/view/:id', element: <EmailView /> },
         { path: 'task', element: <Task /> },
         { path: 'task/view/:id', element: <TaskView /> },
-        // { path: 'settings', element: <Setting /> },
         { path: 'emailtemplate/add', element: <AddEmailTemplate /> },
         { path: 'emailtemplate/view/:id', element: <ViewEmailTemplate /> },
         { path: 'hierarchy/:id', element: <Hierarchy /> },
@@ -111,6 +110,7 @@ export default function Router() {
         { path: 'people/doctor', element: <Doctor /> },
         { path: 'people/doctor/add', element: <AddDoctor /> },
         { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
+        { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
@@ -121,7 +121,6 @@ export default function Router() {
         { path: 'setting/taxmaster', element: <TaxMaster /> },
         { path: 'setting/skippedreason', element: <SkippedReason /> },
         { path: 'setting/leavereason', element: <LeaveReason /> },
-        { path: 'setting/designations', element: <Designations /> },
 
        
 
