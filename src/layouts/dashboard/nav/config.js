@@ -188,7 +188,7 @@ export const adminConfig = [
           },
           {
             title: 'Designation',
-            path: `/${userRole}/dashboard/setting/designation`,
+            path: `/${userRole}/dashboard/setting/designations`,
           },
           {
             title: 'Division',

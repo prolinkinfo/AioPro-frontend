@@ -55,6 +55,10 @@ import TestTypology from '../pages/settings/TestTypology';
 import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
+import Designations from '../pages/settings/Designations';
+// import Card from './pages/card/CardTemplate'
+// import AddCard from './pages/card/Add'
+// import GreetingCardView from './pages/card/View'
 import Zone from '../pages/settings/Zone'
 import DoctorCategory from '../pages/settings/DoctorCategory'
 import Division from '../pages/settings/Division';
@@ -133,6 +137,9 @@ export default function Router() {
         { path: 'setting/taxmaster', element: <TaxMaster /> },
         { path: 'setting/skippedReason', element: <SkippedReason /> },
         { path: 'setting/leaveReason', element: <LeaveReason /> },
+        { path: 'setting/skippedreason', element: <SkippedReason /> },
+        { path: 'setting/leavereason', element: <LeaveReason /> },
+        { path: 'setting/designations', element: <Designations /> },
         { path: 'setting/zone', element: <Zone /> },
         { path: 'setting/doctorCategory', element: <DoctorCategory /> },
         { path: 'setting/division', element: <Division /> },
