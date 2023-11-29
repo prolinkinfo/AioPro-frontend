@@ -73,6 +73,7 @@ import Qualification from '../pages/settings/Qualification'
 import InchargeType from '../pages/settings/InchargeType'
 import FirmType from '../pages/settings/FirmType'
 import ProductIndication from '../pages/settings/ProductIndication'
+import SchemeMaster from '../pages/settings/SchemeMaster'
 
 // ----------------------------------------------------------------------
 
@@ -154,6 +155,7 @@ export default function Router() {
         { path: 'setting/inchargeType', element: <InchargeType /> },
         { path: 'setting/firmType', element: <FirmType /> },
         { path: 'setting/productindication', element: <ProductIndication /> },
+        { path: 'setting/schememaster', element: <SchemeMaster /> },
 
        
 
