@@ -14,42 +14,31 @@ import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
 import { apipost } from '../../../service/api';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
-const AddProductIndication = (props) => {
+const AddTravel = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchProductIndicationData } = props;
+    const { isOpenAdd, handleCloseAdd,fetchTravelData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        productName: yup.string().required('Product Name is required'),
-        indication: yup.string().required('Indication is required'),
+        mode: yup.string().required('Mode Of Travel is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        productName: '',
-        indication: '',
+        mode: '',
     };
 
-    const addProductIndication = async (values) => {
+    const addTravel = async (values) => {
         const pyload = {
-            productName: values.productName,
-            indication: values.indication,
+            mode: values.mode,
+            status: 'active',
         }
-        const result = await apipost('/api/productindication', pyload);
+        const result = await apipost('/api/modeoftravel', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchProductIndicationData();
+            fetchTravelData();
         }
     }
 
@@ -57,7 +46,7 @@ const AddProductIndication = (props) => {
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            addProductIndication(values)
+            addTravel(values)
         },
     });
 
@@ -72,7 +61,7 @@ const AddProductIndication = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Product Indication </Typography>
+                    <Typography variant="h6">Add</Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -82,40 +71,19 @@ const AddProductIndication = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Product Name</FormLabel>
-                                <Autocomplete
-                                    disablePortal
-                                    name="productName"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
-                                    value={formik.values.productName}
-                                    onChange={(event, newValue) => {
-                                        formik.setFieldValue('productName', newValue.divisionName);
-                                    }}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            placeholder='Select Product Name'
-                                            error={formik.touched.productName && Boolean(formik.errors.productName)}
-                                            helperText={formik.touched.productName && formik.errors.productName}
-                                        />}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Indication</FormLabel>
+                                <FormLabel>Mode Of Travel</FormLabel>
                                 <TextField
-                                    id="indication"
-                                    name="indication"
+                                    id="mode"
+                                    name="mode"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder='Enter Indication'
-                                    value={formik.values.indication}
+                                    placeholder='Enter Mode Of Travel'
+                                    value={formik.values.mode}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.indication && Boolean(formik.errors.indication)}
-                                    helperText={formik.touched.indication && formik.errors.indication}
+                                    error={formik.touched.mode && Boolean(formik.errors.mode)}
+                                    helperText={formik.touched.mode && formik.errors.mode}
                                 />
                             </Grid>
                         </Grid>
@@ -148,4 +116,4 @@ const AddProductIndication = (props) => {
     );
 };
 
-export default AddProductIndication;
+export default AddTravel;

@@ -33,7 +33,7 @@ import BirthdayCard from '../pages/greetingCard/birthdayCard/BirthdayCard';
 import DoctordayCard from '../pages/greetingCard/doctorday card/DoctordayCard';
 import NewYearCard from '../pages/greetingCard/NewYearCard/NewYearCard';
 import AnniversaryCard from '../pages/greetingCard/AnniversaryCard/AnniversaryCard';
-import Product from '../pages/product';
+// import Product from '../pages/product';
 import { Sells } from '../pages/Sells';
 import BirthdayCards from '../pages/greetingCard/birthdayCard/Catd';
 import { Chemist } from '../pages/chemist';
@@ -56,6 +56,7 @@ import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
 import Designations from '../pages/settings/Designations';
+import ConutryMaster from '../pages/settings/dataSetting/dataManagement/countryMaster';
 // import Card from './pages/card/CardTemplate'
 // import AddCard from './pages/card/Add'
 // import GreetingCardView from './pages/card/View'
@@ -74,7 +75,11 @@ import InchargeType from '../pages/settings/InchargeType'
 import FirmType from '../pages/settings/FirmType'
 import ProductIndication from '../pages/settings/ProductIndication'
 import SchemeMaster from '../pages/settings/SchemeMaster'
-
+import Product from '../pages/settings/Products'
+import ProductGroup from '../pages/settings/ProductGroup'
+import ModeOfTravel from '../pages/settings/ModeOfTravel';
+import ProductSample from '../pages/settings/ProductSamplesDetails'
+import SampleCollectionCenter from '../pages/settings/SampleCollectionCenter'
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -116,7 +121,7 @@ export default function Router() {
         { path: 'greetingcard/doctordaycard', element: <DoctordayCard /> },
         { path: 'greetingcard/newyearcard', element: <NewYearCard /> },
         { path: 'greetingcard/anniversarycard', element: <AnniversaryCard /> },
-        { path: 'products', element: <Product /> },
+        // { path: 'products', element: <Product /> },
         { path: 'sells', element: <Sells /> },
         { path: 'greetingcard/birthdaycard/card/:id', element: <BirthdayCards /> },
         { path: 'chemist', element: <Chemist /> },
@@ -154,10 +159,14 @@ export default function Router() {
         { path: 'setting/qualification', element: <Qualification /> },
         { path: 'setting/inchargeType', element: <InchargeType /> },
         { path: 'setting/firmType', element: <FirmType /> },
-        { path: 'setting/productindication', element: <ProductIndication /> },
-        { path: 'setting/schememaster', element: <SchemeMaster /> },
-
-       
+        { path: 'setting/productIndication', element: <ProductIndication /> },
+        { path: 'setting/schemeMaster', element: <SchemeMaster /> },
+        { path: 'setting/product', element: <Product /> },
+        { path: 'setting/productGroup', element: <ProductGroup /> },
+        { path: 'setting/modeOfTravel', element: <ModeOfTravel /> },
+        { path: 'setting/productSampleDetails', element: <ProductSample /> },
+        { path: 'setting/SampleCollectionCenter', element: <SampleCollectionCenter /> },
+        { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
 
       ],
     },

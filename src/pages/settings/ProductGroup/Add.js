@@ -11,45 +11,39 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
-import { apipost } from '../../../service/api';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { apiget, apipost } from '../../../service/api';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
-const AddProductIndication = (props) => {
+const AddProductGroup = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchProductIndicationData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchProductGroupData } = props;
+ 
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        productName: yup.string().required('Product Name is required'),
-        indication: yup.string().required('Indication is required'),
+        groupName: yup.string().required('Division is required'),
+        groupCategory: yup.string().required('Product Name is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        productName: '',
-        indication: '',
+        groupName: '',
+        groupCategory: '',
+        orderBy: '',
     };
 
-    const addProductIndication = async (values) => {
+    const addProductGroup = async (values) => {
         const pyload = {
-            productName: values.productName,
-            indication: values.indication,
+            groupName: values.groupName,
+            groupCategory: values.groupCategory,
+            orderBy: values.orderBy,
         }
-        const result = await apipost('/api/productindication', pyload);
+        const result = await apipost('/api/productgroup', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchProductIndicationData();
+            fetchProductGroupData();
         }
     }
 
@@ -57,7 +51,7 @@ const AddProductIndication = (props) => {
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            addProductIndication(values)
+            addProductGroup(values)
         },
     });
 
@@ -72,7 +66,7 @@ const AddProductIndication = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Product Indication </Typography>
+                    <Typography variant="h6">Add Product Group</Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -82,40 +76,49 @@ const AddProductIndication = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Product Name</FormLabel>
-                                <Autocomplete
-                                    disablePortal
-                                    name="productName"
-                                    options={top100Films}
+                                <FormLabel>Group Name</FormLabel>
+                                <TextField
+                                    id="groupName"
+                                    name="groupName"
+                                    size="small"
+                                    placeholder='Enter Group Name'
+                                    maxRows={10}
+                                    value={formik.values.groupName}
+                                    onChange={formik.handleChange}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.productName}
-                                    onChange={(event, newValue) => {
-                                        formik.setFieldValue('productName', newValue.divisionName);
-                                    }}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            placeholder='Select Product Name'
-                                            error={formik.touched.productName && Boolean(formik.errors.productName)}
-                                            helperText={formik.touched.productName && formik.errors.productName}
-                                        />}
+                                    error={formik.touched.groupName && Boolean(formik.errors.groupName)}
+                                    helperText={formik.touched.groupName && formik.errors.groupName}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Indication</FormLabel>
+                                <FormLabel>Group Category</FormLabel>
                                 <TextField
-                                    id="indication"
-                                    name="indication"
-                                    label=""
+                                    id="groupCategory"
+                                    name="groupCategory"
                                     size="small"
+                                    placeholder='Enter Group Category'
                                     maxRows={10}
-                                    placeholder='Enter Indication'
-                                    value={formik.values.indication}
+                                    value={formik.values.groupCategory}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.indication && Boolean(formik.errors.indication)}
-                                    helperText={formik.touched.indication && formik.errors.indication}
+                                    error={formik.touched.groupCategory && Boolean(formik.errors.groupCategory)}
+                                    helperText={formik.touched.groupCategory && formik.errors.groupCategory}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <FormLabel>Order By</FormLabel>
+                                <TextField
+                                    id="orderBy"
+                                    name="orderBy"
+                                    type='number'
+                                    size="small"
+                                    placeholder='Enter Order By'
+                                    maxRows={10}
+                                    value={formik.values.orderBy}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                    error={formik.touched.orderBy && Boolean(formik.errors.orderBy)}
+                                    helperText={formik.touched.orderBy && formik.errors.orderBy}
                                 />
                             </Grid>
                         </Grid>
@@ -148,4 +151,4 @@ const AddProductIndication = (props) => {
     );
 };
 
-export default AddProductIndication;
+export default AddProductGroup;

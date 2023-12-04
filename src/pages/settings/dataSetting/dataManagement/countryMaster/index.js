@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, Container, Grid, Stack, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import TableStyleTwo from '../../../../../components/TableStyleTwo'
@@ -10,9 +10,9 @@ import { apiget } from '../../../../../service/api'
 
 const ConutryMaster = () => {
 
-    const [countryList,setCountryList] = useState([])
-    const [stateList,setStateList] = useState([])
-    const [cityList,setCityList] = useState([])
+    const [countryList, setCountryList] = useState([])
+    const [stateList, setStateList] = useState([])
+    const [cityList, setCityList] = useState([])
 
     const [isOpenCountry, setIsOpenCountry] = useState(false)
     const [isOpenState, setIsOpenState] = useState(false)
@@ -69,116 +69,118 @@ const ConutryMaster = () => {
         fetchCityData();
     }, []);
 
-    
+
     return (
         <div>
             {/* Add Country */}
-            <AddCountry isOpenCountry={isOpenCountry} handleCloseCountry={handleCloseCountry} fetchCountryData={fetchCountryData}/>
+            <AddCountry isOpenCountry={isOpenCountry} handleCloseCountry={handleCloseCountry} fetchCountryData={fetchCountryData} />
 
             {/* Add State */}
-            <AddState isOpenState={isOpenState} handleCloseState={handleCloseState} fetchStateData={fetchStateData}/>
+            <AddState isOpenState={isOpenState} handleCloseState={handleCloseState} fetchStateData={fetchStateData} />
 
             {/* Add City */}
-            <AddCity isOpenCity={isOpenCity} handleCloseCity={handleCloseCity} fetchCityData={fetchCityData}/>
-
-            <Card>
-                <Box style={{ cursor: "pointer" }} p={2}>
-                    <Grid container display="flex" alignItems="center">
-                        <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
-                            <Stack direction="row" spacing={1} alignItems={"center"}>
-                                <Typography variant="h5">Country Master</Typography>
+            <AddCity isOpenCity={isOpenCity} handleCloseCity={handleCloseCity} fetchCityData={fetchCityData} />
+            
+            <Container maxWidth="xl">
+                <Card>
+                    <Box style={{ cursor: "pointer" }} p={2}>
+                        <Grid container display="flex" alignItems="center">
+                            <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
+                                <Stack direction="row" spacing={1} alignItems={"center"}>
+                                    <Typography variant="h5">Country Master</Typography>
+                                </Stack>
+                                <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        startIcon={<Iconify icon="eva:plus-fill" />}
+                                        onClick={handleOpenCountry}
+                                    >
+                                        Add New
+                                    </Button>
+                                </Stack>
                             </Stack>
-                            <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    size="small"
-                                    startIcon={<Iconify icon="eva:plus-fill" />}
-                                    onClick={handleOpenCountry}
-                                >
-                                    Add New
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Grid>
-                </Box>
-                <TableStyleTwo>
-                    <Box width="100%" height="50vh">
-                        <DataGrid
-                            rows={countryList}
-                            columns={countryColumns}
-                            getRowId={row => row._id}
-                            columnHeaderHeight={40}
-                        />
+                        </Grid>
                     </Box>
-                </TableStyleTwo>
-            </Card>
+                    <TableStyleTwo>
+                        <Box width="100%" height="50vh">
+                            <DataGrid
+                                rows={countryList}
+                                columns={countryColumns}
+                                getRowId={row => row._id}
+                                columnHeaderHeight={40}
+                            />
+                        </Box>
+                    </TableStyleTwo>
+                </Card>
 
-            <Card style={{ marginTop: "80px" }}>
-                <Box style={{ cursor: "pointer" }} p={2}>
-                    <Grid container display="flex" alignItems="center">
-                        <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
-                            <Stack direction="row" spacing={1} alignItems={"center"}>
-                                <Typography variant="h5">State Master</Typography>
+                <Card style={{ marginTop: "80px" }}>
+                    <Box style={{ cursor: "pointer" }} p={2}>
+                        <Grid container display="flex" alignItems="center">
+                            <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
+                                <Stack direction="row" spacing={1} alignItems={"center"}>
+                                    <Typography variant="h5">State Master</Typography>
+                                </Stack>
+                                <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        startIcon={<Iconify icon="eva:plus-fill" />}
+                                        onClick={handleOpenState}
+                                    >
+                                        Add New
+                                    </Button>
+                                </Stack>
                             </Stack>
-                            <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    size="small"
-                                    startIcon={<Iconify icon="eva:plus-fill" />}
-                                    onClick={handleOpenState}
-                                >
-                                    Add New
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Grid>
-                </Box>
-                <TableStyleTwo>
-                    <Box width="100%" height="50vh">
-                        <DataGrid
-                            rows={stateList}
-                            columns={stateColumns}
-                            getRowId={row => row._id}
-                            columnHeaderHeight={40}
-                        />
+                        </Grid>
                     </Box>
-                </TableStyleTwo>
-            </Card>
+                    <TableStyleTwo>
+                        <Box width="100%" height="50vh">
+                            <DataGrid
+                                rows={stateList}
+                                columns={stateColumns}
+                                getRowId={row => row._id}
+                                columnHeaderHeight={40}
+                            />
+                        </Box>
+                    </TableStyleTwo>
+                </Card>
 
-            <Card style={{ marginTop: "80px" }}>
-                <Box style={{ cursor: "pointer" }} p={2}>
-                    <Grid container display="flex" alignItems="center">
-                        <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
-                            <Stack direction="row" spacing={1} alignItems={"center"}>
-                                <Typography variant="h5">City Master</Typography>
+                <Card style={{ marginTop: "80px" }}>
+                    <Box style={{ cursor: "pointer" }} p={2}>
+                        <Grid container display="flex" alignItems="center">
+                            <Stack direction="row" alignItems="center" justifyContent={"space-between"} width={"100%"}>
+                                <Stack direction="row" spacing={1} alignItems={"center"}>
+                                    <Typography variant="h5">City Master</Typography>
+                                </Stack>
+                                <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        startIcon={<Iconify icon="eva:plus-fill" />}
+                                        onClick={handleOpenCity}
+                                    >
+                                        Add New
+                                    </Button>
+                                </Stack>
                             </Stack>
-                            <Stack direction="row" alignItems="center" justifyContent={"flex-end"} spacing={2}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    size="small"
-                                    startIcon={<Iconify icon="eva:plus-fill" />}
-                                    onClick={handleOpenCity}
-                                >
-                                    Add New
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Grid>
-                </Box>
-                <TableStyleTwo>
-                    <Box width="100%" height="50vh">
-                        <DataGrid
-                            rows={cityList}
-                            columns={cityColumns}
-                            getRowId={row => row._id}
-                            columnHeaderHeight={40}
-                        />
+                        </Grid>
                     </Box>
-                </TableStyleTwo>
-            </Card>
+                    <TableStyleTwo>
+                        <Box width="100%" height="50vh">
+                            <DataGrid
+                                rows={cityList}
+                                columns={cityColumns}
+                                getRowId={row => row._id}
+                                columnHeaderHeight={40}
+                            />
+                        </Box>
+                    </TableStyleTwo>
+                </Card>
+            </Container>
         </div>
     )
 }
