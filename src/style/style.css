@@ -81,3 +81,9 @@
   margin: 0px;
   text-align: center;
 }
+.ql-editor{
+  height: 50vh !important;
+}
+.css-1sp8c2x-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 8.5px 13px !important;
+}

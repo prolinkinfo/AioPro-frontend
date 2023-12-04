@@ -65,6 +65,8 @@ import Division from '../pages/settings/Division';
 import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
 import RelationMaster from '../pages/settings/RelationMaster';
 import OtherReason from '../pages/settings/OtherReason';
+import  FaqAdd  from '../pages/settings/FAQ/AddFAQ';
+import  FaqMaster  from '../pages/settings/FAQ';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -135,6 +137,8 @@ export default function Router() {
         { path: 'setting/doctorspeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationmaster', element: <RelationMaster /> },
         { path: 'setting/otherreason', element: <OtherReason /> },
+        { path: 'setting/faqMaster', element: <FaqMaster /> },
+        { path: 'setting/faqAdd', element: <FaqAdd /> },
 
        
 

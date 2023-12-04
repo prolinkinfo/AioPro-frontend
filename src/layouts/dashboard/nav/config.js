@@ -204,7 +204,7 @@ export const adminConfig = [
           },
           {
             title: 'FAQ Master',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/faqMaster`,
           },
           {
             title: 'Firm Category',
