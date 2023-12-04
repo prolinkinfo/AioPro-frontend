@@ -1,24 +1,27 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCategory from './Add'
-import { apidelete, apiget } from '../../../service/api'
+import AddQualification from './Add';
 import DeleteModel from '../../../components/Deletemodle'
+import { apidelete, apiget } from '../../../service/api'
 
-const DoctorCategory = () => {
+const InchargeType = () => {
 
-    const [categoryList, setCategoryList] = useState([])
-    const [userAction,setUserAction] = useState('')
+    const [typeList, setTypeList] = useState([])
+    const [userAction, setUserAction] = useState(null)
+    const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [id,setId] = useState('')
 
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
+
+
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
@@ -31,47 +34,46 @@ const DoctorCategory = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    console.log(data, 'data')
-                    setId(data?._id)
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={() => handleClick(params?.row)}>
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData}/>
-                        <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
+                    <Box>
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteType} id={id} />
+                        <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
                     </Box>
                 );
             },
         },
-        { field: 'categoryName', headerName: 'Category Name', flex: 1 },
-        { field: 'minimumPreference', headerName: 'Minimum Preference', flex: 1 },
-        { field: 'maximumPreference', headerName: 'Maximum Preference', flex: 1 },
+        { field: 'inchargeType', headerName: 'Incharge Type', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const deleteCategory = async(id) => {
-        const result = await apidelete(`/api/doctorcategory/${id}`);
+    const deleteType = async (id) => {
+        const result = await apidelete(`/api/inchargetype/${id}`);
         setUserAction(result)
     }
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/doctorcategory`);
+    const fetchTypeData = async () => {
+        const result = await apiget(`/api/inchargetype`);
         if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
+            setTypeList(result?.data?.result);
         }
     };
 
     useEffect(() => {
-        fetchCategoryData();
+        fetchTypeData();
     }, [userAction])
 
     return (
         <div>
-            {/* Add Category */}
-            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
+            
+            {/* Add Incharge Type */}
+            <AddQualification isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Doctor Category</Typography>
+                    <Typography variant="h4">Incharge Type</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -88,7 +90,7 @@ const DoctorCategory = () => {
                         </Stack>
                         <Card style={{ height: '72vh' }}>
                             <DataGrid
-                                rows={categoryList}
+                                rows={typeList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -106,4 +108,4 @@ const DoctorCategory = () => {
     )
 }
 
-export default DoctorCategory
+export default InchargeType

@@ -208,7 +208,7 @@ export const adminConfig = [
           },
           {
             title: 'Firm Category',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/firmCategory`,
           },
           {
             title: 'Firm type',
@@ -242,7 +242,7 @@ export const adminConfig = [
           },
           {
             title: 'Leave Reasons',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/leaveReason`,
           },
           {
             title: 'Mode Of Travel',
@@ -250,7 +250,7 @@ export const adminConfig = [
           },
           {
             title: 'Others Reason',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/otherReason`,
           },
           {
             title: 'Product',
@@ -278,7 +278,7 @@ export const adminConfig = [
           },
           {
             title: 'Relation Master',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/relationMaster`,
           },
           {
             title: 'Sample Collection',

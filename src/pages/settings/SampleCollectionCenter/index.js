@@ -1,24 +1,32 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import moment from 'moment';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCategory from './Add'
-import { apidelete, apiget } from '../../../service/api'
+import AddProduct from './Add';
+import EditProduct from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
+import { apidelete, apiget } from '../../../service/api'
 
-const DoctorCategory = () => {
+const SampleCollectionCenter = () => {
 
-    const [categoryList, setCategoryList] = useState([])
-    const [userAction,setUserAction] = useState('')
+    const [productGroupList, setProductGroupList] = useState([])
+    const [productGroupData, setProductGroupData] = useState({})
+    const [userAction, setUserAction] = useState(null)
+    const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [id,setId] = useState('')
 
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
+
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
@@ -28,50 +36,63 @@ const DoctorCategory = () => {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            flex: 1,
+            width:200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data')
-                    setId(data?._id)
+                    setProductGroupData(data);
+                    handleOpenEdit();
+                };
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={() => handleClick(params?.row)}>
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData}/>
-                        <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
+                    <Box>
+                        <EditProduct isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductGroupData={fetchProductGroupData} data={productGroupData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'categoryName', headerName: 'Category Name', flex: 1 },
-        { field: 'minimumPreference', headerName: 'Minimum Preference', flex: 1 },
-        { field: 'maximumPreference', headerName: 'Maximum Preference', flex: 1 },
+        { field: 'centerName', headerName: 'Center Name', width:200 },
+        { field: 'centerCode', headerName: 'Center Code', width:200 },
+        { field: 'assignedTo', headerName: 'Assigned To', width:200 },
+        { field: 'category', headerName: 'Category', width:200 },
+        { field: 'centerType', headerName: 'Center Type', width:200 },
+        { field: 'zone', headerName: 'Zone', width:200 },
+        { field: 'city', headerName: 'City', width:200 },
+        { field: 'centerAddress', headerName: 'Center Address', width:200 },
     ];
 
-    const deleteCategory = async(id) => {
-        const result = await apidelete(`/api/doctorcategory/${id}`);
+    const deleteGroup = async (id) => {
+        const result = await apidelete(`/api/productgroup/${id}`);
         setUserAction(result)
     }
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/doctorcategory`);
+    const fetchProductGroupData = async () => {
+        const result = await apiget(`/api/productgroup`);
         if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
+            setProductGroupList(result?.data?.result);
         }
     };
 
     useEffect(() => {
-        fetchCategoryData();
+        fetchProductGroupData();
     }, [userAction])
 
     return (
         <div>
-            {/* Add Category */}
-            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
+            {/* Add Product Group */}
+            <AddProduct isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchProductGroupData={fetchProductGroupData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Doctor Category</Typography>
+                    <Typography variant="h4">Sample Collection Center</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -88,7 +109,7 @@ const DoctorCategory = () => {
                         </Stack>
                         <Card style={{ height: '72vh' }}>
                             <DataGrid
-                                rows={categoryList}
+                                rows={productGroupList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -106,4 +127,4 @@ const DoctorCategory = () => {
     )
 }
 
-export default DoctorCategory
+export default SampleCollectionCenter

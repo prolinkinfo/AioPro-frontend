@@ -1,27 +1,26 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCategory from './Add'
-import { apidelete, apiget } from '../../../service/api'
-import DeleteModel from '../../../components/Deletemodle'
+import AddHospitalCategory from './Add'
+import EditHospitalCategory from './Edit'
+import { apiget } from '../../../service/api'
 
-const DoctorCategory = () => {
+const HospitalCategory = () => {
 
     const [categoryList, setCategoryList] = useState([])
-    const [userAction,setUserAction] = useState('')
+    const [categoryData, setCategoryData] = useState({})
+
     const [isOpenAdd, setIsOpenAdd] = useState(false)
-    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [id,setId] = useState('')
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
 
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
-
-    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
-    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
 
     const columns = [
         {
@@ -32,29 +31,22 @@ const DoctorCategory = () => {
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data')
-                    setId(data?._id)
+                    setCategoryData(data);
+                    handleOpenEdit();
                 };
                 return (
-                    <Box onClick={() => handleClick(params?.row)}>
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData}/>
-                        <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
+                    <Box>
+                        <EditHospitalCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCategoryData={fetchCategoryData} data={categoryData} />
+                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
             },
         },
-        { field: 'categoryName', headerName: 'Category Name', flex: 1 },
-        { field: 'minimumPreference', headerName: 'Minimum Preference', flex: 1 },
-        { field: 'maximumPreference', headerName: 'Maximum Preference', flex: 1 },
+        { field: 'hospitalCategory', headerName: 'Hospital Category', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const deleteCategory = async(id) => {
-        const result = await apidelete(`/api/doctorcategory/${id}`);
-        setUserAction(result)
-    }
-
     const fetchCategoryData = async () => {
-        const result = await apiget(`/api/doctorcategory`);
+        const result = await apiget(`/api/hospitalcategory`);
         if (result && result.status === 200) {
             setCategoryList(result?.data?.result);
         }
@@ -62,16 +54,16 @@ const DoctorCategory = () => {
 
     useEffect(() => {
         fetchCategoryData();
-    }, [userAction])
+    }, [])
 
     return (
         <div>
-            {/* Add Category */}
-            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
+            {/* Add Hospital Category */}
+            <AddHospitalCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Doctor Category</Typography>
+                    <Typography variant="h4">Hospital Category</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -106,4 +98,4 @@ const DoctorCategory = () => {
     )
 }
 
-export default DoctorCategory
+export default HospitalCategory
