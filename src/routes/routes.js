@@ -66,6 +66,8 @@ import Division from '../pages/settings/Division';
 import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
 import RelationMaster from '../pages/settings/RelationMaster';
 import OtherReason from '../pages/settings/OtherReason';
+import  FaqAdd  from '../pages/settings/FAQ/AddFAQ';
+import  FaqMaster  from '../pages/settings/FAQ';
 import FirmCategory from '../pages/settings/FirmCategory'
 import HospitalCategory from '../pages/settings/HospitalCategory';
 import HospitalClass from '../pages/settings/HospitalClass'
@@ -151,6 +153,13 @@ export default function Router() {
         { path: 'setting/zone', element: <Zone /> },
         { path: 'setting/doctorCategory', element: <DoctorCategory /> },
         { path: 'setting/division', element: <Division /> },
+        { path: 'setting/doctorspeciality', element: <DoctorSpeciality /> },
+        { path: 'setting/relationmaster', element: <RelationMaster /> },
+        { path: 'setting/otherreason', element: <OtherReason /> },
+        { path: 'setting/faqMaster', element: <FaqMaster /> },
+        { path: 'setting/faqAdd', element: <FaqAdd /> },
+
+       
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
         { path: 'setting/otherReason', element: <OtherReason /> },
