@@ -1,71 +1,156 @@
 import { Box, Button, Card, Container, Stack, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import AddAdministrator from './Add'
+import { apidelete, apiget } from '../../../service/api'
+import DeleteModel from '../../../components/Deletemodle'
 
 const Administrator = () => {
+
+    const [administratorList, setAdministratorList] = useState([])
     const [isOpenAdd, setIsOpenAdd] = useState(false);
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [id, setId] = useState('')
+    const [userAction, setUserAction] = useState(null)
+
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
-
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
     const columns = [
-        { field: 'name', headerName: 'Name', width: 120 },
-        { field: 'email', headerName: 'Email', width: 130 },
+        {
+            field: 'action',
+            headerName: 'Action',
+            sortable: false,
+            width: 200,
+            // eslint-disable-next-line arrow-body-style
+            renderCell: (params) => {
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
+                };
+                return (
+                    <Box>
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteAdministrator} id={id} />
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'name', headerName: 'Name', width: 200, cellClassName: 'name-column--cell--capitalize',
+        },
+        {
+            field: 'email', headerName: 'Email', width: 200, cellClassName: 'name-column--cell--capitalize',
+        },
         {
             field: 'city',
             headerName: 'City',
-            width: 150,
+            width: 200,
+            cellClassName: 'name-column--cell--capitalize',
+
         },
         {
-            field: 'contact',
+            field: 'contactNumber',
             headerName: 'Contact',
-            width: 150,
+            width: 200,
         },
         {
             field: 'division',
             headerName: 'Division',
-            width: 300,
+            width: 150,
+            cellClassName: 'name-column--cell--capitalize',
+
         },
         {
             field: 'zone',
             headerName: 'Zone',
-            width: 120,
+            width: 200,
+            cellClassName: 'name-column--cell--capitalize',
+
         },
         {
             field: 'adminType',
             headerName: 'Admin Type',
-            width: 120,
+            width: 200,
+            cellClassName: 'name-column--cell--capitalize',
+
         },
         {
             field: 'status',
             headerName: 'Status',
-            width: 90,
+            width: 100,
+            cellClassName: 'name-column--cell--capitalize',
+            renderCell: (params) =>
+            // const chengStatus = async(data) => {
+            //   const pyload = {
+            //     _id: data?._id,
+            //     status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+            //   }
+            //   const result = await apiput(`/api/users/changeStatus`, pyload);
+            //   if (result && result.status === 200) {
+            //     fetchdata();
+            //   }
+            // };
+            (
+                <Box>
+                    <Button
+                        variant="outlined"
+                        style={{
+                            color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                            background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                            border: 'none',
+                        }}
+                    >
+                        {params.value}
+                    </Button>
+                </Box>
+            )
+            ,
         },
 
 
     ];
 
-    const rows = [
-        { id: 1, firmId: '1001383', firmName: 'T.k. Saikiya', visitAddress: '1, Akurli Road, Ashok Nagar, Kandivali East, Mumbai, Maharashtra 400101, India', firmAddress: '1, Akurli Road, Ashok Nagar, Kandivali East, Mumbai, Maharashtra 400101, India', zone: 'Madhya Pradesh', city: 'Jabalpur', employeeName: 'Vaibhav Shrivastava', visitDate: '20/11/2016', status: 'open' },
-        { id: 2, firmId: '1001355', firmName: 'Sarita Singh', visitAddress: 'A-202, Dattani Park Rd, Dattani Park, Thakur Village, Kandivali East, Mumbai, Maharashtra 400101, In', firmAddress: 'A-202, Dattani Park Rd, Dattani Park, Thakur Village, Kandivali East, Mumbai, Maharashtra 400101, In', zone: 'Madhya Pradesh', city: 'Satna', employeeName: 'Vikas Gautam', visitDate: '20/11/2016', status: 'open' },
-    ];
+
+    const deleteAdministrator = async (id) => {
+        const result = await apidelete(`/api/administrator/${id}`);
+        setUserAction(result)
+    }
+
+
+    const fetchAdministratorData = async () => {
+        const result = await apiget(`/api/administrator`);
+        if (result && result.status === 200) {
+            setAdministratorList(result?.data?.result);
+        }
+    };
+
+    useEffect(() => {
+        fetchAdministratorData();
+    }, [userAction]);
+
     return (
         <div>
-            <AddAdministrator isOpen={isOpenAdd} handleClose={handleCloseAdd}/>
+            {/* Add Administrator */}
+            <AddAdministrator isOpen={isOpenAdd} handleClose={handleCloseAdd} fetchAdministratorData={fetchAdministratorData} />
             <Container maxWidth="xl">
-                <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Administrator's</Typography>
-                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                        Add Administrator
-                    </Button>
-                </Stack>
+                <Typography variant="h4">Administrator's</Typography>
                 <TableStyle>
                     <Box width="100%" pt={3}>
+                        <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"space-between"} mb={2}>
+                            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                                Add Administrator
+                            </Button>
+                        </Stack>
                         <Card style={{ height: '72vh', paddingTop: '15px' }}>
                             <DataGrid
-                                rows={rows}
+                                rows={administratorList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -73,6 +158,7 @@ const Administrator = () => {
                                     },
                                 }}
                                 pageSizeOptions={[5, 10]}
+                                getRowId={row => row._id}
                             />
                         </Card>
                     </Box>

@@ -1,4 +1,4 @@
-import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.snow.css'
 import 'react-quill-with-table/dist/quill.snow.css';
 import 'react-quill/dist/quill.snow.css';
 import React, { useMemo } from 'react';
