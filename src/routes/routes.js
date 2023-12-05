@@ -83,6 +83,8 @@ import ModeOfTravel from '../pages/settings/ModeOfTravel';
 import ProductSample from '../pages/settings/ProductSamplesDetails'
 import SampleCollectionCenter from '../pages/settings/SampleCollectionCenter'
 import Employees from '../pages/people/employees'
+import PromotionalGifts from '../pages/settings/PromotionalGifts'
+import MediaGallery from '../pages/eDetailing/MediaGallery'
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -178,7 +180,9 @@ export default function Router() {
         { path: 'setting/modeOfTravel', element: <ModeOfTravel /> },
         { path: 'setting/productSampleDetails', element: <ProductSample /> },
         { path: 'setting/SampleCollectionCenter', element: <SampleCollectionCenter /> },
+        { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
+        { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
 
       ],
     },

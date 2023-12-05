@@ -75,7 +75,6 @@ const AddDivision = (props) => {
         setSelectedFile('');
     };
 
-
     return (
         <div>
             <Dialog open={isOpenAdd} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
