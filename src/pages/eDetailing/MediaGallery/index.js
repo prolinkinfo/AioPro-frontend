@@ -1,37 +1,44 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import moment from 'moment';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCollectionCenter from './Add';
-import EditCollectionCenter from './Edit'
-import DeleteModel from '../../../components/Deletemodle'
+import AddMedia from './Add'
 import { apidelete, apiget } from '../../../service/api'
+import DeleteModel from '../../../components/Deletemodle'
 
-const SampleCollectionCenter = () => {
+const MediaGallery = () => {
 
-    const [collectionCenterList, setCollectionCenterList] = useState([])
-    const [collectionCenterData, setCollectionCenterData] = useState({})
-    const [userAction, setUserAction] = useState(null)
+    const [mediaList, setMediaList] = useState([])
     const [id, setId] = useState('')
-    const [isOpenAdd, setIsOpenAdd] = useState(false)
-    const [isOpenEdit, setIsOpenEdit] = useState(false)
-    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [userAction, setUserAction] = useState(null)
 
+    const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
-
-    const handleOpenEdit = () => setIsOpenEdit(true)
-    const handleCloseEdit = () => setIsOpenEdit(false)
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
+        { field: 'srNo', headerName: 'Sr.No', flex: 1 },
+        { field: 'name', headerName: 'Name', flex: 1 },
+        { field: 'divisionName', headerName: 'division', flex: 1 },
+        {
+            field: 'image',
+            headerName: 'Images',
+            flex: 1,
+            renderCell: (params) => (
+                <a href={params?.row?.image} target='_blank' rel="noreferrer"><img
+                src={params?.row?.image}
+                alt="Avatar"
+                style={{ width: 50, height: 50, borderRadius: '50%' }}
+            /></a>
+            ),
+        },
         {
             field: 'action',
             headerName: 'Action',
@@ -39,60 +46,47 @@ const SampleCollectionCenter = () => {
             width:200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setCollectionCenterData(data);
-                    handleOpenEdit();
-                };
                 const handleClickDeleteBtn = async (data) => {
                     setId(data?._id);
                     handleOpenDeleteModel();
                 };
                 return (
                     <Box>
-                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCollectionCenterData={fetchCollectionCenterData} data={collectionCenterData} />
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteMedia} id={id} />
                         <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
                             <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
                         </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'centerName', headerName: 'Center Name', width:200 },
-        { field: 'centerCode', headerName: 'Center Code', width:200 },
-        { field: 'assignTo', headerName: 'Assigned To', width:200 },
-        { field: 'category', headerName: 'Category', width:200 },
-        { field: 'type', headerName: 'Center Type', width:200 },
-        { field: 'zoneName', headerName: 'Zone', width:200 },
-        { field: 'cityName', headerName: 'City', width:200 },
-        { field: 'centerAddress', headerName: 'Center Address', width:200 },
     ];
 
-    const deleteGroup = async (id) => {
-        const result = await apidelete(`/api/sampleCollectionCenter/${id}`);
+    const deleteMedia = async (id) => {
+        const result = await apidelete(`/api/mediaGallery/${id}`);
         setUserAction(result)
     }
 
-    const fetchCollectionCenterData = async () => {
-        const result = await apiget(`/api/sampleCollectionCenter`);
+
+    const fetchMediaData = async () => {
+        const result = await apiget(`/api/mediaGallery`);
         if (result && result.status === 200) {
-            setCollectionCenterList(result?.data?.result);
+            setMediaList(result?.data?.result);
         }
     };
 
     useEffect(() => {
-        fetchCollectionCenterData();
+        fetchMediaData();
     }, [userAction])
 
     return (
         <div>
-            {/* Add Collection Center */}
-            <AddCollectionCenter isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCollectionCenterData={fetchCollectionCenterData} />
+            {/* Add Media */}
+            <AddMedia isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchMediaData={fetchMediaData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Sample Collection Center</Typography>
+                    <Typography variant="h4">Media Gallery</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -109,7 +103,7 @@ const SampleCollectionCenter = () => {
                         </Stack>
                         <Card style={{ height: '72vh' }}>
                             <DataGrid
-                                rows={collectionCenterList}
+                                rows={mediaList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -127,4 +121,4 @@ const SampleCollectionCenter = () => {
     )
 }
 
-export default SampleCollectionCenter
+export default MediaGallery

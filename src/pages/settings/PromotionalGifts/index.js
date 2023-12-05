@@ -7,15 +7,15 @@ import moment from 'moment';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
-import AddCollectionCenter from './Add';
+import AddPromotionalGift from './Add';
 import EditCollectionCenter from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 
-const SampleCollectionCenter = () => {
+const PromotionalGifts = () => {
 
-    const [collectionCenterList, setCollectionCenterList] = useState([])
-    const [collectionCenterData, setCollectionCenterData] = useState({})
+    const [promotionalGiftList, setPromotionalGiftList] = useState([])
+    const [promotionalGiftData, setpromotionalGiftData] = useState({})
     const [userAction, setUserAction] = useState(null)
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
@@ -36,11 +36,11 @@ const SampleCollectionCenter = () => {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            width:200,
+            width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    setCollectionCenterData(data);
+                    setpromotionalGiftData(data);
                     handleOpenEdit();
                 };
                 const handleClickDeleteBtn = async (data) => {
@@ -49,7 +49,7 @@ const SampleCollectionCenter = () => {
                 };
                 return (
                     <Box>
-                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCollectionCenterData={fetchCollectionCenterData} data={collectionCenterData} />
+                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchPromotionalGiftsData={fetchPromotionalGiftsData} data={promotionalGiftData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
@@ -59,40 +59,69 @@ const SampleCollectionCenter = () => {
                 );
             },
         },
-        { field: 'centerName', headerName: 'Center Name', width:200 },
-        { field: 'centerCode', headerName: 'Center Code', width:200 },
-        { field: 'assignTo', headerName: 'Assigned To', width:200 },
-        { field: 'category', headerName: 'Category', width:200 },
-        { field: 'type', headerName: 'Center Type', width:200 },
-        { field: 'zoneName', headerName: 'Zone', width:200 },
-        { field: 'cityName', headerName: 'City', width:200 },
-        { field: 'centerAddress', headerName: 'Center Address', width:200 },
+        { field: 'divisionName', headerName: 'Division Name', width: 200 },
+        { field: 'employeeName', headerName: 'Employee Name', width: 200 },
+        { field: 'giftName', headerName: 'Gift Name', width: 200 },
+        { field: 'quantity', headerName: 'Quantity', width: 200 },
+        { field: 'remaining', headerName: 'Remaining', width: 200 },
+        {
+            field: 'status',
+            headerName: 'Status',
+            width: 200,
+            renderCell: (params) => 
+                // const chengStatus = async(data) => {
+                //   const pyload = {
+                //     _id: data?._id,
+                //     status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+                //   }
+                //   const result = await apiput(`/api/users/changeStatus`, pyload);
+                //   if (result && result.status === 200) {
+                //     fetchdata();
+                //   }
+                // };
+                 (
+                  <Box>
+                    <Button
+                      variant="outlined"
+                      style={{
+                        color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                        background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                        border: 'none',
+                      }}
+                      
+                    >
+                      {params.value}
+                    </Button>
+                  </Box>
+                )
+              ,
+        },
     ];
 
     const deleteGroup = async (id) => {
-        const result = await apidelete(`/api/sampleCollectionCenter/${id}`);
+        const result = await apidelete(`/api/promotionalGift/${id}`);
         setUserAction(result)
     }
 
-    const fetchCollectionCenterData = async () => {
-        const result = await apiget(`/api/sampleCollectionCenter`);
+    const fetchPromotionalGiftsData = async () => {
+        const result = await apiget(`/api/promotionalGift`);
         if (result && result.status === 200) {
-            setCollectionCenterList(result?.data?.result);
+            setPromotionalGiftList(result?.data?.result);
         }
     };
 
     useEffect(() => {
-        fetchCollectionCenterData();
+        fetchPromotionalGiftsData();
     }, [userAction])
 
     return (
         <div>
-            {/* Add Collection Center */}
-            <AddCollectionCenter isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCollectionCenterData={fetchCollectionCenterData} />
+            {/* Add Promotional Gift */}
+            <AddPromotionalGift isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchPromotionalGiftsData={fetchPromotionalGiftsData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-                    <Typography variant="h4">Sample Collection Center</Typography>
+                    <Typography variant="h4">Promotional Gifts</Typography>
 
                 </Stack>
                 <TableStyle>
@@ -109,7 +138,7 @@ const SampleCollectionCenter = () => {
                         </Stack>
                         <Card style={{ height: '72vh' }}>
                             <DataGrid
-                                rows={collectionCenterList}
+                                rows={promotionalGiftList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -127,4 +156,4 @@ const SampleCollectionCenter = () => {
     )
 }
 
-export default SampleCollectionCenter
+export default PromotionalGifts

@@ -14,38 +14,54 @@ import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import { apiget, apipost } from '../../../service/api';
 
-const AddProductGroup = (props) => {
+const AddCollectionCenter = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchProductGroupData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchCollectionCenterData } = props;
     const [cityList, setCityList] = useState([])
     const [zoneList, setZoneList] = useState([])
 
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        groupName: yup.string().required('Division is required'),
-        groupCategory: yup.string().required('Product Name is required'),
+        centerName: yup.string().required('Center Name is required'),
+        centerCode: yup.string().required('Center Code is required'),
+        type: yup.string().required('Type is required'),
+        zoneName: yup.string().required('Zone Name is required'),
+        cityName: yup.string().required('City Name is required'),
+        category: yup.string().required('Category is required'),
+        assignTo: yup.string().required('Assign To is required'),
+        centerAddress: yup.string().required('Center Address is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        groupName: '',
-        groupCategory: '',
-        orderBy: '',
+        centerName: '',
+        centerCode: '',
+        type: '',
+        zoneName: '',
+        cityName: '',
+        category: '',
+        assignTo: '',
+        centerAddress: '',
     };
 
-    const addProductGroup = async (values) => {
+    const addCollectionCenter = async (values) => {
         const pyload = {
-            groupName: values.groupName,
-            groupCategory: values.groupCategory,
-            orderBy: values.orderBy,
+            centerName: values.centerName,
+            centerCode: values.centerCode,
+            type: values.type,
+            zoneName: values.zoneName,
+            cityName: values.cityName,
+            category: values.category,
+            assignTo: values.assignTo,
+            centerAddress: values.centerAddress,
         }
-        const result = await apipost('/api/productgroup', pyload);
+        const result = await apipost('/api/sampleCollectionCenter', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchProductGroupData();
+            fetchCollectionCenterData();
         }
     }
 
@@ -53,7 +69,7 @@ const AddProductGroup = (props) => {
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            addProductGroup(values)
+            addCollectionCenter(values)
         },
     });
 
@@ -70,7 +86,7 @@ const AddProductGroup = (props) => {
             setZoneList(result?.data?.result);
         }
     };
-    console.log(zoneList, "zoneList")
+    
     useEffect(() => {
         fetchCityData();
         fetchZoneData();
@@ -86,7 +102,7 @@ const AddProductGroup = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Product Group</Typography>
+                    <Typography variant="h6">Add Sample Collection Center</Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -98,31 +114,31 @@ const AddProductGroup = (props) => {
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Center Name</FormLabel>
                                 <TextField
-                                    id="groupName"
-                                    name="groupName"
+                                    id="centerName"
+                                    name="centerName"
                                     size="small"
-                                    placeholder='Enter Group Name'
+                                    placeholder='Enter Center Name'
                                     maxRows={10}
-                                    value={formik.values.groupName}
+                                    value={formik.values.centerName}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.groupName && Boolean(formik.errors.groupName)}
-                                    helperText={formik.touched.groupName && formik.errors.groupName}
+                                    error={formik.touched.centerName && Boolean(formik.errors.centerName)}
+                                    helperText={formik.touched.centerName && formik.errors.centerName}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Center Code</FormLabel>
                                 <TextField
-                                    id="groupCategory"
-                                    name="groupCategory"
+                                    id="centerCode"
+                                    name="centerCode"
                                     size="small"
-                                    placeholder='Enter Group Category'
+                                    placeholder='Enter Center Code'
                                     maxRows={10}
-                                    value={formik.values.groupCategory}
+                                    value={formik.values.centerCode}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.groupCategory && Boolean(formik.errors.groupCategory)}
-                                    helperText={formik.touched.groupCategory && formik.errors.groupCategory}
+                                    error={formik.touched.centerCode && Boolean(formik.errors.centerCode)}
+                                    helperText={formik.touched.centerCode && formik.errors.centerCode}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
@@ -135,10 +151,13 @@ const AddProductGroup = (props) => {
                                         name='type'
                                         value={formik.values.type}
                                         onChange={formik.handleChange}
+                                        error={formik.touched.type && Boolean(formik.errors.type)}
+                                        helperText={formik.touched.type && formik.errors.type}
                                     >
                                         <MenuItem value={'Pick Up'}>Pick Up</MenuItem>
                                         <MenuItem value={'Drop'}>Drop</MenuItem>
                                     </Select>
+                                    <FormHelperText error={formik.touched.type && Boolean(formik.errors.type)}>{formik.touched.type && formik.errors.type}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
@@ -158,7 +177,7 @@ const AddProductGroup = (props) => {
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select City'
+                                                placeholder='Select Zone'
                                                 error={formik.touched.zoneName && Boolean(formik.errors.zoneName)}
                                                 helperText={formik.touched.zoneName && formik.errors.zoneName}
                                             />
@@ -199,11 +218,15 @@ const AddProductGroup = (props) => {
                                         id="demo-simple-select"
                                         size='small'
                                         name='category'
+                                        placeholder='Select Category'
                                         value={formik.values.category}
                                         onChange={formik.handleChange}
+                                        error={formik.touched.category && Boolean(formik.errors.category)}
+                                        helperText={formik.touched.category && formik.errors.category}
                                     >
                                         <MenuItem value={'other'}>OTHER</MenuItem>
                                     </Select>
+                                    <FormHelperText error={formik.touched.category && Boolean(formik.errors.category)}>{formik.touched.category && formik.errors.category}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
@@ -212,7 +235,7 @@ const AddProductGroup = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('cityName', newValue.cityName);
+                                            formik.setFieldValue('assignTo', newValue.cityName);
                                         }}
                                         options={cityList}
                                         value={cityList.find(city => city.cityName === formik.values.cityName) || null}
@@ -223,9 +246,9 @@ const AddProductGroup = (props) => {
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select City'
-                                                error={formik.touched.cityName && Boolean(formik.errors.cityName)}
-                                                helperText={formik.touched.cityName && formik.errors.cityName}
+                                                placeholder='Select Assign To'
+                                                error={formik.touched.assignTo && Boolean(formik.errors.assignTo)}
+                                                helperText={formik.touched.assignTo && formik.errors.assignTo}
                                             />
                                         )}
                                     />
@@ -276,4 +299,4 @@ const AddProductGroup = (props) => {
     );
 };
 
-export default AddProductGroup;
+export default AddCollectionCenter;
