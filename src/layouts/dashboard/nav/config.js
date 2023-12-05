@@ -49,7 +49,7 @@ export const adminConfig = [
       },
       {
         title: 'Employees',
-        path: `/${userRole}/dashboard/people`,
+        path: `/${userRole}/dashboard/people/employees`,
       },
     ],
   },
