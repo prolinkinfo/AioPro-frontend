@@ -77,7 +77,7 @@ const Doctor = () => {
                     <Typography variant="h4">Doctors</Typography>
                     <Stack direction="row" spacing={2}>
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                            <Link to={`/${userRole}/dashboard/people/doctor/update_doctor`} style={{ color: 'white', textDecoration: 'none' }}>Add Doctor</Link>
+                            <Link to={`/${userRole}/dashboard/people/doctor/add`} style={{ color: 'white', textDecoration: 'none' }}>Add Doctor</Link>
                         </Button>
                         <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
                             Export

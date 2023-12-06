@@ -84,6 +84,7 @@ import ProductSample from '../pages/settings/ProductSamplesDetails'
 import SampleCollectionCenter from '../pages/settings/SampleCollectionCenter'
 import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
+import TutorialMaster from '../pages/settings/TutorialMaster';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -180,6 +181,7 @@ export default function Router() {
         { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
+        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
 
       ],
     },

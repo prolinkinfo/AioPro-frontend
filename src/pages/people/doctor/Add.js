@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Autocomplete, Box, Button, Card, Container, Divider, FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Select, Stack, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { apiget } from '../../../service/api';
 import Iconify from '../../../components/iconify'
 
 const names = [
@@ -28,6 +29,10 @@ const top100Films = [
 ]
 
 const Add = () => {
+
+    const [qualificationList, setQualificationList] = useState([]);
+    const [stateList, setStateList] = useState([]);
+    const [cityList, setCityList] = useState([]);
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role.toLowerCase(); const navigate = useNavigate()
 
@@ -109,6 +114,34 @@ const Add = () => {
             addDoctor(values)
         },
     });
+
+    const fetchQualificationData = async () => {
+        const result = await apiget(`/api/qualification`);
+        if (result && result.status === 200) {
+            setQualificationList(result?.data?.result);
+        }
+    };
+
+    const fetchStateData = async () => {
+        const result = await apiget(`/api/statemaster`);
+        if (result && result.status === 200) {
+            setStateList(result?.data?.result);
+        }
+    };
+
+    const fetchCityData = async (stateName) => {
+        const result = await apiget(`/api/citymaster`);
+        if (result && result.status === 200) {
+            const filtered = result?.data?.result?.filter((city) => city?.stateName?.toLowerCase() === stateName?.toLowerCase())
+            setCityList(filtered);
+        }
+    };
+
+    useEffect(() => {
+        fetchQualificationData();
+        fetchStateData();
+        fetchCityData();
+    }, [])
 
     const back = () => {
         navigate(`/${userRole}/dashboard/people/doctor`)
@@ -267,20 +300,20 @@ const Add = () => {
                                 <FormLabel>Qualification</FormLabel>
                                 <FormControl fullWidth>
                                     <Autocomplete
-                                        // multiple
                                         size="small"
-                                        value={formik.values.qualification}
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('qualification', newValue);
+                                            formik.setFieldValue('qualification', newValue ? newValue.qualification : "");
                                         }}
-                                        options={names}
-                                        getOptionLabel={(option) => option}
-                                        disableCloseOnSelect
+                                        fullWidth
+                                        options={qualificationList}
+                                        value={qualificationList.find(qualification => qualification.qualification === formik.values.qualification) || null}
+                                        getOptionLabel={(qualification) => qualification?.qualification}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
+                                                placeholder='Select Qualification'
                                                 error={formik.touched.qualification && Boolean(formik.errors.qualification)}
                                                 helperText={formik.touched.qualification && formik.errors.qualification}
                                             />
@@ -296,39 +329,48 @@ const Add = () => {
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>State</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="state"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('state', newValue ? newValue.stateName : "");
+                                        fetchCityData(newValue ? newValue.stateName : "")
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.state}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={stateList}
+                                    value={stateList.find(state => state.stateName === formik.values.state) || null}
+                                    getOptionLabel={(state) => state?.stateName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select State'
                                             error={formik.touched.state && Boolean(formik.errors.state)}
                                             helperText={formik.touched.state && formik.errors.state}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>City</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="city"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('city', newValue ? newValue.cityName : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.city}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={cityList}
+                                    value={cityList.find(city => city.cityName === formik.values.city) || null}
+                                    getOptionLabel={(city) => city?.cityName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select City'
                                             error={formik.touched.city && Boolean(formik.errors.city)}
                                             helperText={formik.touched.city && formik.errors.city}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
