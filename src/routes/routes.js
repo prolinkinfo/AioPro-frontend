@@ -83,6 +83,7 @@ import ModeOfTravel from '../pages/settings/ModeOfTravel';
 import ProductSample from '../pages/settings/ProductSamplesDetails'
 import SampleCollectionCenter from '../pages/settings/SampleCollectionCenter'
 import Employees from '../pages/people/employees'
+import AddEmployees from '../pages/people/employees/Add'
 import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
 // ----------------------------------------------------------------------
@@ -138,6 +139,7 @@ export default function Router() {
         { path: 'people/doctor/add', element: <AddDoctor /> },
         { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
         { path: 'people/employees', element: <Employees /> },
+        { path: 'people/employees/add', element: <AddEmployees /> },
 
         { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
