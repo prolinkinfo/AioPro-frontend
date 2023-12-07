@@ -86,6 +86,7 @@ import Employees from '../pages/people/employees'
 import AddEmployees from '../pages/people/employees/Add'
 import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
+import TutorialMaster from '../pages/settings/TutorialMaster';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -185,6 +186,7 @@ export default function Router() {
         { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
+        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
 
       ],
     },

@@ -18,6 +18,7 @@ import { Autocomplete, Box, Chip, Divider, FormControl, FormControlLabel, FormHe
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { useTheme } from '@emotion/react';
+import { apiget, apipost } from '../../../service/api';
 // import { apiget, apipost, addmeeting, getsingleuser, allusers } from '../../../service/api';
 
 const top100Films = [
@@ -30,23 +31,25 @@ const top100Films = [
     { label: 'Pulp Fiction', year: 1994 },
 ]
 
-const AddVisit = (props) => {
-    const { isOpen, handleClose, fetchOpd } = props;
+const AddAdministrator = (props) => {
+    const { isOpen, handleClose, fetchAdministratorData } = props;
+    const [stateList, setStateList] = useState([]);
+    const [cityList, setCityList] = useState([]);
+    const [divisionList, setDivisionList] = useState([]);
+    const [zoneList, setZoneList] = useState([]);
 
-    const [allUser, setAllUser] = useState([]);
     const { id } = JSON.parse(localStorage.getItem('user'));
 
     // -----------  validationSchema
     const validationSchema = yup.object({
         name: yup.string().required('Name is required'),
-        contactNumber: yup.string().required('Contact Number is required'),
-        state: yup.string().required('State is required'),
-        city: yup.string().required('City is required'),
-        address: yup.string().required('Address is required'),
-        division: yup.string().required('Division is required'),
-        zone: yup.string().required('Zone is required'),
-        email: yup.string().required('Email is required'),
-        visitDate: yup.string().required('Visit Date is required'),
+        // contactNumber: yup.string().required('Contact Number is required'),
+        // state: yup.string().required('State is required'),
+        // city: yup.string().required('City is required'),
+        // address: yup.string().required('Address is required'),
+        // division: yup.string().required('Division is required'),
+        // zone: yup.string().required('Zone is required'),
+        // email: yup.string().required('Email is required'),
     });
 
     const initialValues = {
@@ -65,15 +68,74 @@ const AddVisit = (props) => {
     };
 
 
+    const addAdministrator = async (values) => {
+        const pyload = {
+            adminType: values.adminType,
+            name: values.name,
+            contactNumber: values.contactNumber,
+            state: values.state,
+            city: values.city,
+            address: values.address,
+            division: values.division,
+            zone: values.zone,
+            email: values.email,
+            dcrEmail: values.dcrEmail,
+            alias: values.alias,
+            status:'active',
+            createdBy: values.createdBy,
+        }
+        const result = await apipost('/api/administrator', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleClose();
+            fetchAdministratorData();
+        }
+    }
+
     // formik
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values, { resetForm }) => {
+            addAdministrator(values)
             resetForm();
-            console.log(values)
         },
     });
+
+    const fetchStateData = async () => {
+        const result = await apiget(`/api/stateMaster`);
+        if (result && result.status === 200) {
+            setStateList(result?.data?.result);
+        }
+    };
+
+    const fetchCityData = async () => {
+        const result = await apiget(`/api/citymaster`);
+        if (result && result.status === 200) {
+            setCityList(result?.data?.result);
+        }
+    };
+
+    const fetchDivisionData = async () => {
+        const result = await apiget(`/api/division`);
+        if (result && result.status === 200) {
+            setDivisionList(result?.data?.result);
+        }
+    };
+    const fetchZoneData = async () => {
+        const result = await apiget(`/api/zone`);
+        if (result && result.status === 200) {
+            setZoneList(result?.data?.result);
+        }
+    };
+
+    useEffect(() => {
+        fetchStateData();
+        fetchCityData();
+        fetchDivisionData();
+        fetchZoneData();
+    }, [])
 
 
     return (
@@ -148,39 +210,47 @@ const AddVisit = (props) => {
                                             <Grid item xs={12} sm={6} md={6}>
                                                 <FormLabel>State</FormLabel>
                                                 <Autocomplete
-                                                    disablePortal
-                                                    name="state"
-                                                    options={top100Films}
+                                                    size="small"
+                                                    onChange={(event, newValue) => {
+                                                        formik.setFieldValue('state', newValue ? newValue.stateName : "");
+                                                    }}
                                                     fullWidth
-                                                    size='small'
-                                                    value={formik.values.state}
-                                                    onChange={formik.handleChange}
-                                                    renderInput={(params) =>
+                                                    options={stateList}
+                                                    value={stateList.find(state => state.stateName === formik.values.state) || null}
+                                                    getOptionLabel={(state) => state?.stateName}
+                                                    style={{ textTransform: 'capitalize' }}
+                                                    renderInput={(params) => (
                                                         <TextField
                                                             {...params}
+                                                            style={{ textTransform: 'capitalize' }}
                                                             placeholder='Select State'
                                                             error={formik.touched.state && Boolean(formik.errors.state)}
                                                             helperText={formik.touched.state && formik.errors.state}
-                                                        />}
+                                                        />
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={6} md={6}>
                                                 <FormLabel>City</FormLabel>
                                                 <Autocomplete
-                                                    disablePortal
-                                                    name="city"
-                                                    options={top100Films}
+                                                    size="small"
+                                                    onChange={(event, newValue) => {
+                                                        formik.setFieldValue('city', newValue ? newValue.cityName : '');
+                                                    }}
                                                     fullWidth
-                                                    size='small'
-                                                    value={formik.values.city}
-                                                    onChange={formik.handleChange}
-                                                    renderInput={(params) =>
+                                                    options={cityList}
+                                                    value={cityList.find(city => city.cityName === formik.values.city)}
+                                                    getOptionLabel={(city) => city?.cityName}
+                                                    style={{ textTransform: 'capitalize' }}
+                                                    renderInput={(params) => (
                                                         <TextField
                                                             {...params}
+                                                            style={{ textTransform: 'capitalize' }}
                                                             placeholder='Select City'
                                                             error={formik.touched.city && Boolean(formik.errors.city)}
                                                             helperText={formik.touched.city && formik.errors.city}
-                                                        />}
+                                                        />
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={12} md={12}>
@@ -201,39 +271,47 @@ const AddVisit = (props) => {
                                             <Grid item xs={12} sm={6} md={6}>
                                                 <FormLabel>Division</FormLabel>
                                                 <Autocomplete
-                                                    disablePortal
-                                                    name="division"
-                                                    options={top100Films}
+                                                    size="small"
+                                                    onChange={(event, newValue) => {
+                                                        formik.setFieldValue('division', newValue ? newValue.divisionName : '');
+                                                    }}
                                                     fullWidth
-                                                    size='small'
-                                                    value={formik.values.division}
-                                                    onChange={formik.handleChange}
-                                                    renderInput={(params) =>
+                                                    options={divisionList}
+                                                    value={divisionList.find(division => division.divisionName === formik.values.division)}
+                                                    getOptionLabel={(division) => division?.divisionName}
+                                                    style={{ textTransform: 'capitalize' }}
+                                                    renderInput={(params) => (
                                                         <TextField
                                                             {...params}
-                                                            placeholder='Select division'
+                                                            style={{ textTransform: 'capitalize' }}
+                                                            placeholder='Select Division'
                                                             error={formik.touched.division && Boolean(formik.errors.division)}
                                                             helperText={formik.touched.division && formik.errors.division}
-                                                        />}
+                                                        />
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={6} md={6}>
                                                 <FormLabel>Zone</FormLabel>
                                                 <Autocomplete
-                                                    disablePortal
-                                                    name="zone"
-                                                    options={top100Films}
+                                                    size="small"
+                                                    onChange={(event, newValue) => {
+                                                        formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
+                                                    }}
                                                     fullWidth
-                                                    size='small'
-                                                    value={formik.values.zone}
-                                                    onChange={formik.handleChange}
-                                                    renderInput={(params) =>
+                                                    options={zoneList}
+                                                    value={zoneList.find(zone => zone.zoneName === formik.values.zone) || null}
+                                                    getOptionLabel={(zone) => zone?.zoneName}
+                                                    style={{ textTransform: 'capitalize' }}
+                                                    renderInput={(params) => (
                                                         <TextField
                                                             {...params}
+                                                            style={{ textTransform: 'capitalize' }}
                                                             placeholder='Select Zone'
                                                             error={formik.touched.zone && Boolean(formik.errors.zone)}
                                                             helperText={formik.touched.zone && formik.errors.zone}
-                                                        />}
+                                                        />
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={6} md={6}>
@@ -341,20 +419,24 @@ const AddVisit = (props) => {
                                                 <Grid item xs={12} sm={6} md={6}>
                                                     <FormLabel>Division</FormLabel>
                                                     <Autocomplete
-                                                        disablePortal
-                                                        name="division"
-                                                        options={top100Films}
+                                                        size="small"
+                                                        onChange={(event, newValue) => {
+                                                            formik.setFieldValue('division', newValue ? newValue.divisionName : '');
+                                                        }}
                                                         fullWidth
-                                                        size='small'
-                                                        value={formik.values.division}
-                                                        onChange={formik.handleChange}
-                                                        renderInput={(params) =>
+                                                        options={divisionList}
+                                                        value={divisionList.find(division => division.divisionName === formik.values.division)}
+                                                        getOptionLabel={(division) => division?.divisionName}
+                                                        style={{ textTransform: 'capitalize' }}
+                                                        renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
-                                                                placeholder='Select division'
+                                                                style={{ textTransform: 'capitalize' }}
+                                                                placeholder='Select Division'
                                                                 error={formik.touched.division && Boolean(formik.errors.division)}
                                                                 helperText={formik.touched.division && formik.errors.division}
-                                                            />}
+                                                            />
+                                                        )}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={6} md={6}>
@@ -418,43 +500,50 @@ const AddVisit = (props) => {
                                                             helperText={formik.touched.address && formik.errors.address}
                                                         />
                                                     </Grid>
-                                                    <Grid item xs={12} sm={12} md={12}>
+                                                    <Grid item xs={12} sm={6} md={6}>
                                                         <FormLabel>Zone</FormLabel>
                                                         <Autocomplete
-                                                            disablePortal
-                                                            name="zone"
-                                                            options={top100Films}
+                                                            size="small"
+                                                            onChange={(event, newValue) => {
+                                                                formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
+                                                            }}
                                                             fullWidth
-                                                            size='small'
-                                                            value={formik.values.zone}
-                                                            onChange={formik.handleChange}
-                                                            renderInput={(params) =>
+                                                            options={zoneList}
+                                                            value={zoneList.find(zone => zone.zoneName === formik.values.zone) || null}
+                                                            getOptionLabel={(zone) => zone?.zoneName}
+                                                            style={{ textTransform: 'capitalize' }}
+                                                            renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
+                                                                    style={{ textTransform: 'capitalize' }}
                                                                     placeholder='Select Zone'
                                                                     error={formik.touched.zone && Boolean(formik.errors.zone)}
                                                                     helperText={formik.touched.zone && formik.errors.zone}
-                                                                />}
+                                                                />
+                                                            )}
                                                         />
                                                     </Grid>
-
-                                                    <Grid item xs={12} sm={12} md={12}>
+                                                    <Grid item xs={12} sm={6} md={6}>
                                                         <FormLabel>Division</FormLabel>
                                                         <Autocomplete
-                                                            disablePortal
-                                                            name="division"
-                                                            options={top100Films}
+                                                            size="small"
+                                                            onChange={(event, newValue) => {
+                                                                formik.setFieldValue('division', newValue ? newValue.divisionName : '');
+                                                            }}
                                                             fullWidth
-                                                            size='small'
-                                                            value={formik.values.division}
-                                                            onChange={formik.handleChange}
-                                                            renderInput={(params) =>
+                                                            options={divisionList}
+                                                            value={divisionList.find(division => division.divisionName === formik.values.division)}
+                                                            getOptionLabel={(division) => division?.divisionName}
+                                                            style={{ textTransform: 'capitalize' }}
+                                                            renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
-                                                                    placeholder='Select division'
+                                                                    style={{ textTransform: 'capitalize' }}
+                                                                    placeholder='Select Division'
                                                                     error={formik.touched.division && Boolean(formik.errors.division)}
                                                                     helperText={formik.touched.division && formik.errors.division}
-                                                                />}
+                                                                />
+                                                            )}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12}>
@@ -579,4 +668,4 @@ const AddVisit = (props) => {
     );
 };
 
-export default AddVisit;
+export default AddAdministrator;

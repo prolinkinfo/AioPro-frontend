@@ -15,21 +15,24 @@ import { apipost } from '../../../../../service/api';
 
 const AddCountry = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenCountry, handleCloseCountry,fetchCountryData } = props;
+    const { isOpenCountry, handleCloseCountry, fetchCountryData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
         countryName: yup.string().required('Country Name is required'),
+        countryCode: yup.string().required('Country Code is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
         countryName: '',
+        countryCode: '',
     };
 
     const addCountry = async (values) => {
         const pyload = {
-            countryName: values.countryName
+            countryName: values.countryName,
+            countryCode: values.countryCode
         }
         const result = await apipost('/api/countrymaster', pyload);
 
@@ -81,6 +84,22 @@ const AddCountry = (props) => {
                                     fullWidth
                                     error={formik.touched.countryName && Boolean(formik.errors.countryName)}
                                     helperText={formik.touched.countryName && formik.errors.countryName}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <FormLabel>Country Code</FormLabel>
+                                <TextField
+                                    id="countryCode"
+                                    name="countryCode"
+                                    label=""
+                                    size="small"
+                                    maxRows={10}
+                                    placeholder='Enter Country Code'
+                                    value={formik.values.countryCode}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                    error={formik.touched.countryCode && Boolean(formik.errors.countryCode)}
+                                    helperText={formik.touched.countryCode && formik.errors.countryCode}
                                 />
                             </Grid>
                         </Grid>

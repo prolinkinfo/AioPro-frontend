@@ -28,6 +28,7 @@ const ConutryMaster = () => {
     const countryColumns = [
         { field: "countryId", headerName: "Country Id", flex: 1 },
         { field: "countryName", headerName: "Country Name", flex: 1 },
+        { field: "countryCode", headerName: "Country Code", flex: 1 },
     ];
 
     const stateColumns = [
