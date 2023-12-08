@@ -1,42 +1,73 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddTax from './Add'
-import { apiget } from '../../../service/api'
+import { apidelete, apiget } from '../../../service/api'
+import DeleteModel from '../../../components/Deletemodle'
+import EditTax from './Edit';
 
 const TaxMaster = () => {
 
     const[taxList,setTaxList] = useState([])
 
-    const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenAdd, setIsOpenAdd] = useState(false);
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [taxData, setTaxData] = useState('')
+    const [id, setId] = useState('')
+    const [userAction, setUserAction] = useState(null)
 
-    const handleOpenAdd = () => setIsOpenAdd(true)
-    const handleCloseAdd = () => setIsOpenAdd(false)
+    const handleOpenAdd = () => setIsOpenAdd(true);
+    const handleCloseAdd = () => setIsOpenAdd(false);
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
         {
+            field: 'action',
             headerName: 'Action',
             sortable: false,
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data');
+                    setTaxData(data);
+                    handleOpenEdit();
+                };
+
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={handleClick}>
-                        <ActionBtn data={[{ name: 'Edit' }]} />
+                    <Box>
+                        <EditTax isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTaxData={fetchTaxData} data={taxData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteTax} id={id} />
+
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
         { field: 'id', headerName: 'Id', flex: 1 },
-        { field: 'taxType', headerName: 'Tax Type', flex: 1 },
+        { field: 'taxType', headerName: 'Tax Type', flex: 1 ,cellClassName: 'name-column--cell--capitalize'},
         { field: 'percent', headerName: 'Percentage Of Tax', flex: 1 },
     ];
+
+    const deleteTax = async (id) => {
+        const result = await apidelete(`/api/taxmaster/${id}`);
+        setUserAction(result)
+    }
 
     const fetchTaxData = async () => {
         const result = await apiget(`/api/taxmaster`);
@@ -47,10 +78,10 @@ const TaxMaster = () => {
 
     useEffect(()=>{
         fetchTaxData();
-    },[])
+    },[userAction])
     return (
         <div>
-            {/* Add Typology */}
+            {/* Add Tax */}
             <AddTax isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTaxData={fetchTaxData}/>
 
             <Container maxWidth="xl">

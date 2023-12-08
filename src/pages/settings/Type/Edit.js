@@ -12,10 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { apiput } from '../../../service/api';
 
 const EdiType = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchTypeData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -24,17 +25,34 @@ const EdiType = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        typeName: ''
+        typeName: data?.typeName
     };
+
+    const editType = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            typeName: values?.typeName,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/type', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchTypeData();
+        }
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
+            editType(values)
         },
     });
 
- 
+
     return (
         <div>
             <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">

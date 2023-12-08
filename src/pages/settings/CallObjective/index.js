@@ -35,11 +35,11 @@ const CallObjective = () => {
   const rows = [
     {
       _id: 1,
-      activityTyple: 'Doctor',
+      objectiveName: 'Doctor',
     },
     {
       _id: 2,
-      activityTyple: 'Abcd',
+      objectiveName: 'Abcd',
     },
   ];
 

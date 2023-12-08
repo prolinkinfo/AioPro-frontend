@@ -1,11 +1,15 @@
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddSpeciality from './Add'
-import { apiget } from '../../../service/api'
+import { apidelete, apiget } from '../../../service/api'
+import DeleteModel from '../../../components/Deletemodle'
+import EditDoctorSpeciality from './Edit'
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -20,10 +24,19 @@ const DoctorSpeciality = () => {
 
     const [specialityList, setSpecialityList] = useState([])
 
-    const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenAdd, setIsOpenAdd] = useState(false);
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [activityTypeData, setActivityTypeData] = useState('')
+    const [id, setId] = useState('')
+    const [userAction, setUserAction] = useState(null)
 
-    const handleOpenAdd = () => setIsOpenAdd(true)
-    const handleCloseAdd = () => setIsOpenAdd(false)
+    const handleOpenAdd = () => setIsOpenAdd(true);
+    const handleCloseAdd = () => setIsOpenAdd(false);
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
         {
@@ -34,19 +47,37 @@ const DoctorSpeciality = () => {
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data');
+                    setActivityTypeData(data);
+                    handleOpenEdit();
+                };
+
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={handleClick}>
-                        <ActionBtn data={[{ name: 'Edit' }]} />
+                    <Box>
+                        <EditDoctorSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSpecialityData={fetchSpecialityData} data={activityTypeData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSpeciality} id={id} />
+
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'divisionName', headerName: 'Division Name', flex: 1 },
-        { field: 'specialityName', headerName: 'Speciality Name', flex: 1 },
-        { field: 'group', headerName: 'Group', flex: 1 }, 0
+        { field: 'divisionName', headerName: 'Division Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
+        { field: 'specialityName', headerName: 'Speciality Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
+        { field: 'group', headerName: 'Group', flex: 1, cellClassName: 'name-column--cell--capitalize' }, 0
     ];
+
+    const deleteSpeciality = async (id) => {
+        const result = await apidelete(`/api/doctorspeciality/${id}`);
+        setUserAction(result)
+    }
+
 
     const fetchSpecialityData = async () => {
         const result = await apiget(`/api/doctorspeciality`);
@@ -57,7 +88,7 @@ const DoctorSpeciality = () => {
 
     useEffect(() => {
         fetchSpecialityData();
-    }, [])
+    }, [userAction])
 
     return (
         <div>
@@ -107,10 +138,10 @@ const DoctorSpeciality = () => {
                                 columns={columns}
                                 initialState={{
                                     pagination: {
-                                        paginationModel: { page: 0, pageSize: 5 },
+                                        paginationModel: { page: 0, pageSize: 10 },
                                     },
                                 }}
-                                pageSizeOptions={[5, 10, 25, 50]}
+                                pageSizeOptions={[5,10, 25, 50]}
                                 getRowId={row => row._id}
                             />
                         </Card>

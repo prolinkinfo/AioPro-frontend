@@ -1,40 +1,71 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddSkippedReason from './Add'
-import { apiget } from '../../../service/api'
+import EditSkippedReason from './Edit'
+import { apidelete, apiget } from '../../../service/api'
+import DeleteModel from '../../../components/Deletemodle'
 
 const SkippedReason = () => {
 
-    const[reasonList,setReasonList] = useState([])
+    const [reasonList, setReasonList] = useState([])
 
-    const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [isOpenAdd, setIsOpenAdd] = useState(false);
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [reasonData, setReasonData] = useState('')
+    const [id, setId] = useState('')
+    const [userAction, setUserAction] = useState(null)
 
-    const handleOpenAdd = () => setIsOpenAdd(true)
-    const handleCloseAdd = () => setIsOpenAdd(false)
+    const handleOpenAdd = () => setIsOpenAdd(true);
+    const handleCloseAdd = () => setIsOpenAdd(false);
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
         {
+            field: 'action',
             headerName: 'Action',
             sortable: false,
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, 'data');
+                    setReasonData(data);
+                    handleOpenEdit();
+                };
+
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={handleClick}>
-                        <ActionBtn data={[{ name: 'Edit' }]} />
+                    <Box>
+                        <EditSkippedReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchReasonData={fetchReasonData} data={reasonData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteReason} id={id} />
+
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'reason', headerName: 'Reason Name', flex: 1 },
+        { field: 'reason', headerName: 'Reason Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
     ];
+
+    const deleteReason = async (id) => {
+        const result = await apidelete(`/api/skippedreason/${id}`);
+        setUserAction(result)
+    }
 
     const fetchReasonData = async () => {
         const result = await apiget(`/api/skippedreason`);
@@ -43,14 +74,14 @@ const SkippedReason = () => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchReasonData();
-    },[])
+    }, [])
 
     return (
         <div>
             {/* Add Skipped Reason */}
-            <AddSkippedReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchReasonData={fetchReasonData}/>
+            <AddSkippedReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchReasonData={fetchReasonData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>

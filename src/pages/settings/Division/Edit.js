@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -11,31 +12,76 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, Box, Avatar } from '@mui/material';
+import { apiput } from '../../../service/api';
 
-const EditZone = (props) => {
+const EditDivision = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchDivisionData } = props;
+
+    const [selectedFile, setSelectedFile] = React.useState(null);
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        zoneCode: yup.string().required('Zone Code is required'),
-        zoneName: yup.string().required('Zone Name is required'),
+        divisionName: yup.string().required('Division Name is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        zoneCode: '',
-        zoneName: ''
+        _id:data?._id,
+        divisionName: data?.divisionName,
+        appLogo: ''
     };
+
+    const editDivision = async (values) => {
+        const data = new FormData()
+        data.append('_id',values?._id );
+        data.append('divisionName', values?.divisionName);
+        data.append('appLogo', values?.appLogo);
+        data.append('modifiedOn', new Date());
+        const result = await apiput('/api/division', data);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            setSelectedFile('')
+            handleCloseEdit();
+            fetchDivisionData();
+        }
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
+            editDivision(values)
         },
     });
 
+    const handleFileChange = (e) => {
+        const file = e.currentTarget.files[0];
+        if (file) {
+            // Read the selected file and set it in state.
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setSelectedFile(e.target.result);
+            };
+            reader.readAsDataURL(file);
+
+            // Update the formik field value with the selected file.
+        }
+        formik.setFieldValue('appLogo', file);
+    };
+
+    const clear = () => {
+        setSelectedFile('');
+    };
+
+    useEffect(()=>{
+        if(data){
+            setSelectedFile(data?.appLogo)
+        }
+    },[])
 
     return (
         <div>
@@ -57,35 +103,56 @@ const EditZone = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Zone Code</FormLabel>
-                                <TextField
-                                    id="zoneName"
-                                    name="zoneCode"
-                                    label=""
-                                    size="small"
-                                    maxRows={10}
-                                    placeholder='Enter Zone Code'
-                                    value={formik.values.zoneCode}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    error={formik.touched.zoneCode && Boolean(formik.errors.zoneCode)}
-                                    helperText={formik.touched.zoneCode && formik.errors.zoneCode}
-                                />
+                                <Box style={{ textAlign: 'center' }}>
+                                    {selectedFile ? (
+                                        <Avatar
+                                            alt="Avatar"
+                                            src={selectedFile}
+                                            sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                                        />
+                                    ) : (
+                                        <img
+                                            src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
+                                            style={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                                        />
+                                    )}
+                                    <Typography variant="h6">Upload App Logo</Typography>
+                                    <input
+                                        accept="image/*"
+                                        type="file"
+                                        id="avatar-upload"
+                                        style={{ display: 'none' }}
+                                        onChange={handleFileChange}
+                                    />
+                                    <div>
+                                        <label htmlFor="avatar-upload" >
+                                            <Button component="span" variant="outlined" color="primary">
+                                                {selectedFile ? "Change" : "Upload"}
+                                            </Button>
+                                        </label>
+                                        {
+                                            selectedFile ?
+                                                <Button component="span" variant="outlined" color="error" style={{ marginLeft: "10px" }} onClick={clear}>
+                                                    Clear
+                                                </Button> : ""
+                                        }
+                                    </div>
+                                </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Zone Name</FormLabel>
+                                <FormLabel>Division Name</FormLabel>
                                 <TextField
-                                    id="zoneName"
-                                    name="zoneName"
+                                    id="divisionName"
+                                    name="divisionName"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder='Enter Zone Name'
-                                    value={formik.values.zoneName}
+                                    placeholder='Enter Division Name'
+                                    value={formik.values.divisionName}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.zoneName && Boolean(formik.errors.zoneName)}
-                                    helperText={formik.touched.zoneName && formik.errors.zoneName}
+                                    error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
+                                    helperText={formik.touched.divisionName && formik.errors.divisionName}
                                 />
                             </Grid>
                         </Grid>
@@ -118,4 +185,4 @@ const EditZone = (props) => {
     );
 };
 
-export default EditZone;
+export default EditDivision;

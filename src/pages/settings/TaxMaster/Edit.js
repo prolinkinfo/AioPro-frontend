@@ -12,6 +12,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { apiput } from '../../../service/api';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -24,7 +25,7 @@ const top100Films = [
 ]
 const EditTax = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchTaxData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -34,21 +35,39 @@ const EditTax = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        taxType: '',
-        percent: ''
+        taxType: data?.taxType,
+        percent: data?.percent
     };
+
+    const editTax = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            taxType: values?.taxType,
+            percent: values?.percent,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/taxmaster', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchTaxData();
+        }
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
+            editTax(values)
         },
     });
 
 
     return (
         <div>
-            <Dialog open={isOpenAdd} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+            <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
                 <DialogTitle
                     id="scroll-dialog-title"
                     style={{
@@ -58,7 +77,7 @@ const EditTax = (props) => {
                 >
                     <Typography variant="h6">Edit Tax </Typography>
                     <Typography>
-                        <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
+                        <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
                 </DialogTitle>
 
@@ -67,21 +86,18 @@ const EditTax = (props) => {
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Tax Type</FormLabel>
-                                <Autocomplete
-                                    disablePortal
+                                <TextField
+                                    id="taxType"
                                     name="taxType"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
+                                    label=""
+                                    size="small"
+                                    maxRows={10}
+                                    placeholder='Enter Tax Type'
                                     value={formik.values.taxType}
                                     onChange={formik.handleChange}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            placeholder='Select Tax Type'
-                                            error={formik.touched.taxType && Boolean(formik.errors.taxType)}
-                                            helperText={formik.touched.taxType && formik.errors.taxType}
-                                        />}
+                                    fullWidth
+                                    error={formik.touched.taxType && Boolean(formik.errors.taxType)}
+                                    helperText={formik.touched.taxType && formik.errors.taxType}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
@@ -119,7 +135,7 @@ const EditTax = (props) => {
                         style={{ textTransform: 'capitalize' }}
                         onClick={() => {
                             formik.resetForm();
-                            handleCloseAdd();
+                            handleCloseEdit();
                         }}
                     >
                         Cancle

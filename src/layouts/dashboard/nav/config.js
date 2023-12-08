@@ -192,7 +192,7 @@ export const adminConfig = [
           },
           {
             title: 'Division',
-            path: `/${userRole}/dashboard/setting/devision`,
+            path: `/${userRole}/dashboard/setting/division`,
           },
           {
             title: 'Doctor Speciality',
@@ -212,7 +212,7 @@ export const adminConfig = [
           },
           {
             title: 'Firm type',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/firmType`,
           },
           {
             title: 'Fixed Allowance',
@@ -220,16 +220,16 @@ export const adminConfig = [
           },
           {
             title: 'Hospital Category',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/hospitalCategory`,
           },
           {
             title: 'Hospital Class',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/hospitalClass`,
           },
 
           {
             title: 'Hospital Speciality',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/hospitalSpeciality`,
           },
 
           {
@@ -238,7 +238,7 @@ export const adminConfig = [
           },
           {
             title: 'Incharge Type',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/inchargeType`,
           },
           {
             title: 'Leave Reasons',
@@ -246,7 +246,7 @@ export const adminConfig = [
           },
           {
             title: 'Mode Of Travel',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/modeOfTravel`,
           },
           {
             title: 'Others Reason',
@@ -254,23 +254,23 @@ export const adminConfig = [
           },
           {
             title: 'Product',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/product`,
           },
           {
             title: 'Product Indication',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/productIndication`,
           },
           {
             title: 'Product Samples',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/productSampleDetails`,
           },
           {
             title: 'Promotional Gifts',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/promotionalGifts`,
           },
           {
             title: 'Qualification',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/qualification`,
           },
           {
             title: 'Radius Settings',
@@ -282,7 +282,43 @@ export const adminConfig = [
           },
           {
             title: 'Sample Collection',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/SampleCollectionCenter`,
+          },
+          {
+            title: 'Sample / Gift With Challan',
+            path: `/${userRole}/dashboard/setting/`,
+          },
+          {
+            title: 'Scheme Master',
+            path: `/${userRole}/dashboard/setting/schemeMaster`,
+          },
+          {
+            title: 'Skipped Reasons',
+            path: `/${userRole}/dashboard/setting/skippedreason`,
+          },
+          {
+            title: 'Tax Master',
+            path: `/${userRole}/dashboard/setting/taxmaster`,
+          },
+          {
+            title: 'Test Typology',
+            path: `/${userRole}/dashboard/setting/testTypology`,
+          },
+          {
+            title: 'Type',
+            path: `/${userRole}/dashboard/setting/type`,
+          },
+          {
+            title: 'Visit Counter',
+            path: `/${userRole}/dashboard/setting/`,
+          },
+          {
+            title: 'Work Agenda',
+            path: `/${userRole}/dashboard/setting/workAgenda`,
+          },
+          {
+            title: 'Zone',
+            path: `/${userRole}/dashboard/setting/zone`,
           },
         ],
       },
@@ -317,7 +353,7 @@ export const adminConfig = [
         subLink: [
           {
             title: 'Data Management',
-            path: `${userRole}/dashboard/settings/datasettings`,
+            path: `${userRole}/dashboard/setting/dataSetting/dataManagement`,
           },
           {
             title: 'Less Call',
@@ -327,7 +363,7 @@ export const adminConfig = [
       },
       {
         title: 'Tutorial Master',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/setting/tutorialMaster`,
       },
     ],
   },
@@ -342,7 +378,7 @@ export const adminConfig = [
       },
       {
         title: 'MediaGallery',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/eDetailing/mediaGallery`,
       },
     ],
   },

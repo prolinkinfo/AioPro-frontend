@@ -36,14 +36,14 @@ const EditCollectionCenter = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        centerName: '',
-        centerCode: '',
-        type: '',
-        zoneName: '',
-        cityName: '',
-        category: '',
-        assignTo: '',
-        centerAddress: '',
+        centerName: data?.centerName,
+        centerCode: data?.centerCode,
+        type: data?.type,
+        zoneName: data?.zoneName,
+        cityName: data?.cityName,
+        category: data?.category,
+        assignTo: data?.assignTo,
+        centerAddress: data?.centerAddress,
     };
 
     const editCollectionCenter = async (values) => {

@@ -12,11 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
-import { apiget } from '../../../service/api';
+import { apiget, apiput } from '../../../service/api';
 
-const EditZone = (props) => {
+const EditDoctorSpeciality = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit,data ,fetchSpecialityData} = props;
 
     const [divisionList, setDivisionList] = useState([])
 
@@ -29,15 +29,34 @@ const EditZone = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        divisionName: '',
-        group: '',
-        specialityName: '',
+        divisionName: data?.divisionName,
+        group: data?.group,
+        specialityName: data?.specialityName,
     };
+
+    const editSpeciality = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            divisionName: values.divisionName,
+            group: values.group,
+            specialityName: values.specialityName,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/doctorspeciality', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchSpecialityData();
+        }
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
+            editSpeciality(values)
         },
     });
     const fetchDivisionData = async () => {
@@ -62,7 +81,7 @@ const EditZone = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Edit Work Agenda </Typography>
+                    <Typography variant="h6">Edit Speciality </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -80,7 +99,7 @@ const EditZone = (props) => {
                                             formik.setFieldValue('divisionName', newValue.divisionName);
                                         }}
                                         options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
+                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
                                         clearIcon
@@ -103,7 +122,7 @@ const EditZone = (props) => {
                                         id="group"
                                         name='group'
                                         size='small'
-                                        value={formik.values.group}
+                                        value={formik.values.group || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.group && Boolean(formik.errors.group)}
                                     >
@@ -160,4 +179,4 @@ const EditZone = (props) => {
     );
 };
 
-export default EditZone;
+export default EditDoctorSpeciality;

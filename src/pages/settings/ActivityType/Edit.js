@@ -14,42 +14,41 @@ import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
 import { apiput } from '../../../service/api';
 
-const EditSkippedReason = (props) => {
+const EditActivityType = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchReasonData } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchTypeData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        reason: yup.string().required('Reason is required'),
+        activityName: yup.string().required('Activity Name is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        reason: data?.reason
+        activityName: data?.activityName,
     };
 
-    const editReason = async (values) => {
+    const editActivityType = async (values) => {
         const pyload = {
             _id: data?._id,
-            reason: values?.reason,
+            activityName: values.activityName,
             modifiedOn: new Date()
         }
-        const result = await apiput('/api/skippedreason', pyload);
+        const result = await apiput('/api/activityType', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchReasonData();
+            fetchTypeData();
         }
     }
-
 
     const formik = useFormik({
         initialValues,
         validationSchema,
         enableReinitialize:true,
         onSubmit: async (values) => {
-            editReason(values)
+            editActivityType(values)
         },
     });
 
@@ -64,7 +63,7 @@ const EditSkippedReason = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Edit Reason </Typography>
+                    <Typography variant="h6">Edit Activity Type </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -74,19 +73,19 @@ const EditSkippedReason = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Reason</FormLabel>
+                                <FormLabel>Activity Type Name</FormLabel>
                                 <TextField
-                                    id="reason"
-                                    name="reason"
+                                    id="typeName"
+                                    name="activityName"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder='Enter Reason'
-                                    value={formik.values.reason}
+                                    placeholder="Enter Type Name"
+                                    value={formik.values.activityName}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.reason && Boolean(formik.errors.reason)}
-                                    helperText={formik.touched.reason && formik.errors.reason}
+                                    error={formik.touched.activityName && Boolean(formik.errors.activityName)}
+                                    helperText={formik.touched.activityName && formik.errors.activityName}
                                 />
                             </Grid>
                         </Grid>
@@ -119,4 +118,4 @@ const EditSkippedReason = (props) => {
     );
 };
 
-export default EditSkippedReason;
+export default EditActivityType;
