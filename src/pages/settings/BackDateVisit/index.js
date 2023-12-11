@@ -72,7 +72,7 @@ const BackDateVisit = () => {
                     paginationModel: { page: 0, pageSize: 5 },
                   },
                 }}
-                getRowId={(row) => row._id}
+                // getRowId={(row) => row._id}
                 pageSizeOptions={[5, 10, 25]}
               />
             </Card>

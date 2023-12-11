@@ -1,37 +1,68 @@
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useState, useEffect } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
 import ActivityTypeAdd from './Add';
-import { apiget } from '../../../service/api';
+import { apidelete, apiget } from '../../../service/api';
+import EditActivityType from './Edit';
+import DeleteModel from '../../../components/Deletemodle'
 
 const ActivityType = () => {
   const [typeList, setTypeList] = useState([]);
   const [isOpenAdd, setIsOpenAdd] = useState(false);
+  const [isOpenEdit, setIsOpenEdit] = useState(false)
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+  const [activityTypeData,setActivityTypeData] = useState('')
+  const [id, setId] = useState('')
+  const [userAction, setUserAction] = useState(null)
 
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
+  const handleOpenEdit = () => setIsOpenEdit(true)
+  const handleCloseEdit = () => setIsOpenEdit(false)
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
   const columns = [
     {
+      field: 'action',
       headerName: 'Action',
       sortable: false,
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleClick = async (data) => {
-          console.log(data, 'data');
+          setActivityTypeData(data);
+          handleOpenEdit();
         };
+      
+        const handleClickDeleteBtn = async (data) => {
+          setId(data?._id);
+          handleOpenDeleteModel();
+      };
         return (
-          <Box onClick={handleClick}>
-            <Button>Edit</Button>
+          <Box>
+            <EditActivityType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTypeData={fetchTypeData} data={activityTypeData} />
+            <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteActivityType} id={id} />
+
+            <Stack direction={"row"} spacing={2}>
+              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+              <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+            </Stack>
           </Box>
         );
       },
     },
-    { field: 'activityName', headerName: 'Activity Name',flex: 1 },
+    { field: 'activityName', headerName: 'Activity Name', flex: 1 ,cellClassName: 'name-column--cell--capitalize'},
   ];
+
+  const deleteActivityType = async (id) => {
+    const result = await apidelete(`/api/activityType/${id}`);
+    setUserAction(result)
+}
 
   const fetchTypeData = async (e) => {
     const searchText = e?.target?.value;
@@ -46,7 +77,7 @@ const ActivityType = () => {
 
   useEffect(() => {
     fetchTypeData();
-  }, []);
+  }, [userAction]);
 
   return (
     <div>

@@ -12,10 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { apiput } from '../../../service/api';
 
 const EdiLeaveReason = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit,fetchLeaveData,data } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -25,14 +26,32 @@ const EdiLeaveReason = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        leaveReason: '',
-        leaveEntitlement: ''
+        leaveReason: data?.leaveReason,
+        leaveEntitlement: data?.leaveEntitlement
     };
+
+    const editReason = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            leaveReason: values.leaveReason,
+            leaveEntitlement: values.leaveEntitlement,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/doctorspeciality', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchLeaveData();
+        }
+    }
+
 
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
+            editReason(values)
         },
     });
 

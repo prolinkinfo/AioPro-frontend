@@ -12,10 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { apipost, apiput } from '../../../service/api';
 
 const EditRelation = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchRelationData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -24,13 +25,32 @@ const EditRelation = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        relationName: '',
+
+        relationName: data?.relationName,
     };
+
+    const editRelation = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            relationName: values.relationName,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/relationmaster', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchRelationData();
+        }
+    }
+
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize: true,
         onSubmit: async (values) => {
+            editRelation(values)
         },
     });
 

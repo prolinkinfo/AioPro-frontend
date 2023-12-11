@@ -42,6 +42,7 @@ const AddPromotionalGift = (props) => {
             employeeName: values.employeeName,
             giftName: values.giftName,
             quantity: values.quantity,
+            status:"active"
 
         }
         const result = await apipost('/api/promotionalGift', pyload);

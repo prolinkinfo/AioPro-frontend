@@ -13,7 +13,7 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
 import dayjs from 'dayjs';
-import { apiput } from '../../../service/api';
+import { apiget, apiput } from '../../../service/api';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -27,6 +27,7 @@ const top100Films = [
 const EditSchemeMaster = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, fetchSchemeMasterData, data } = props;
+    const [productList, setProductList] = useState([])
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -76,7 +77,16 @@ const EditSchemeMaster = (props) => {
         },
     });
 
+    const fetchProductData = async () => {
+        const result = await apiget(`/api/products`);
+        if (result && result.status === 200) {
+            setProductList(result?.data?.result);
+        }
+    };
 
+    useEffect(() => {
+        fetchProductData();
+    }, [])
     return (
         <div>
             <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -177,20 +187,23 @@ const EditSchemeMaster = (props) => {
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Product Name</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="productName"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
-                                    value={formik.values.productName}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('productName', newValue ? newValue.productName : "");
+                                    }}
+                                    options={productList}
+                                    value={productList.find(product => product.productName === formik.values.productName) || null}
+                                    getOptionLabel={(product) => product?.productName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
-                                            placeholder='Select Product Name'
+                                            style={{ textTransform: 'capitalize' }}
+                                            placeholder='Select Product Group'
                                             error={formik.touched.productName && Boolean(formik.errors.productName)}
                                             helperText={formik.touched.productName && formik.errors.productName}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         </Grid>

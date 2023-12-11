@@ -12,10 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { apiput } from '../../../service/api';
 
 const EditZone = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit } = props;
+    const { isOpenEdit, handleCloseEdit,data,fetchZoneData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -25,14 +26,32 @@ const EditZone = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        zoneCode: '',
-        zoneName: ''
+        zoneCode: data?.zoneCode,
+        zoneName: data?.zoneName
     };
+
+    const editZone = async (values) => {
+        const pyload = {
+            _id: data?._id,
+            zoneCode: values?.zoneCode,
+            zoneName: values?.zoneName,
+            modifiedOn: new Date()
+        }
+        const result = await apiput('/api/zone', pyload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseEdit();
+            fetchZoneData();
+        }
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
+            editZone(values)
         },
     });
 

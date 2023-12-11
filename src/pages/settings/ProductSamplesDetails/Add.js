@@ -22,10 +22,10 @@ const AddProductSample = (props) => {
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        divisionName: yup.string().required('Category Name is required'),
-        employeeName: yup.string().required('Employee is required'),
-        productName: yup.string().required('Product Name is required'),
-        quantity: yup.string().required('Quantity is required'),
+        // divisionName: yup.string().required('Category Name is required'),
+        // employeeName: yup.string().required('Employee is required'),
+        // productName: yup.string().required('Product Name is required'),
+        // quantity: yup.string().required('Quantity is required'),
     });
 
     // -----------   initialValues
@@ -71,7 +71,8 @@ const AddProductSample = (props) => {
     const fetchProductData = async () => {
         const result = await apiget(`/api/products`);
         if (result && result.status === 200) {
-            setProductList(result?.data?.result);
+            const filterData = result?.data?.result?.map((item)=>item?.productName)
+            setProductList(filterData);
         }
     };
     useEffect(() => {
@@ -153,11 +154,11 @@ const AddProductSample = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('productName', newValue.productName);
+                                            formik.setFieldValue('productName', newValue);
                                         }}
                                         options={productList}
-                                        value={productList.find(product => product.productName === formik.values.productName)}
-                                        getOptionLabel={(product) => product?.productName}
+                                        value={productList.find(product => product === formik.values.productName)}
+                                        getOptionLabel={(product) => product}
                                         style={{ textTransform: 'capitalize' }}
                                         clearIcon
                                         multiple
