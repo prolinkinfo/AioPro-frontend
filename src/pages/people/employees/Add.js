@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Autocomplete,
   Avatar,
@@ -20,11 +20,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../../components/iconify';
 import { allusers, apipost } from '../../../service/api';
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchQualificationData } from '../../../redux/slice/GetQualificationSlice';
 
 const names = [
   'Oliver Hansen',
@@ -66,17 +71,78 @@ const AddEmployees = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   // -----------  validationSchema
-  // const validationSchema = yup.object({
-  //   doctorName: yup.string().required('Doctor Name is required'),
-  //   hospitalName: yup.string().required('Hospital Name is required'),
-  //   gender: yup.string().required('Gender is required'),
-  //   state: yup.string().required('State is required'),
-  //   city: yup.string().required('City is required'),
-  //   division: yup.string().required('Division is required'),
-  //   zone: yup.string().required('Zone is required'),
-  //   speciality: yup.string().required('Speciality is required'),
-  //   assignedTo: yup.string().required('Assigned To is required'),
-  // });
+  const validationSchema = Yup.object({
+    profileImg: Yup.string(),
+    employeesCode: Yup.string().required('Employee code is required'),
+    employeesName: Yup.string().required('Employee name is required'),
+    gender: Yup.string().required('Gender is required'),
+    workType: Yup.string().required('Work type is required'),
+    Dob: Yup.string().required('Date of birth is required'),
+    maritalStatus: Yup.string().required('Marital status is required'),
+    anniversaryDate: Yup.string(),
+    primaryContact: Yup.string()
+      .matches(/^[0-9]{10}$/, 'Invalid mobile number')
+      .required('Primary contact is required'),
+    alternateContact: Yup.string().matches(/^[0-9]{10}$/, 'Invalid mobile number'),
+    email: Yup.string().email('Invalid email address'),
+    // country: Yup.string().required('Country is required'),
+    // state: Yup.string().required('State is required'),
+    // hq: Yup.string().required('Headquarters is required'),
+    // multipleHq: Yup.string(),
+    // division: Yup.string().required('Division is required'),
+    // zone: Yup.string().required('Zone is required'),
+    homeLocation: Yup.string().required('Home location is required'),
+    permanentLoction: Yup.string().required('Permanent location is required'),
+    pincode: Yup.string().required('Pincode is required'),
+    additionalDivision: Yup.string(),
+    // exStations: Yup.string().required('Ex stations are required'),
+    // outStations: Yup.string().required('Out stations are required'),
+    // designation: Yup.string().required('Designation is required'),
+    // assignedTo: Yup.string().required('Assigned to is required'),
+    // additionalSupervisor: Yup.string(),
+    // Doj: Yup.string().required('Date of joining is required'),
+    endProbationDate: Yup.string(),
+    endConfirmationDate: Yup.string(),
+    dailyWorkHours: Yup.string().required('Daily work hours are required'),
+    showAccompanied: Yup.boolean().required('Please select Show Accompanied field'),
+    accompaniedEmployee: Yup.string(),
+    dateOfResignation: Yup.string(),
+    showInTransit: Yup.boolean().required('Please select Show Accompanied field'),
+    employeeQualification: Yup.string(),
+    aadharNumber: Yup.string().required('Aadhar number is required'),
+    PanNumber: Yup.string().required('Pan number is required'),
+    pfNumber: Yup.string().required('PF number is required'),
+    ESICNumber: Yup.string().required('ESIC number is required'),
+    PfUanNumber: Yup.string().required('PF UAN number is required'),
+    bloodGroup: Yup.string(),
+    Language: Yup.string(),
+    DA_HO: Yup.string(),
+    DA_EX: Yup.string(),
+    DA_OUT: Yup.string(),
+    DA_RHO: Yup.string(),
+    DA_TRANSIT: Yup.string(),
+    DA_OTHER: Yup.string(),
+    accountHolderName: Yup.string().required('Account holder name is required'),
+    accountNumber: Yup.string().required('Account number is required'),
+    IFSCNumber: Yup.string().required('IFSC number is required'),
+    beneficiaryID: Yup.string(),
+    bankName: Yup.string().required('Bank name is required'),
+    branchName: Yup.string().required('Branch name is required'),
+    nomineeName: Yup.string(),
+  });
+
+  const dispatch = useDispatch();
+  const cityData = useSelector((state) => state?.getCity?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
+  const divisionList = useSelector((state) => state?.getDivision?.data);
+  const qualificationList = useSelector((state) => state?.getQualification?.data);
+
+  useEffect(() => {
+    dispatch(fetchCityData());
+    dispatch(fetchZoneData());
+    dispatch(fetchDivisionData());
+    dispatch(fetchQualificationData());
+  }, [dispatch]);
 
   const initialValues = {
     profileImg: '',
@@ -111,10 +177,10 @@ const AddEmployees = () => {
     endProbationDate: '',
     endConfirmationDate: '',
     dailyWorkHours: '',
-    showAccompanied: '',
+    showAccompanied: false,
     accompaniedEmployee: '',
     dateOfResignation: '',
-    showInTransit: '',
+    showInTransit: false,
     // Other Information
     employeeQualification: '',
     aadharNumber: '',
@@ -124,6 +190,7 @@ const AddEmployees = () => {
     PfUanNumber: '',
     bloodGroup: '',
     Language: '',
+    driverLicenseNumber: '',
     // Daily Allowance Information
     DA_HO: '',
     DA_EX: '',
@@ -206,19 +273,21 @@ const AddEmployees = () => {
     data.append('branchName', values?.branchName);
     data.append('nomineeName', values?.nomineeName);
 
-    // const result = await apipost('/api/auth/signup', data);
-    // if (result && result.status === 200) {
-    //   navigate('/login');
-    // }
+    console.log('hhh', data);
+
+    const result = await apipost('/api/employees', data);
+    if (result && result.status === 200) {
+      console.log('employe addd ');
+      // navigate('/login');
+    }
   };
 
   // formik
   const formik = useFormik({
     initialValues,
-    // validationSchema,
+    validationSchema,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
-      console.log("values",values)
       AddEmployees(values);
     },
   });
@@ -417,15 +486,14 @@ const AddEmployees = () => {
                     id="demo-simple-select"
                     size="small"
                     name="maritalStatus"
-                    placeholder="Select Marital Status"
-                    value={formik.values.maritalStatus}
+                    value={formik.values.maritalStatus || ''}
                     onChange={formik.handleChange}
                     error={formik.touched.maritalStatus && Boolean(formik.errors.maritalStatus)}
                     helperText={formik.touched.maritalStatus && formik.errors.maritalStatus}
                   >
+                    <MenuItem value="">Select Marital Status</MenuItem>
                     <MenuItem value={'married'}>Married</MenuItem>
                     <MenuItem value={'single'}>Single</MenuItem>
-                    <MenuItem value={'other'}>Other</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -584,15 +652,16 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Select Division</FormLabel>
+                <FormLabel>Division</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="division"
-                  options={top100Films}
+                  options={divisionList}
                   fullWidth
                   size="small"
-                  value={formik.values.division}
-                  onChange={formik.handleChange}
+                  value={formik.values.division || ''}
+                  onChange={(e, value) => formik.setFieldValue('division', value)}
+                  getOptionLabel={({ divisionName }) => divisionName} // Set the label to the 'divisionName' property
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -609,17 +678,18 @@ const AddEmployees = () => {
                 <Autocomplete
                   disablePortal
                   name="zone"
-                  options={top100Films}
+                  options={zoneList}
                   fullWidth
                   size="small"
-                  value={formik.values.zones}
-                  onChange={formik.handleChange}
+                  value={formik.values.zone || ''}
+                  onChange={(e, value) => formik.setFieldValue('zone', value.zoneName)}
+                  getOptionLabel={({ zoneName }) => zoneName} // Set the label to the 'divisionName' property
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       placeholder="Select Zone"
-                      error={formik.touched.zones && Boolean(formik.errors.zones)}
-                      helperText={formik.touched.zones && formik.errors.zones}
+                      error={formik.touched.zone && Boolean(formik.errors.zone)}
+                      helperText={formik.touched.zone && formik.errors.zone}
                     />
                   )}
                 />
@@ -868,7 +938,11 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Show Accompanied</FormLabel>
                 <br />
-                <Checkbox defaultChecked name="showAccompanied" />
+                <Checkbox
+                  checked={formik.values.showAccompanied}
+                  onChange={(e) => formik.setFieldValue('showAccompanied', e.target.checked)}
+                  name="showAccompanied"
+                />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
@@ -904,7 +978,11 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Show In Transit</FormLabel>
                 <br />
-                <Checkbox defaultChecked name="showInTransit" />
+                <Checkbox
+                  checked={formik.values.showInTransit}
+                  onChange={(e) => formik.setFieldValue('showInTransit', e.target.checked)}
+                  name="showInTransit"
+                />
               </Grid>
             </Grid>
 
@@ -1024,10 +1102,11 @@ const AddEmployees = () => {
                   disablePortal
                   name="bloodGroup"
                   options={BloodGroup}
+                  getOptionLabel={(option) => option.label} // Specify the label property
                   fullWidth
                   size="small"
-                  value={formik.values.bloodGroup}
-                  onChange={formik.handleChange}
+                  value={BloodGroup.find((option) => option.label === formik.values.bloodGroup)}
+                  onChange={(e, value) => formik.setFieldValue('bloodGroup', value?.label || null)} // Set the label as the value
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -1047,12 +1126,12 @@ const AddEmployees = () => {
                   options={Language}
                   fullWidth
                   size="small"
-                  value={formik.values.Language}
-                  onChange={formik.handleChange}
+                  value={Language.find((option) => option.label === formik.values.Language)}
+                  onChange={(e, value) => formik.setFieldValue('Language', value?.label || null)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="Select Blood Group"
+                      placeholder="Select your Language"
                       error={formik.touched.Language && Boolean(formik.errors.Language)}
                       helperText={formik.touched.Language && formik.errors.Language}
                     />
@@ -1269,7 +1348,7 @@ const AddEmployees = () => {
             </Grid>
 
             <Divider />
-            <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'}>
+            <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'} style={{ marginTop: '15px' }}>
               <Stack direction={'row'} spacing={2}>
                 <Button variant="contained" onClick={formik.handleSubmit}>
                   Add Doctor
