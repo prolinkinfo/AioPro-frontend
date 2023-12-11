@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   Container,
   Divider,
   FormControl,
@@ -65,88 +66,159 @@ const AddEmployees = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   // -----------  validationSchema
-  const validationSchema = yup.object({
-    doctorName: yup.string().required('Doctor Name is required'),
-    hospitalName: yup.string().required('Hospital Name is required'),
-    gender: yup.string().required('Gender is required'),
-    state: yup.string().required('State is required'),
-    city: yup.string().required('City is required'),
-    division: yup.string().required('Division is required'),
-    zone: yup.string().required('Zone is required'),
-    speciality: yup.string().required('Speciality is required'),
-    assignedTo: yup.string().required('Assigned To is required'),
-  });
+  // const validationSchema = yup.object({
+  //   doctorName: yup.string().required('Doctor Name is required'),
+  //   hospitalName: yup.string().required('Hospital Name is required'),
+  //   gender: yup.string().required('Gender is required'),
+  //   state: yup.string().required('State is required'),
+  //   city: yup.string().required('City is required'),
+  //   division: yup.string().required('Division is required'),
+  //   zone: yup.string().required('Zone is required'),
+  //   speciality: yup.string().required('Speciality is required'),
+  //   assignedTo: yup.string().required('Assigned To is required'),
+  // });
 
   const initialValues = {
     profileImg: '',
     employeesCode: '',
     employeesName: '',
-    hospitalName: '',
     gender: '',
     workType: '',
-    contactNumber: '',
-    email: '',
-    dateOfBirth: '',
+    Dob: '',
     maritalStatus: '',
     anniversaryDate: '',
-    qualification: '',
+    // Contact Information
+    primaryContact: '',
+    alternateContact: '',
+    email: '',
+    country: '',
     state: '',
-    city: '',
+    hq: '',
+    multipleHq: '',
     division: '',
-    zones: '',
+    zone: '',
+    homeLocation: '',
+    permanentLoction: '',
     pincode: '',
-    speciality: '',
-    type: '',
-    category: '',
-    address: '',
-    approximatedBusiness: '',
+    additionalDivision: '',
+    // Work Information
+    exStations: '',
+    outStations: '',
+    designation: '',
     assignedTo: '',
-    firmName: '',
-    // createdBy: id,
+    additionalSupervisor: '',
+    Doj: '',
+    endProbationDate: '',
+    endConfirmationDate: '',
+    dailyWorkHours: '',
+    showAccompanied: '',
+    accompaniedEmployee: '',
+    dateOfResignation: '',
+    showInTransit: '',
+    // Other Information
+    employeeQualification: '',
+    aadharNumber: '',
+    PanNumber: '',
+    pfNumber: '',
+    ESICNumber: '',
+    PfUanNumber: '',
+    bloodGroup: '',
+    Language: '',
+    // Daily Allowance Information
+    DA_HO: '',
+    DA_EX: '',
+    DA_OUT: '',
+    DA_RHO: '',
+    DA_TRANSIT: '',
+    DA_OTHER: '',
+    // Account Information
+    accountHolderName: '',
+    accountNumber: '',
+    IFSCNumber: '',
+    beneficiaryID: '',
+    bankName: '',
+    branchName: '',
+    nomineeName: '',
   };
 
   const AddEmployees = async (values) => {
     const data = new FormData();
-    data.append('avatar', values?.avatar);
+    // Basic Information
+    data.append('profileImg', values?.profileImg);
+    data.append('employeesCode', values?.employeesCode);
+    data.append('employeesName', values?.employeesName);
+    data.append('gender', values?.gender);
+    data.append('workType', values?.workType);
+    data.append('Dob', values?.Dob);
+    data.append('maritalStatus', values?.maritalStatus);
+    data.append('anniversaryDate', values?.anniversaryDate);
+    // Contact Information
+    data.append('primaryContact', values?.primaryContact);
+    data.append('alternateContact', values?.alternateContact);
+    data.append('email', values?.email);
+    data.append('country', values?.country);
+    data.append('state', values?.state);
+    data.append('hq', values?.hq);
+    data.append('multipleHq', values?.multipleHq);
+    data.append('division', values?.division);
+    data.append('zone', values?.zone);
+    data.append('homeLocation', values?.homeLocation);
+    data.append('permanentLoction', values?.permanentLoction);
+    data.append('pincode', values?.pincode);
+    data.append('additionalDivision', values?.additionalDivision);
+    // Work Information
+    data.append('exStations', values?.exStations);
+    data.append('outStations', values?.outStations);
+    data.append('designation', values?.designation);
+    data.append('assignedTo', values?.assignedTo);
+    data.append('additionalSupervisor', values?.additionalSupervisor);
+    data.append('Doj', values?.Doj);
+    data.append('endProbationDate', values?.endProbationDate);
+    data.append('endConfirmationDate', values?.endConfirmationDate);
+    data.append('dailyWorkHours', values?.dailyWorkHours);
+    data.append('showAccompanied', values?.showAccompanied);
+    data.append('accompaniedEmployee', values?.accompaniedEmployee);
+    data.append('dateOfResignation', values?.dateOfResignation);
+    data.append('showInTransit', values?.showInTransit);
+    // Other Information
+    data.append('employeeQualification', values?.employeeQualification);
+    data.append('aadharNumber', values?.aadharNumber);
+    data.append('PanNumber', values?.PanNumber);
+    data.append('pfNumber', values?.pfNumber);
+    data.append('ESICNumber', values?.ESICNumber);
+    data.append('PfUanNumber', values?.PfUanNumber);
+    data.append('driverLicenseNumber', values?.driverLicenseNumber);
+    data.append('bloodGroup', values?.bloodGroup);
+    data.append('Language', values?.Language);
+    // Daily Allowance Information
+    data.append('DA_HO', values?.DA_HO);
+    data.append('DA_EX', values?.DA_EX);
+    data.append('DA_OUT', values?.DA_OUT);
+    data.append('DA_RHO', values?.DA_RHO);
+    data.append('DA_TRANSIT', values?.DA_TRANSIT);
+    data.append('DA_OTHER', values?.DA_OTHER);
+    // Account Information
+    data.append('accountHolderName', values?.accountHolderName);
+    data.append('accountNumber', values?.accountNumber);
+    data.append('IFSCNumber', values?.IFSCNumber);
+    data.append('beneficiaryID', values?.beneficiaryID);
+    data.append('bankName', values?.bankName);
+    data.append('branchName', values?.branchName);
+    data.append('nomineeName', values?.nomineeName);
 
     // const result = await apipost('/api/auth/signup', data);
     // if (result && result.status === 200) {
     //   navigate('/login');
     // }
-    const payload = {
-      doctorName: values.doctorName,
-      hospitalName: values.hospitalName,
-      gender: values.gender,
-      contactNumber: values.contactNumber,
-      email: values.email,
-      dateOfBirth: values.dateOfBirth,
-      maritalStatus: values.maritalStatus,
-      anniversaryDate: values.anniversaryDate,
-      qualification: values.qualification,
-      addressInformation: {
-        state: values.state,
-        city: values.city,
-        division: values.division,
-        zone: values.zone,
-        Pincode: values.pincode,
-      },
-      workInformation: {
-        speciality: values.speciality,
-        type: values.type,
-        category: values.category,
-        approximatedBusiness: values.approximatedBusiness,
-        assignedTo: values.assignedTo,
-        firmName: values.firmName,
-      },
-    };
   };
 
   // formik
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    // validationSchema,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
+      console.log("values",values)
       AddEmployees(values);
     },
   });
@@ -284,7 +356,7 @@ const AddEmployees = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
                   <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
                   <RadioGroup
@@ -303,7 +375,7 @@ const AddEmployees = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
                   <FormLabel id="demo-row-radio-buttons-group-label">Work Type</FormLabel>
                   <RadioGroup
@@ -325,15 +397,15 @@ const AddEmployees = () => {
                 <FormLabel>Date Of Birth</FormLabel>
                 <TextField
                   id="dateOfBirth"
-                  name="dateOfBirth"
+                  name="Dob"
                   size="small"
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.dateOfBirth}
+                  value={formik.values.Dob}
                   onChange={formik.handleChange}
-                  error={formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)}
-                  helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
+                  error={formik.touched.Dob && Boolean(formik.errors.Dob)}
+                  helperText={formik.touched.Dob && formik.errors.Dob}
                 />
               </Grid>
 
@@ -648,6 +720,7 @@ const AddEmployees = () => {
                   )}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Out-Stations</FormLabel>
                 <Autocomplete
@@ -668,6 +741,7 @@ const AddEmployees = () => {
                   )}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Designation</FormLabel>
                 <Autocomplete
@@ -688,28 +762,9 @@ const AddEmployees = () => {
                   )}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Assigned To</FormLabel>
-                <Autocomplete
-                  disablePortal
-                  name="approximatedBusiness"
-                  options={top100Films}
-                  fullWidth
-                  size="small"
-                  value={formik.values.approximatedBusiness}
-                  onChange={formik.handleChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Select Approximated Business"
-                      error={formik.touched.approximatedBusiness && Boolean(formik.errors.approximatedBusiness)}
-                      helperText={formik.touched.approximatedBusiness && formik.errors.approximatedBusiness}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Additional Supervisor</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="assignedTo"
@@ -721,155 +776,135 @@ const AddEmployees = () => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="Select Assigned To"
+                      placeholder="Select Employees"
                       error={formik.touched.assignedTo && Boolean(formik.errors.assignedTo)}
                       helperText={formik.touched.assignedTo && formik.errors.assignedTo}
                     />
                   )}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Date Of Joining</FormLabel>
-                <TextField
-                  id="firmName"
-                  name="firmName"
-                  size="small"
-                  maxRows={10}
+                <FormLabel>Additional Supervisor</FormLabel>
+                <Autocomplete
+                  disablePortal
+                  name="additionalSupervisor"
+                  options={top100Films}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  size="small"
+                  value={formik.values.additionalSupervisor}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Select Assigned To"
+                      error={formik.touched.additionalSupervisor && Boolean(formik.errors.additionalSupervisor)}
+                      helperText={formik.touched.additionalSupervisor && formik.errors.additionalSupervisor}
+                    />
+                  )}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Date Of Joining</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="Doj"
                   size="small"
+                  type="date"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  value={formik.values.Doj}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.Doj && Boolean(formik.errors.Doj)}
+                  helperText={formik.touched.Doj && formik.errors.Doj}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>End Probation Date</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="endProbationDate"
                   size="small"
+                  type="date"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  value={formik.values.endProbationDate}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.endProbationDate && Boolean(formik.errors.endProbationDate)}
+                  helperText={formik.touched.endProbationDate && formik.errors.endProbationDate}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>End Confirmation Date</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="endConfirmationDate"
                   size="small"
+                  type="date"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  value={formik.values.endConfirmationDate}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.endConfirmationDate && Boolean(formik.errors.endConfirmationDate)}
+                  helperText={formik.touched.endConfirmationDate && formik.errors.endConfirmationDate}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Daily Work Hours (In numbers)</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="dailyWorkHours"
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  placeholder="Enter Working Hours"
+                  value={formik.values.dailyWorkHours}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.dailyWorkHours && Boolean(formik.errors.dailyWorkHours)}
+                  helperText={formik.touched.dailyWorkHours && formik.errors.dailyWorkHours}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Show Accompanied</FormLabel>
-                <TextField
-                  id="firmName"
-                  name="firmName"
-                  size="small"
-                  maxRows={10}
-                  fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
-                />
+                <br />
+                <Checkbox defaultChecked name="showAccompanied" />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Accompanied Employee</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="accompaniedEmployee"
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  placeholder="Enter Working Hours"
+                  value={formik.values.accompaniedEmployee}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.accompaniedEmployee && Boolean(formik.errors.accompaniedEmployee)}
+                  helperText={formik.touched.accompaniedEmployee && formik.errors.accompaniedEmployee}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Date Of Resignation</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="firmName"
+                  name="dateOfResignation"
                   size="small"
+                  type="date"
                   maxRows={10}
                   fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
+                  value={formik.values.dateOfResignation}
                   onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
+                  error={formik.touched.dateOfResignation && Boolean(formik.errors.dateOfResignation)}
+                  helperText={formik.touched.dateOfResignation && formik.errors.dateOfResignation}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Show In Transit</FormLabel>
-                <TextField
-                  id="firmName"
-                  name="firmName"
-                  size="small"
-                  maxRows={10}
-                  fullWidth
-                  placeholder="Select Firm Name"
-                  value={formik.values.firmName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.firmName && Boolean(formik.errors.firmName)}
-                  helperText={formik.touched.firmName && formik.errors.firmName}
-                />
+                <br />
+                <Checkbox defaultChecked name="showInTransit" />
               </Grid>
             </Grid>
 
@@ -881,7 +916,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Employee Qualification</FormLabel>
                 <TextField
-                  id="firmName"
                   name="employeeQualification"
                   size="small"
                   maxRows={10}
@@ -897,7 +931,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Aadhar Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="aadharNumber"
                   size="small"
                   maxRows={10}
@@ -913,7 +946,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>PAN Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="PanNumber"
                   size="small"
                   maxRows={10}
@@ -929,7 +961,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>PF Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="pfNumber"
                   size="small"
                   maxRows={10}
@@ -941,10 +972,10 @@ const AddEmployees = () => {
                   helperText={formik.touched.pfNumber && formik.errors.pfNumber}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>ESIC Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="ESICNumber"
                   size="small"
                   maxRows={10}
@@ -956,10 +987,10 @@ const AddEmployees = () => {
                   helperText={formik.touched.ESICNumber && formik.errors.ESICNumber}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>PF UAN Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="PfUanNumber"
                   size="small"
                   maxRows={10}
@@ -971,10 +1002,10 @@ const AddEmployees = () => {
                   helperText={formik.touched.PfUanNumber && formik.errors.PfUanNumber}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Driver's License Number</FormLabel>
                 <TextField
-                  id="firmName"
                   name="driverLicenseNumber"
                   size="small"
                   maxRows={10}
@@ -1007,22 +1038,23 @@ const AddEmployees = () => {
                   )}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Language</FormLabel>
                 <Autocomplete
                   disablePortal
-                  name="bloodGroup"
+                  name="Language"
                   options={Language}
                   fullWidth
                   size="small"
-                  value={formik.values.bloodGroup}
+                  value={formik.values.Language}
                   onChange={formik.handleChange}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       placeholder="Select Blood Group"
-                      error={formik.touched.bloodGroup && Boolean(formik.errors.bloodGroup)}
-                      helperText={formik.touched.bloodGroup && formik.errors.bloodGroup}
+                      error={formik.touched.Language && Boolean(formik.errors.Language)}
+                      helperText={formik.touched.Language && formik.errors.Language}
                     />
                   )}
                 />
@@ -1037,7 +1069,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_HO</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_HO"
                   size="small"
                   maxRows={10}
@@ -1053,7 +1084,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_EX</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_EX"
                   size="small"
                   maxRows={10}
@@ -1069,7 +1099,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_OUT</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_OUT"
                   size="small"
                   maxRows={10}
@@ -1085,7 +1114,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_RHO</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_RHO"
                   size="small"
                   maxRows={10}
@@ -1101,7 +1129,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_TRANSIT</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_TRANSIT"
                   size="small"
                   maxRows={10}
@@ -1117,7 +1144,6 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>DA_OTHER</FormLabel>
                 <TextField
-                  id="firmName"
                   name="DA_OTHER"
                   size="small"
                   maxRows={10}
@@ -1139,112 +1165,105 @@ const AddEmployees = () => {
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Account Holder Name</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_HO"
+                  name="accountHolderName"
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="Account Holder Name"
-                  value={formik.values.DA_HO}
+                  placeholder="AAccount Holder Name"
+                  value={formik.values.accountHolderName}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_HO && Boolean(formik.errors.DA_HO)}
-                  helperText={formik.touched.DA_HO && formik.errors.DA_HO}
+                  error={formik.touched.accountHolderName && Boolean(formik.errors.accountHolderName)}
+                  helperText={formik.touched.accountHolderName && formik.errors.accountHolderName}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Account Number</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_EX"
+                  name="accountNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Account Number"
-                  value={formik.values.DA_EX}
+                  value={formik.values.accountNumber}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_EX && Boolean(formik.errors.DA_EX)}
-                  helperText={formik.touched.DA_EX && formik.errors.DA_EX}
+                  error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
+                  helperText={formik.touched.accountNumber && formik.errors.accountNumber}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>IFSC Number</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_OUT"
+                  name="IFSCNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="IFSC Number"
-                  value={formik.values.DA_OUT}
+                  value={formik.values.IFSCNumber}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_OUT && Boolean(formik.errors.DA_OUT)}
-                  helperText={formik.touched.DA_OUT && formik.errors.DA_OUT}
+                  error={formik.touched.IFSCNumber && Boolean(formik.errors.IFSCNumber)}
+                  helperText={formik.touched.IFSCNumber && formik.errors.IFSCNumber}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Beneficiary ID</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_RHO"
+                  name="beneficiaryID"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Beneficiary ID"
-                  value={formik.values.DA_RHO}
+                  value={formik.values.beneficiaryID}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_RHO && Boolean(formik.errors.DA_RHO)}
-                  helperText={formik.touched.DA_RHO && formik.errors.DA_RHO}
+                  error={formik.touched.beneficiaryID && Boolean(formik.errors.beneficiaryID)}
+                  helperText={formik.touched.beneficiaryID && formik.errors.beneficiaryID}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Bank Name</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_TRANSIT"
+                  name="bankName"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Bank Name"
-                  value={formik.values.DA_TRANSIT}
+                  value={formik.values.bankName}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_TRANSIT && Boolean(formik.errors.DA_TRANSIT)}
-                  helperText={formik.touched.DA_TRANSIT && formik.errors.DA_TRANSIT}
+                  error={formik.touched.bankName && Boolean(formik.errors.bankName)}
+                  helperText={formik.touched.bankName && formik.errors.bankName}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Branch Name</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_OTHER"
+                  name="branchName"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Branch Name"
-                  value={formik.values.DA_OTHER}
+                  value={formik.values.branchName}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_OTHER && Boolean(formik.errors.DA_OTHER)}
-                  helperText={formik.touched.DA_OTHER && formik.errors.DA_OTHER}
+                  error={formik.touched.branchName && Boolean(formik.errors.branchName)}
+                  helperText={formik.touched.branchName && formik.errors.branchName}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Nominee Name</FormLabel>
                 <TextField
-                  id="firmName"
-                  name="DA_OTHER"
+                  name="nomineeName"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Nominee Name"
-                  value={formik.values.DA_OTHER}
+                  value={formik.values.nomineeName}
                   onChange={formik.handleChange}
-                  error={formik.touched.DA_OTHER && Boolean(formik.errors.DA_OTHER)}
-                  helperText={formik.touched.DA_OTHER && formik.errors.DA_OTHER}
+                  error={formik.touched.nomineeName && Boolean(formik.errors.nomineeName)}
+                  helperText={formik.touched.nomineeName && formik.errors.nomineeName}
                 />
               </Grid>
             </Grid>

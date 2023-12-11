@@ -87,6 +87,7 @@ import AddEmployees from '../pages/people/employees/Add'
 import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
 import TutorialMaster from '../pages/settings/TutorialMaster';
+import LeaveCalendar from '../pages/calender/Leave';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -141,8 +142,10 @@ export default function Router() {
         { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
         { path: 'people/employees', element: <Employees /> },
         { path: 'people/employees/add', element: <AddEmployees /> },
+        { path: 'people/employees/:id', element: <AddEmployees /> },
 
         { path: 'calendar/holiday&work', element: <Holiday /> },
+        { path: 'calendar/leave', element: <LeaveCalendar /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
@@ -163,7 +166,7 @@ export default function Router() {
         { path: 'setting/relationmaster', element: <RelationMaster /> },
         { path: 'setting/otherreason', element: <OtherReason /> },
         { path: 'setting/faqMaster', element: <FaqMaster /> },
-        { path: 'setting/faqAdd', element: <FaqAdd /> },
+        { path: 'setting/faqMaster/add', element: <FaqAdd /> },
 
        
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },

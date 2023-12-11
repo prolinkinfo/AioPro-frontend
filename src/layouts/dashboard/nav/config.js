@@ -64,7 +64,7 @@ export const adminConfig = [
       },
       {
         title: 'Leave Calendar',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/calendar/leave`,
       },
     ],
   },
