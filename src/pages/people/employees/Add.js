@@ -30,6 +30,8 @@ import { fetchCityData } from '../../../redux/slice/GetCitySlice';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 import { fetchQualificationData } from '../../../redux/slice/GetQualificationSlice';
+import { fetchCountryData } from '../../../redux/slice/getCountrySlice';
+import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 
 const names = [
   'Oliver Hansen',
@@ -136,12 +138,16 @@ const AddEmployees = () => {
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
   const qualificationList = useSelector((state) => state?.getQualification?.data);
+  const country =useSelector((state) => state?.getCountry?.data);
+  const state =useSelector((state) => state?.getState?.data);
 
   useEffect(() => {
     dispatch(fetchCityData());
     dispatch(fetchZoneData());
     dispatch(fetchDivisionData());
     dispatch(fetchQualificationData());
+    dispatch(fetchCountryData())
+    dispatch(fetchStateData())
   }, [dispatch]);
 
   const initialValues = {
@@ -572,11 +578,12 @@ const AddEmployees = () => {
                 <Autocomplete
                   disablePortal
                   name="country"
-                  options={top100Films}
+                  options={country}
                   fullWidth
                   size="small"
-                  value={formik.values.country}
-                  onChange={formik.handleChange}
+                  value={country.find((item) => item.countryName === formik.values.country) || null}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.country :'')}
+                  getOptionLabel={({ countryName }) => countryName}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -593,11 +600,12 @@ const AddEmployees = () => {
                 <Autocomplete
                   disablePortal
                   name="state"
-                  options={top100Films}
+                  options={state}
                   fullWidth
                   size="small"
-                  value={formik.values.state}
-                  onChange={formik.handleChange}
+                  value={state.find((item) => item.stateName === formik.values.state) || null}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.stateName :'')}
+                  getOptionLabel={({ stateName }) => stateName}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -659,8 +667,8 @@ const AddEmployees = () => {
                   options={divisionList}
                   fullWidth
                   size="small"
-                  value={formik.values.division || ''}
-                  onChange={(e, value) => formik.setFieldValue('division', value)}
+                  value={divisionList.find((division) => division.divisionName === formik.values.division) || null}
+                  onChange={(e, value) => formik.setFieldValue('division', value ? value.divisionName :'')}
                   getOptionLabel={({ divisionName }) => divisionName} // Set the label to the 'divisionName' property
                   renderInput={(params) => (
                     <TextField
@@ -681,8 +689,8 @@ const AddEmployees = () => {
                   options={zoneList}
                   fullWidth
                   size="small"
-                  value={formik.values.zone || ''}
-                  onChange={(e, value) => formik.setFieldValue('zone', value.zoneName)}
+                  value={zoneList.find((zone) => zone.zoneName === formik.values.zone) || null}
+                  onChange={(e, value) => formik.setFieldValue('zone', value ? value.zoneName : '')}
                   getOptionLabel={({ zoneName }) => zoneName} // Set the label to the 'divisionName' property
                   renderInput={(params) => (
                     <TextField
@@ -704,11 +712,13 @@ const AddEmployees = () => {
                   rows={2}
                   multiline
                   fullWidth
+                  placeholder='201, Deepkamal mall 1, near Sarthana Nature Park, Sarthana Jakat Naka, Nature Park and Zoo, Nana Varachha, Surat, Gujarat'
                   value={formik.values.homeLocation}
                   onChange={formik.handleChange}
                   error={formik.touched.homeLocation && Boolean(formik.errors.homeLocation)}
                   helperText={formik.touched.homeLocation && formik.errors.homeLocation}
                 />
+                 
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>

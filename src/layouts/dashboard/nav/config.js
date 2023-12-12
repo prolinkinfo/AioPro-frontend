@@ -75,23 +75,23 @@ export const adminConfig = [
     children: [
       {
         title: 'Designation wise expense',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/expenses/allowance`,
       },
       {
         title: 'Expenses',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/expenses/expenses`,
       },
       {
         title: 'Day wise Expenses',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/expenses/daywiseexpenses`,
       },
       {
         title: 'Expense Head',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/expenses/expensehead`,
       },
       {
         title: 'Standard Fare chart',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/expenses/standardfarechart`,
       },
     ],
   },

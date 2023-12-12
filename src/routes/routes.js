@@ -88,6 +88,12 @@ import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
 import TutorialMaster from '../pages/settings/TutorialMaster';
 import LeaveCalendar from '../pages/calender/Leave';
+import Allowance from '../pages/expendar/Allowance';
+import Expenses from '../pages/expendar/Expenses';
+import Daywiseexpenses from '../pages/expendar/Daywiseexpenses';
+import Expensehead from '../pages/expendar/Expensehead';
+import Standardfarechart from '../pages/expendar/Standardfarechart';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -191,6 +197,11 @@ export default function Router() {
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
         { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
+        { path: 'expenses/allowance', element: <Allowance /> },
+        { path: 'expenses/expenses', element: <Expenses /> },
+        { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },
+        { path: 'expenses/expensehead', element: <Expensehead /> },
+        { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
 
       ],
     },
