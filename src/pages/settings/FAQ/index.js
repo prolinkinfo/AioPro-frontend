@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import { Link } from 'react-router-dom';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import { apiget } from '../../../service/api';
 
 const FaqMaster = () => {
   const [typeList, setTypeList] = useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userRole = user?.role.toLowerCase();
 
   const columns = [
     {
@@ -20,7 +23,7 @@ const FaqMaster = () => {
         };
         return (
           <Box onClick={handleClick}>
-            <Button variant='outlined' >Edit</Button>
+            <Button variant="outlined">Edit</Button>
           </Box>
         );
       },
@@ -53,7 +56,12 @@ const FaqMaster = () => {
           <Box width="100%" pt={3}>
             <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'space-between'} mb={2}>
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                Add New
+                <Link
+                  to={`/${userRole}/dashboard/setting/faqMaster/add`}
+                  style={{ color: 'white', textDecoration: 'none' }}
+                >
+                  Add New
+                </Link>
               </Button>
               <TextField type="text" size="small" placeholder="Search" onChange={fetchTypeData} />
             </Stack>

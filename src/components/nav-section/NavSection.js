@@ -137,11 +137,11 @@ function NavItem({ item, active, isShow }) {
 
                     <Collapse in={openSub} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
-                        {subLink?.map((items) => {
+                        {subLink?.map((items,index) => {
                           const isActiveSub = active(path);
                           return (
                             <ListItemStyle
-                              key={items?.title}
+                              key={index}
                               component={RouterLink}
                               to={items?.path}
                               sx={{

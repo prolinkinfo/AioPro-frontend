@@ -82,9 +82,18 @@ import ProductGroup from '../pages/settings/ProductGroup'
 import ModeOfTravel from '../pages/settings/ModeOfTravel';
 import ProductSample from '../pages/settings/ProductSamplesDetails'
 import SampleCollectionCenter from '../pages/settings/SampleCollectionCenter'
+import Employees from '../pages/people/employees'
+import AddEmployees from '../pages/people/employees/Add'
 import PromotionalGifts from '../pages/settings/PromotionalGifts'
 import MediaGallery from '../pages/eDetailing/MediaGallery'
 import TutorialMaster from '../pages/settings/TutorialMaster';
+import LeaveCalendar from '../pages/calender/Leave';
+import Allowance from '../pages/expendar/Allowance';
+import Expenses from '../pages/expendar/Expenses';
+import Daywiseexpenses from '../pages/expendar/Daywiseexpenses';
+import Expensehead from '../pages/expendar/Expensehead';
+import Standardfarechart from '../pages/expendar/Standardfarechart';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -137,7 +146,13 @@ export default function Router() {
         { path: 'people/doctor', element: <Doctor /> },
         { path: 'people/doctor/add', element: <AddDoctor /> },
         { path: 'people/doctor/update_doctor/:id', element: <EditDoctor /> },
+        { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
+        { path: 'people/employees', element: <Employees /> },
+        { path: 'people/employees/add', element: <AddEmployees /> },
+        { path: 'people/employees/:id', element: <AddEmployees /> },
+
         { path: 'calendar/holiday&work', element: <Holiday /> },
+        { path: 'calendar/leave', element: <LeaveCalendar /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
@@ -158,6 +173,9 @@ export default function Router() {
         { path: 'setting/relationmaster', element: <RelationMaster /> },
         { path: 'setting/otherreason', element: <OtherReason /> },
         { path: 'setting/faqMaster', element: <FaqMaster /> },
+        { path: 'setting/faqMaster/add', element: <FaqAdd /> },
+
+       
         { path: 'setting/faqAdd', element: <FaqAdd /> },
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
@@ -180,6 +198,11 @@ export default function Router() {
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
         { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
+        { path: 'expenses/allowance', element: <Allowance /> },
+        { path: 'expenses/expenses', element: <Expenses /> },
+        { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },
+        { path: 'expenses/expensehead', element: <Expensehead /> },
+        { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
 
       ],
     },
