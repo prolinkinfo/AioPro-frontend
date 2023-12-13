@@ -136,7 +136,7 @@ export default function Router() {
         { path: 'people/administrator', element: <Administrator /> },
         { path: 'people/doctor', element: <Doctor /> },
         { path: 'people/doctor/add', element: <AddDoctor /> },
-        { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
+        { path: 'people/doctor/update_doctor/:id', element: <EditDoctor /> },
         { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },

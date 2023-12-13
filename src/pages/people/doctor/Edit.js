@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Autocomplete, Box, Button, Card, Container, Divider, FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Select, Stack, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../../components/iconify'
 import ClinicAddress from './clinicAddress';
+import { apiget, apiput } from '../../../service/api';
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchQualificationData } from '../../../redux/slice/GetQualificationSlice';
+import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import { fetchStateData } from '../../../redux/slice/GetStateSlice';
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const names = [
     'Oliver Hansen',
@@ -31,6 +42,30 @@ const top100Films = [
 const Edit = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role.toLowerCase(); const navigate = useNavigate()
+    const [specialityList, setSpecialityList] = useState([]);
+    const [data, setData] = useState({});
+    const dispatch = useDispatch()
+    const cityData = useSelector((state) => state?.getCity?.data)
+    const stateData = useSelector((state) => state?.getState?.data)
+    const doctorSpeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
+    const zoneList = useSelector((state) => state?.getZone?.data)
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const qualificationList = useSelector((state) => state?.getQualification?.data)
+    const typeList = useSelector((state) => state?.getType?.data)
+    const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
+    const [cityList, setCityList] = useState([]);
+    const [addressList, setAddressList] = useState([])
+    const [userAction, setUserAction] = useState(null)
+
+
+    useEffect(() => {
+        if (doctorSpeciality) {
+            const filteredArray = doctorSpeciality.map(item => item.specialityName);
+            setSpecialityList(filteredArray);
+        }
+    }, [doctorSpeciality]);
+    const params = useParams();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -41,38 +76,39 @@ const Edit = () => {
         city: yup.string().required('City is required'),
         division: yup.string().required('Division is required'),
         zone: yup.string().required('Zone is required'),
-        speciality: yup.string().required('Speciality is required'),
+        // speciality: yup.string().required('Speciality is required'),
         assignedTo: yup.string().required('Assigned To is required'),
     });
 
     const initialValues = {
-        doctorName: '',
-        hospitalName: '',
-        gender: '',
-        contactNumber: '',
-        email: '',
-        dateOfBirth: '',
-        maritalStatus: '',
-        anniversaryDate: '',
-        qualification: '',
-        state: '',
-        city: '',
-        division: '',
-        zone: '',
-        Pincode: '',
-        speciality: '',
-        type: '',
-        category: '',
-        approximatedBusiness: '',
-        assignedTo: '',
-        firmName: '',
+        doctorName: data?.doctorName,
+        hospitalName: data?.hospitalName,
+        gender: data?.gender,
+        contactNumber: data?.contactNumber,
+        email: data?.email,
+        dateOfBirth: data?.dateOfBirth,
+        maritalStatus: data?.maritalStatus,
+        anniversaryDate: data?.anniversaryDate,
+        qualification: data?.qualification,
+        state: data?.addressInformation?.state,
+        city: data?.addressInformation?.city,
+        division: data?.addressInformation?.division,
+        zone: data?.addressInformation?.zone,
+        pincode: data?.addressInformation?.pincode,
+        speciality: data?.workInformation?.speciality,
+        type: data?.workInformation?.type,
+        category: data?.workInformation?.category,
+        approximatedBusiness: data?.workInformation?.approximatedBusiness,
+        assignedTo: data?.workInformation?.assignedTo,
+        firmName: data?.workInformation?.firmName,
+        registrationNumber: data?.registrationNumber,
         // createdBy: id,
     };
 
 
-
-    const addDoctor = (values) => {
+    const editDoctor = async (values) => {
         const payload = {
+            _id: data?._id,
             doctorName: values.doctorName,
             hospitalName: values.hospitalName,
             gender: values.gender,
@@ -82,12 +118,13 @@ const Edit = () => {
             maritalStatus: values.maritalStatus,
             anniversaryDate: values.anniversaryDate,
             qualification: values.qualification,
+            registrationNumber: values.registrationNumber,
             addressInformation: {
                 state: values.state,
                 city: values.city,
                 division: values.division,
                 zone: values.zone,
-                Pincode: values.pincode,
+                pincode: values.pincode,
             },
             workInformation: {
                 speciality: values.speciality,
@@ -98,18 +135,52 @@ const Edit = () => {
                 firmName: values.firmName,
             }
         }
-    }
 
+        const result = await apiput('/api/doctor', payload);
+
+        if (result && result.status === 200) {
+            formik.resetForm();
+        }
+    }
 
     // formik
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize: true,
         onSubmit: async (values, { resetForm }) => {
             resetForm();
-            addDoctor(values)
+            editDoctor(values)
         },
     });
+
+    const fetchCityDatas = async (stateName) => {
+        const filtered = cityData?.filter((city) => city?.stateName?.toLowerCase() === stateName?.toLowerCase())
+        setCityList(filtered);
+    };
+
+    const fetchDoctorData = async (e) => {
+        const result = await apiget(`/api/doctor/${params?.id}`);
+        if (result && result.status === 200) {
+            setData(result?.data?.result && result?.data?.result[0])
+            setAddressList(result?.data?.result && result?.data?.result[0]?.clinicAddress)
+        }
+    };
+
+
+    useEffect(() => {
+        fetchDoctorData();
+        dispatch(fetchCityData());
+        dispatch(fetchDoctorSpecialityData());
+        dispatch(fetchZoneData());
+        dispatch(fetchDivisionData());
+        dispatch(fetchQualificationData());
+        dispatch(fetchTypeData());
+        dispatch(fetchStateData());
+        dispatch(fetchCategoryData());
+        dispatch(fetchEmployeeData());
+    }, [userAction]);
+
 
     const back = () => {
         navigate(`/${userRole}/dashboard/people/doctor`)
@@ -173,11 +244,10 @@ const Edit = () => {
                                         error={formik.touched.gender && Boolean(formik.errors.gender)}
                                         helperText={formik.touched.gender && formik.errors.gender}
                                     >
-                                        <FormControlLabel value="female" control={<Radio />} label="Female" />
                                         <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                        <FormControlLabel value="female" control={<Radio />} label="Female" />
                                         <FormControlLabel
-                                            value="disabled"
-                                            disabled
+                                            value="other"
                                             control={<Radio />}
                                             label="other"
                                         />
@@ -238,7 +308,7 @@ const Edit = () => {
                                         size='small'
                                         name='maritalStatus'
                                         placeholder='Select Marital Status'
-                                        value={formik.values.maritalStatus}
+                                        value={formik.values.maritalStatus || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.maritalStatus && Boolean(formik.errors.maritalStatus)}
                                         helperText={formik.touched.maritalStatus && formik.errors.maritalStatus}
@@ -268,20 +338,20 @@ const Edit = () => {
                                 <FormLabel>Qualification</FormLabel>
                                 <FormControl fullWidth>
                                     <Autocomplete
-                                        // multiple
                                         size="small"
-                                        value={formik.values.qualification}
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('qualification', newValue);
+                                            formik.setFieldValue('qualification', newValue ? newValue.qualification : "");
                                         }}
-                                        options={names}
-                                        getOptionLabel={(option) => option}
-                                        disableCloseOnSelect
+                                        fullWidth
+                                        options={qualificationList}
+                                        value={qualificationList.find(qualification => qualification.qualification === formik.values.qualification) || null}
+                                        getOptionLabel={(qualification) => qualification?.qualification}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
+                                                placeholder='Select Qualification'
                                                 error={formik.touched.qualification && Boolean(formik.errors.qualification)}
                                                 helperText={formik.touched.qualification && formik.errors.qualification}
                                             />
@@ -297,77 +367,94 @@ const Edit = () => {
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>State</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="state"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('state', newValue ? newValue.stateName : "");
+                                        fetchCityDatas(newValue ? newValue.stateName : "")
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.state}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={stateData}
+                                    value={stateData.find(state => state.stateName === formik.values.state) || null}
+                                    getOptionLabel={(state) => state?.stateName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select State'
                                             error={formik.touched.state && Boolean(formik.errors.state)}
                                             helperText={formik.touched.state && formik.errors.state}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>City</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="city"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('city', newValue ? newValue.cityName : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.city}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={cityList}
+                                    value={cityList.find(city => city.cityName === formik.values.city) || null}
+                                    getOptionLabel={(city) => city?.cityName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select City'
                                             error={formik.touched.city && Boolean(formik.errors.city)}
                                             helperText={formik.touched.city && formik.errors.city}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Division</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="division"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('division', newValue ? newValue.divisionName : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.division}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={divisionList}
+                                    value={divisionList.find(division => division.divisionName === formik.values.division) || null}
+                                    getOptionLabel={(division) => division?.divisionName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Division'
                                             error={formik.touched.division && Boolean(formik.errors.division)}
                                             helperText={formik.touched.division && formik.errors.division}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Zone</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="zone"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.zone}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={zoneList}
+                                    value={zoneList.find(zone => zone.zoneName === formik.values.zone) || null}
+                                    getOptionLabel={(zone) => zone?.zoneName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Zone'
                                             error={formik.touched.zone && Boolean(formik.errors.zone)}
                                             helperText={formik.touched.zone && formik.errors.zone}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
@@ -392,99 +479,125 @@ const Edit = () => {
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Speciality</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="speciality"
-                                    options={top100Films}
+                                    multiple
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        // Ensure newValue is not null before accessing properties
+                                        formik.setFieldValue('speciality', newValue || "");
+                                    }}
                                     fullWidth
-                                    size='small'
+                                    options={specialityList || []}
                                     value={formik.values.speciality}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    getOptionLabel={(speciality) => speciality}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Speciality'
                                             error={formik.touched.speciality && Boolean(formik.errors.speciality)}
                                             helperText={formik.touched.speciality && formik.errors.speciality}
-                                        />}
+                                        />
+                                    )}
                                 />
+
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Type</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="type"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('type', newValue ? newValue.typeName : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.type}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={typeList}
+                                    value={typeList.find(type => type.typeName === formik.values.type) || null}
+                                    getOptionLabel={(type) => type?.typeName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Type'
                                             error={formik.touched.type && Boolean(formik.errors.type)}
                                             helperText={formik.touched.type && formik.errors.type}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Category</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="category"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('category', newValue ? newValue.categoryName
+                                            : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.category}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={doctorCategoryList}
+                                    value={doctorCategoryList.find(categoryType => categoryType.categoryName === formik.values.category) || null}
+                                    getOptionLabel={(categoryType) => categoryType?.categoryName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Category'
                                             error={formik.touched.category && Boolean(formik.errors.category)}
                                             helperText={formik.touched.category && formik.errors.category}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
-                                <FormLabel>Approximated Business</FormLabel>
-                                <Autocomplete
-                                    disablePortal
-                                    name="approximatedBusiness"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
-                                    value={formik.values.approximatedBusiness}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            placeholder='Select Approximated Business'
-                                            error={formik.touched.approximatedBusiness && Boolean(formik.errors.approximatedBusiness)}
-                                            helperText={formik.touched.approximatedBusiness && formik.errors.approximatedBusiness}
-                                        />}
-                                />
+                                <FormControl fullWidth>
+                                    <FormLabel>Approximated Business</FormLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        size='small'
+                                        name="approximatedBusiness"
+                                        placeholder='Select Marital Status'
+                                        value={formik.values.approximatedBusiness || null}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.approximatedBusiness && Boolean(formik.errors.approximatedBusiness)}
+                                        helperText={formik.touched.approximatedBusiness && formik.errors.approximatedBusiness}
+                                    >
+                                        <MenuItem value={"0-5000"}>0-5000</MenuItem>
+                                        <MenuItem value={"5000-10000"}>5000-10000</MenuItem>
+                                        <MenuItem value={"10000-20000"}>10000-20000</MenuItem>
+                                        <MenuItem value={"10000-25000"}>10000-25000</MenuItem>
+                                        <MenuItem value={"25000-50000"}>25000-50000</MenuItem>
+                                        <MenuItem value={"50000-75000"}>50000-75000</MenuItem>
+                                        <MenuItem value={"75000-100000"}>75000-100000</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <FormLabel>Assigned To</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="assignedTo"
-                                    options={top100Films}
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('assignedTo', newValue ? newValue.basicInformation?.employeesName
+                                            : "");
+                                    }}
                                     fullWidth
-                                    size='small'
-                                    value={formik.values.assignedTo}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    options={employeeList}
+                                    value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.assignedTo) || null}
+                                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Assigned To'
                                             error={formik.touched.assignedTo && Boolean(formik.errors.assignedTo)}
                                             helperText={formik.touched.assignedTo && formik.errors.assignedTo}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} mb={2}>
+                            <Grid item xs={12} sm={6} md={6} >
                                 <FormLabel>Firm Name</FormLabel>
                                 <TextField
                                     id="firmName"
@@ -499,17 +612,32 @@ const Edit = () => {
                                     helperText={formik.touched.firmName && formik.errors.firmName}
                                 />
                             </Grid>
+                            <Grid item xs={12} sm={6} md={6} mb={2}>
+                                <FormLabel>Registration Number</FormLabel>
+                                <TextField
+                                    id="registrationNumber"
+                                    name="registrationNumber"
+                                    size="small"
+                                    maxRows={10}
+                                    fullWidth
+                                    placeholder='Enter Registration Number'
+                                    value={formik.values.registrationNumber}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.registrationNumber && Boolean(formik.errors.registrationNumber)}
+                                    helperText={formik.touched.registrationNumber && formik.errors.registrationNumber}
+                                />
+                            </Grid>
                             <Divider />
                             <Grid item xs={12} sm={12} md={12} display={"flex"} justifyContent={"end"}>
                                 <Stack direction={"row"} spacing={2}>
-                                    <Button variant='contained' onClick={formik.handleSubmit}>Edit Doctor</Button>
+                                    <Button variant='contained' onClick={formik.handleSubmit}>Add Doctor</Button>
                                     <Button variant='outlined' color='error'>Cancle</Button>
                                 </Stack>
                             </Grid>
                         </Grid>
                     </Card>
                     <Card style={{ marginTop: "30px" }}>
-                        <ClinicAddress />
+                        <ClinicAddress data={data} clinicAddress={addressList} setUserAction={setUserAction}/>
                     </Card>
                 </Box>
             </Container>
