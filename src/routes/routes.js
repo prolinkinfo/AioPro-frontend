@@ -93,6 +93,13 @@ import Expenses from '../pages/expendar/Expenses';
 import Daywiseexpenses from '../pages/expendar/Daywiseexpenses';
 import Expensehead from '../pages/expendar/Expensehead';
 import Standardfarechart from '../pages/expendar/Standardfarechart';
+import ReportPage from '../pages/Reports';
+import Target from '../pages/Sales/target';
+import SecondarySales from '../pages/Sales/secondarySales';
+import Orders from '../pages/Sales/orders';
+import Ratemaster from '../pages/Sales/rateMaster';
+import Firms from '../pages/Sales/firms';
+import FirmMonthly from '../pages/Sales/firmMonthly';
 
 // ----------------------------------------------------------------------
 
@@ -202,7 +209,13 @@ export default function Router() {
         { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },
         { path: 'expenses/expensehead', element: <Expensehead /> },
         { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
-
+        { path: 'reports', element: <ReportPage /> },
+        { path: 'sales/firms', element: <Firms /> },
+        { path: 'sales/firmmonthly', element: <FirmMonthly /> },
+        { path: 'sales/orders', element: <Orders /> },
+        { path: 'sales/ratemaster', element: <Ratemaster /> },
+        { path: 'sales/secondarysales', element: <SecondarySales /> },
+        { path: 'sales/target', element: <Target /> },
       ],
     },
     {

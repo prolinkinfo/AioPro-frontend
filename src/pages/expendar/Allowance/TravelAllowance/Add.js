@@ -58,7 +58,7 @@ const TravelAllowanceModel = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add Activity Type Name </Typography>
+          <Typography variant="h6">Allowance </Typography>
           <Typography>
             <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -68,7 +68,39 @@ const TravelAllowanceModel = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Activity Type Name</FormLabel>
+                <FormLabel>Title</FormLabel>
+                <TextField
+                  id="typeName"
+                  name="activityName"
+                  label=""
+                  size="small"
+                  maxRows={10}
+                  placeholder="Enter Type Name"
+                  value={formik.values.activityName}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.activityName && Boolean(formik.errors.activityName)}
+                  helperText={formik.touched.activityName && formik.errors.activityName}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Min</FormLabel>
+                <TextField
+                  id="typeName"
+                  name="activityName"
+                  label=""
+                  size="small"
+                  maxRows={10}
+                  placeholder="Enter Type Name"
+                  value={formik.values.activityName}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.activityName && Boolean(formik.errors.activityName)}
+                  helperText={formik.touched.activityName && formik.errors.activityName}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Max</FormLabel>
                 <TextField
                   id="typeName"
                   name="activityName"

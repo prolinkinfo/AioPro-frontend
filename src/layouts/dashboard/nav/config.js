@@ -97,37 +97,36 @@ export const adminConfig = [
   },
   {
     title: 'Report',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/reports`,
     icon: icon('ic_report'),
   },
   {
     title: 'Sales',
-    path: `/${userRole}/dashboard/user`,
     icon: icon('ic_sales'),
     children: [
       {
         title: 'Firms',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/firms`,
       },
       {
         title: 'Orders',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/orders`,
       },
       {
         title: 'Rate Master',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/ratemaster`,
       },
       {
         title: 'Secondary Sales',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/secondarysales`,
       },
       {
         title: 'Target',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/target`,
       },
       {
         title: 'Firm Monthly',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/sales/firmmonthly`,
       },
     ],
   },
