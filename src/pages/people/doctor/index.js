@@ -1,58 +1,247 @@
-import React from 'react'
+/* eslint-disable arrow-body-style */
+import React, { useEffect, useState } from 'react'
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
+import { fetchDoctorData } from '../../../redux/slice/GetDoctorSlice';
+import { apidelete } from '../../../service/api';
+import DeleteModel from '../../../components/Deletemodle'
 
 const Doctor = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role.toLowerCase();
+    const dispatch = useDispatch()
+    const [id, setId] = useState('')
+    const doctorList = useSelector((state) => state?.getDoctor?.data)
+    const navigate = useNavigate();
+    const [userAction, setUserAction] = useState(null)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
         {
+            field: 'action',
             headerName: 'Action',
             sortable: false,
-            width: 120,
+            width: 350,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    console.log(data, "data")
+                    navigate(`/${userRole}/dashboard/people/doctor/update_doctor/${data?._id}`)
+                };
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
                 };
                 return (
-                    <Box onClick={handleClick}>
-                        <ActionBtn data={[{name:"View"},{name:"Edit"}]} />
+                    <Box>
+                        {/* <EditProduct isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductGroupData={fetchProductGroupData} data={productGroupData} /> */}
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteDoctor} id={id} />
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small'> Deactive</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
-        { field: 'doctorId', headerName: 'Doctor ID', width: 120 },
-        { field: 'doctorName', headerName: 'Doctor Name', width: 130 },
-        { field: 'city', headerName: 'City', width: 130 },
-        { field: 'hospitalName', headerName: 'Hospital Name', width: 130 },
-        { field: 'employeeName', headerName: 'Employee Name', width: 130 },
-        { field: 'immediateSenior', headerName: 'Immediate Senior', width: 130 },
-        { field: 'contactNumber', headerName: 'Contact Number', width: 130 },
-        { field: 'speciality', headerName: 'Speciality', width: 130 },
-        { field: 'qualification', headerName: 'Qualification', width: 130 },
-        { field: 'division', headerName: 'Division', width: 130 },
-        { field: 'category', headerName: 'Category', width: 130 },
-        { field: 'zone', headerName: 'Zone', width: 130 },
-        { field: 'email', headerName: 'Email', width: 130 },
-        { field: 'gender', headerName: 'Gender', width: 130 },
-        { field: 'dateOfBirth', headerName: 'DOB', width: 130 },
-        { field: 'anniversaryDate', headerName: 'Anniversary', width: 130 },
-        { field: 'type', headerName: 'Type', width: 130 },
-        { field: 'firm', headerName: 'Firm', width: 130 },
-        { field: 'country', headerName: 'Country', width: 130 },
-        { field: 'status', headerName: 'Status', width: 130 },
+        {
+            field: 'doctorId',
+            headerName: 'Doctor ID',
+            width: 120
+        },
+        {
+            field: 'doctorName',
+            headerName: 'Doctor Name',
+            width: 200,
+        },
+        {
+            field: 'city',
+            headerName: 'City',
+            width: 150,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.addressInformation?.city}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'hospitalName',
+            headerName: 'Hospital Name',
+            width: 250
+        },
+        {
+            field: 'employeeName',
+            headerName: 'Employee Name',
+            width: 250,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.assignedTo}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'immediateSenior',
+            headerName: 'Immediate Senior',
+            width: 250
+        },
+        {
+            field: 'contactNumber',
+            headerName: 'Contact Number',
+            width: 200
+        },
+        {
+            field: 'speciality',
+            headerName: 'Speciality',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.speciality}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'qualification',
+            headerName: 'Qualification',
+            width: 130,
+        },
+        {
+            field: 'division',
+            headerName: 'Division',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.addressInformation?.division}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'category',
+            headerName: 'Category',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.category}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'zone',
+            headerName: 'Zone',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.addressInformation?.zone}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            width: 200
+        },
+        {
+            field: 'gender',
+            headerName: 'Gender',
+            width: 130
+        },
+        {
+            field: 'dateOfBirth',
+            headerName: 'DOB',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {moment(params?.row?.dateOfBirth).format("DD/MM/YYYY")}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'anniversaryDate',
+            headerName: 'Anniversary',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {moment(params?.row?.anniversaryDate).format("DD/MM/YYYY")}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'type',
+            headerName: 'Type',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.type}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'firmName',
+            headerName: 'Firm',
+            width: 250,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.firmName}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'country',
+            headerName: 'Country',
+            width: 130,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.workInformation?.country}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            width: 130
+        },
     ];
 
-    const rows = [
-        { id: 1, visitId: '1001383', doctorId: '525', doctorName: 'T.k. Saikiya', clinicAddress: 'jai nagar Rd, Kamla Nehru Nagar, Yadav Colony, Jabalpur, Madhya Pradesh 482002, India', zone: 'Madhya Pradesh', city: 'Jabalpur', employeeName: 'Vaibhav Shrivastava', date: '20/11/2016', status: 'open' },
-        { id: 2, visitId: '1001355', doctorId: '1650', doctorName: 'Sarita Singh', clinicAddress: 'Panna Khajuraho Rd, Satna, Madhya Pradesh 485001, India', zone: 'Madhya Pradesh', city: 'Satna', employeeName: 'Vikas Gautam', date: '20/11/2016', status: 'open' },
-    ];
+
+
+    const deleteDoctor = async (id) => {
+        const result = await apidelete(`/api/doctor/${id}`);
+        setUserAction(result)
+    }
+
+
+
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
         { label: 'The Godfather', year: 1972 },
@@ -70,6 +259,11 @@ const Doctor = () => {
         { label: 'Pulp Fiction', year: 1994 },
         { label: 'Pulp Fiction', year: 1994 },
     ]
+
+    useEffect(() => {
+        dispatch(fetchDoctorData());
+    }, [userAction])
+
     return (
         <div>
             <Container maxWidth="xl">
@@ -190,7 +384,7 @@ const Doctor = () => {
                         </Grid>
                         <Card style={{ height: '72vh', marginTop: "10px" }}>
                             <DataGrid
-                                rows={rows}
+                                rows={doctorList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -198,6 +392,8 @@ const Doctor = () => {
                                     },
                                 }}
                                 pageSizeOptions={[5, 10]}
+                                getRowId={(row) => row._id}
+
                             />
                         </Card>
                     </Box>

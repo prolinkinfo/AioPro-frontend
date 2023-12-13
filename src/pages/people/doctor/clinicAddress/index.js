@@ -1,16 +1,21 @@
 import { Box, Button, Grid, Stack, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import TableStyleTwo from '../../../../components/TableStyleTwo'
 import Iconify from '../../../../components/iconify'
 import AddClinicAddress from './Add'
+import { fetchDoctorData } from '../../../../redux/slice/GetDoctorSlice'
+import { apiget } from '../../../../service/api'
 
-const ClinicAddress = () => {
+const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
 
-    const [isOpen,setIsOpen] = useState(false)
-
-    const handleOpenAdd =()=> setIsOpen(true)
-    const handleCloseAdd =()=> setIsOpen(false)
+    const [isOpen, setIsOpen] = useState(false)
+    const handleOpenAdd = () => setIsOpen(true)
+    const handleCloseAdd = () => setIsOpen(false)
+    const params = useParams();
+    // const [data, setData] = useState({});
 
     const columns = [
         {
@@ -23,19 +28,57 @@ const ClinicAddress = () => {
             field: "doctorName",
             headerName: "Doctor Name",
             cellClassName: "name-column--cell name-column--cell--capitalize",
-            width: 300
+            width: 300,
+
         },
-        { field: "clinicAddress", headerName: "Clinic Address", width: 300 },
-        { field: "city", headerName: "City", width: 150 },
-        { field: "preferredDay	", headerName: "Preferred Day", width: 300 },
-        { field: "preferredTime", headerName: "Preferred Time", width: 300 },
-        { field: "latitude", headerName: "Latitude", width: 300 },
-        { field: "longitude", headerName: "Longitude", width: 300 },
+        {
+            field: "clinicAddress",
+            headerName: "Clinic Address",
+            width: 300,
+
+        },
+        {
+            field: "city",
+            headerName: "City",
+            width: 150,
+
+        },
+        {
+            field: "preferredDay",
+            headerName: "Preferred Day",
+            width: 300,
+
+        },
+        {
+            field: "preferredTime",
+            headerName: "Preferred Time",
+            width: 300,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {params?.row?.startTime} - {params?.row?.endTime}
+                    </Box>
+                );
+            },
+        },
+        {
+            field: "latitude",
+            headerName: "Latitude",
+            width: 300,
+        },
+        {
+            field: "longitude",
+            headerName: "Longitude",
+            width: 300,
+
+        },
     ];
+
+console.log(clinicAddress,"clinicAddress")
 
     return (
         <div>
-            <AddClinicAddress isOpen={isOpen} handleClose={handleCloseAdd}/>
+            <AddClinicAddress isOpen={isOpen} handleClose={handleCloseAdd} data={data} setUserAction={setUserAction} />
 
             <Box style={{ cursor: "pointer" }} p={2}>
                 <Grid container display="flex" alignItems="center">
@@ -60,7 +103,7 @@ const ClinicAddress = () => {
             <TableStyleTwo>
                 <Box width="100%" height="30vh">
                     <DataGrid
-                        rows={nbNO}
+                        rows={clinicAddress}
                         columns={columns}
                         getRowId={row => row._id}
                         columnHeaderHeight={40}

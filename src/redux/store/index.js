@@ -7,6 +7,9 @@ import GetDoctorSpecialityReducer from '../slice/GetDoctorSpecialitySlice';
 import GetZoneReducer from '../slice/GetZoneSlice'
 import  GetQualificationReducer  from '../slice/GetQualificationSlice';
 import GetTypeReducer from '../slice/GetTypeSlice';
+import GetDoctorCategoryReducer from '../slice/GetDoctorCategorySlice';
+import GetEmployeeReducer from '../slice/GetEmployeeSlice'
+import GetDoctorReducer from '../slice/GetDoctorSlice';
 
 const store = configureStore({
   reducer: {
@@ -18,6 +21,9 @@ const store = configureStore({
     getZone: GetZoneReducer,
     getQualification: GetQualificationReducer,
     getType: GetTypeReducer,
+    getDoctorCategory: GetDoctorCategoryReducer,
+    getEmployee: GetEmployeeReducer,
+    getDoctor: GetDoctorReducer,
   },
 });
 
