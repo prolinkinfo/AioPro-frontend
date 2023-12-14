@@ -100,6 +100,8 @@ import Orders from '../pages/Sales/orders';
 import Ratemaster from '../pages/Sales/rateMaster';
 import Firms from '../pages/Sales/firms';
 import FirmMonthly from '../pages/Sales/firmMonthly';
+import LeaveReport from '../pages/Reports/LeaveReport';
+import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 
 // ----------------------------------------------------------------------
 
@@ -211,6 +213,8 @@ export default function Router() {
         { path: 'expenses/expensehead', element: <Expensehead /> },
         { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
         { path: 'reports', element: <ReportPage /> },
+        { path: 'reports/leave', element: <LeaveReport /> },
+        { path: 'reports/firmvisits', element: <VisitFirmReport /> },
         { path: 'sales/firms', element: <Firms /> },
         { path: 'sales/firmmonthly', element: <FirmMonthly /> },
         { path: 'sales/orders', element: <Orders /> },
