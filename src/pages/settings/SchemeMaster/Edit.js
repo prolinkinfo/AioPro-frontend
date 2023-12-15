@@ -130,7 +130,7 @@ const EditSchemeMaster = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
-                                    value={dayjs(formik.values.startDate).format('mm/dd/yyyy')}
+                                    value={dayjs(formik.values.startDate).format('YYYY-MM-DD')}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.startDate && Boolean(formik.errors.startDate)}
@@ -145,7 +145,7 @@ const EditSchemeMaster = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
-                                    value={dayjs(formik.values.endDate).format('mm/dd/yyyy')}
+                                    value={dayjs(formik.values.endDate).format('YYYY-MM-DD')}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.endDate && Boolean(formik.errors.endDate)}

@@ -1,35 +1,79 @@
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
+/* eslint-disable arrow-body-style */
+import { Autocomplete, Box, Button, Card, Checkbox, Container, FormControlLabel, FormGroup, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
-import CallObjectiveModel from './Add';
+import AddCallObjective from './Add';
+import EditCallObjective from './Edit';
+import DeleteModel from '../../../components/Deletemodle'
+import { apidelete, apiget } from '../../../service/api';
 
 const CallObjective = () => {
+
+  const [callObjectiveList, setCallObjectiveList] = useState([])
+  const [callObjectiveData, setCallObjectiveData] = useState('')
   const [isOpenAdd, setIsOpenAdd] = useState(false);
+  const [isOpenEdit, setIsOpenEdit] = useState(false)
+  const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+  const [id, setId] = useState('')
+  const [userAction, setUserAction] = useState(null)
 
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
+  const handleOpenEdit = () => setIsOpenEdit(true)
+  const handleCloseEdit = () => setIsOpenEdit(false)
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
   const columns = [
     {
+      field: 'action',
       headerName: 'Action',
       sortable: false,
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleClick = async (data) => {
-          console.log(data, 'data');
+          setCallObjectiveData(data);
+          handleOpenEdit();
+        };
+
+        const handleClickDeleteBtn = async (data) => {
+          setId(data?._id);
+          handleOpenDeleteModel();
         };
         return (
-          <Box onClick={handleClick}>
-            <Button>Edit</Button>
+          <Box>
+            <EditCallObjective isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCallObjectiveData={fetchCallObjectiveData} data={callObjectiveData} />
+            <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCallObjective} id={id} />
+
+            <Stack direction={"row"} spacing={2}>
+              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+              <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+            </Stack>
           </Box>
         );
       },
     },
-    { field: 'objectiveName', headerName: 'Objective Name', flex: 1},
-    { field: 'promptShow/hide', headerName: 'promptShow/hide', flex: 1},
+    { field: 'objectiveName', headerName: 'Objective Name', flex: 1 },
+    {
+      field: 'promptShow/hide',
+      headerName: 'promptShow/hide',
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Box>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox />}/>
+            </FormGroup>
+          </Box>
+        );
+      },
+    },
   ];
 
   const rows = [
@@ -43,9 +87,27 @@ const CallObjective = () => {
     },
   ];
 
+  const deleteCallObjective = async (id) => {
+    const result = await apidelete(`/api/callObjective/${id}`);
+    setUserAction(result)
+  }
+
+
+  const fetchCallObjectiveData = async () => {
+    const result = await apiget(`/api/callObjective`);
+    if (result && result.status === 200) {
+      setCallObjectiveList(result?.data?.result);
+    }
+  };
+
+  useEffect(() => {
+    fetchCallObjectiveData();
+  }, [userAction])
+
   return (
     <div>
-      <CallObjectiveModel isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={'hhhhhhh'} />
+      <AddCallObjective isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCallObjectiveData={fetchCallObjectiveData} />
+
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Call Objective</Typography>
@@ -60,7 +122,7 @@ const CallObjective = () => {
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid
-                rows={rows}
+                rows={callObjectiveList}
                 columns={columns}
                 initialState={{
                   pagination: {

@@ -14,30 +14,33 @@ import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
 import { apipost } from '../../../service/api';
 
-const CallObjectiveModel = (props) => {
+const AddCallObjective = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd, fetchTypeData } = props;
+  const { isOpenAdd, handleCloseAdd, fetchCallObjectiveData } = props;
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    activityName: yup.string().required('Activity Name is required'),
+    objectiveName: yup.string().required('Objective Name is required'),
+    abbrevation: yup.string().required('Abbrevation is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
-    activityName: '',
+    objectiveName: '',
+    abbrevation: '',
   };
 
-  const addType = async (values) => {
+  const addCallObjective = async (values) => {
     const pyload = {
-      activityName: values.activityName,
+      objectiveName: values.objectiveName,
+      abbrevation: values.abbrevation,
     };
-    const result = await apipost('/api/activityType', pyload);
+    const result = await apipost('/api/callObjective', pyload);
 
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      fetchTypeData();
+      fetchCallObjectiveData();
     }
   };
 
@@ -45,7 +48,7 @@ const CallObjectiveModel = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      addType(values);
+      addCallObjective(values);
     },
   });
 
@@ -59,7 +62,7 @@ const CallObjectiveModel = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add Activity Type Name </Typography>
+          <Typography variant="h6">Add Call Objective</Typography>
           <Typography>
             <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -69,19 +72,35 @@ const CallObjectiveModel = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Activity Type Name</FormLabel>
+                <FormLabel>Objective Name</FormLabel>
                 <TextField
-                  id="typeName"
-                  name="activityName"
+                  id="objectiveName"
+                  name="objectiveName"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Type Name"
-                  value={formik.values.activityName}
+                  placeholder="Enter Objective Name"
+                  value={formik.values.objectiveName}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.activityName && Boolean(formik.errors.activityName)}
-                  helperText={formik.touched.activityName && formik.errors.activityName}
+                  error={formik.touched.objectiveName && Boolean(formik.errors.objectiveName)}
+                  helperText={formik.touched.objectiveName && formik.errors.objectiveName}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Abbrevation</FormLabel>
+                <TextField
+                  id="abbrevation"
+                  name="abbrevation"
+                  label=""
+                  size="small"
+                  maxRows={10}
+                  placeholder="Enter Abbrevation"
+                  value={formik.values.abbrevation}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.abbrevation && Boolean(formik.errors.abbrevation)}
+                  helperText={formik.touched.abbrevation && formik.errors.abbrevation}
                 />
               </Grid>
             </Grid>
@@ -114,4 +133,4 @@ const CallObjectiveModel = (props) => {
   );
 };
 
-export default CallObjectiveModel;
+export default AddCallObjective;
