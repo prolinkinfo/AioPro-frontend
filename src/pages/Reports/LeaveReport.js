@@ -3,13 +3,19 @@ import { DataGrid, nbNO } from '@mui/x-data-grid';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
+import moment from 'moment';
+
 import TableStyle from '../../components/TableStyle';
 import Iconify from '../../components/iconify';
 import ActionBtn from '../../components/actionbtn/ActionBtn';
 import { fetchZoneData } from '../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../redux/slice/GetDivisionSlice';
+import { fetchEmployeeData } from '../../redux/slice/GetEmployeeSlice';
+import { apiget } from '../../service/api';
 
 const LeaveReport = () => {
+  const [leaveList, setLeaveList] = useState([]);
+  const [employe, setSemploye] = useState([]);
   const dispatch = useDispatch();
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
@@ -17,6 +23,7 @@ const LeaveReport = () => {
   useEffect(() => {
     dispatch(fetchZoneData());
     dispatch(fetchDivisionData());
+    dispatch(fetchEmployeeData());
   }, [dispatch]);
 
   const initialValues = {
@@ -24,7 +31,7 @@ const LeaveReport = () => {
     division: '',
     role: '',
     employees: '',
-    form: '',
+    from: '',
     to: '',
   };
 
@@ -34,52 +41,66 @@ const LeaveReport = () => {
     // validationSchema,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
+
+      const result = await apiget(
+        `/api/leave/report?startDate=${values.from}&endDate=${values.to}&zone=${values.zone}&division=${values.division}&role=${values.role}`
+      );
+      if (result && result.status === 200) {
+        setLeaveList(result?.data.result);
+      }
       console.log('222222', values);
     },
   });
 
   const columns = [
-    // {
-    //   headerName: 'Action',
-    //   sortable: false,
-    //   width: 120,
-    //   // eslint-disable-next-line arrow-body-style
-    //   renderCell: (params) => {
-    //     const handleClick = async (data) => {
-    //       console.log(data, 'data');
-    //     };
-    //     return (
-    //       <Box onClick={handleClick}>
-    //         <ActionBtn data={[{ name: 'View' }, { name: 'Edit' }]} />
-    //       </Box>
-    //     );
-    //   },
-    // },
-    { field: 'EmployeeCode', headerName: 'Employee Code', width: 130 },
+    {
+      field: 'EmployeeCode',
+      headerName: 'Employee Code',
+      renderCell: (params) => {
+        console.log('2222', params);
+        return <Box>{params?.row?.employees?.map((item) => item?.basicInformation?.employeesCode)} </Box>;
+      },
+      width: 130,
+    },
     {
       field: 'EmployeeName',
       headerName: 'Employee Name',
+      renderCell: (params) => {
+        return <Box>{params?.row?.employees?.map((item) => item?.basicInformation?.employeesName)} </Box>;
+      },
       width: 180,
     },
     {
       field: 'department',
       headerName: 'Department/Division',
+      renderCell: (params) => {
+        return <Box>{params?.row?.employees?.map((item) => item?.contactInformation?.division)} </Box>;
+      },
       width: 170,
     },
     {
-      field: 'type',
+      field: 'leaveType',
       headerName: 'Leave Type',
+      renderCell: (params) => {
+        return <Box>{params?.row?.leaveType} </Box>;
+      },
       width: 150,
     },
 
     {
-      field: 'Fromdate',
+      field: 'leaveStartDate',
       headerName: 'From date',
+      renderCell: (params) => {
+        return <Box>{moment(params?.row?.leaveStartDate).format('MM-DD-YYYY')} </Box>;
+      },
       width: 150,
     },
     {
-      field: 'Todate',
+      field: 'leaveEndDate',
       headerName: 'To date',
+      renderCell: (params) => {
+        return <Box>{moment(params?.row?.leaveEndDate).format('MM-DD-YYYY')} </Box>;
+      },
       width: 150,
     },
 
@@ -89,13 +110,19 @@ const LeaveReport = () => {
       width: 180,
     },
     {
-      field: 'Leavecount',
+      field: 'dayOfLeave',
       headerName: 'Leave count',
+      renderCell: (params) => {
+        return <Box>{params?.row?.dayOfLeave} </Box>;
+      },
       width: 120,
     },
     {
       field: 'status',
       headerName: 'Status',
+      renderCell: (params) => {
+        return <Box>{params?.row?.satatus} </Box>;
+      },
       width: 120,
     },
   ];
@@ -135,23 +162,6 @@ const LeaveReport = () => {
       Leavecount: '1',
     },
   ];
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-  ];
 
   const StatusList = [{ label: 'Approved' }, { label: 'Pending' }, { label: 'Reject' }, { label: 'Cancelled' }];
   const RoleList = [
@@ -159,6 +169,18 @@ const LeaveReport = () => {
     { label: 'Area Business Manager (ABM)', value: 'ABM' },
     { label: 'Businee  Develpement  Executive (BDE)', value: 'BDE' },
   ];
+
+  async function fetchdata() {
+    const result = await apiget('/api/employees');
+    if (result && result.status === 200) {
+      setSemploye(result?.data);
+      console.log('result?.data', result?.data);
+    }
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
   return (
     <div>
       <Container maxWidth="xl" style={{ height: '72vh', paddingTop: '15px' }}>
@@ -173,7 +195,7 @@ const LeaveReport = () => {
                 name="zone"
                 options={zoneList}
                 value={zoneList.find((zone) => zone.zoneName === formik.values.zone) || null}
-                onChange={(e, value) => formik.setFieldValue('zone', value ? value._id : '')}
+                onChange={(e, value) => formik.setFieldValue('zone', value ? value.zoneName : '')}
                 getOptionLabel={({ zoneName }) => zoneName}
                 fullWidth
                 size="small"
@@ -185,7 +207,7 @@ const LeaveReport = () => {
                 name="division"
                 options={divisionList}
                 value={divisionList.find((item) => item.divisionName === formik.values.division) || null}
-                onChange={(e, value) => formik.setFieldValue('division', value ? value._id : '')}
+                onChange={(e, value) => formik.setFieldValue('division', value ? value.divisionName : '')}
                 getOptionLabel={({ divisionName }) => divisionName}
                 fullWidth
                 size="small"
@@ -210,8 +232,15 @@ const LeaveReport = () => {
                 disablePortal
                 id="combo-box-demo"
                 fullWidth
-                name="employee"
-                options={top100Films}
+                name="employees"
+                options={employe}
+                value={
+                  employe?.find((item) => item?.basicInformation.employeesName === formik.values?.employees) || null
+                }
+                onChange={(e, value) =>
+                  formik.setFieldValue('employees', value ? value.basicInformation.employeesName : '')
+                }
+                getOptionLabel={(data) => data?.basicInformation?.employeesName}
                 size="small"
                 renderInput={(params) => (
                   <TextField {...params} placeholder="All Employee" style={{ fontSize: '15px' }} />
@@ -234,20 +263,23 @@ const LeaveReport = () => {
                 name="from"
                 type="date"
                 size="small"
-                label="From Date"
+                // label="From Date"
                 variant="outlined"
                 value={formik.values.from}
                 onChange={formik.handleChange}
                 fullWidth
               />
+
               <TextField
                 name="to"
                 type="date"
                 size="small"
-                label="To Date"
                 value={formik.values.to}
                 onChange={formik.handleChange}
                 fullWidth
+                InputLabelProps={{ shrink: true, style: { display: 'none' } }}
+                InputProps={{ placeholder: 'To Date' }}
+                // label="To Data"
               />
 
               <Button variant="contained" onClick={formik.handleSubmit}>
@@ -255,19 +287,25 @@ const LeaveReport = () => {
               </Button>
             </Stack>
 
-            <Card style={{ height: '72vh' }}>
-              <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
-                  },
-                }}
-                pageSizeOptions={[5, 10]}
-                // getRowId={(row) => row._id}
-              />
-            </Card>
+            {leaveList?.length > 0 ? (
+              <Card style={{ height: '72vh' }}>
+                <DataGrid
+                  rows={leaveList}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  getRowId={(row) => row._id}
+                />
+              </Card>
+            ) : (
+              <Typography variant="h6" sx={{ marginTop: '15px', textAlign: 'center' }}>
+                Please select the parameters to generate report.
+              </Typography>
+            )}
           </Box>
         </TableStyle>
       </Container>

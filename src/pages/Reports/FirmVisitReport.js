@@ -8,8 +8,10 @@ import Iconify from '../../components/iconify';
 import ActionBtn from '../../components/actionbtn/ActionBtn';
 import { fetchZoneData } from '../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../redux/slice/GetDivisionSlice';
+import { apiget } from '../../service/api';
 
 const VisitFirmReport = () => {
+  const [farmList, setFarmList] = useState([]);
   const dispatch = useDispatch();
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
@@ -34,7 +36,12 @@ const VisitFirmReport = () => {
     // validationSchema,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
-      console.log('222222', values);
+      const result = await apiget(
+        `/api/leave/report?startDate=${values.from}&endDate=${values.to}&zone=${values.zone}&division=${values.division}&role=${values.role}`
+      );
+      if (result && result.status === 200) {
+        setFarmList(result?.data.result);
+      }
     },
   });
 
@@ -177,39 +184,12 @@ const VisitFirmReport = () => {
                 name="zone"
                 options={zoneList}
                 value={zoneList.find((zone) => zone.zoneName === formik.values.zone) || null}
-                onChange={(e, value) => formik.setFieldValue('zone', value ? value._id : '')}
+                onChange={(e, value) => formik.setFieldValue('zone', value ? value.zoneName : '')}
                 getOptionLabel={({ zoneName }) => zoneName}
                 fullWidth
                 size="small"
                 renderInput={(params) => <TextField {...params} placeholder="Select Zone" />}
               />
-
-              {/* <Autocomplete
-                disablePortal
-                name="division"
-                options={divisionList}
-                value={divisionList.find((item) => item.divisionName === formik.values.division) || null}
-                onChange={(e, value) => formik.setFieldValue('division', value ? value._id : '')}
-                getOptionLabel={({ divisionName }) => divisionName}
-                fullWidth
-                size="small"
-                renderInput={(params) => <TextField {...params} placeholder="Select Division" />}
-              /> */}
-
-              {/* <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                fullWidth
-                options={RoleList}
-                name="role"
-                size="small"
-                value={RoleList.find((item) => item.label === formik.values.role)}
-                onChange={(e, value) => formik.setFieldValue('role', value?.value || null)}
-                getOptionLabel={({ label }) => label}
-                renderInput={(params) => (
-                  <TextField {...params} placeholder="Employee role" style={{ fontSize: '15px' }} />
-                )}
-              /> */}
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
@@ -259,6 +239,9 @@ const VisitFirmReport = () => {
                 Go
               </Button>
             </Stack>
+
+
+
 
             <Card style={{ height: '72vh' }}>
               <DataGrid

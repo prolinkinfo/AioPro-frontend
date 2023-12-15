@@ -86,13 +86,13 @@ const AddEmployees = () => {
       .matches(/^[0-9]{10}$/, 'Invalid mobile number')
       .required('Primary contact is required'),
     alternateContact: Yup.string().matches(/^[0-9]{10}$/, 'Invalid mobile number'),
-    email: Yup.string().email('Invalid email address'),
-    // country: Yup.string().required('Country is required'),
-    // state: Yup.string().required('State is required'),
-    // hq: Yup.string().required('Headquarters is required'),
+    email: Yup.string().email('Invalid email address').required('Employee email address'),
+    country: Yup.string().required('Country is required'),
+    state: Yup.string().required('State is required'),
+    hq: Yup.string().required('Headquarters is required'),
     // multipleHq: Yup.string(),
-    // division: Yup.string().required('Division is required'),
-    // zone: Yup.string().required('Zone is required'),
+    division: Yup.string().required('Division is required'),
+    zone: Yup.string().required('Zone is required'),
     homeLocation: Yup.string().required('Home location is required'),
     permanentLoction: Yup.string().required('Permanent location is required'),
     pincode: Yup.string().required('Pincode is required'),
@@ -582,7 +582,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={country.find((item) => item.countryName === formik.values.country) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.country :'')}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.countryName :'')}
                   getOptionLabel={({ countryName }) => countryName}
                   renderInput={(params) => (
                     <TextField
@@ -604,7 +604,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={state.find((item) => item.stateName === formik.values.state) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.stateName :'')}
+                  onChange={(e, value) => formik.setFieldValue('state', value ? value.stateName :'')}
                   getOptionLabel={({ stateName }) => stateName}
                   renderInput={(params) => (
                     <TextField
@@ -766,7 +766,7 @@ const AddEmployees = () => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="Select Zone"
+                      placeholder="Select Additional Division"
                       error={formik.touched.additionalDivision && Boolean(formik.errors.additionalDivision)}
                       helperText={formik.touched.additionalDivision && formik.errors.additionalDivision}
                     />
@@ -1361,7 +1361,7 @@ const AddEmployees = () => {
             <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'} style={{ marginTop: '15px' }}>
               <Stack direction={'row'} spacing={2}>
                 <Button variant="contained" onClick={formik.handleSubmit}>
-                  Add Doctor
+                  Add Employee
                 </Button>
                 <Button variant="outlined" color="error">
                   Cancle
