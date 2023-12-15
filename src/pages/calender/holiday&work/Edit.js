@@ -19,20 +19,14 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { useTheme } from '@emotion/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { apipost } from '../../../service/api';
+import { apipost, apiput } from '../../../service/api';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 
-const zoneList = [
-    "mp",
-    "gj"
-]
 
 
+const Edit = (props) => {
+    const { isOpenEdit, handleCloseEdit, fetchHolidayData,data } = props;
 
-const Add = (props) => {
-    const { isOpenAdd, handleCloseAdd, fetchHolidayData } = props;
-
-    const [allUser, setAllUser] = useState([]);
     const { id } = JSON.parse(localStorage.getItem('user'));
     const dispatch = useDispatch()
     const zoneList = useSelector((state) => state?.getZone?.data)
@@ -45,23 +39,24 @@ const Add = (props) => {
     });
 
     const initialValues = {
-        zone: '',
-        holidayDate: '',
-        holidayName: '',
+        zone: data?.zone,
+        holidayDate: data?.holidayDate,
+        holidayName: data?.holidayName,
         createdBy: id,
     };
 
 
-    const addHoliday = async (values) => {
+    const editHoliday = async (values) => {
         const pyload = {
+            _id:data?._id,
             zone: values.zone,
             holidayDate: values.holidayDate,
             holidayName: values.holidayName,
             createdBy: values.createdBy
         }
-        const result = await apipost('/api/holidaycalendar', pyload)
+        const result = await apiput('/api/holidaycalendar', pyload)
         if (result && result.status === 200) {
-            handleCloseAdd()
+            handleCloseEdit()
             fetchHolidayData()
         }
     }
@@ -71,9 +66,10 @@ const Add = (props) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values, { resetForm }) => {
             resetForm();
-            addHoliday(values)
+            editHoliday(values)
         },
     });
 
@@ -83,7 +79,7 @@ const Add = (props) => {
 
     return (
         <div>
-            <Dialog open={isOpenAdd} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+            <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
                 <DialogTitle
                     id="scroll-dialog-title"
                     style={{
@@ -91,9 +87,9 @@ const Add = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Holiday </Typography>
+                    <Typography variant="h6">Edit Holiday </Typography>
                     <Typography>
-                        <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
+                        <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
                 </DialogTitle>
 
@@ -109,6 +105,7 @@ const Add = (props) => {
                                             formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
                                         }}
                                         fullWidth
+                                        disabled
                                         options={zoneList}
                                         value={zoneList.find(zone => zone.zoneName === formik.values.zone) || null}
                                         getOptionLabel={(zone) => zone?.zoneName}
@@ -129,10 +126,10 @@ const Add = (props) => {
                                     <TextField
                                         id="holidayDate"
                                         name="holidayDate"
-                                        label=""
+                                        disabled
                                         type='date'
                                         size="small"
-                                        value={formik.values.holidayDate}
+                                        value={dayjs(formik.values.holidayDate).format("YYYY-MM-DD")}
                                         onChange={formik.handleChange}
                                         fullWidth
                                         error={formik.touched.holidayDate && Boolean(formik.errors.holidayDate)}
@@ -173,7 +170,7 @@ const Add = (props) => {
                         style={{ textTransform: 'capitalize' }}
                         onClick={() => {
                             formik.resetForm();
-                            handleCloseAdd();
+                            handleCloseEdit();
                         }}
                         color="error"
                     >
@@ -185,4 +182,4 @@ const Add = (props) => {
     );
 };
 
-export default Add;
+export default Edit;

@@ -103,6 +103,8 @@ import Firms from '../pages/Sales/firms';
 import FirmMonthly from '../pages/Sales/firmMonthly';
 import LeaveReport from '../pages/Reports/LeaveReport';
 import VisitFirmReport from '../pages/Reports/FirmVisitReport';
+import VisitCounter from '../pages/settings/VisitCounter';
+import ChangePassword from '../pages/settings/ChangePassword'
 
 // ----------------------------------------------------------------------
 
@@ -205,9 +207,11 @@ export default function Router() {
         { path: 'setting/productSampleDetails', element: <ProductSample /> },
         { path: 'setting/SampleCollectionCenter', element: <SampleCollectionCenter /> },
         { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
+        { path: 'setting/visitCounter', element: <VisitCounter /> },
+        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
+        { path: 'setting/changePassword', element: <ChangePassword /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
-        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
         { path: 'expenses/allowance', element: <Allowance /> },
         { path: 'expenses/expenses', element: <Expenses /> },
         { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },

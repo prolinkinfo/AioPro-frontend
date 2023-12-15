@@ -311,7 +311,7 @@ export const adminConfig = [
           },
           {
             title: 'Visit Counter',
-            path: `/${userRole}/dashboard/setting/`,
+            path: `/${userRole}/dashboard/setting/visitCounter`,
           },
           {
             title: 'Work Agenda',
@@ -333,7 +333,7 @@ export const adminConfig = [
           },
           {
             title: 'Change Password',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/changePassword`,
           },
           {
             title: 'General Settings',
@@ -347,7 +347,12 @@ export const adminConfig = [
       },
       {
         title: 'Company Settings',
-        path: `/${userRole}/dashboard`,
+        subLink: [
+          {
+            title: 'Change Password',
+            path: `/${userRole}/dashboard/setting/changePassword`,
+          },
+        ],
       },
       {
         title: 'Data Settings',
