@@ -1,30 +1,67 @@
 import { useEffect, useState } from 'react';
 import { Card, Stack, Button, Container, Typography, Box, TextField, Autocomplete, Grid } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarContainer, nbNO } from '@mui/x-data-grid';
-import { DeleteOutline, Edit } from '@mui/icons-material';
+import { DeleteOutline } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
 import MapIcon from '@mui/icons-material/Map';
 import moment from 'moment';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import Iconify from '../../../components/iconify';
 import TableStyle from '../../../components/TableStyle';
 import AddHoliday from './Add'
-import { apiget } from '../../../service/api';
+import Edit from './Edit';
+import { apidelete, apiget } from '../../../service/api';
+import DeleteModel from '../../../components/Deletemodle'
 
 // ----------------------------------------------------------------------
 
 const Holiday = () => {
     const [holidayList, setHolidayList] = useState([])
-    const [isOpen, setIsOpen] = useState(false);
-    const { id } = JSON.parse(localStorage.getItem('user'));
 
-    const handleOpen = () => setIsOpen(true);
-    const handleClose = () => setIsOpen(false);
+    const [holidayData, setHolidayData] = useState('')
+    const [isOpenAdd, setIsOpenAdd] = useState(false);
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [id, setId] = useState('')
+    const [userAction, setUserAction] = useState(null)
+  
+    const handleOpenAdd = () => setIsOpenAdd(true);
+    const handleCloseAdd = () => setIsOpenAdd(false);
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
+    const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const columns = [
         {
-            // field: 'doctorName',
+            field: 'action',
             headerName: 'Action',
-            width: 150
+            sortable: false,
+            flex: 1,
+            // eslint-disable-next-line arrow-body-style
+            renderCell: (params) => {
+                const handleClick = async (data) => {
+                    setHolidayData(data);
+                    handleOpenEdit();
+                };
+
+                const handleClickDeleteBtn = async (data) => {
+                    setId(data?._id);
+                    handleOpenDeleteModel();
+                };
+                return (
+                    <Box>
+                        <Edit isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHolidayData={fetchHolidayData} data={holidayData} />
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteHolidayData} id={id} />
+
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        </Stack>
+                    </Box>
+                );
+            },
         },
         {
             field: 'zone',
@@ -48,11 +85,7 @@ const Holiday = () => {
         },
     ];
 
-    const row = [
-        {
-            id: 1, zone: "gujrat", date: "14/02/2003", occasion: "rja"
-        }
-    ]
+
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
         { label: 'The Godfather', year: 1972 },
@@ -71,6 +104,12 @@ const Holiday = () => {
         { label: 'Pulp Fiction', year: 1994 },
     ]
 
+    const deleteHolidayData = async (id) => {
+        const result = await apidelete(`/api/holidaycalendar/${id}`);
+        setUserAction(result)
+      }
+    
+
     const fetchHolidayData = async () => {
         const result = await apiget(`/api/holidaycalendar`);
         if (result && result.status === 200) {
@@ -80,14 +119,14 @@ const Holiday = () => {
 
     useEffect(() => {
         fetchHolidayData();
-    }, []);
+    }, [userAction]);
 
     return (
         <>
-            <AddHoliday isOpen={isOpen} handleClose={handleClose} fetchHolidayData={fetchHolidayData}/>
+            <AddHoliday isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchHolidayData={fetchHolidayData} />
 
             <Stack direction="row" alignItems="center" justifyContent="end">
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                     Add new
                 </Button>
             </Stack>
@@ -100,7 +139,7 @@ const Holiday = () => {
                                 id="combo-box-demo"
                                 options={top100Films}
                                 size='small'
-                                renderInput={(params) => <TextField {...params} style={{ fontSize: "12px" }} placeholder='Select Zone'/>}
+                                renderInput={(params) => <TextField {...params} style={{ fontSize: "12px" }} placeholder='Select Zone' />}
                             />
                         </Grid>
                         <Grid item xs={12} sm={9} md={9} display={"flex"} justifyContent={"end"}>

@@ -55,7 +55,7 @@ export const adminConfig = [
   },
   {
     title: 'Calendar',
-    path: `/${userRole}/dashboard/user`,
+    // path: `/${userRole}/dashboard/user`,
     icon: icon('ic_calendar'),
     children: [
       {
@@ -70,7 +70,7 @@ export const adminConfig = [
   },
   {
     title: 'Expense',
-    path: `/${userRole}/dashboard/user`,
+    // path: `/${userRole}/dashboard/user`,
     icon: icon('ic_rupee'),
     children: [
       {
@@ -97,11 +97,13 @@ export const adminConfig = [
   },
   {
     title: 'Report',
+    // path: `/${userRole}/dashboard/user`,
     path: `/${userRole}/dashboard/reports`,
     icon: icon('ic_report'),
   },
   {
     title: 'Sales',
+    // path: `/${userRole}/dashboard/user`,
     icon: icon('ic_sales'),
     children: [
       {
@@ -132,7 +134,7 @@ export const adminConfig = [
   },
   {
     title: 'Files',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/files`,
     icon: icon('ic_files'),
   },
   {
@@ -309,7 +311,7 @@ export const adminConfig = [
           },
           {
             title: 'Visit Counter',
-            path: `/${userRole}/dashboard/setting/`,
+            path: `/${userRole}/dashboard/setting/visitCounter`,
           },
           {
             title: 'Work Agenda',
@@ -331,7 +333,7 @@ export const adminConfig = [
           },
           {
             title: 'Change Password',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/changePassword`,
           },
           {
             title: 'General Settings',
@@ -345,7 +347,12 @@ export const adminConfig = [
       },
       {
         title: 'Company Settings',
-        path: `/${userRole}/dashboard`,
+        subLink: [
+          {
+            title: 'Change Password',
+            path: `/${userRole}/dashboard/setting/changePassword`,
+          },
+        ],
       },
       {
         title: 'Data Settings',

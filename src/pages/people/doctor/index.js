@@ -47,7 +47,7 @@ const Doctor = () => {
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteDoctor} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small'> Deactive</Button>
+                            {/* <Button variant='outlined' startIcon={<EditIcon />} size='small'> Deactive</Button> */}
                             <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
                         </Stack>
                     </Box>

@@ -19,7 +19,12 @@ const EditDivision = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, data, fetchDivisionData } = props;
 
-    const [selectedFile, setSelectedFile] = React.useState(null);
+    const [selectedFile, setSelectedFile] = useState({
+        file: null,
+        imagePreview: null,
+    });
+
+    const img = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -28,14 +33,14 @@ const EditDivision = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        _id:data?._id,
+        _id: data?._id,
         divisionName: data?.divisionName,
-        appLogo: ''
+        appLogo: data?.appLogo
     };
 
     const editDivision = async (values) => {
         const data = new FormData()
-        data.append('_id',values?._id );
+        data.append('_id', values?._id);
         data.append('divisionName', values?.divisionName);
         data.append('appLogo', values?.appLogo);
         data.append('modifiedOn', new Date());
@@ -52,7 +57,7 @@ const EditDivision = (props) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
-        enableReinitialize:true,
+        enableReinitialize: true,
         onSubmit: async (values) => {
             editDivision(values)
         },
@@ -77,11 +82,11 @@ const EditDivision = (props) => {
         setSelectedFile('');
     };
 
-    useEffect(()=>{
-        if(data){
-            setSelectedFile(data?.appLogo)
-        }
-    },[])
+    console.log(data?.appLogo, "data?.appLogo")
+
+    useEffect(() => {
+        setSelectedFile(data?.appLogo)
+    }, [])
 
     return (
         <div>

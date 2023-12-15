@@ -68,7 +68,7 @@ const AddVisit = (props) => {
     const fetchDoctorList = async () => {
         const result = await apiget(`/api/doctor`);
         if (result && result.status === 200) {
-          setDoctorList(result?.data);
+          setDoctorList(result?.data?.data);
         }
       };
 
@@ -135,7 +135,7 @@ const AddVisit = (props) => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12}>
                                     <FormLabel>Doctor</FormLabel>
-                                    <Autocomplete
+                                    {/* <Autocomplete
                                         name="doctor"
                                         disablePortal
                                         options={doctorList}
@@ -154,7 +154,7 @@ const AddVisit = (props) => {
                                                 error={formik.touched.doctor && Boolean(formik.errors.doctor)}
                                                 helperText={formik.touched.doctor && formik.errors.doctor}
                                             />}
-                                    />
+                                    /> */}
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12}>
                                     <FormLabel>Employee</FormLabel>

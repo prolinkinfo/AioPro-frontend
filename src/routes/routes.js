@@ -93,6 +93,7 @@ import Expenses from '../pages/expendar/Expenses';
 import Daywiseexpenses from '../pages/expendar/Daywiseexpenses';
 import Expensehead from '../pages/expendar/Expensehead';
 import Standardfarechart from '../pages/expendar/Standardfarechart';
+import Files from '../pages/Files'
 import ReportPage from '../pages/Reports';
 import Target from '../pages/Sales/target';
 import SecondarySales from '../pages/Sales/secondarySales';
@@ -102,6 +103,8 @@ import Firms from '../pages/Sales/firms';
 import FirmMonthly from '../pages/Sales/firmMonthly';
 import LeaveReport from '../pages/Reports/LeaveReport';
 import VisitFirmReport from '../pages/Reports/FirmVisitReport';
+import VisitCounter from '../pages/settings/VisitCounter';
+import ChangePassword from '../pages/settings/ChangePassword'
 
 // ----------------------------------------------------------------------
 
@@ -204,14 +207,18 @@ export default function Router() {
         { path: 'setting/productSampleDetails', element: <ProductSample /> },
         { path: 'setting/SampleCollectionCenter', element: <SampleCollectionCenter /> },
         { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
+        { path: 'setting/visitCounter', element: <VisitCounter /> },
+        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
+        { path: 'setting/changePassword', element: <ChangePassword /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
-        { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
         { path: 'expenses/allowance', element: <Allowance /> },
         { path: 'expenses/expenses', element: <Expenses /> },
         { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },
         { path: 'expenses/expensehead', element: <Expensehead /> },
         { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
+        { path: 'files', element: <Files /> },
+
         { path: 'reports', element: <ReportPage /> },
         { path: 'reports/leave', element: <LeaveReport /> },
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },

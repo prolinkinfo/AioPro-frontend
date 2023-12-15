@@ -18,8 +18,7 @@ const Visit = () => {
             width: 120,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    console.log(data, "data")
+                const handleClick = async () => {
                 };
                 return (
                     <Box onClick={handleClick}>
@@ -62,14 +61,13 @@ const Visit = () => {
             headerName: 'Status',
             width: 90,
         },
-
-
     ];
 
     const rows = [
         { id: 1, visitId: '1001383', doctorId: '525', doctorName: 'T.k. Saikiya', clinicAddress: 'jai nagar Rd, Kamla Nehru Nagar, Yadav Colony, Jabalpur, Madhya Pradesh 482002, India', zone: 'Madhya Pradesh', city: 'Jabalpur', employeeName: 'Vaibhav Shrivastava', date: '20/11/2016', status: 'open' },
         { id: 2, visitId: '1001355', doctorId: '1650', doctorName: 'Sarita Singh', clinicAddress: 'Panna Khajuraho Rd, Satna, Madhya Pradesh 485001, India', zone: 'Madhya Pradesh', city: 'Satna', employeeName: 'Vikas Gautam', date: '20/11/2016', status: 'open' },
     ];
+
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
         { label: 'The Godfather', year: 1972 },
