@@ -105,6 +105,7 @@ import LeaveReport from '../pages/Reports/LeaveReport';
 import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 import VisitCounter from '../pages/settings/VisitCounter';
 import ChangePassword from '../pages/settings/ChangePassword'
+import VisitReport from '../pages/Reports/VisitReport';
 
 // ----------------------------------------------------------------------
 
@@ -187,7 +188,6 @@ export default function Router() {
         { path: 'setting/faqMaster', element: <FaqMaster /> },
         { path: 'setting/faqMaster/add', element: <FaqAdd /> },
 
-       
         { path: 'setting/faqAdd', element: <FaqAdd /> },
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
@@ -221,6 +221,7 @@ export default function Router() {
 
         { path: 'reports', element: <ReportPage /> },
         { path: 'reports/leave', element: <LeaveReport /> },
+        { path: 'reports/visit', element: <VisitReport /> },
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },
         { path: 'sales/firms', element: <Firms /> },
         { path: 'sales/firmmonthly', element: <FirmMonthly /> },

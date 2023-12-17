@@ -48,7 +48,6 @@ const LeaveReport = () => {
       if (result && result.status === 200) {
         setLeaveList(result?.data.result);
       }
-      console.log('222222', values);
     },
   });
 
@@ -127,41 +126,6 @@ const LeaveReport = () => {
     },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      EmployeeCode: '1001383',
-      doctorId: '525',
-      EmployeeName: 'T.k. Saikiya',
-      clinicAddress: 'jai nagar Rd, Kamla Nehru Nagar, Yadav Colony, Jabalpur, Madhya Pradesh 482002, India',
-      zone: 'Madhya Pradesh',
-      city: 'Jabalpur',
-      RespondBy: 'Vaibhav Shrivastava',
-      date: '14/12/2023',
-      Fromdate: '18/12/2023',
-      Todate: '19/12/2023',
-      status: 'Approved',
-      department: 'main',
-      type: 'multiple',
-      Leavecount: '2',
-    },
-    {
-      id: 2,
-      EmployeeCode: '1001384',
-      doctorId: '1650',
-      EmployeeName: 'Sarita Singh',
-      clinicAddress: 'Panna Khajuraho Rd, Satna, Madhya Pradesh 485001, India',
-      zone: 'Madhya Pradesh',
-      city: 'Satna',
-      RespondBy: 'Vikas Gautam',
-      Fromdate: '18/12/2023',
-      Todate: '18/12/2023',
-      department: 'main',
-      type: 'fullday',
-      status: 'Approved',
-      Leavecount: '1',
-    },
-  ];
 
   const StatusList = [{ label: 'Approved' }, { label: 'Pending' }, { label: 'Reject' }, { label: 'Cancelled' }];
   const RoleList = [
@@ -173,8 +137,7 @@ const LeaveReport = () => {
   async function fetchdata() {
     const result = await apiget('/api/employees');
     if (result && result.status === 200) {
-      setSemploye(result?.data);
-      console.log('result?.data', result?.data);
+      setSemploye(result?.data?.result);
     }
   }
   useEffect(() => {
@@ -235,7 +198,9 @@ const LeaveReport = () => {
                 name="employees"
                 options={employe}
                 value={
-                  employe?.find((item) => item?.basicInformation.employeesName === formik.values?.employees) || null
+                  (employe &&
+                    employe?.find((item) => item?.basicInformation?.employeesName === formik.values?.employees)) ||
+                  null
                 }
                 onChange={(e, value) =>
                   formik.setFieldValue('employees', value ? value.basicInformation.employeesName : '')
