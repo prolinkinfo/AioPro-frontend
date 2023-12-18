@@ -219,7 +219,7 @@ const VisitFirmReport = () => {
                 name="from"
                 type="date"
                 size="small"
-                label="From Date"
+                // label="From Date"
                 variant="outlined"
                 value={formik.values.from}
                 onChange={formik.handleChange}
@@ -229,7 +229,7 @@ const VisitFirmReport = () => {
                 name="to"
                 type="date"
                 size="small"
-                label="To Date"
+                // label="To Date"
                 value={formik.values.to}
                 onChange={formik.handleChange}
                 fullWidth
@@ -239,10 +239,6 @@ const VisitFirmReport = () => {
                 Go
               </Button>
             </Stack>
-
-
-
-
             <Card style={{ height: '72vh' }}>
               <DataGrid
                 rows={rows}

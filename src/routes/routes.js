@@ -106,6 +106,7 @@ import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 import VisitCounter from '../pages/settings/VisitCounter';
 import ChangePassword from '../pages/settings/ChangePassword'
 import VisitReport from '../pages/Reports/VisitReport';
+import AddFirms from '../pages/Sales/firms/Add';
 
 // ----------------------------------------------------------------------
 
@@ -224,6 +225,7 @@ export default function Router() {
         { path: 'reports/visit', element: <VisitReport /> },
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },
         { path: 'sales/firms', element: <Firms /> },
+        { path: 'sales/firms/add', element: <AddFirms /> },
         { path: 'sales/firmmonthly', element: <FirmMonthly /> },
         { path: 'sales/orders', element: <Orders /> },
         { path: 'sales/ratemaster', element: <Ratemaster /> },

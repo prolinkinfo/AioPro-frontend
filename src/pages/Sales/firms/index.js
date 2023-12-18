@@ -92,6 +92,8 @@ const Firms = () => {
     { label: 'Pulp Fiction', year: 1994 },
     { label: 'Pulp Fiction', year: 1994 },
   ];
+
+  const StatusList = [{ label: 'Approved',value:'approved' }, { label: 'Unapproved',value:'unapproved' }];
   return (
     <div>
       <Container maxWidth="xl">
@@ -99,7 +101,7 @@ const Firms = () => {
           <Typography variant="h4">Firms</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              <Link to={`/${userRole}/dashboard/people/doctor/add`} style={{ color: 'white', textDecoration: 'none' }}>
+              <Link to={`/${userRole}/dashboard/sales/firms/add`} style={{ color: 'white', textDecoration: 'none' }}>
                 Add Firm
               </Link>
             </Button>
@@ -118,9 +120,11 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  options={StatusList}
                   size="small"
                   fullWidth
+                  // value={StatusList.find((option) => option.value === formik.values.Language)}
+                  // onChange={(e, value) => formik.setFieldValue('status', value?.value || null)}
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select Status" style={{ fontSize: '12px' }} />
                   )}
@@ -198,13 +202,6 @@ const Firms = () => {
                   )}
                 />
               </Grid>
-
-              {/* <Grid item xs={12} sm={3} md={3}>
-                <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'end'} mb={2}>
-                  <TextField type="text" size="small" placeholder="Search" />
-                  <Button variant="contained">Go</Button>
-                </Stack>
-              </Grid> */}
             </Grid>
             <Card style={{ height: '72vh', marginTop: '10px' }}>
               <DataGrid
