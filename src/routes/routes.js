@@ -226,6 +226,7 @@ export default function Router() {
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },
         { path: 'sales/firms', element: <Firms /> },
         { path: 'sales/firms/add', element: <AddFirms /> },
+        { path: 'sales/firms/:id', element: <AddFirms /> },
         { path: 'sales/firmmonthly', element: <FirmMonthly /> },
         { path: 'sales/orders', element: <Orders /> },
         { path: 'sales/ratemaster', element: <Ratemaster /> },

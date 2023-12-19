@@ -13,200 +13,221 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Autocomplete, Box, Chip, FormControl, FormHelperText, FormLabel, MenuItem, Select } from '@mui/material';
-import { toast } from 'react-toastify';
-import dayjs from 'dayjs';
-import { useTheme } from '@emotion/react';
-import { apiget, apipost, addmeeting, getsingleuser, allusers } from '../../../service/api';
+import { apiget, apipost, allusers } from '../../../service/api';
 
-const Add = (props) => {
-    const { isOpen, handleClose, fetchOpd } = props;
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
+import { fetchfirmData } from '../../../redux/slice/GetFirmSlice';
 
-    const [allUser, setAllUser] = useState([]);
-    const { id } = JSON.parse(localStorage.getItem('user'));
+const VisitModel = (props) => {
+  const { isOpen, handleCloseView } = props;
+  const dispatch = useDispatch();
+  const [firmEmployee, setFirmEmployee] = useState(null);
+  const [firmType, setFirmType] = useState(null);
+  const [firms, setFirms] = useState(null);
 
-    // -----------  validationSchema
-    const validationSchema = yup.object({
-        date: yup.string().required('Date is required'),
-        location: yup.string().required('Location is required'),
-    });
+  const [allUser, setAllUser] = useState([]);
+  const { id } = JSON.parse(localStorage.getItem('user'));
 
-    const initialValues = {
-        date: '',
-        location: '',
-        doctors: [],
-        notes: '',
-        createdBy: id,
+  // -----------  validationSchema
+  const validationSchema = yup.object({
+    date: yup.string().required('Date is required'),
+    location: yup.string().required('Location is required'),
+  });
+
+  const initialValues = {
+    date: '',
+    location: '',
+    doctors: [],
+    notes: '',
+    createdBy: id,
+  };
+
+  const cityData = useSelector((state) => state?.getCity?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
+  const divisionList = useSelector((state) => state?.getDivision?.data);
+  const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
+  const employeeList = useSelector((state) => state?.getEmployee?.data);
+  const firmData = useSelector((state) => state?.geFirmType?.data);
+  const firm = useSelector((state) => state?.getFirm?.data);
+
+  useEffect(() => {
+    dispatch(fetchfirmData());
+    dispatch(fetchCityData());
+    dispatch(fetchZoneData());
+    dispatch(fetchDivisionData());
+    dispatch(fetchTypeData());
+    dispatch(fetchCategoryData());
+    dispatch(fetchEmployeeData());
+    dispatch(firmaTypeData());
+  }, []);
+
+  const addOpd = async (values) => {
+    const data = {
+      date: values.date,
+      location: values.location,
+      doctors: values.doctors,
+      notes: values.notes,
+      createdBy: values.createdBy,
     };
 
-    // add opd api
-    const addOpd = async (values) => {
-        const data = {
-            date: values.date,
-            location: values.location,
-            doctors: values.doctors,
-            notes: values.notes,
-            createdBy: values.createdBy
-        }
-
-        const result = await apipost('/api/opd', data);
-        if (result && result.status === 200) {
-            formik.resetForm();
-            handleClose();
-            fetchOpd();
-        }
-    };
-
-    // formik
-    const formik = useFormik({
-        initialValues,
-        validationSchema,
-        onSubmit: async (values, { resetForm }) => {
-            addOpd(values);
-            resetForm();
-        },
-    });
-
-    function capitalize(str) {
-        if (!str) return "";
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    const result = await apipost('/api/opd', data);
+    if (result && result.status === 200) {
+      formik.resetForm();
+      handleCloseView();
     }
+  };
 
-    async function fetchdata() {
-        const result = await allusers('/api/users');
-        if (result && result.status === 200) {
-            const filterRole = result.data.filter(user => user?.role === "Dr")
-            const names = filterRole.map(user => {
-                const firstName = capitalize(user?.firstName);
-                const lastName = capitalize(user?.lastName);
-                return `${firstName} ${lastName}`;
-            });
-            setAllUser(names)
-        }
+  // formik
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values, { resetForm }) => {
+      addOpd(values);
+      resetForm();
+    },
+  });
+
+  function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
+  async function fetchdata() {
+    const result = await allusers('/api/users');
+    if (result && result.status === 200) {
+      const filterRole = result.data.filter((user) => user?.role === 'Dr');
+      const names = filterRole.map((user) => {
+        const firstName = capitalize(user?.firstName);
+        const lastName = capitalize(user?.lastName);
+        return `${firstName} ${lastName}`;
+      });
+      setAllUser(names);
     }
-    useEffect(() => {
-        fetchdata()
-    }, [])
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
 
-    return (
-        <div>
-            <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
-                <DialogTitle
-                    id="scroll-dialog-title"
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <Typography variant="h6">Add Opd </Typography>
-                    <Typography>
-                        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
-                    </Typography>
-                </DialogTitle>
+  console.log('firm', firm);
+  return (
+    <div>
+      <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
+        <DialogTitle
+          id="scroll-dialog-title"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="h6">Add Visits</Typography>
+          <Typography>
+            <ClearIcon onClick={handleCloseView} style={{ cursor: 'pointer' }} />
+          </Typography>
+        </DialogTitle>
 
-                <DialogContent dividers>
-                    <form>
-                        <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-                            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-                                <Grid item xs={12} sm={6} md={6}>
-                                    <FormLabel>Date</FormLabel>
-                                    <TextField
-                                        name="date"
-                                        type={'datetime-local'}
-                                        size="small"
-                                        fullWidth
-                                        value={formik.values.date}
-                                        onChange={formik.handleChange}
-                                        error={formik.touched.date && Boolean(formik.errors.date)}
-                                        helperText={formik.touched.date && formik.errors.date}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={6}>
-                                    <FormLabel>Location</FormLabel>
-                                    <TextField
-                                        id="location"
-                                        name="location"
-                                        label=""
-                                        size="small"
-                                        value={formik.values.location}
-                                        onChange={formik.handleChange}
-                                        fullWidth
-                                        error={formik.touched.location && Boolean(formik.errors.location)}
-                                        helperText={formik.touched.location && formik.errors.location}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={12}>
-                                    <FormLabel>Doctors</FormLabel>
-                                    <FormControl fullWidth style={{ textTransform: "capitalize" }}>
-                                        <Autocomplete
-                                            multiple
-                                            size="small"
-                                            value={formik.values.doctors}
-                                            onChange={(event, newValue) => {
-                                                formik.setFieldValue('doctors', newValue);
-                                            }}
-                                            options={allUser}
-                                            getOptionLabel={(option) => option}
-                                            disableCloseOnSelect
-                                            style={{ textTransform: "capitalize" }}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    style={{ textTransform: "capitalize" }}
-                                                    error={formik.touched.doctors && Boolean(formik.errors.doctors)}
-                                                    helperText={formik.touched.doctors && formik.errors.doctors}
-                                                />
-                                            )}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={12}>
-                                    <FormLabel>Notes</FormLabel>
-                                    <TextField
-                                        id="notes"
-                                        name="notes"
-                                        label=""
-                                        size="small"
-                                        multiline
-                                        rows={4}
-                                        value={formik.values.notes}
-                                        onChange={formik.handleChange}
-                                        fullWidth
-                                        error={formik.touched.notes && Boolean(formik.errors.notes)}
-                                        helperText={formik.touched.notes && formik.errors.notes}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </DialogContentText>
-                    </form>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        onClick={formik.handleSubmit}
-                        style={{ textTransform: 'capitalize' }}
-                        color="secondary"
-                    >
-                        Save
-                    </Button>
-                    <Button
-                        type="reset"
-                        variant="outlined"
-                        style={{ textTransform: 'capitalize' }}
-                        onClick={() => {
-                            formik.resetForm();
-                            handleClose();
-                        }}
-                        color="error"
-                    >
-                        Cancle
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
+        <DialogContent dividers>
+          <form>
+            <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
+              <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+                <Grid item xs={12} sm={12} md={12}>
+                  <Autocomplete
+                    size="small"
+                    name="firmType"
+                    onChange={(event, newValue) => setFirmType(newValue?.firmType)}
+                    fullWidth
+                    options={firmData}
+                    value={firmData.find((item) => item.firmType === firmType) || null}
+                    getOptionLabel={(firm) => firm?.firmType}
+                    // style={{ textTransform: 'capitalize' }}
+                    renderInput={(params) => (
+                      <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Firm Type" />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12} md={12}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    onChange={(event, newValue) => setFirmEmployee(newValue?.basicInformation?.employeesName)}
+                    options={employeeList}
+                    value={employeeList.find((item) => item.basicInformation?.employeesName === firmEmployee) || null}
+                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                    size="small"
+                    fullWidth
+                    renderInput={(params) => (
+                      <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12} md={12}>
+                  <Autocomplete
+                    size="small"
+                    name="firms"
+                    onChange={(event, newValue) => setFirms(newValue?.firmName)}
+                    fullWidth
+                    options={firm}
+                    value={firm.find((item) => item.firmName === firms) || null}
+                    getOptionLabel={(firm) => firm?.firmName}
+                    // style={{ textTransform: 'capitalize' }}
+                    renderInput={(params) => (
+                      <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Firm" />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>Visit Date</FormLabel>
+                  <TextField
+                    name="date"
+                    type={'datetime-local'}
+                    size="small"
+                    fullWidth
+                    value={formik.values.date}
+                    onChange={formik.handleChange}
+                    error={formik.touched.date && Boolean(formik.errors.date)}
+                    helperText={formik.touched.date && formik.errors.date}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContentText>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={formik.handleSubmit}
+            style={{ textTransform: 'capitalize' }}
+            color="secondary"
+          >
+            Save
+          </Button>
+          <Button
+            type="reset"
+            variant="outlined"
+            style={{ textTransform: 'capitalize' }}
+            onClick={() => {
+              formik.resetForm();
+              handleCloseView();
+            }}
+            color="error"
+          >
+            Cancle
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
 
-export default Add;
+export default VisitModel;

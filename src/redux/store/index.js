@@ -11,6 +11,7 @@ import GetDoctorCategoryReducer from '../slice/GetDoctorCategorySlice';
 import GetEmployeeReducer from '../slice/GetEmployeeSlice'
 import GetDoctorReducer from '../slice/GetDoctorSlice';
 import GetFirmTypeReducer from '../slice/GetFirmTypesSlice'
+import GetFirmReducer from '../slice/GetFirmSlice'
 
 const store = configureStore({
   reducer: {
@@ -25,7 +26,8 @@ const store = configureStore({
     getDoctorCategory: GetDoctorCategoryReducer,
     getEmployee: GetEmployeeReducer,
     getDoctor: GetDoctorReducer,
-    geFirmType:GetFirmTypeReducer
+    geFirmType:GetFirmTypeReducer,
+    getFirm:GetFirmReducer
   },
 });
 

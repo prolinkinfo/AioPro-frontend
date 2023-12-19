@@ -30,20 +30,55 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useSelector, useDispatch } from 'react-redux';
 
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import { apidelete, apiget } from '../../../service/api';
+// redux api fatch
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
+import VisitModel from './VisitModel';
 
 const Firms = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [firmsList, setFirmsList] = useState([]);
   const [openModel, setOpenModel] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [firmId, setFirmId] = useState(null);
+  const [firmType, setFirmType] = useState(null);
+  const [firmCity, setFirmCity] = useState(null);
+  const [firmZone, setFirmZone] = useState(null);
+  const [firmDivision, setFirmDivision] = useState(null);
+  const [firmEmployee, setFirmEmployee] = useState(null);
+  const [firmManager, setFirmManager] = useState(null);
+  const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const open = Boolean(anchorEl);
+
+  const cityData = useSelector((state) => state?.getCity?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
+  const divisionList = useSelector((state) => state?.getDivision?.data);
+  const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
+  const employeeList = useSelector((state) => state?.getEmployee?.data);
+  const firmData = useSelector((state) => state?.geFirmType?.data);
+
+  useEffect(() => {
+    dispatch(fetchCityData());
+    dispatch(fetchZoneData());
+    dispatch(fetchDivisionData());
+    dispatch(fetchTypeData());
+    dispatch(fetchCategoryData());
+    dispatch(fetchEmployeeData());
+    dispatch(firmaTypeData());
+  }, []);
 
   const handleClickOpenModel = (value) => {
     // console.log("value",value)
@@ -99,8 +134,13 @@ const Firms = () => {
                 'aria-labelledby': 'basic-button',
               }}
             >
-              <MenuItem onClick={() => handleClose()}>
-                <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
+              <MenuItem>
+                <Link
+                  to={`/${userRole}/dashboard/sales/firms/${params?.row?._id}`}
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
+                  <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
+                </Link>
               </MenuItem>
               <MenuItem onClick={() => handleClose()}>
                 <VerticalAlignBottomIcon fontSize="10" />
@@ -127,7 +167,7 @@ const Firms = () => {
       width: 130,
     },
     { field: 'firmCode', headerName: 'Firm Code', width: 130 },
-    { field: 'firmName', headerName: 'Firm Name', width: 170 },
+    { field: 'firmName', headerName: 'Firm Name', width: 200 },
     { field: 'firmType', headerName: 'Firm Type', width: 120 },
     { field: 'contactNumber', headerName: 'Contact Number', width: 130 },
     { field: 'contactPersonName', headerName: 'Contact Person Name', width: 130 },
@@ -156,7 +196,27 @@ const Firms = () => {
     { field: 'drugLicenseNumber', headerName: 'Drug License Number', width: 130 },
     { field: 'foodLicenseNumber', headerName: 'Food License Number', width: 130 },
 
-    { field: 'status', headerName: 'Status', width: 130 },
+    {
+      field: 'status',
+      headerName: 'Status',
+      renderCell: (params) => {
+        return (
+          <Box>
+            <Button
+              variant="outlined"
+              style={{
+                color: params.value === 'Approved' ? '#22C55E' : '#B61D18',
+                background: params.value === 'Approved' ? '#22c55e29' : '#ff563029',
+                border: 'none',
+              }}
+            >
+              {params.value}
+            </Button>
+          </Box>
+        );
+      },
+      width: 130,
+    },
   ];
 
   const top100Films = [
@@ -181,7 +241,6 @@ const Firms = () => {
     const result = await apiget('/api/firm');
     if (result && result.status === 200) {
       setFirmsList(result?.data?.result);
-      console.log('result?.data', result?.data?.result);
     }
   }
   useEffect(() => {
@@ -192,8 +251,13 @@ const Firms = () => {
     { label: 'Approved', value: 'approved' },
     { label: 'Unapproved', value: 'unapproved' },
   ];
+
+  const handleOpenView = () => setIsOpen(true);
+  const handleCloseView = () => setIsOpen(false);
+
   return (
     <div>
+      <VisitModel isOpen={isOpen} handleCloseView={handleCloseView}/>
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Firms</Typography>
@@ -203,7 +267,7 @@ const Firms = () => {
                 Add Firm
               </Link>
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenView}>
               Add Visit
             </Button>
             <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
@@ -230,21 +294,27 @@ const Firms = () => {
               </Grid>
               <Grid item xs={12} sm={2} md={1.7}>
                 <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={top100Films}
                   size="small"
+                  name="firmType"
+                  onChange={(event, newValue) => setFirmType(newValue?.firmType)}
                   fullWidth
+                  options={firmData}
+                  value={firmData.find((item) => item.firmType === firmType) || null}
+                  getOptionLabel={(firm) => firm?.firmType}
+                  // style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
-                    <TextField {...params} placeholder="Select Firm Type" style={{ fontSize: '12px' }} />
+                    <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Firm Type" />
                   )}
                 />
               </Grid>
               <Grid item xs={12} sm={2} md={1.7}>
                 <Autocomplete
                   disablePortal
+                  onChange={(event, newValue) => setFirmDivision(newValue?.divisionName)}
                   id="combo-box-demo"
-                  options={top100Films}
+                  options={divisionList}
+                  value={divisionList.find((item) => item.divisionName === firmDivision) || null}
+                  getOptionLabel={({ divisionName }) => divisionName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -256,7 +326,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmZone(newValue?.zoneName)}
+                  options={zoneList}
+                  value={zoneList.find((item) => item.zoneName === firmZone) || null}
+                  getOptionLabel={({ zoneName }) => zoneName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -268,7 +341,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmCity(newValue?.cityName)}
+                  options={cityData}
+                  value={cityData.find((item) => item.cityName === firmCity) || null}
+                  getOptionLabel={({ cityName }) => cityName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -280,7 +356,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmEmployee(newValue?.basicInformation?.employeesName)}
+                  options={employeeList}
+                  value={employeeList.find((item) => item.basicInformation?.employeesName === firmEmployee) || null}
+                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -292,7 +371,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmManager(newValue?.basicInformation?.employeesName)}
+                  options={employeeList}
+                  value={employeeList.find((item) => item.basicInformation?.employeesName === firmManager) || null}
+                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (

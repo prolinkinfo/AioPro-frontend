@@ -21,9 +21,9 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { apiget, apipost } from '../../../service/api';
+import { apiget, apipost, apiput } from '../../../service/api';
 import Iconify from '../../../components/iconify';
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
 import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
@@ -36,41 +36,31 @@ import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-const top100Films = [
-  { label: 'The Shawshank Redemption', year: 1994 },
-  { label: 'The Godfather', year: 1972 },
-  { label: 'The Godfather: Part II', year: 1974 },
-  { label: 'The Dark Knight', year: 2008 },
-  { label: '12 Angry Men', year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: 'Pulp Fiction', year: 1994 },
-];
-
 const AddFirms = () => {
   const [cityList, setCityList] = useState([]);
+  const [firmsList, setFirmsList] = useState([]);
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const cityData = useSelector((state) => state?.getCity?.data);
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
   const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
   const employeeList = useSelector((state) => state?.getEmployee?.data);
   const firmData = useSelector((state) => state?.geFirmType?.data);
+
+  const params = useParams();
+
+  async function fetchdata() {
+    const result = await apiget(`/api/firm/${params?.id}`);
+    if (result && result.status === 200) {
+      setFirmsList(result?.data?.result);
+    }
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -88,39 +78,38 @@ const AddFirms = () => {
   });
 
   const initialValues = {
-    firmName: '',
-    firmType: '',
-    date: '',
-    firmCode: '',
-    contactPersonName: '',
-    contactNumber: '',
-    email: '',
-    category: '',
-    assignedTo: '',
-    assignedFirmEmail: '',
-    employeeAssigned: '',
-    firstLevelManager: '',
-    secondLevelManager: '',
-    thirdLevelManager: '',
-    dateOfBirth: '',
-    city: '',
-    division: '',
-    zone: '',
-    address: '',
-    gstNumber: '',
-    drugLicenseNumber: '',
-    panNumber: '',
-    foodLicenseNumber: '',
-    pincode: '',
-    bankname: '',
-    branchName: '',
-    accountNumber: '',
+    firmName: firmsList?.firmName || '',
+    firmType: firmsList?.firmType || '',
+    date: firmsList?.date || '',
+    firmCode: firmsList?.firmCode || '',
+    contactPersonName: firmsList?.contactPersonName || '',
+    contactNumber: firmsList?.contactNumber || '',
+    email: firmsList?.email || '',
+    category: firmsList?.category || '',
+    assignedTo: firmsList?.assignedTo || '',
+    assignedFirmEmail: firmsList?.assignedFirmEmail || '',
+    employeeAssigned: firmsList?.employeeAssigned || '',
+    firstLevelManager: firmsList?.firstLevelManager || '',
+    secondLevelManager: firmsList?.secondLevelManager || '',
+    thirdLevelManager: firmsList?.thirdLevelManager || '',
+    dateOfBirth: firmsList?.dateOfBirth || '',
+    city: firmsList?.city || '',
+    division: firmsList?.division || '',
+    zone: firmsList?.zone || '',
+    address: firmsList?.address || '',
+    gstNumber: firmsList?.gstNumber || '',
+    drugLicenseNumber: firmsList?.drugLicenseNumber || '',
+    panNumber: firmsList?.panNumber || '',
+    foodLicenseNumber: firmsList?.foodLicenseNumber || '',
+    pincode: firmsList?.pincode || '',
+    bankname: firmsList?.bankname || '',
+    branchName: firmsList?.branchName || '',
+    accountNumber: firmsList?.accountNumber || '',
     status: 'Approved',
   };
 
   const addDoctor = async (values) => {
-    console.log('values', values);
-    const result = await apipost('/api/firm', values);
+    const result = params?.id ? await apiput(`/api/firm`, values) : await apipost('/api/firm', values);
 
     if (result && result.status === 200) {
       formik.resetForm();
@@ -132,15 +121,13 @@ const AddFirms = () => {
   const formik = useFormik({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
-      addDoctor(values);
+      const data = params?.id ? { ...values, _id: params?.id } : values;
+      addDoctor(data);
+      resetForm();
     },
   });
-
-  const fetchCityDatas = async (stateName) => {
-    const filtered = cityData?.filter((city) => city?.stateName?.toLowerCase() === stateName?.toLowerCase());
-    setCityList(filtered);
-  };
 
   useEffect(() => {
     dispatch(fetchCityData());
@@ -163,7 +150,7 @@ const AddFirms = () => {
     <div>
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-          <Typography variant="h4">Add Firms</Typography>
+          <Typography variant="h4">{params?.id ? 'Edit Firms' : 'Add Firms'}</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={back}>
               Back
@@ -509,14 +496,14 @@ const AddFirms = () => {
                     formik.setFieldValue('city', newValue ? newValue.cityName : '');
                   }}
                   fullWidth
-                  options={cityList}
-                  value={cityList.find((city) => city.cityName === formik.values.city) || null}
+                  options={cityData}
+                  value={cityData.find((city) => city?.cityName === formik.values.city) || null}
                   getOptionLabel={(city) => city?.cityName}
-                  style={{ textTransform: 'capitalize' }}
+                  // style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      style={{ textTransform: 'capitalize' }}
+                      // style={{ textTransform: 'capitalize' }}
                       placeholder="Select City"
                       error={formik.touched.city && Boolean(formik.errors.city)}
                       helperText={formik.touched.city && formik.errors.city}
@@ -708,7 +695,7 @@ const AddFirms = () => {
               <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'}>
                 <Stack direction={'row'} spacing={2}>
                   <Button variant="contained" onClick={formik.handleSubmit}>
-                    Add Firm
+                    {params?.id ? 'Edit Firm' : ' Add Firm'}
                   </Button>
                   <Button variant="outlined" color="error">
                     Cancle
@@ -719,8 +706,6 @@ const AddFirms = () => {
           </Card>
         </Box>
       </Container>
-
-     
     </div>
   );
 };
