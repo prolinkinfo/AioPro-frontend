@@ -3,12 +3,11 @@ import { styled, alpha } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
+
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import PrintIcon from '@mui/icons-material/Print';
+
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const StyledMenu = styled((props) => (

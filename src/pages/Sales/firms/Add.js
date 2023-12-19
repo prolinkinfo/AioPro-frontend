@@ -115,14 +115,16 @@ const AddFirms = () => {
     bankname: '',
     branchName: '',
     accountNumber: '',
+    status: 'Approved',
   };
 
   const addDoctor = async (values) => {
-    console.log("values",values)
+    console.log('values', values);
     const result = await apipost('/api/firm', values);
 
     if (result && result.status === 200) {
       formik.resetForm();
+      navigate(`/${userRole}/dashboard/sales/firms`);
     }
   };
 
@@ -352,7 +354,7 @@ const AddFirms = () => {
                   id="email"
                   name="assignedFirmEmail"
                   size="small"
-                  type='email'
+                  type="email"
                   placeholder="Enter of Assigned Firm"
                   maxRows={10}
                   fullWidth
@@ -717,6 +719,8 @@ const AddFirms = () => {
           </Card>
         </Box>
       </Container>
+
+     
     </div>
   );
 };
