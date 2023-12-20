@@ -38,7 +38,12 @@ const ReportPage = () => {
 
             <Box sx={{ margin: '10px 5px', border: '2px solid #eee', borderRadius: '10px' }}>
               <Box sx={{ backgroundColor: '#eee', color: '#000', padding: '8px 10px' }}>
-                <Typography variant="h6">Visit Report</Typography>
+                <Link
+                  to={`/${userRole}/dashboard/reports/visit`}
+                  style={{ textDecoration: 'none', color: '#000' }}
+                >
+                  <Typography variant="h6">Visit Report</Typography>
+                </Link>
               </Box>
               <Box>
                 <Typography p="5px 8px" minHeight="120px">
@@ -50,7 +55,10 @@ const ReportPage = () => {
 
             <Box sx={{ margin: '10px 5px', border: '2px solid #eee', borderRadius: '10px' }}>
               <Box sx={{ backgroundColor: '#eee', color: '#000', padding: '8px 10px' }}>
-                <Link to={`/${userRole}/dashboard/reports/firmvisits`} style={{ textDecoration: 'none', color: '#000' }}>
+                <Link
+                  to={`/${userRole}/dashboard/reports/firmvisits`}
+                  style={{ textDecoration: 'none', color: '#000' }}
+                >
                   <Typography variant="h6">Firm Visit Report</Typography>
                 </Link>
               </Box>

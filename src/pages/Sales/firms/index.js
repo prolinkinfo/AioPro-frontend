@@ -1,80 +1,224 @@
-import React from 'react';
-import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Card,
+  ClickAwayListener,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Grow,
+  MenuList,
+  Paper,
+  Popper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SettingsIcon from '@mui/icons-material/Settings';
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useSelector, useDispatch } from 'react-redux';
+
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
-import ActionBtn from '../../../components/actionbtn/ActionBtn';
+import { apidelete, apiget } from '../../../service/api';
+// redux api fatch
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
+import VisitModel from './VisitModel';
 
 const Firms = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [firmsList, setFirmsList] = useState([]);
+  const [openModel, setOpenModel] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [firmId, setFirmId] = useState(null);
+  const [firmType, setFirmType] = useState(null);
+  const [firmCity, setFirmCity] = useState(null);
+  const [firmZone, setFirmZone] = useState(null);
+  const [firmDivision, setFirmDivision] = useState(null);
+  const [firmEmployee, setFirmEmployee] = useState(null);
+  const [firmManager, setFirmManager] = useState(null);
+  const dispatch = useDispatch();
+
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
+  const open = Boolean(anchorEl);
+
+  const cityData = useSelector((state) => state?.getCity?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
+  const divisionList = useSelector((state) => state?.getDivision?.data);
+  const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
+  const employeeList = useSelector((state) => state?.getEmployee?.data);
+  const firmData = useSelector((state) => state?.geFirmType?.data);
+
+  useEffect(() => {
+    dispatch(fetchCityData());
+    dispatch(fetchZoneData());
+    dispatch(fetchDivisionData());
+    dispatch(fetchTypeData());
+    dispatch(fetchCategoryData());
+    dispatch(fetchEmployeeData());
+    dispatch(firmaTypeData());
+  }, []);
+
+  const handleClickOpenModel = (value) => {
+    // console.log("value",value)
+    setFirmId(value);
+    setOpenModel(true);
+    setAnchorEl(null);
+  };
+
+  const handleCloseModel = async (id) => {
+    const result = await apidelete(`/api/firm/${id}`);
+    if (result && result.status === 200) {
+      setOpenModel(false);
+      fetchdata();
+    }
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const columns = [
     {
       headerName: 'Action',
       sortable: false,
       width: 120,
-      // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          console.log(data, 'data');
-        };
+        // console.log("params",params?.row?._id)
+        // const handleClick = async (data) => {
+        //   console.log(data, 'data');
+        // };
+
         return (
-          <Box onClick={handleClick}>
-            <ActionBtn data={[{ name: 'View' }, { name: 'Edit' }]} />
-          </Box>
+          <div>
+            <Button
+              id="demo-positioned-button"
+              aria-controls={open ? 'demo-positioned-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <SettingsIcon />
+            </Button>
+            <Menu
+              id="demo-positioned-menu"
+              aria-labelledby="demo-positioned-button"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem>
+                <Link
+                  to={`/${userRole}/dashboard/sales/firms/${params?.row?._id}`}
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
+                  <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={() => handleClose()}>
+                <VerticalAlignBottomIcon fontSize="10" />
+                <span style={{ marginLeft: '20px' }}>Unapprove</span>
+              </MenuItem>
+              <MenuItem onClick={() => handleClose()}>
+                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
+              </MenuItem>
+              <MenuItem onClick={() => handleClickOpenModel(params?.row?._id)}>
+                <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
+              </MenuItem>
+            </Menu>
+          </div>
         );
       },
     },
-    { field: 'doctorId', headerName: 'Doctor ID', width: 120 },
-    { field: 'doctorName', headerName: 'Doctor Name', width: 130 },
-    { field: 'city', headerName: 'City', width: 130 },
-    { field: 'hospitalName', headerName: 'Hospital Name', width: 130 },
-    { field: 'employeeName', headerName: 'Employee Name', width: 130 },
-    { field: 'immediateSenior', headerName: 'Immediate Senior', width: 130 },
+    { field: '_id', headerName: 'Firm Id', width: 120 },
+    {
+      field: 'date',
+      headerName: 'Date',
+      renderCell: (params) => {
+        return <Box>{dayjs(params?.row?.date).format('DD-MM-YYYY')} </Box>;
+      },
+      width: 130,
+    },
+    { field: 'firmCode', headerName: 'Firm Code', width: 130 },
+    { field: 'firmName', headerName: 'Firm Name', width: 200 },
+    { field: 'firmType', headerName: 'Firm Type', width: 120 },
     { field: 'contactNumber', headerName: 'Contact Number', width: 130 },
-    { field: 'speciality', headerName: 'Speciality', width: 130 },
-    { field: 'qualification', headerName: 'Qualification', width: 130 },
-    { field: 'division', headerName: 'Division', width: 130 },
-    { field: 'category', headerName: 'Category', width: 130 },
+    { field: 'contactPersonName', headerName: 'Contact Person Name', width: 130 },
+    { field: 'city', headerName: 'City', width: 130 },
     { field: 'zone', headerName: 'Zone', width: 130 },
+    { field: 'division', headerName: 'Division', width: 130 },
+    { field: 'category', headerName: 'Firm Category', width: 130 },
+
+    { field: 'assignedTo', headerName: 'Employee Assigned', width: 130 },
+    { field: 'assignedFirm', headerName: 'Assigned Firm', width: 130 },
     { field: 'email', headerName: 'Email', width: 130 },
-    { field: 'gender', headerName: 'Gender', width: 130 },
-    { field: 'dateOfBirth', headerName: 'DOB', width: 130 },
-    { field: 'anniversaryDate', headerName: 'Anniversary', width: 130 },
-    { field: 'type', headerName: 'Type', width: 130 },
-    { field: 'firm', headerName: 'Firm', width: 130 },
-    { field: 'country', headerName: 'Country', width: 130 },
-    { field: 'status', headerName: 'Status', width: 130 },
+    { field: 'address', headerName: 'Address', width: 130 },
+
+    { field: 'firstLevelManager', headerName: 'First Level Manager', width: 130 },
+    { field: 'secondLevelManager', headerName: 'Second Level Manager', width: 130 },
+    { field: 'thirdLevelManager', headerName: 'Third Level Manager', width: 130 },
+    {
+      field: 'dateOfBirth',
+      headerName: 'DOB',
+      renderCell: (params) => {
+        return <Box>{dayjs(params?.row?.dateOfBirth).format('DD-MM-YYYY')} </Box>;
+      },
+      width: 130,
+    },
+    { field: 'panNumber', headerName: 'Pan Number', width: 130 },
+    { field: 'drugLicenseNumber', headerName: 'Drug License Number', width: 130 },
+    { field: 'foodLicenseNumber', headerName: 'Food License Number', width: 130 },
+
+    {
+      field: 'status',
+      headerName: 'Status',
+      renderCell: (params) => {
+        return (
+          <Box>
+            <Button
+              variant="outlined"
+              style={{
+                color: params.value === 'Approved' ? '#22C55E' : '#B61D18',
+                background: params.value === 'Approved' ? '#22c55e29' : '#ff563029',
+                border: 'none',
+              }}
+            >
+              {params.value}
+            </Button>
+          </Box>
+        );
+      },
+      width: 130,
+    },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      visitId: '1001383',
-      doctorId: '525',
-      doctorName: 'T.k. Saikiya',
-      clinicAddress: 'jai nagar Rd, Kamla Nehru Nagar, Yadav Colony, Jabalpur, Madhya Pradesh 482002, India',
-      zone: 'Madhya Pradesh',
-      city: 'Jabalpur',
-      employeeName: 'Vaibhav Shrivastava',
-      date: '20/11/2016',
-      status: 'open',
-    },
-    {
-      id: 2,
-      visitId: '1001355',
-      doctorId: '1650',
-      doctorName: 'Sarita Singh',
-      clinicAddress: 'Panna Khajuraho Rd, Satna, Madhya Pradesh 485001, India',
-      zone: 'Madhya Pradesh',
-      city: 'Satna',
-      employeeName: 'Vikas Gautam',
-      date: '20/11/2016',
-      status: 'open',
-    },
-  ];
   const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
     { label: 'The Godfather', year: 1972 },
@@ -92,18 +236,38 @@ const Firms = () => {
     { label: 'Pulp Fiction', year: 1994 },
     { label: 'Pulp Fiction', year: 1994 },
   ];
+
+  async function fetchdata() {
+    const result = await apiget('/api/firm');
+    if (result && result.status === 200) {
+      setFirmsList(result?.data?.result);
+    }
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
+  const StatusList = [
+    { label: 'Approved', value: 'approved' },
+    { label: 'Unapproved', value: 'unapproved' },
+  ];
+
+  const handleOpenView = () => setIsOpen(true);
+  const handleCloseView = () => setIsOpen(false);
+
   return (
     <div>
+      <VisitModel isOpen={isOpen} handleCloseView={handleCloseView}/>
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Firms</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              <Link to={`/${userRole}/dashboard/people/doctor/add`} style={{ color: 'white', textDecoration: 'none' }}>
+              <Link to={`/${userRole}/dashboard/sales/firms/add`} style={{ color: 'white', textDecoration: 'none' }}>
                 Add Firm
               </Link>
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenView}>
               Add Visit
             </Button>
             <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
@@ -118,9 +282,11 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  options={StatusList}
                   size="small"
                   fullWidth
+                  // value={StatusList.find((option) => option.value === formik.values.Language)}
+                  // onChange={(e, value) => formik.setFieldValue('status', value?.value || null)}
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select Status" style={{ fontSize: '12px' }} />
                   )}
@@ -128,21 +294,27 @@ const Firms = () => {
               </Grid>
               <Grid item xs={12} sm={2} md={1.7}>
                 <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={top100Films}
                   size="small"
+                  name="firmType"
+                  onChange={(event, newValue) => setFirmType(newValue?.firmType)}
                   fullWidth
+                  options={firmData}
+                  value={firmData.find((item) => item.firmType === firmType) || null}
+                  getOptionLabel={(firm) => firm?.firmType}
+                  // style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
-                    <TextField {...params} placeholder="Select Firm Type" style={{ fontSize: '12px' }} />
+                    <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Firm Type" />
                   )}
                 />
               </Grid>
               <Grid item xs={12} sm={2} md={1.7}>
                 <Autocomplete
                   disablePortal
+                  onChange={(event, newValue) => setFirmDivision(newValue?.divisionName)}
                   id="combo-box-demo"
-                  options={top100Films}
+                  options={divisionList}
+                  value={divisionList.find((item) => item.divisionName === firmDivision) || null}
+                  getOptionLabel={({ divisionName }) => divisionName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -154,7 +326,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmZone(newValue?.zoneName)}
+                  options={zoneList}
+                  value={zoneList.find((item) => item.zoneName === firmZone) || null}
+                  getOptionLabel={({ zoneName }) => zoneName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -166,7 +341,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmCity(newValue?.cityName)}
+                  options={cityData}
+                  value={cityData.find((item) => item.cityName === firmCity) || null}
+                  getOptionLabel={({ cityName }) => cityName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -178,7 +356,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmEmployee(newValue?.basicInformation?.employeesName)}
+                  options={employeeList}
+                  value={employeeList.find((item) => item.basicInformation?.employeesName === firmEmployee) || null}
+                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -190,7 +371,10 @@ const Firms = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => setFirmManager(newValue?.basicInformation?.employeesName)}
+                  options={employeeList}
+                  value={employeeList.find((item) => item.basicInformation?.employeesName === firmManager) || null}
+                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -198,17 +382,10 @@ const Firms = () => {
                   )}
                 />
               </Grid>
-
-              {/* <Grid item xs={12} sm={3} md={3}>
-                <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'end'} mb={2}>
-                  <TextField type="text" size="small" placeholder="Search" />
-                  <Button variant="contained">Go</Button>
-                </Stack>
-              </Grid> */}
             </Grid>
             <Card style={{ height: '72vh', marginTop: '10px' }}>
               <DataGrid
-                rows={rows}
+                rows={firmsList}
                 columns={columns}
                 initialState={{
                   pagination: {
@@ -216,11 +393,31 @@ const Firms = () => {
                   },
                 }}
                 pageSizeOptions={[5, 10]}
+                getRowId={(row) => row._id}
               />
             </Card>
           </Box>
         </TableStyle>
       </Container>
+
+      {/* Delete modele */}
+      <Dialog
+        open={openModel}
+        onClose={handleCloseModel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        {/* <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle> */}
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to remove firm ?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModel}>Disagree</Button>
+          <Button onClick={() => handleCloseModel(firmId)} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

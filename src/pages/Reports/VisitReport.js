@@ -7,22 +7,6 @@ import ActionBtn from '../../components/actionbtn/ActionBtn';
 
 const VisitReport = () => {
   const columns = [
-    // {
-    //   headerName: 'Action',
-    //   sortable: false,
-    //   width: 120,
-    //   // eslint-disable-next-line arrow-body-style
-    //   renderCell: (params) => {
-    //     const handleClick = async (data) => {
-    //       console.log(data, 'data');
-    //     };
-    //     return (
-    //       <Box onClick={handleClick}>
-    //         <ActionBtn data={[{ name: 'View' }, { name: 'Edit' }]} />
-    //       </Box>
-    //     );
-    //   },
-    // },
     { field: 'doctorName', headerName: 'Doctor Name', width: 130 },
     {
       field: 'clinicAddress',
@@ -103,7 +87,7 @@ const VisitReport = () => {
     <div>
       <Container maxWidth="xl" style={{ height: '72vh', paddingTop: '15px' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-          <Typography variant="h4">Day wise expense</Typography>
+          <Typography variant="h4">Visit Report</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
               Export

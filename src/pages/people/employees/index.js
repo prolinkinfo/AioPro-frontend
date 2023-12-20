@@ -27,7 +27,14 @@ const Employees = () => {
         };
         return (
           <Box onClick={handleClick}>
-            <Button>Edit</Button>
+            <Button>
+              <Link
+                to={`/${userRole}/dashboard/people/employees/${params?.row?._id}`}
+                style={{ color: 'white', textDecoration: 'none' }}
+              >
+                Edit
+              </Link>
+            </Button>
           </Box>
         );
       },

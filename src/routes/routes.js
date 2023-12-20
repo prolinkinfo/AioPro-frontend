@@ -106,6 +106,8 @@ import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 import VisitCounter from '../pages/settings/VisitCounter';
 import ChangePassword from '../pages/settings/ChangePassword'
 import DoctorView from '../pages/visit/doctorVisit/view'
+import VisitReport from '../pages/Reports/VisitReport';
+import AddFirms from '../pages/Sales/firms/Add';
 
 // ----------------------------------------------------------------------
 
@@ -186,6 +188,7 @@ export default function Router() {
         { path: 'setting/otherreason', element: <OtherReason /> },
         { path: 'setting/faqMaster', element: <FaqMaster /> },
         { path: 'setting/faqMaster/add', element: <FaqAdd /> },
+
         { path: 'setting/faqAdd', element: <FaqAdd /> },
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
@@ -218,8 +221,11 @@ export default function Router() {
         { path: 'files', element: <Files /> },
         { path: 'reports', element: <ReportPage /> },
         { path: 'reports/leave', element: <LeaveReport /> },
+        { path: 'reports/visit', element: <VisitReport /> },
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },
         { path: 'sales/firms', element: <Firms /> },
+        { path: 'sales/firms/add', element: <AddFirms /> },
+        { path: 'sales/firms/:id', element: <AddFirms /> },
         { path: 'sales/firmmonthly', element: <FirmMonthly /> },
         { path: 'sales/orders', element: <Orders /> },
         { path: 'sales/ratemaster', element: <Ratemaster /> },
