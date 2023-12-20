@@ -20,7 +20,7 @@ import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 
 const EditVisit = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenEdit, handleCloseEdit,fetchCounterData } = props;
+  const { isOpenEdit, handleCloseEdit,fetchCounterData,data } = props;
   const dispatch = useDispatch()
   const employeeList = useSelector((state) => state?.getEmployee?.data)
   const doctorSpeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
@@ -33,14 +33,14 @@ const EditVisit = (props) => {
 
   // -----------   initialValues
   const initialValues = {
-    type: '',
-    clientId: '',
-    employeeCode: '',
-    visitCounter: '',
-    employeeName: '',
-    speciality: '',
-    category: '',
-    clientName: '',
+    type: data?.type,
+    clientId: data?.clientId,
+    employeeCode: data?.employeeCode,
+    visitCounter: data?.visitCounter,
+    employeeName: data?.employeeName,
+    speciality: data?.speciality,
+    category: data?.category,
+    clientName: data?.clientName,
   };
 
   const editCounter = async (values) => {

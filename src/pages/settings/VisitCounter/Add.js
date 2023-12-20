@@ -54,7 +54,7 @@ const AddVisit = (props) => {
             category: values.category,
             clientName: values.clientName,
         }
-        const result = await apipost('/api/zone', pyload);
+        const result = await apipost('/api/visitCounter', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
