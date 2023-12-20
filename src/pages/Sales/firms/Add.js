@@ -23,6 +23,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 import { apiget, apipost, apiput } from '../../../service/api';
 import Iconify from '../../../components/iconify';
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
@@ -102,7 +103,7 @@ const AddFirms = () => {
     panNumber: firmsList?.panNumber || '',
     foodLicenseNumber: firmsList?.foodLicenseNumber || '',
     pincode: firmsList?.pincode || '',
-    bankname: firmsList?.bankname || '',
+    bankName: firmsList?.bankName || '',
     branchName: firmsList?.branchName || '',
     accountNumber: firmsList?.accountNumber || '',
     status: 'Approved',
@@ -212,7 +213,7 @@ const AddFirms = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.date}
+                  value={dayjs(formik.values.date).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.date && Boolean(formik.errors.date)}
                   helperText={formik.touched.date && formik.errors.date}
@@ -475,7 +476,7 @@ const AddFirms = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.dateOfBirth}
+                  value={dayjs(formik.values.dateOfBirth).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)}
                   helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
@@ -651,15 +652,15 @@ const AddFirms = () => {
               <Grid item xs={12} sm={6} md={6} mb={2}>
                 <FormLabel>Bank Name</FormLabel>
                 <TextField
-                  name="bankname"
+                  name="bankName"
                   size="small"
                   maxRows={10}
                   fullWidth
                   placeholder="Enter Bank Name"
-                  value={formik.values.bankname}
+                  value={formik.values.bankName}
                   onChange={formik.handleChange}
-                  error={formik.touched.bankname && Boolean(formik.errors.bankname)}
-                  helperText={formik.touched.bankname && formik.errors.bankname}
+                  error={formik.touched.bankName && Boolean(formik.errors.bankName)}
+                  helperText={formik.touched.bankName && formik.errors.bankName}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6} mb={2}>
