@@ -76,7 +76,7 @@ const AddEmployees = () => {
   // -----------  validationSchema
   const validationSchema = Yup.object({
     profileImg: Yup.string(),
-    employeesCode: Yup.string().required('Employee code is required'),
+    // employeesCode: Yup.string().required('Employee code is required'),
     employeesName: Yup.string().required('Employee name is required'),
     gender: Yup.string().required('Gender is required'),
     workType: Yup.string().required('Work type is required'),
@@ -153,7 +153,7 @@ const AddEmployees = () => {
 
   const initialValues = {
     profileImg: '',
-    employeesCode: '',
+    // employeesCode: '',
     employeesName: '',
     gender: '',
     workType: '',
@@ -219,7 +219,7 @@ const AddEmployees = () => {
     const data = new FormData();
     // Basic Information
     data.append('profileImg', values?.profileImg);
-    data.append('employeesCode', values?.employeesCode);
+    // data.append('employeesCode', values?.employeesCode);
     data.append('employeesName', values?.employeesName);
     data.append('gender', values?.gender);
     data.append('workType', values?.workType);
@@ -280,11 +280,13 @@ const AddEmployees = () => {
     data.append('branchName', values?.branchName);
     data.append('nomineeName', values?.nomineeName);
 
-    console.log('hhh', data);
+
 
     const result = await apipost('/api/employees', data);
     if (result && result.status === 200) {
       dispatch(fetchEmployeeData());
+      navigate(`/${userRole}/dashboard/people/employees`);
+      setSelectedFile(null)
       // navigate('/login');
     }
   };
@@ -400,7 +402,7 @@ const AddEmployees = () => {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={6}>
+              {/* <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Employees Code</FormLabel>
                 <TextField
                   id="doctorName"
@@ -414,9 +416,9 @@ const AddEmployees = () => {
                   error={formik.touched.employeesCode && Boolean(formik.errors.employeesCode)}
                   helperText={formik.touched.employeesCode && formik.errors.employeesCode}
                 />
-              </Grid>
+              </Grid> */}
 
-              <Grid item xs={12} sm={6} md={6}>
+              <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Employees Name</FormLabel>
                 <TextField
                   id="doctorName"
@@ -485,7 +487,7 @@ const AddEmployees = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Marital Status</FormLabel>
                   <Select
@@ -505,7 +507,7 @@ const AddEmployees = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Anniversary</FormLabel>
                 <TextField
                   id="anniversaryDate"

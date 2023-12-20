@@ -32,6 +32,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
@@ -123,7 +124,7 @@ const Firms = () => {
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <SettingsIcon />
+              <DragIndicatorIcon />
             </Button>
             <Menu
               id="demo-positioned-menu"
@@ -218,24 +219,6 @@ const Firms = () => {
       },
       width: 130,
     },
-  ];
-
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
   ];
 
   async function fetchdata() {
