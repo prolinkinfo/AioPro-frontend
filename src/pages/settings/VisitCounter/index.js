@@ -64,7 +64,7 @@ const VisitCounter = () => {
         { field: 'clientName', headerName: 'Client Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
         { field: 'employeeCode', headerName: 'Employee Code', flex: 1, cellClassName: 'name-column--cell--capitalize' },
         { field: 'employeeName', headerName: 'Employee Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
-        { field: 'count', headerName: 'Count', flex: 1 },
+        { field: 'visitCounter', headerName: 'Count', flex: 1 },
     ];
 
     const deleteCounter = async (id) => {
