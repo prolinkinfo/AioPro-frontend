@@ -29,7 +29,7 @@ const EditHospitalSpeciality = (props) => {
         hospitalSpeciality: data?.hospitalSpeciality,
         divisionName: data?.divisionName,
     };
-
+    console.log(data, "ndex.php/LOGIN_URL")
     const editSpeciality = async (values) => {
         const pyload = {
             _id: data?._id,
@@ -106,13 +106,12 @@ const EditHospitalSpeciality = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

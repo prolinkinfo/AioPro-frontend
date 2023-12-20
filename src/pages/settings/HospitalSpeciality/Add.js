@@ -105,17 +105,16 @@ const AddHospitalSpeciality = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
-                                                style={{ textTransform:'capitalize' }}
+                                                style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Division'
                                                 error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
                                                 helperText={formik.touched.divisionName && formik.errors.divisionName}

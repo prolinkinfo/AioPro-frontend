@@ -105,6 +105,7 @@ import LeaveReport from '../pages/Reports/LeaveReport';
 import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 import VisitCounter from '../pages/settings/VisitCounter';
 import ChangePassword from '../pages/settings/ChangePassword'
+import DoctorView from '../pages/visit/doctorVisit/view'
 
 // ----------------------------------------------------------------------
 
@@ -147,12 +148,12 @@ export default function Router() {
         { path: 'greetingcard/doctordaycard', element: <DoctordayCard /> },
         { path: 'greetingcard/newyearcard', element: <NewYearCard /> },
         { path: 'greetingcard/anniversarycard', element: <AnniversaryCard /> },
-        // { path: 'products', element: <Product /> },
         { path: 'sells', element: <Sells /> },
         { path: 'greetingcard/birthdaycard/card/:id', element: <BirthdayCards /> },
         { path: 'chemist', element: <Chemist /> },
         { path: 'chemist/:id', element: <ChemistView /> },
         { path: 'visits/doctorvisit', element: <DoctorVisit /> },
+        { path: 'visits/doctorvisit/view/:id', element: <DoctorView /> },
         { path: 'visits/firmvisit', element: <FirmVisit /> },
         { path: 'people/administrator', element: <Administrator /> },
         { path: 'people/doctor', element: <Doctor /> },
@@ -162,7 +163,6 @@ export default function Router() {
         { path: 'people/employees', element: <Employees /> },
         { path: 'people/employees/add', element: <AddEmployees /> },
         { path: 'people/employees/:id', element: <AddEmployees /> },
-
         { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'calendar/leave', element: <LeaveCalendar /> },
         { path: 'setting/manageActivityType', element: <ActivityType /> },
@@ -186,8 +186,6 @@ export default function Router() {
         { path: 'setting/otherreason', element: <OtherReason /> },
         { path: 'setting/faqMaster', element: <FaqMaster /> },
         { path: 'setting/faqMaster/add', element: <FaqAdd /> },
-
-       
         { path: 'setting/faqAdd', element: <FaqAdd /> },
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
@@ -218,7 +216,6 @@ export default function Router() {
         { path: 'expenses/expensehead', element: <Expensehead /> },
         { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
         { path: 'files', element: <Files /> },
-
         { path: 'reports', element: <ReportPage /> },
         { path: 'reports/leave', element: <LeaveReport /> },
         { path: 'reports/firmvisits', element: <VisitFirmReport /> },

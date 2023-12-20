@@ -1,35 +1,53 @@
+/* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import moment from 'moment'
+import Papa from 'papaparse';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddVisit from './Add'
+import { fetchDoctorVisitData } from '../../../redux/slice/GetDoctorVisitSlice'
+import { apiget } from '../../../service/api'
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice'
+import { fetchCityData } from '../../../redux/slice/GetCitySlice'
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice'
 
 const Visit = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
+    const dispatch = useDispatch();
+
+    const doctorVisit = useSelector((state) => state?.getDoctorVisit?.data)
+    const zoneList = useSelector((state) => state?.getZone?.data)
+    const cityList = useSelector((state) => state?.getCity?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     const columns = [
         {
             headerName: 'Action',
             sortable: false,
-            width: 120,
+            width: 250,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async () => {
                 };
                 return (
                     <Box onClick={handleClick}>
-                        <ActionBtn data={[{name:"View"},{name:"Edit"}]} />
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<Iconify icon="carbon:view" />} size='small' onClick={() => handleClick(params?.row)}> View</Button>
+                            <Button variant='outlined' color='error' startIcon={<Iconify icon="material-symbols-light:print-outline" />} size='small'> Print</Button>
+                        </Stack>
                     </Box>
                 );
             },
         },
         { field: 'visitId', headerName: 'Visit ID', width: 120 },
         { field: 'doctorId', headerName: 'Doctor ID', width: 150 },
-        { field: 'doctorName', headerName: 'Doctor Name', width: 130 },
+        { field: 'doctorName', headerName: 'Doctor Name', width: 150 },
         {
             field: 'clinicAddress',
             headerName: 'Clinic Address',
@@ -37,12 +55,12 @@ const Visit = () => {
 
         },
         {
-            field: 'zone',
+            field: 'zoneName',
             headerName: 'Zone',
             width: 150,
         },
         {
-            field: 'city',
+            field: 'cityName',
             headerName: 'City',
             width: 150,
         },
@@ -52,14 +70,21 @@ const Visit = () => {
             width: 200,
         },
         {
-            field: 'date',
+            field: 'visitDate',
             headerName: 'Date',
             width: 120,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {moment(params?.row?.visitDate).format("DD/MM/YYYY")}
+                    </Box>
+                );
+            },
         },
         {
             field: 'status',
             headerName: 'Status',
-            width: 90,
+            width: 100,
         },
     ];
 
@@ -85,9 +110,21 @@ const Visit = () => {
         { label: 'Pulp Fiction', year: 1994 },
         { label: 'Pulp Fiction', year: 1994 },
     ]
+
+    const downloadCSV = async () => {
+        await apiget('/api/doctorvisit/export-csv');
+    }
+
+    useEffect(() => {
+        dispatch(fetchDoctorVisitData());
+        dispatch(fetchZoneData());
+        dispatch(fetchCityData());
+        dispatch(fetchEmployeeData());
+    }, [])
+
     return (
         <div>
-            <AddVisit isOpen={isOpenAdd} handleClose={handleCloseAdd} />
+            <AddVisit isOpen={isOpenAdd} handleClose={handleCloseAdd} fetchDoctorVisitData={fetchDoctorVisitData} />
             <Container maxWidth="xl" style={{ height: '72vh', paddingTop: '15px' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Doctor Visit</Typography>
@@ -95,7 +132,7 @@ const Visit = () => {
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                             Add Visit
                         </Button>
-                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
+                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={downloadCSV}>
                             Export
                         </Button>
                     </Stack>
@@ -112,30 +149,66 @@ const Visit = () => {
                                 renderInput={(params) => <TextField {...params} placeholder='Select Type' style={{ fontSize: "12px" }} />}
                             />
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={top100Films}
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
+                                //     fetchDoctor(newValue ? newValue.zoneName : "")
+                                //     fetchEmployee(newValue ? newValue.zoneName : "")
+                                // }}
                                 fullWidth
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select Zone' />}
+                                options={zoneList}
+                                value={zoneList.find(zone => zone.zoneName) || null}
+                                getOptionLabel={(zone) => zone?.zoneName}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select Zone'
+                                    />
+                                )}
                             />
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={top100Films}
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('city', newValue ? newValue.cityName : "");
+                                // }}
                                 fullWidth
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select City' />}
+                                options={cityList}
+                                value={cityList.find(city => city.cityName) || null}
+                                getOptionLabel={(city) => city?.cityName}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select City'
+                                    // error={formik.touched.city && Boolean(formik.errors.city)}
+                                    // helperText={formik.touched.city && formik.errors.city}
+                                    />
+                                )}
                             />
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('employee', newValue ? newValue?.basicInformation?.employeesName : "");
+                                // }}
                                 fullWidth
-                                options={top100Films}
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select Employee' style={{ fontSize: "15px" }} />}
+                                options={employeeList}
+                                value={employeeList.find(employee => employee?.basicInformation?.employeesName) || null}
+                                getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select Employee'
+                                        // error={formik.touched.employee && Boolean(formik.errors.employee)}
+                                        // helperText={formik.touched.employee && formik.errors.employee}
+                                    />
+                                )}
                             />
-                            <TextField
+                            {/* <TextField
                                 type='date'
                                 size='small'
                                 label="From Date"
@@ -147,7 +220,7 @@ const Visit = () => {
                                 size='small'
                                 label='To Date'
                                 fullWidth
-                            />
+                            /> */}
 
                         </Stack>
                         <Card style={{ height: '72vh', paddingTop: '15px' }}>
@@ -160,7 +233,7 @@ const Visit = () => {
                                 <Button variant='contained'>Go</Button>
                             </Stack>
                             <DataGrid
-                                rows={rows}
+                                rows={doctorVisit}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -168,6 +241,7 @@ const Visit = () => {
                                     },
                                 }}
                                 pageSizeOptions={[5, 10]}
+                                getRowId={row => row._id}
                             />
                         </Card>
                     </Box>

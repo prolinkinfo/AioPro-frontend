@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -13,15 +14,17 @@ import EditZone from './Edit';
 
 const Zone = () => {
 
-    const[zoneList,setZoneList] = useState([])
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userRole = user?.role.toLowerCase();
 
+    const [zoneList, setZoneList] = useState([])
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [zoneData, setZoneData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const navigate = useNavigate();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -78,14 +81,14 @@ const Zone = () => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchZoneData();
-    },[userAction])
+    }, [userAction])
 
     return (
         <div>
             {/* Add Zone */}
-            <AddZone isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchZoneData={fetchZoneData}/>
+            <AddZone isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchZoneData={fetchZoneData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -95,9 +98,12 @@ const Zone = () => {
                 <TableStyle>
                     <Box width="100%" pt={3}>
                         <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"space-between"} mb={2}>
-                            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                                Add New
-                            </Button>
+                            <div>
+                                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                                    Add New
+                                </Button>
+                                
+                            </div>
                             <TextField
                                 type='text'
                                 size='small'

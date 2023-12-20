@@ -32,6 +32,7 @@ import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 import { fetchQualificationData } from '../../../redux/slice/GetQualificationSlice';
 import { fetchCountryData } from '../../../redux/slice/getCountrySlice';
 import { fetchStateData } from '../../../redux/slice/GetStateSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const names = [
   'Oliver Hansen',
@@ -138,8 +139,8 @@ const AddEmployees = () => {
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
   const qualificationList = useSelector((state) => state?.getQualification?.data);
-  const country =useSelector((state) => state?.getCountry?.data);
-  const state =useSelector((state) => state?.getState?.data);
+  const country = useSelector((state) => state?.getCountry?.data);
+  const state = useSelector((state) => state?.getState?.data);
 
   useEffect(() => {
     dispatch(fetchCityData());
@@ -283,7 +284,7 @@ const AddEmployees = () => {
 
     const result = await apipost('/api/employees', data);
     if (result && result.status === 200) {
-      console.log('employe addd ');
+      dispatch(fetchEmployeeData());
       // navigate('/login');
     }
   };
@@ -291,7 +292,7 @@ const AddEmployees = () => {
   // formik
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    // validationSchema,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
       AddEmployees(values);
@@ -582,7 +583,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={country.find((item) => item.countryName === formik.values.country) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.country :'')}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.country : '')}
                   getOptionLabel={({ countryName }) => countryName}
                   renderInput={(params) => (
                     <TextField
@@ -604,7 +605,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={state.find((item) => item.stateName === formik.values.state) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.stateName :'')}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.stateName : '')}
                   getOptionLabel={({ stateName }) => stateName}
                   renderInput={(params) => (
                     <TextField
@@ -668,7 +669,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={divisionList.find((division) => division.divisionName === formik.values.division) || null}
-                  onChange={(e, value) => formik.setFieldValue('division', value ? value.divisionName :'')}
+                  onChange={(e, value) => formik.setFieldValue('division', value ? value.divisionName : '')}
                   getOptionLabel={({ divisionName }) => divisionName} // Set the label to the 'divisionName' property
                   renderInput={(params) => (
                     <TextField
@@ -718,7 +719,7 @@ const AddEmployees = () => {
                   error={formik.touched.homeLocation && Boolean(formik.errors.homeLocation)}
                   helperText={formik.touched.homeLocation && formik.errors.homeLocation}
                 />
-                 
+
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
