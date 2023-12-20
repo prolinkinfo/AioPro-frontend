@@ -2,20 +2,24 @@ import { Box, Button, Card, Container, Stack, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import AddAdministrator from './Add';
 import { apidelete, apiget, deleteManyApi } from '../../../service/api';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const Employees = () => {
-  const [Employees, setEmployees] = useState([]);
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
+  const dispatch = useDispatch();
+
+  const employeeData = useSelector((state)=>state?.getEmployee?.data)
   const columns = [
     {
       headerName: 'Action',
       sortable: false,
-      flex: 1,
+      width:200,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
         const handleClick = async (data) => {
@@ -38,7 +42,7 @@ const Employees = () => {
     {
       field: 'employeesCode',
       headerName: 'Employees Code',
-      flex: 1,
+      width:200,
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.employeesCode} </Box>;
       },
@@ -49,7 +53,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.employeesName} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'assignTo',
@@ -57,7 +61,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.workInformation?.assignTo} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'email',
@@ -65,7 +69,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.contactInformation?.email} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'city',
@@ -73,7 +77,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.city} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'contact',
@@ -81,7 +85,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.contact} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'division',
@@ -89,7 +93,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.division} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'zone',
@@ -97,7 +101,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.zone} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'homeLocation',
@@ -105,7 +109,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.contactInformation?.homeLocation} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'designation',
@@ -113,7 +117,7 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.designation} </Box>;
       },
-      flex: 1,
+      width:200,
     },
     {
       field: 'Dob',
@@ -121,16 +125,16 @@ const Employees = () => {
       renderCell: (params) => {
         return <Box>{params?.row?.basicInformation?.Dob} </Box>;
       },
-      flex: 1,
+      width:200,
     },
-    { field: 'signup', headerName: 'Signup Date & Time', flex: 1 },
-    { field: 'lastSyncDate', headerName: 'Last sync Date & time', flex: 1 },
-    { field: 'ApkVersion', headerName: 'Apk Version', flex: 1 },
-    // { field: 'mobile', headerName: 'Mobile',flex: 1 },
-    { field: 'os', headerName: 'OS', flex: 1 },
-    { field: 'inactiveDate', headerName: 'Inactive Date', flex: 1 },
-    { field: 'inactiveReson', headerName: 'Inactive Reson', flex: 1 },
-    { field: 'status', headerName: 'Status', flex: 1 },
+    { field: 'signup', headerName: 'Signup Date & Time', width:200 },
+    { field: 'lastSyncDate', headerName: 'Last sync Date & time', width:200 },
+    { field: 'ApkVersion', headerName: 'Apk Version', width:200 },
+    // { field: 'mobile', headerName: 'Mobile',width:200 },
+    { field: 'os', headerName: 'OS', width:200 },
+    { field: 'inactiveDate', headerName: 'Inactive Date', width:200 },
+    { field: 'inactiveReson', headerName: 'Inactive Reson', width:200 },
+    { field: 'status', headerName: 'Status', width:200 },
   ];
 
   const rows = [
@@ -148,15 +152,9 @@ const Employees = () => {
     },
   ];
 
-  async function fetchdata() {
-    const result = await apiget('/api/employees');
-    if (result && result.status === 200) {
-      setEmployees(result?.data);
-      console.log('result?.data', result?.data);
-    }
-  }
+
   useEffect(() => {
-    fetchdata();
+    dispatch(fetchEmployeeData());
   }, []);
 
   return (
@@ -174,7 +172,7 @@ const Employees = () => {
           <Box width="100%" pt={3}>
             <Card style={{ height: '72vh' }}>
               <DataGrid
-                rows={Employees}
+                rows={employeeData}
                 columns={columns}
                 initialState={{
                   pagination: {

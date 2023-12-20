@@ -31,7 +31,7 @@ const AddCity = (props) => {
     const { isOpenCity, handleCloseCity, fetchCityData } = props;
 
     const [countryList, setCountryList] = useState([])
-    const [stateList,setStateList] = useState([])
+    const [stateList, setStateList] = useState([])
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -102,7 +102,7 @@ const AddCity = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add State </Typography>
+                    <Typography variant="h6">Add City </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseCity} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -117,7 +117,7 @@ const AddCity = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('countryName', newValue.countryName);
+                                            formik.setFieldValue('countryName', newValue ? newValue.countryName : "");
                                         }}
                                         options={countryList}
                                         value={countryList.find(country => country.countryName === formik.values.countryName) || null}
@@ -142,7 +142,7 @@ const AddCity = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('stateName', newValue.stateName);
+                                            formik.setFieldValue('stateName', newValue ? newValue.stateName : "");
                                         }}
                                         options={stateList}
                                         value={stateList.find(state => state.stateName === formik.values.stateName) || null}
