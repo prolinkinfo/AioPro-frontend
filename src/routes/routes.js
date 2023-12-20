@@ -108,6 +108,12 @@ import ChangePassword from '../pages/settings/ChangePassword'
 import DoctorView from '../pages/visit/doctorVisit/view'
 import VisitReport from '../pages/Reports/VisitReport';
 import AddFirms from '../pages/Sales/firms/Add';
+import Reminders from '../pages/Reminders';
+import Support from '../pages/Support';
+import LeaveManagement from '../pages/HrPortal/LeaveManagement';
+import Entitlements from '../pages/HrPortal/Entitlements';
+import DoctorBusiness from '../pages/Business/DoctorBusiness';
+import FirmBusiness from '../pages/Business/FirmBusiness';
 
 // ----------------------------------------------------------------------
 
@@ -231,6 +237,12 @@ export default function Router() {
         { path: 'sales/ratemaster', element: <Ratemaster /> },
         { path: 'sales/secondarysales', element: <SecondarySales /> },
         { path: 'sales/target', element: <Target /> },
+        { path: 'support', element: <Support /> },
+        { path: 'reminders', element: <Reminders /> },
+        { path: 'hrportal/leavemanagement', element: <LeaveManagement /> },
+        { path: 'hrportal/entitlements', element: <Entitlements /> },
+        { path: 'business/doctorbusiness', element: <DoctorBusiness /> },
+        { path: 'business/firmbusiness', element: <FirmBusiness /> },
       ],
     },
     {
