@@ -49,32 +49,33 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   const renderContent = (
-    <Scrollbar
-      sx={{
-        height: 1,
-        '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
-      }}
-    >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex', cursor: 'pointer' }} onClick={home}>
-        <h2>AioPro</h2>
+    <>
+      <Box sx={{ cursor: 'pointer', textAlign: 'center' }} onClick={home}>
+        <h2>Aiopro</h2>
       </Box>
+      <Scrollbar
+        sx={{
+          height: 1,
+          '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
+        }}
+      >
+        {user.role === 'Hr' || user.role === 'Admin' ? (
+          <NavSection data={adminConfig} />
+        ) : user.role === 'National Manager' ? (
+          <NavSection data={nmConfig} />
+        ) : user.role === 'Branch Manager' ? (
+          <NavSection data={bmConfig} />
+        ) : user.role === 'Zonal Manager' ? (
+          <NavSection data={zmConfig} />
+        ) : user.role === 'Regional Manager' ? (
+          <NavSection data={rmConfig} />
+        ) : user.role === 'Territory Manager' ? (
+          <NavSection data={tmConfig} />
+        ) : null}
 
-      {user.role === 'Hr' || user.role === 'Admin' ? (
-        <NavSection data={adminConfig} />
-      ) : user.role === 'National Manager' ? (
-        <NavSection data={nmConfig} />
-      ) : user.role === 'Branch Manager' ? (
-        <NavSection data={bmConfig} />
-      ) : user.role === 'Zonal Manager' ? (
-        <NavSection data={zmConfig} />
-      ) : user.role === 'Regional Manager' ? (
-        <NavSection data={rmConfig} />
-      ) : user.role === 'Territory Manager' ? (
-        <NavSection data={tmConfig} />
-      ) : null}
-
-      <Box sx={{ flexGrow: 1 }} />
-    </Scrollbar>
+        <Box sx={{ flexGrow: 1 }} />
+      </Scrollbar>
+    </>
   );
 
   return (
