@@ -30,31 +30,27 @@ import { fetchfirmData } from '../../../redux/slice/GetFirmSlice';
 const VisitModel = (props) => {
   const { isOpen, handleCloseView } = props;
   const dispatch = useDispatch();
-  const [firmEmployee, setFirmEmployee] = useState(null);
-  const [firmType, setFirmType] = useState(null);
-  const [firms, setFirms] = useState(null);
-
-  const [allUser, setAllUser] = useState([]);
-  const { id } = JSON.parse(localStorage.getItem('user'));
+  const [firmList, setFirmList] = useState([]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    date: yup.string().required('Date is required'),
-    location: yup.string().required('Location is required'),
+    // date: yup.string().required('Date is required'),
+    // location: yup.string().required('Location is required'),
   });
 
   const initialValues = {
-    date: '',
-    location: '',
-    doctors: [],
-    notes: '',
-    createdBy: id,
+    firmType: '',
+    employeeName: '',
+    firmId: '',
+    address: '',
+    city: '',
+    zone: '',
+    firmName: '',
+    visitDate: '',
+
   };
 
-  const cityData = useSelector((state) => state?.getCity?.data);
-  const zoneList = useSelector((state) => state?.getZone?.data);
-  const divisionList = useSelector((state) => state?.getDivision?.data);
-  const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
+
   const employeeList = useSelector((state) => state?.getEmployee?.data);
   const firmData = useSelector((state) => state?.geFirmType?.data);
   const firm = useSelector((state) => state?.getFirm?.data);
@@ -70,16 +66,19 @@ const VisitModel = (props) => {
     dispatch(firmaTypeData());
   }, []);
 
-  const addOpd = async (values) => {
+  const addVisit = async (values) => {
     const data = {
-      date: values.date,
-      location: values.location,
-      doctors: values.doctors,
-      notes: values.notes,
-      createdBy: values.createdBy,
+      firmType: values.firmType,
+      employeeName: values.employeeName,
+      firmId: values.firmId,
+      visitAddress: values.address,
+      firmAddress: values.address,
+      city: values.city,
+      zone: values.zone,
+      firmName: values.firmName,
+      visitDate: values.visitDate,
     };
-
-    const result = await apipost('/api/opd', data);
+    const result = await apipost('/api/firmVisit', data);
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseView();
@@ -91,33 +90,17 @@ const VisitModel = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
-      addOpd(values);
+      addVisit(values);
       resetForm();
     },
   });
 
-  function capitalize(str) {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const fetchFirm = (firmType) => {
+    const filteredFirm = firm?.filter((firm) => firm?.firmType?.toLowerCase() === firmType?.toLowerCase());
+    setFirmList(filteredFirm)
   }
 
-  async function fetchdata() {
-    const result = await allusers('/api/users');
-    if (result && result.status === 200) {
-      const filterRole = result.data.filter((user) => user?.role === 'Dr');
-      const names = filterRole.map((user) => {
-        const firstName = capitalize(user?.firstName);
-        const lastName = capitalize(user?.lastName);
-        return `${firstName} ${lastName}`;
-      });
-      setAllUser(names);
-    }
-  }
-  useEffect(() => {
-    fetchdata();
-  }, []);
 
-  console.log('firm', firm);
   return (
     <div>
       <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -139,13 +122,19 @@ const VisitModel = (props) => {
             <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
               <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                 <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>Firm Type</FormLabel>
                   <Autocomplete
                     size="small"
                     name="firmType"
-                    onChange={(event, newValue) => setFirmType(newValue?.firmType)}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue("firmType", newValue ? newValue?.firmType : "");
+                      fetchFirm(newValue ? newValue?.firmType : "")
+                    }
+
+                    }
                     fullWidth
                     options={firmData}
-                    value={firmData.find((item) => item.firmType === firmType) || null}
+                    value={firmData.find((item) => item.firmType === formik.values.firmType) || null}
                     getOptionLabel={(firm) => firm?.firmType}
                     // style={{ textTransform: 'capitalize' }}
                     renderInput={(params) => (
@@ -155,12 +144,16 @@ const VisitModel = (props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>Employee</FormLabel>
                   <Autocomplete
                     disablePortal
+                    name="employeeName"
                     id="combo-box-demo"
-                    onChange={(event, newValue) => setFirmEmployee(newValue?.basicInformation?.employeesName)}
+                    onChange={(event, newValue) =>
+                      formik.setFieldValue("employeeName", newValue ? newValue?.basicInformation?.employeesName : "")
+                    }
                     options={employeeList}
-                    value={employeeList.find((item) => item.basicInformation?.employeesName === firmEmployee) || null}
+                    value={employeeList.find((item) => item.basicInformation?.employeesName === formik.values.employeeName) || null}
                     getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
                     size="small"
                     fullWidth
@@ -171,13 +164,22 @@ const VisitModel = (props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>Firm</FormLabel>
                   <Autocomplete
                     size="small"
                     name="firms"
-                    onChange={(event, newValue) => setFirms(newValue?.firmName)}
+                    onChange={(event, newValue) => {
+                      console.log(newValue)
+                      formik.setFieldValue("firmName", newValue ? newValue?.firmName : "");
+                      formik.setFieldValue("firmId", newValue ? newValue?.firmId : "");
+                      formik.setFieldValue("city", newValue ? newValue?.city : "");
+                      formik.setFieldValue("zone", newValue ? newValue?.zone : "");
+                      formik.setFieldValue("address", newValue ? newValue?.address : "");
+                    }
+                    }
                     fullWidth
-                    options={firm}
-                    value={firm.find((item) => item.firmName === firms) || null}
+                    options={firmList}
+                    value={firmList.find((item) => item?.firmName === formik.values.firmName) || null}
                     getOptionLabel={(firm) => firm?.firmName}
                     // style={{ textTransform: 'capitalize' }}
                     renderInput={(params) => (
@@ -188,14 +190,14 @@ const VisitModel = (props) => {
                 <Grid item xs={12} sm={12} md={12}>
                   <FormLabel>Visit Date</FormLabel>
                   <TextField
-                    name="date"
+                    name="visitDate"
                     type={'datetime-local'}
                     size="small"
                     fullWidth
-                    value={formik.values.date}
+                    value={formik.values.visitDate}
                     onChange={formik.handleChange}
-                    error={formik.touched.date && Boolean(formik.errors.date)}
-                    helperText={formik.touched.date && formik.errors.date}
+                    error={formik.touched.visitDate && Boolean(formik.errors.visitDate)}
+                    helperText={formik.touched.visitDate && formik.errors.visitDate}
                   />
                 </Grid>
               </Grid>
