@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import React, { useState, useEffect } from 'react';
 import {
   Autocomplete,
@@ -157,7 +158,7 @@ const Firms = () => {
         );
       },
     },
-    { field: '_id', headerName: 'Firm Id', width: 120 },
+    { field: 'firmId', headerName: 'Firm Id', width: 120 },
     {
       field: 'date',
       headerName: 'Date',
@@ -257,7 +258,7 @@ const Firms = () => {
 
   return (
     <div>
-      <VisitModel isOpen={isOpen} handleCloseView={handleCloseView}/>
+      <VisitModel isOpen={isOpen} handleCloseView={handleCloseView} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Firms</Typography>

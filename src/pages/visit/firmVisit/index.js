@@ -1,25 +1,31 @@
+/* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import moment from 'moment'
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
+import { fetchFirmVisitData } from '../../../redux/slice/GetFirmVisitSlice'
 
 const FirmVisit = () => {
 
+    const dispatch = useDispatch();
+    const firmVisitList = useSelector((state) => state?.getFirmVisit?.data);
 
     const columns = [
         { field: 'firmId', headerName: 'Firm Id', width: 120 },
-        { field: 'firmName', headerName: 'Firm Name', width: 130 },
+        { field: 'firmName', headerName: 'Firm Name', width: 200 },
         {
             field: 'visitAddress',
             headerName: 'Visit Address',
-            width: 200,
+            width: 400,
         },
         {
             field: 'firmAddress',
             headerName: 'Firm Address',
-            width: 200,
+            width: 400,
         },
         {
             field: 'city',
@@ -40,6 +46,13 @@ const FirmVisit = () => {
             field: 'visitDate',
             headerName: 'Visit Date',
             width: 120,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {moment(params?.row?.visitDate).format("DD/MM/YYYY")}
+                    </Box>
+                );
+            },
         },
         {
             field: 'status',
@@ -71,6 +84,11 @@ const FirmVisit = () => {
         { label: 'Pulp Fiction', year: 1994 },
         { label: 'Pulp Fiction', year: 1994 },
     ]
+
+    useEffect(()=>{
+dispatch(fetchFirmVisitData())
+    },[])
+
     return (
         <div>
             <Container maxWidth="xl">
@@ -148,7 +166,7 @@ const FirmVisit = () => {
                                 <Button variant='contained'>Go</Button>
                             </Stack>
                             <DataGrid
-                                rows={rows}
+                                rows={firmVisitList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
@@ -156,6 +174,8 @@ const FirmVisit = () => {
                                     },
                                 }}
                                 pageSizeOptions={[5, 10]}
+                                getRowId={(row) => row._id}
+
                             />
                         </Card>
                     </Box>
