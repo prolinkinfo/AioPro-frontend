@@ -71,9 +71,16 @@ const Employees = () => {
                 'aria-labelledby': 'basic-button',
               }}
             >
+              <MenuItem onClick={() => handleClose()}>
+                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View</span>
+              </MenuItem>
+              <MenuItem onClick={() => handleClose()}>
+                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log</span>
+              </MenuItem>
+              
               <MenuItem>
                 <Link
-                  to={`/${userRole}/dashboard/sales/firms/${params?.row?._id}`}
+                  to={`/${userRole}/dashboard/people/employees/${params?.row?._id}`}
                   style={{ color: '#000', textDecoration: 'none' }}
                 >
                   <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
@@ -82,9 +89,6 @@ const Employees = () => {
               <MenuItem onClick={() => handleClose()}>
                 <VerticalAlignBottomIcon fontSize="10" />
                 <span style={{ marginLeft: '20px' }}>Unapprove</span>
-              </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
-                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
               </MenuItem>
               <MenuItem onClick={() => handleClickOpenModel(params?.row?._id)}>
                 <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
@@ -103,10 +107,10 @@ const Employees = () => {
       },
     },
     {
-      field: 'employeesName',
+      field: 'firstName',
       headerName: 'Name',
       renderCell: (params) => {
-        return <Box>{params?.row?.basicInformation?.employeesName} </Box>;
+        return <Box>{`${params?.row?.basicInformation?.firstName} ${params?.row?.basicInformation?.surname}`} </Box>;
       },
       width: 200,
     },
