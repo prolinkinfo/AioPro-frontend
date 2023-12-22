@@ -139,26 +139,26 @@ export const adminConfig = [
   },
   {
     title: 'Reminders',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/reminders`,
     icon: icon('ic_reminder'),
   },
   {
     title: 'Support',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/support`,
     icon: icon('ic_support'),
   },
   {
     title: 'HR Portal',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/hrportal`,
     icon: icon('ic_portal'),
     children: [
       {
         title: 'Entitlements',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/hrportal/entitlements`,
       },
       {
         title: 'Leave Management',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/hrportal/leavemanagement`,
       },
     ],
   },
@@ -395,11 +395,11 @@ export const adminConfig = [
     children: [
       {
         title: 'Doctor Business',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/business/doctorbusiness`,
       },
       {
         title: 'Firm Business',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/business/firmbusiness`,
       },
     ],
   },

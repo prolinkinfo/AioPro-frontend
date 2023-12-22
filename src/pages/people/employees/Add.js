@@ -23,9 +23,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 import Iconify from '../../../components/iconify';
-import { allusers, apipost } from '../../../service/api';
+import { allusers, apipost, apiget, apiput } from '../../../service/api';
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
@@ -73,11 +74,16 @@ const AddEmployees = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [employeeList, setEmployeeList] = useState([]);
+
   // -----------  validationSchema
   const validationSchema = Yup.object({
     profileImg: Yup.string(),
-    employeesCode: Yup.string().required('Employee code is required'),
-    employeesName: Yup.string().required('Employee name is required'),
+    // employeesCode: Yup.string().required('Employee code is required'),
+
+    firstName: Yup.string().required('First name is required'),
+    // middleName:Yup.string().required('Employee name is required'),
+    surname: Yup.string().required('Surname  is required'),
     gender: Yup.string().required('Gender is required'),
     workType: Yup.string().required('Work type is required'),
     Dob: Yup.string().required('Date of birth is required'),
@@ -90,7 +96,7 @@ const AddEmployees = () => {
     email: Yup.string().email('Invalid email address').required('Employee email address'),
     country: Yup.string().required('Country is required'),
     state: Yup.string().required('State is required'),
-    hq: Yup.string().required('Headquarters is required'),
+    // hq: Yup.string().required('Headquarters is required'),
     // multipleHq: Yup.string(),
     division: Yup.string().required('Division is required'),
     zone: Yup.string().required('Zone is required'),
@@ -133,6 +139,7 @@ const AddEmployees = () => {
     branchName: Yup.string().required('Branch name is required'),
     nomineeName: Yup.string(),
   });
+  const params = useParams();
 
   const dispatch = useDispatch();
   const cityData = useSelector((state) => state?.getCity?.data);
@@ -147,79 +154,97 @@ const AddEmployees = () => {
     dispatch(fetchZoneData());
     dispatch(fetchDivisionData());
     dispatch(fetchQualificationData());
-    dispatch(fetchCountryData())
-    dispatch(fetchStateData())
+    dispatch(fetchCountryData());
+    dispatch(fetchStateData());
   }, [dispatch]);
 
+  async function fetchdata() {
+    const result = await apiget(`/api/employees/${params?.id}`);
+    if (result && result.status === 200) {
+      setEmployeeList(result?.data?.result);
+    }
+  }
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
   const initialValues = {
-    profileImg: '',
-    employeesCode: '',
-    employeesName: '',
-    gender: '',
-    workType: '',
-    Dob: '',
-    maritalStatus: '',
-    anniversaryDate: '',
+    profileImg: employeeList?.basicInformation?.profileImg || '',
+    employeesCode: employeeList?.basicInformation?.employeesCode,
+    firstName: employeeList?.basicInformation?.firstName || '',
+    middleName: employeeList?.basicInformation?.middleName || '',
+    surname: employeeList?.basicInformation?.surname || '',
+    // employeesName: '',
+    gender: employeeList?.basicInformation?.gender || '',
+    workType: employeeList?.basicInformation?.workType || '',
+    Dob: employeeList?.basicInformation?.Dob || '',
+    maritalStatus: employeeList?.basicInformation?.maritalStatus || '',
+    anniversaryDate: employeeList?.basicInformation?.anniversaryDate || '',
     // Contact Information
-    primaryContact: '',
-    alternateContact: '',
-    email: '',
-    country: '',
-    state: '',
-    hq: '',
-    multipleHq: '',
-    division: '',
-    zone: '',
-    homeLocation: '',
-    permanentLoction: '',
-    pincode: '',
-    additionalDivision: '',
+    primaryContact: employeeList?.contactInformation?.primaryContact || '',
+    alternateContact: employeeList?.contactInformation?.alternateContact || '',
+    email: employeeList?.contactInformation?.email || '',
+    country: employeeList?.contactInformation?.country || '',
+    state: employeeList?.contactInformation?.state || '',
+    hq: employeeList?.contactInformation?.hq || '',
+    multipleHq: employeeList?.contactInformation?.multipleHq || '',
+    division: employeeList?.contactInformation?.division || '',
+    zone: employeeList?.contactInformation?.zone || '',
+    homeLocation: employeeList?.contactInformation?.homeLocation || '',
+    permanentLoction: employeeList?.contactInformation?.permanentLoction || '',
+    pincode: employeeList?.contactInformation?.pincode || '',
+    additionalDivision: employeeList?.contactInformation?.additionalDivision || '',
     // Work Information
-    exStations: '',
-    outStations: '',
-    designation: '',
-    assignedTo: '',
-    additionalSupervisor: '',
-    Doj: '',
-    endProbationDate: '',
-    endConfirmationDate: '',
-    dailyWorkHours: '',
-    showAccompanied: false,
-    accompaniedEmployee: '',
-    dateOfResignation: '',
-    showInTransit: false,
+    exStations: employeeList?.workInformation?.exStations || '',
+    outStations: employeeList?.workInformation?.outStations || '',
+    designation: employeeList?.workInformation?.designation || '',
+    assignedTo: employeeList?.workInformation?.assignedTo || '',
+    additionalSupervisor: employeeList?.workInformation?.additionalSupervisor || '',
+    Doj: employeeList?.workInformation?.Doj || '',
+    endProbationDate: employeeList?.workInformation?.endConfirmationDate || '',
+    endConfirmationDate: employeeList?.workInformation?.endConfirmationDate || '',
+    dailyWorkHours: employeeList?.workInformation?.dailyWorkHours || '',
+    showAccompanied: employeeList?.workInformation?.showAccompanied || false,
+    accompaniedEmployee: employeeList?.workInformation?.accompaniedEmployee || '',
+    dateOfResignation: employeeList?.workInformation?.dateOfResignation || '',
+    showInTransit: employeeList?.workInformation?.showInTransit || false,
     // Other Information
-    employeeQualification: '',
-    aadharNumber: '',
-    PanNumber: '',
-    pfNumber: '',
-    ESICNumber: '',
-    PfUanNumber: '',
-    bloodGroup: '',
-    Language: '',
-    driverLicenseNumber: '',
+    employeeQualification: employeeList?.otherInformation?.employeeQualification || '',
+    aadharNumber: employeeList?.otherInformation?.aadharNumber || '',
+    PanNumber: employeeList?.otherInformation?.PanNumber || '',
+    pfNumber: employeeList?.otherInformation?.pfNumber || '',
+    ESICNumber: employeeList?.otherInformation?.ESICNumber || '',
+    PfUanNumber: employeeList?.otherInformation?.PfUanNumber || '',
+    bloodGroup: employeeList?.otherInformation?.bloodGroup || '',
+    Language: employeeList?.otherInformation?.Language || '',
+    driverLicenseNumber: employeeList?.otherInformation?.driverLicenseNumber || '',
     // Daily Allowance Information
-    DA_HO: '',
-    DA_EX: '',
-    DA_OUT: '',
-    DA_RHO: '',
-    DA_TRANSIT: '',
-    DA_OTHER: '',
+    DA_HO: employeeList?.dailyAllowanceInformation?.DA_HO || '',
+    DA_EX: employeeList?.dailyAllowanceInformation?.DA_EX || '',
+    DA_OUT: employeeList?.dailyAllowanceInformation?.DA_OUT || '',
+    DA_RHO: employeeList?.dailyAllowanceInformation?.DA_RHO || '',
+    DA_TRANSIT: employeeList?.dailyAllowanceInformation?.DA_TRANSIT || '',
+    DA_OTHER: employeeList?.dailyAllowanceInformation?.DA_OTHER || '',
     // Account Information
-    accountHolderName: '',
-    accountNumber: '',
-    IFSCNumber: '',
-    beneficiaryID: '',
-    bankName: '',
-    branchName: '',
-    nomineeName: '',
+    accountHolderName: employeeList?.accountInformation?.accountHolderName || '',
+    accountNumber: employeeList?.accountInformation?.accountHolderName || '',
+    IFSCNumber: employeeList?.accountInformation?.IFSCNumber || '',
+    beneficiaryID: employeeList?.accountInformation?.beneficiaryID || '',
+    bankName: employeeList?.accountInformation?.bankName || '',
+    branchName: employeeList?.accountInformation?.branchName || '',
+    nomineeName: employeeList?.accountInformation?.nomineeName || '',
   };
 
   const AddEmployees = async (values) => {
+    console.log('values', values);
     const data = new FormData();
     // Basic Information
     data.append('profileImg', values?.profileImg);
-    data.append('employeesCode', values?.employeesCode);
+    data.append('employeesCode', employeeList?.basicInformation?.employeesCode);
+    data.append('firstName', values?.firstName);
+    data.append('middleName', values?.middleName);
+    data.append('surname', values?.surname);
+
     data.append('employeesName', values?.employeesName);
     data.append('gender', values?.gender);
     data.append('workType', values?.workType);
@@ -279,12 +304,13 @@ const AddEmployees = () => {
     data.append('bankName', values?.bankName);
     data.append('branchName', values?.branchName);
     data.append('nomineeName', values?.nomineeName);
+    data.append('_id', values?._id);
 
-    console.log('hhh', data);
-
-    const result = await apipost('/api/employees', data);
+    const result = params?.id ? await apiput('/api/employees', data) : await apipost('/api/employees', data);
     if (result && result.status === 200) {
       dispatch(fetchEmployeeData());
+      navigate(`/${userRole}/dashboard/people/employees`);
+      setSelectedFile(null);
       // navigate('/login');
     }
   };
@@ -292,10 +318,12 @@ const AddEmployees = () => {
   // formik
   const formik = useFormik({
     initialValues,
-    // validationSchema,
+    validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       resetForm();
-      AddEmployees(values);
+      const data = params?.id ? { ...values, _id: params?.id } : values;
+      AddEmployees(data);
     },
   });
 
@@ -356,7 +384,7 @@ const AddEmployees = () => {
     <div>
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-          <Typography variant="h4">Add Employees</Typography>
+          <Typography variant="h4"> {params?.id ? 'Edit Employees' : 'Add Employees'}</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={back}>
               Back
@@ -369,12 +397,12 @@ const AddEmployees = () => {
             <Divider />
 
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mt={2}>
-              <Grid item xs={12} sm={12} md={12}>
+              <Grid item xs={12} sm={4} md={4}>
                 <Box style={{ textAlign: 'center' }}>
-                  {selectedFile ? (
+                  {selectedFile || formik?.values?.profileImg ? (
                     <Avatar
                       alt="Avatar"
-                      src={selectedFile}
+                      src={selectedFile || formik?.values?.profileImg}
                       sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
                     />
                   ) : (
@@ -400,37 +428,73 @@ const AddEmployees = () => {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Employees Code</FormLabel>
-                <TextField
-                  id="doctorName"
-                  name="employeesCode"
-                  size="small"
-                  maxRows={10}
-                  placeholder="Employees code"
-                  fullWidth
-                  value={formik.values.employeesCode}
-                  onChange={formik.handleChange}
-                  error={formik.touched.employeesCode && Boolean(formik.errors.employeesCode)}
-                  helperText={formik.touched.employeesCode && formik.errors.employeesCode}
-                />
+              <Grid item xs={12} sm={8} md={8} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+                <Grid item xs={12} sm={12} md={12} mt={1}>
+                  <FormLabel>First Name</FormLabel>
+                  <TextField
+                    id="doctorName"
+                    name="firstName"
+                    size="small"
+                    maxRows={10}
+                    placeholder="Enter First Name"
+                    fullWidth
+                    value={formik.values.firstName}
+                    onChange={formik.handleChange}
+                    error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                    helperText={formik.touched.firstName && formik.errors.firstName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} mt={1}>
+                  <FormLabel>Middle Name</FormLabel>
+                  <TextField
+                    id="doctorName"
+                    name="middleName"
+                    size="small"
+                    maxRows={10}
+                    placeholder="Enter Middle Name"
+                    fullWidth
+                    value={formik.values.middleName}
+                    onChange={formik.handleChange}
+                    error={formik.touched.middleName && Boolean(formik.errors.middleName)}
+                    helperText={formik.touched.middleName && formik.errors.middleName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} mt={1}>
+                  <FormLabel>Surname</FormLabel>
+                  <TextField
+                    id="doctorName"
+                    name="surname"
+                    size="small"
+                    maxRows={10}
+                    placeholder="Enter Surname"
+                    fullWidth
+                    value={formik.values.surname}
+                    onChange={formik.handleChange}
+                    error={formik.touched.surname && Boolean(formik.errors.surname)}
+                    helperText={formik.touched.surname && formik.errors.surname}
+                  />
+                </Grid>
               </Grid>
-
-              <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Employees Name</FormLabel>
-                <TextField
-                  id="doctorName"
-                  name="employeesName"
-                  size="small"
-                  maxRows={10}
-                  placeholder="Enter Employees Name"
-                  fullWidth
-                  value={formik.values.employeesName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.employeesName && Boolean(formik.errors.employeesName)}
-                  helperText={formik.touched.employeesName && formik.errors.employeesName}
-                />
-              </Grid>
+              {params?.id ? (
+                <Grid item xs={12} sm={12} md={12}>
+                  <FormLabel>Employees Code</FormLabel>
+                  <TextField
+                    id="doctorName"
+                    name="employeesCode"
+                    size="small"
+                    maxRows={10}
+                    placeholder="Employees code"
+                    fullWidth
+                    disabled
+                    value={formik.values.employeesCode}
+                    onChange={formik.handleChange}
+                    error={formik.touched.employeesCode && Boolean(formik.errors.employeesCode)}
+                    helperText={formik.touched.employeesCode && formik.errors.employeesCode}
+                  />
+                </Grid>
+              ) : (
+                ''
+              )}
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
@@ -478,14 +542,14 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.Dob}
+                  value={dayjs(formik.values.Dob).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.Dob && Boolean(formik.errors.Dob)}
                   helperText={formik.touched.Dob && formik.errors.Dob}
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Marital Status</FormLabel>
                   <Select
@@ -505,7 +569,7 @@ const AddEmployees = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={6}>
                 <FormLabel>Anniversary</FormLabel>
                 <TextField
                   id="anniversaryDate"
@@ -514,7 +578,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.anniversaryDate}
+                  value={dayjs(formik.values.anniversaryDate).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.anniversaryDate && Boolean(formik.errors.anniversaryDate)}
                   helperText={formik.touched.anniversaryDate && formik.errors.anniversaryDate}
@@ -583,7 +647,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={country.find((item) => item.countryName === formik.values.country) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.countryName :'')}
+                  onChange={(e, value) => formik.setFieldValue('country', value ? value.countryName : '')}
                   getOptionLabel={({ countryName }) => countryName}
                   renderInput={(params) => (
                     <TextField
@@ -605,7 +669,7 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={state.find((item) => item.stateName === formik.values.state) || null}
-                  onChange={(e, value) => formik.setFieldValue('state', value ? value.stateName :'')}
+                  onChange={(e, value) => formik.setFieldValue('state', value ? value.stateName : '')}
                   getOptionLabel={({ stateName }) => stateName}
                   renderInput={(params) => (
                     <TextField
@@ -713,13 +777,12 @@ const AddEmployees = () => {
                   rows={2}
                   multiline
                   fullWidth
-                  placeholder='201, Deepkamal mall 1, near Sarthana Nature Park, Sarthana Jakat Naka, Nature Park and Zoo, Nana Varachha, Surat, Gujarat'
+                  placeholder="201, Deepkamal mall 1, near Sarthana Nature Park, Sarthana Jakat Naka, Nature Park and Zoo, Nana Varachha, Surat, Gujarat"
                   value={formik.values.homeLocation}
                   onChange={formik.handleChange}
                   error={formik.touched.homeLocation && Boolean(formik.errors.homeLocation)}
                   helperText={formik.touched.homeLocation && formik.errors.homeLocation}
                 />
-
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
@@ -894,7 +957,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.Doj}
+                  value={dayjs(formik.values.Doj).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.Doj && Boolean(formik.errors.Doj)}
                   helperText={formik.touched.Doj && formik.errors.Doj}
@@ -909,7 +972,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.endProbationDate}
+                  value={dayjs(formik.values.endProbationDate).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.endProbationDate && Boolean(formik.errors.endProbationDate)}
                   helperText={formik.touched.endProbationDate && formik.errors.endProbationDate}
@@ -924,7 +987,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.endConfirmationDate}
+                  value={dayjs(formik.values.endConfirmationDate).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.endConfirmationDate && Boolean(formik.errors.endConfirmationDate)}
                   helperText={formik.touched.endConfirmationDate && formik.errors.endConfirmationDate}
@@ -946,13 +1009,16 @@ const AddEmployees = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Show Accompanied</FormLabel>
-                <br />
-                <Checkbox
-                  checked={formik.values.showAccompanied}
-                  onChange={(e) => formik.setFieldValue('showAccompanied', e.target.checked)}
-                  name="showAccompanied"
+              <Grid item xs={12} sm={6} md={6} alignItems="center" justifyContent="center">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formik.values.showAccompanied}
+                      onChange={(e) => formik.setFieldValue('showAccompanied', e.target.checked)}
+                      name="requiredCheckbox"
+                    />
+                  }
+                  label="Show Accompanied"
                 />
               </Grid>
 
@@ -979,7 +1045,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={formik.values.dateOfResignation}
+                  value={dayjs(formik.values.dateOfResignation).format('YYYY-MM-DD')}
                   onChange={formik.handleChange}
                   error={formik.touched.dateOfResignation && Boolean(formik.errors.dateOfResignation)}
                   helperText={formik.touched.dateOfResignation && formik.errors.dateOfResignation}
@@ -987,12 +1053,15 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Show In Transit</FormLabel>
-                <br />
-                <Checkbox
-                  checked={formik.values.showInTransit}
-                  onChange={(e) => formik.setFieldValue('showInTransit', e.target.checked)}
-                  name="showInTransit"
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formik.values.showInTransit}
+                      onChange={(e) => formik.setFieldValue('showInTransit', e.target.checked)}
+                      name="showInTransit"
+                    />
+                  }
+                  label="Show In Transit"
                 />
               </Grid>
             </Grid>
@@ -1163,7 +1232,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_HO"
+                  placeholder="0"
                   value={formik.values.DA_HO}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_HO && Boolean(formik.errors.DA_HO)}
@@ -1178,7 +1247,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_EX"
+                  placeholder="0"
                   value={formik.values.DA_EX}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_EX && Boolean(formik.errors.DA_EX)}
@@ -1193,7 +1262,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_OUT"
+                  placeholder="0"
                   value={formik.values.DA_OUT}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_OUT && Boolean(formik.errors.DA_OUT)}
@@ -1208,7 +1277,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_RHO"
+                  placeholder="0"
                   value={formik.values.DA_RHO}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_RHO && Boolean(formik.errors.DA_RHO)}
@@ -1223,7 +1292,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_TRANSIT"
+                  placeholder="0"
                   value={formik.values.DA_TRANSIT}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_TRANSIT && Boolean(formik.errors.DA_TRANSIT)}
@@ -1238,7 +1307,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="DA_OTHER"
+                  placeholder="0"
                   value={formik.values.DA_OTHER}
                   onChange={formik.handleChange}
                   error={formik.touched.DA_OTHER && Boolean(formik.errors.DA_OTHER)}
@@ -1362,7 +1431,7 @@ const AddEmployees = () => {
             <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'} style={{ marginTop: '15px' }}>
               <Stack direction={'row'} spacing={2}>
                 <Button variant="contained" onClick={formik.handleSubmit}>
-                  Add Employee
+                  {params?.id ? 'Edit Employee' : 'Add Employee'}
                 </Button>
                 <Button variant="outlined" color="error">
                   Cancle
