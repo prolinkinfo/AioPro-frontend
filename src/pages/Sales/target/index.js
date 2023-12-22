@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 
 import * as React from 'react';
 import PropTypes from 'prop-types';
@@ -50,6 +51,7 @@ export default function BasicTabs() {
     setValue(newValue);
   };
 
+  
   return (
     <Container maxWidth="xl">
       <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>

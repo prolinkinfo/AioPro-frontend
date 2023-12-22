@@ -12,14 +12,44 @@ import DeleteModel from '../../../components/Deletemodle'
 import AddTarget from './AddTarget';
 import { fetchTargetData } from '../../../redux/slice/GetTargetSlice';
 
+const yearList = [
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+]
+const monthList = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
+const quarterList = [
+    "1 Quarter",
+    "2 Quarter",
+    "3 Quarter",
+    "4 Quarter",
+]
+
 const Target = () => {
 
     const [taxList, setTaxList] = useState([])
     const dispatch = useDispatch();
 
-    const targetList = useSelector((state)=>state?.getTarget?.data)
+    const targetList = useSelector((state) => state?.getTarget?.data)
 
-    console.log(targetList,"targetList")
+    console.log(targetList, "targetList")
 
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -85,7 +115,13 @@ const Target = () => {
         //     },
         // },
         { field: 'srNo', headerName: 'Sr.No', width: 100 },
-        { field: 'employeeName', headerName: 'Employee Name', width: 300, cellClassName: 'name-column--cell--capitalize' },
+        {
+            field: 'employeeName',
+            headerName: 'Employee Name',
+            width: 300,
+            cellClassName: 'name-column--cell--capitalize'
+
+        },
         { field: 'headquarter', headerName: 'Headquarter', width: 150, cellClassName: 'name-column--cell--capitalize' },
         { field: 'frequency', headerName: 'Frequency', width: 150, cellClassName: 'name-column--cell--capitalize' },
         { field: 'month', headerName: 'Month', width: 150, cellClassName: 'name-column--cell--capitalize' },
@@ -101,7 +137,7 @@ const Target = () => {
         },
     ];
 
- 
+
 
     useEffect(() => {
         dispatch(fetchTargetData());
@@ -147,32 +183,68 @@ const Target = () => {
                         </Grid>
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={top100Films}
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('month', newValue || "");
+                                // }}
                                 fullWidth
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select Month' />}
+                                options={monthList}
+                                // value={monthList.find(month => month === formik.values.month) || null}
+                                getOptionLabel={(month) => month}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select Month'
+                                    // error={formik.touched.month && Boolean(formik.errors.month)}
+                                    // helperText={formik.touched.month && formik.errors.month}
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={top100Films}
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('quarter', newValue || "");
+                                // }}
                                 fullWidth
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select Quarter' />}
+                                options={quarterList}
+                                // value={quarterList.find(quarter => quarter === formik.values.quarter) || null}
+                                getOptionLabel={(quarter) => quarter}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select Quarter'
+                                    // error={formik.touched.quarter && Boolean(formik.errors.quarter)}
+                                    // helperText={formik.touched.quarter && formik.errors.quarter}
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
+                                size="small"
+                                // onChange={(event, newValue) => {
+                                //     formik.setFieldValue('year', newValue || "");
+                                // }}
                                 fullWidth
-                                options={top100Films}
-                                size='small'
-                                renderInput={(params) => <TextField {...params} placeholder='Select Year' style={{ fontSize: "15px" }} />}
+                                options={yearList}
+                                // value={yearList.find(year => year === formik.values.year) || null}
+                                getOptionLabel={(year) => year}
+                                style={{ textTransform: 'capitalize' }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        style={{ textTransform: 'capitalize' }}
+                                        placeholder='Select Year'
+                                        // error={formik.touched.year && Boolean(formik.errors.year)}
+                                        // helperText={formik.touched.year && formik.errors.year}
+                                    />
+                                )}
                             />
                         </Grid>
 

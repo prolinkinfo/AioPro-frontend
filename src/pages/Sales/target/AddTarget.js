@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -56,6 +57,7 @@ const quarterList = [
 const AddTarget = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd, fetchTargetData } = props;
+
     const dispatch = useDispatch()
     const employeeList = useSelector((state) => state?.getEmployee?.data)
     const zoneList = useSelector((state) => state?.getZone?.data)
@@ -109,7 +111,7 @@ const AddTarget = (props) => {
             dispatch(fetchTargetData());
         }
     }
-
+  
 
     const formik = useFormik({
         initialValues,
@@ -118,13 +120,15 @@ const AddTarget = (props) => {
             addTarget(values)
         },
     });
-console.log(employeeList,"employeeList")
     useEffect(() => {
         dispatch(fetchEmployeeData());
         dispatch(fetchCityData());
         dispatch(fetchZoneData());
 
     }, [])
+
+ 
+
     return (
         <div>
             <Dialog open={isOpenAdd} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -151,7 +155,7 @@ console.log(employeeList,"employeeList")
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="targetType"
-                                        value={formik.values.targetType}
+                                        value={formik.values.targetType || "employeeWise"}
                                         onChange={formik.handleChange}
                                         defaultValue={"employeeWise"}
                                         error={formik.touched.targetType && Boolean(formik.errors.targetType)}
@@ -170,13 +174,12 @@ console.log(employeeList,"employeeList")
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('employeeName', newValue ? newValue.basicInformation?.employeesName
-                                                : "");
+                                            formik.setFieldValue('employeeName',newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
                                         fullWidth
                                         options={employeeList}
-                                        value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.employeeName) || null}
-                                        getOptionLabel={(employee) => `${employee?.basicInformation?.employeesName?.firstName} ${employee?.basicInformation?.employeesName?.surname}`}
+                                        value={employeeList.find(employee =>  employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField

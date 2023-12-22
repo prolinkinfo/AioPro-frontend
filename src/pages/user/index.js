@@ -357,7 +357,6 @@ const User = () => {
     <>
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
       <AddDocter open={openAddDocter} handleClose={handleCloseAddDocter} fetchdata={fetchdata} />
-
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Box>
