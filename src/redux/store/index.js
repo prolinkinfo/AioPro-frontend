@@ -14,6 +14,8 @@ import GetDoctorVisitReducer from '../slice/GetDoctorVisitSlice';
 import GetFirmTypeReducer from '../slice/GetFirmTypesSlice'
 import GetFirmReducer from '../slice/GetFirmSlice'
 import GetFirmVisitReducer from '../slice/GetFirmVisitSlice';
+import GetTargetReducer from '../slice/GetTargetSlice';
+import GetLeaveEntitlementReducer from '../slice/GetLeaveEntitlementSlice';
 
 const store = configureStore({
   reducer: {
@@ -32,6 +34,8 @@ const store = configureStore({
     geFirmType: GetFirmTypeReducer,
     getFirm: GetFirmReducer,
     getFirmVisit: GetFirmVisitReducer,
+    getTarget: GetTargetReducer,
+    getLeaveEntitlement: GetLeaveEntitlementReducer,
   },
 });
 
