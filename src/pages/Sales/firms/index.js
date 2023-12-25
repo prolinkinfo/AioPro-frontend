@@ -46,11 +46,16 @@ import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
 import VisitModel from './VisitModel';
+import ImportFile from './ImportFile';
+import RejectModel from './RejectModel';
 
 const Firms = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [fileImport, setFileImport] = useState(false);
   const [firmsList, setFirmsList] = useState([]);
   const [openModel, setOpenModel] = useState(false);
+  const [approveModel, setApproveModel] = useState(false);
+  const [rejectModel, setRejectModel] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [firmId, setFirmId] = useState(null);
   const [firmType, setFirmType] = useState(null);
@@ -59,6 +64,7 @@ const Firms = () => {
   const [firmDivision, setFirmDivision] = useState(null);
   const [firmEmployee, setFirmEmployee] = useState(null);
   const [firmManager, setFirmManager] = useState(null);
+  const [fId, setFId] = useState({});
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -97,8 +103,9 @@ const Firms = () => {
     }
   };
 
-  const handleClick = (event) => {
+  const handleClick = (id, event) => {
     setAnchorEl(event.currentTarget);
+    setFId(id);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -110,11 +117,6 @@ const Firms = () => {
       sortable: false,
       width: 120,
       renderCell: (params) => {
-        // console.log("params",params?.row?._id)
-        // const handleClick = async (data) => {
-        //   console.log(data, 'data');
-        // };
-
         return (
           <div>
             <Button
@@ -122,7 +124,7 @@ const Firms = () => {
               aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={(e) => handleClick(params?.row, e)}
             >
               <DragIndicatorIcon />
             </Button>
@@ -138,20 +140,22 @@ const Firms = () => {
             >
               <MenuItem>
                 <Link
-                  to={`/${userRole}/dashboard/sales/firms/${params?.row?._id}`}
+                  to={`/${userRole}/dashboard/sales/firms/${fId?._id}`}
                   style={{ color: '#000', textDecoration: 'none' }}
                 >
                   <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
                 </Link>
               </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
+              <MenuItem onClick={() => setApproveModel(true)}>
                 <VerticalAlignBottomIcon fontSize="10" />
-                <span style={{ marginLeft: '20px' }}>Unapprove</span>
+                <span style={{ marginLeft: '20px' }}>
+                  {fId?.status === 'Approved'? 'Unapproved': fId?.status === 'Unapproved'? 'Approved': fId?.status}
+                </span>
               </MenuItem>
               <MenuItem onClick={() => handleClose()}>
                 <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
               </MenuItem>
-              <MenuItem onClick={() => handleClickOpenModel(params?.row?._id)}>
+              <MenuItem onClick={() => handleClickOpenModel(fId?._id)}>
                 <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
               </MenuItem>
             </Menu>
@@ -232,16 +236,23 @@ const Firms = () => {
   }, []);
 
   const StatusList = [
-    { label: 'Approved', value: 'approved' },
-    { label: 'Unapproved', value: 'unapproved' },
+    { label: 'Approved', value: 'Approved' },
+    { label: 'Unapproved', value: 'Unapproved' },
+    { label: 'Reject', value: 'Reject' },
+    { label: 'Pending', value: 'Pending' },
+
   ];
 
   const handleOpenView = () => setIsOpen(true);
   const handleCloseView = () => setIsOpen(false);
 
+  const approvedFirm = (id) => {};
+
   return (
     <div>
+      <ImportFile isOpen={fileImport} handleClose={setFileImport} />
       <VisitModel isOpen={isOpen} handleCloseView={handleCloseView} />
+      <RejectModel isOpen={rejectModel} handleClose={setRejectModel} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Firms</Typography>
@@ -256,6 +267,13 @@ const Firms = () => {
             </Button>
             <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
               Export
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => setFileImport(true)}
+            >
+              Import
             </Button>
           </Stack>
         </Stack>
@@ -373,10 +391,10 @@ const Firms = () => {
                 columns={columns}
                 initialState={{
                   pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
+                    paginationModel: { page: 0, pageSize: 10 },
                   },
                 }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[10, 15, 25]}
                 getRowId={(row) => row._id}
               />
             </Card>
@@ -399,6 +417,34 @@ const Firms = () => {
           <Button onClick={handleCloseModel}>Disagree</Button>
           <Button onClick={() => handleCloseModel(firmId)} autoFocus>
             Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Approve modele */}
+      <Dialog
+        open={approveModel}
+        onClose={() => setApproveModel(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth='sm'
+      >
+        {/* <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle> */}
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">A request for approval is a formal process in which you ask a senior team member for their approval. This could be a project manager, the head of a department, or even an external client. </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setApproveModel(false);
+              setRejectModel(true);
+              setAnchorEl(null);
+            }}
+          >
+            Reject
+          </Button>
+          <Button onClick={() => approvedFirm(firmId)} autoFocus>
+            Approve
           </Button>
         </DialogActions>
       </Dialog>

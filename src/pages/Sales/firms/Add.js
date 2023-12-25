@@ -106,7 +106,8 @@ const AddFirms = () => {
     bankName: firmsList?.bankName || '',
     branchName: firmsList?.branchName || '',
     accountNumber: firmsList?.accountNumber || '',
-    status: 'Approved',
+    status: 'Pending',
+    msg:'Approved requset send'
   };
 
   const addDoctor = async (values) => {
@@ -445,16 +446,16 @@ const AddFirms = () => {
                 <Autocomplete
                   size="small"
                   onChange={(event, newValue) => {
-                    formik.setFieldValue('thirdLevelManager', newValue ? newValue.basicInformation?.employeesName : '');
+                    formik.setFieldValue('thirdLevelManager', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                   }}
                   fullWidth
                   options={employeeList}
                   value={
                     employeeList.find(
-                      (employee) => employee?.basicInformation?.employeesName === formik.values.thirdLevelManager
+                      (employee) => employee?.basicInformation?.firstName + employee?.basicInformation?.surname  === formik.values.thirdLevelManager
                     ) || null
                   }
-                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                   style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
                     <TextField
