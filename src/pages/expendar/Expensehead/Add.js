@@ -1,3 +1,4 @@
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -11,35 +12,41 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
-const ActivityTypeAdd = (props) => {
+const AddExpenseHead = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd, fetchActivityTypeData } = props;
+  const { isOpenAdd, handleCloseAdd, fetchExpenseHeadData } = props;
   const dispatch = useDispatch();
-
+  
   // -----------  validationSchema
   const validationSchema = yup.object({
-    activityName: yup.string().required('Activity Name is required'),
+    title: yup.string().required('Title is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
-    activityName: '',
+    title: '',
+    monthlyCap: '',
+    isEditable: '',
   };
 
-  const addType = async (values) => {
+  const addHead = async (values) => {
     const pyload = {
-      activityName: values.activityName,
+      title: values.title,
+      monthlyCap: values.monthlyCap,
+      isEditable: values.isEditable === true ? "Yes" : "No",
+      status: "active",
     };
-    const result = await apipost('/api/activityType', pyload);
+
+    const result = await apipost('/api/expenseHead', pyload);
 
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      dispatch(fetchActivityTypeData());
+      dispatch(fetchExpenseHeadData());
     }
   };
 
@@ -47,7 +54,7 @@ const ActivityTypeAdd = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      addType(values);
+      addHead(values);
     },
   });
 
@@ -61,7 +68,7 @@ const ActivityTypeAdd = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add Activity Type Name </Typography>
+          <Typography variant="h6">Add Head</Typography>
           <Typography>
             <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -71,20 +78,40 @@ const ActivityTypeAdd = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Activity Type Name</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <TextField
-                  id="typeName"
-                  name="activityName"
+                  id="title"
+                  name="title"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Type Name"
-                  value={formik.values.activityName}
+                  placeholder="Enter Title"
+                  value={formik.values.title}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.activityName && Boolean(formik.errors.activityName)}
-                  helperText={formik.touched.activityName && formik.errors.activityName}
+                  error={formik.touched.title && Boolean(formik.errors.title)}
+                  helperText={formik.touched.title && formik.errors.title}
                 />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormLabel>Monthly Cap</FormLabel>
+                <TextField
+                  id="monthlyCap"
+                  name="monthlyCap"
+                  label=""
+                  size="small"
+                  maxRows={10}
+                  placeholder="Enter Monthly Cap"
+                  value={formik.values.monthlyCap}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  error={formik.touched.monthlyCap && Boolean(formik.errors.monthlyCap)}
+                  helperText={formik.touched.monthlyCap && formik.errors.monthlyCap}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormControlLabel control={<Checkbox checked={formik.values.isEditable}
+                  onChange={(e) => formik.setFieldValue('isEditable', e.target.checked)} />} name='isEditable' labelPlacement="start" label="Is Editable" />
               </Grid>
             </Grid>
           </form>
@@ -116,4 +143,4 @@ const ActivityTypeAdd = (props) => {
   );
 };
 
-export default ActivityTypeAdd;
+export default AddExpenseHead;

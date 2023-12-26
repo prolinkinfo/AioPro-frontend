@@ -18,6 +18,8 @@ import GetTargetReducer from '../slice/GetTargetSlice';
 import GetLeaveEntitlementReducer from '../slice/GetLeaveEntitlementSlice';
 import GetProductReducer from '../slice/GetProductSlice';
 import GetPresentationReducer from '../slice/GetPresentationSlice';
+import GetExpenseHeadReducer from '../slice/GetExpenseHeadSlice';
+import GetActivityTypeReducer from '../slice/GetActivityTypeSlice';
 
 const store = configureStore({
   reducer: {
@@ -40,6 +42,8 @@ const store = configureStore({
     getLeaveEntitlement: GetLeaveEntitlementReducer,
     getProduct: GetProductReducer,
     getPresentation: GetPresentationReducer,
+    getExpenseHead: GetExpenseHeadReducer,
+    getActivityType: GetActivityTypeReducer,
   },
 });
 

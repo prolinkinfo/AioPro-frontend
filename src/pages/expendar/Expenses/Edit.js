@@ -12,13 +12,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
-import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
-const EditActivityType = (props) => {
+const EditExpense = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchActivityTypeData } = props;
-    const dispatch = useDispatch();
+    const { isOpenEdit, handleCloseEdit, data, fetchTypeData } = props;
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -41,7 +39,7 @@ const EditActivityType = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            dispatch(fetchActivityTypeData());
+            fetchTypeData();
         }
     }
 
@@ -120,4 +118,4 @@ const EditActivityType = (props) => {
     );
 };
 
-export default EditActivityType;
+export default EditExpense;

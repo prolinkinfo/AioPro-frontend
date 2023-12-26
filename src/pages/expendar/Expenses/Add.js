@@ -11,14 +11,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { apipost } from '../../../service/api';
 
-const ActivityTypeAdd = (props) => {
+const AddExpense = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd, fetchActivityTypeData } = props;
-  const dispatch = useDispatch();
+  const { isOpenAdd, handleCloseAdd, fetchTypeData } = props;
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -39,7 +37,7 @@ const ActivityTypeAdd = (props) => {
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      dispatch(fetchActivityTypeData());
+      fetchTypeData();
     }
   };
 
@@ -86,6 +84,10 @@ const ActivityTypeAdd = (props) => {
                   helperText={formik.touched.activityName && formik.errors.activityName}
                 />
               </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormControlLabel control={<Checkbox checked={formik.values.canCarryForward}
+                  onChange={(e) => formik.setFieldValue('canCarryForward', e.target.checked)} />} name='canCarryForward' labelPlacement="start" label="Can Carry Forward" />
+              </Grid>
             </Grid>
           </form>
         </DialogContent>
@@ -116,4 +118,4 @@ const ActivityTypeAdd = (props) => {
   );
 };
 
-export default ActivityTypeAdd;
+export default AddExpense;

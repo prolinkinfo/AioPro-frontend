@@ -1,3 +1,5 @@
+/* eslint-disable no-unneeded-ternary */
+/* eslint-disable react/prop-types */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -11,46 +13,50 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
-const EditActivityType = (props) => {
+const EditExpenseHead = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchActivityTypeData } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchExpenseHeadData } = props;
     const dispatch = useDispatch();
 
-    // -----------  validationSchema
-    const validationSchema = yup.object({
-        activityName: yup.string().required('Activity Name is required'),
-    });
+// -----------  validationSchema
+const validationSchema = yup.object({
+    title: yup.string().required('Title is required'),
+  });
 
-    // -----------   initialValues
-    const initialValues = {
-        activityName: data?.activityName,
-    };
+  // -----------   initialValues
+  const initialValues = {
+    title: data?.title,
+    monthlyCap: data?.monthlyCap,
+    isEditable: data?.isEditable === "Yes" ? true : false,
+  };
 
-    const editActivityType = async (values) => {
+    const editHead = async (values) => {
         const pyload = {
             _id: data?._id,
-            activityName: values.activityName,
+            title: values.title,
+            monthlyCap: values.monthlyCap,
+            isEditable: values.isEditable === true ? "Yes" : "No", 
             modifiedOn: new Date()
         }
-        const result = await apiput('/api/activityType', pyload);
+        const result = await apiput('/api/expenseHead', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            dispatch(fetchActivityTypeData());
+            dispatch(fetchExpenseHeadData());
         }
     }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
-        enableReinitialize:true,
+        enableReinitialize: true,
         onSubmit: async (values) => {
-            editActivityType(values)
+            editHead(values)
         },
     });
 
@@ -75,20 +81,41 @@ const EditActivityType = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Activity Type Name</FormLabel>
+                                <FormLabel>Title</FormLabel>
                                 <TextField
-                                    id="typeName"
-                                    name="activityName"
+                                    id="title"
+                                    name="title"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder="Enter Type Name"
-                                    value={formik.values.activityName}
+                                    disabled
+                                    placeholder="Enter Title"
+                                    value={formik.values.title}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.activityName && Boolean(formik.errors.activityName)}
-                                    helperText={formik.touched.activityName && formik.errors.activityName}
+                                    error={formik.touched.title && Boolean(formik.errors.title)}
+                                    helperText={formik.touched.title && formik.errors.title}
                                 />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <FormLabel>Monthly Cap</FormLabel>
+                                <TextField
+                                    id="monthlyCap"
+                                    name="monthlyCap"
+                                    label=""
+                                    size="small"
+                                    maxRows={10}
+                                    placeholder="Enter Monthly Cap"
+                                    value={formik.values.monthlyCap}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                    error={formik.touched.monthlyCap && Boolean(formik.errors.monthlyCap)}
+                                    helperText={formik.touched.monthlyCap && formik.errors.monthlyCap}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <FormControlLabel control={<Checkbox checked={formik.values.isEditable || null}
+                                    onChange={(e) => formik.setFieldValue('isEditable', e.target.checked)} />} name='isEditable' labelPlacement="start" label="Is Editable" />
                             </Grid>
                         </Grid>
                     </form>
@@ -120,4 +147,4 @@ const EditActivityType = (props) => {
     );
 };
 
-export default EditActivityType;
+export default EditExpenseHead;
