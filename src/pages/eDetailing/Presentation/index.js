@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable arrow-body-style */
 import { Box, Button, Container, Grid, Stack, TextField, Typography } from '@mui/material'
@@ -14,36 +15,6 @@ import EdiPresentation from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchPresentationData } from '../../../redux/slice/GetPresentationSlice'
 import { apidelete, apiget } from '../../../service/api'
-
-const data = [
-    {
-        img: img1,
-        "name": "Task 1",
-        "assigningType": "User",
-        "assigningTo": "John Doe",
-        "division": "Development",
-        "date": "2023-12-25",
-        "description": "Complete feature XYZ"
-    },
-    {
-        img: img2,
-        "name": "Task 2",
-        "assigningType": "Team",
-        "assigningTo": "Project Team",
-        "division": "Testing",
-        "date": "2023-12-26",
-        "description": "Run system tests"
-    },
-    {
-        "name": "Task 3",
-        "assigningType": "User",
-        "assigningTo": "Jane Smith",
-        "division": "Design",
-        "date": "2023-12-27",
-        "description": "Create UI mockups"
-    }
-    // Add more tasks as needed
-]
 
 const Presentation = () => {
 
@@ -85,6 +56,11 @@ const Presentation = () => {
     const deleteData = async () => {
         const result = await apidelete(`/api/presentation/${id}`);
         setUserAction(result)
+    }
+
+    const text = (item) => {
+        const a = item.length > 10 ? item.slice(0, 20) + "..." : item;
+        return a
     }
 
 
@@ -130,25 +106,25 @@ const Presentation = () => {
                                                             openView={openView}
                                                         />
                                                     </div>
-                                                    <img src={item?.slideImgs ? item?.slideImgs[0]?.image : img1} width={450} height={300} />
+                                                    <img src={item?.slideImgs[0]?.image} width={450} height={300} />
                                                 </div>
                                                 <div>
                                                     <table className='presantationTable'>
                                                         <tr >
                                                             <th style={{ textAlign: "start" }}>Name :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{item.presentationName}</td>
+                                                            <td style={{ paddingLeft: "100px" }}>{text(item.presentationName)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning Type :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{item.assigedType}</td>
+                                                            <td style={{ paddingLeft: "100px" }}>{text(item.assigedType)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning To :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{item.assigedTo}</td>
+                                                            <td style={{ paddingLeft: "100px" }}>{text(item.assigedTo)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>division :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{item.division}</td>
+                                                            <td style={{ paddingLeft: "100px" }}>{text(item.division)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Date :</th>
@@ -156,7 +132,7 @@ const Presentation = () => {
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Description :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{item?.description}</td>
+                                                            <td style={{ paddingLeft: "100px" }}>{text(item?.description)}</td>
                                                         </tr>
                                                     </table>
                                                 </div>
