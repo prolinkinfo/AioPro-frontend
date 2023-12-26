@@ -2,18 +2,20 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddCategory from './Add'
-import EditCategory from'./Edit'
+import EditCategory from './Edit'
 import { apiget } from '../../../service/api'
+import { fetchFirmCategoryData } from '../../../redux/slice/GetFirmCategorySlice';
 
 const FirmCategory = () => {
 
-    const[categoryList,setCategoryList] = useState([])
+    const [categoryList, setCategoryList] = useState([])
     const [categoryData, setCategoryData] = useState({})
-
+    const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
 
@@ -22,9 +24,11 @@ const FirmCategory = () => {
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
 
+    const firmCategory = useSelector((state) => state?.getFirmCategory?.data)
+
     const columns = [
         {
-            field:'action',
+            field: 'action',
             headerName: 'Action',
             sortable: false,
             flex: 1,
@@ -36,30 +40,34 @@ const FirmCategory = () => {
                 };
                 return (
                     <Box>
-                        <EditCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCategoryData={fetchCategoryData} data={categoryData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
+                        <EditCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchFirmCategoryData={fetchFirmCategoryData} data={categoryData} />
+                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
             },
         },
-        { field: 'firmCategory', headerName: 'Firm Category', flex: 1,cellClassName: 'name-column--cell--capitalize', },
+        { field: 'firmCategory', headerName: 'Firm Category', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/firmcategory`);
-        if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = firmCategory?.filter(({ firmCategory }) =>
+            firmCategory?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setCategoryList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : firmCategory)
     };
 
-    useEffect(()=>{
-        fetchCategoryData();
-    },[])
+    useEffect(() => {
+        dispatch(fetchFirmCategoryData());
+    }, [])
+
+    useEffect(() => {
+        fetchData();
+    }, [firmCategory])
 
     return (
         <div>
             {/* Add Category */}
-            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData}/>
+            <AddCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchFirmCategoryData={fetchFirmCategoryData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -76,6 +84,7 @@ const FirmCategory = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

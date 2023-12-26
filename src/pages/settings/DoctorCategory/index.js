@@ -2,26 +2,30 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddCategory from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 
 const DoctorCategory = () => {
 
     const [categoryList, setCategoryList] = useState([])
-    const [userAction,setUserAction] = useState('')
+    const [userAction, setUserAction] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [id,setId] = useState('')
-
+    const [id, setId] = useState('')
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const doctorCategory = useSelector((state) => state?.getDoctorCategory?.data)
 
     const columns = [
         {
@@ -37,7 +41,7 @@ const DoctorCategory = () => {
                 };
                 return (
                     <Box onClick={() => handleClick(params?.row)}>
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData}/>
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData} />
                         <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
                     </Box>
                 );
@@ -48,21 +52,26 @@ const DoctorCategory = () => {
         { field: 'maximumPreference', headerName: 'Maximum Preference', flex: 1 },
     ];
 
-    const deleteCategory = async(id) => {
+    const deleteCategory = async (id) => {
         const result = await apidelete(`/api/doctorcategory/${id}`);
         setUserAction(result)
     }
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/doctorcategory`);
-        if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = doctorCategory?.filter(({ categoryName }) =>
+            categoryName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setCategoryList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : doctorCategory)
     };
 
+
     useEffect(() => {
-        fetchCategoryData();
+        dispatch(fetchCategoryData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [doctorCategory])
 
     return (
         <div>
@@ -84,6 +93,7 @@ const DoctorCategory = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

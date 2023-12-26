@@ -51,7 +51,7 @@ const AddBackDateVisit = (props) => {
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      fetchBackDateVisitData();
+      dispatch(fetchBackDateVisitData());
     }
   };
 
@@ -66,7 +66,7 @@ const AddBackDateVisit = (props) => {
   useEffect(() => {
     dispatch(fetchEmployeeData());
   }, [])
-  
+
   return (
     <div>
       <Dialog open={isOpenAdd} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -91,13 +91,12 @@ const AddBackDateVisit = (props) => {
                 <Autocomplete
                   size="small"
                   onChange={(event, newValue) => {
-                    formik.setFieldValue('employeeName', newValue ? newValue.basicInformation?.employeesName
-                      : "");
+                    formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                   }}
                   fullWidth
                   options={employeeList}
-                  value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.employeeName) || null}
-                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                  value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                   style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
                     <TextField

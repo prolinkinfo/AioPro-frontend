@@ -20,6 +20,9 @@ import GetProductReducer from '../slice/GetProductSlice';
 import GetPresentationReducer from '../slice/GetPresentationSlice';
 import GetExpenseHeadReducer from '../slice/GetExpenseHeadSlice';
 import GetActivityTypeReducer from '../slice/GetActivityTypeSlice';
+import GetBackDateVisitReducer from '../slice/GetBackDateVisitSlice';
+import GetCallObjectiveReducer from '../slice/GetCallObjectiveSlice';
+import GetFirmCategoryReducer from '../slice/GetFirmCategorySlice';
 
 const store = configureStore({
   reducer: {
@@ -44,6 +47,9 @@ const store = configureStore({
     getPresentation: GetPresentationReducer,
     getExpenseHead: GetExpenseHeadReducer,
     getActivityType: GetActivityTypeReducer,
+    getBackDateVisit: GetBackDateVisitReducer,
+    getCallObjective: GetCallObjectiveReducer,
+    getFirmCategory: GetFirmCategoryReducer,
   },
 });
 

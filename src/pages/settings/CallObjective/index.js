@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
@@ -11,6 +12,7 @@ import AddCallObjective from './Add';
 import EditCallObjective from './Edit';
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api';
+import { fetchCallObjectiveData } from '../../../redux/slice/GetCallObjectiveSlice';
 
 const CallObjective = () => {
 
@@ -21,13 +23,15 @@ const CallObjective = () => {
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
-
+  const dispatch = useDispatch();
+  const callObjective = useSelector((state)=>state?.getCallObjective?.data)
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
   const handleCloseEdit = () => setIsOpenEdit(false)
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
 
   const columns = [
     {
@@ -68,22 +72,11 @@ const CallObjective = () => {
         return (
           <Box>
             <FormGroup>
-              <FormControlLabel control={<Checkbox />}/>
+              <FormControlLabel control={<Checkbox />} />
             </FormGroup>
           </Box>
         );
       },
-    },
-  ];
-
-  const rows = [
-    {
-      _id: 1,
-      objectiveName: 'Doctor',
-    },
-    {
-      _id: 2,
-      objectiveName: 'Abcd',
     },
   ];
 
@@ -92,17 +85,20 @@ const CallObjective = () => {
     setUserAction(result)
   }
 
-
-  const fetchCallObjectiveData = async () => {
-    const result = await apiget(`/api/callObjective`);
-    if (result && result.status === 200) {
-      setCallObjectiveList(result?.data?.result);
-    }
+  const fetchData = async (e) => {
+    const searchText = e?.target?.value;
+    const filtered = callObjective?.filter(({ objectiveName }) =>
+    objectiveName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+    setCallObjectiveList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : callObjective)
   };
 
   useEffect(() => {
-    fetchCallObjectiveData();
+    dispatch(fetchCallObjectiveData());
   }, [userAction])
+
+  useEffect(() => {
+    fetchData();
+  }, [callObjective])
 
   return (
     <div>
@@ -118,7 +114,7 @@ const CallObjective = () => {
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                 Add New
               </Button>
-              <TextField type="text" size="small" placeholder="Search" />
+              <TextField type="text" size="small" placeholder="Search" onChange={fetchData}/>
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid

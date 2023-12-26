@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddCategory = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd,fetchCategoryData } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -43,7 +45,7 @@ const AddCategory = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchCategoryData();
+            dispatch(fetchCategoryData());
         }
     }
 

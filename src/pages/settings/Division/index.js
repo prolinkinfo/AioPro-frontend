@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,6 +11,7 @@ import AddDivision from './Add'
 import EditDivision from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const Division = () => {
 
@@ -17,10 +19,11 @@ const Division = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [activityTypeData, setActivityTypeData] = useState('')
+    const [divisionData, setDivisionData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
+    const division = useSelector((state) => state?.getDivision?.data)
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -37,7 +40,7 @@ const Division = () => {
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    setActivityTypeData(data);
+                    setDivisionData(data);
                     handleOpenEdit();
                 };
 
@@ -47,7 +50,7 @@ const Division = () => {
                 };
                 return (
                     <Box>
-                        <EditDivision isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDivisionData={fetchDivisionData} data={activityTypeData} />
+                        <EditDivision isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDivisionData={fetchDivisionData} data={divisionData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteDivision} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -58,7 +61,7 @@ const Division = () => {
                 );
             },
         },
-        { field: 'divisionName', headerName: 'Division Name', flex: 1 ,cellClassName: 'name-column--cell--capitalize'},
+        { field: 'divisionName', headerName: 'Division Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
         {
             field: 'appLogo',
             headerName: 'App Logo',
@@ -77,18 +80,21 @@ const Division = () => {
         const result = await apidelete(`/api/division/${id}`);
         setUserAction(result)
     }
-    
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = division?.filter(({ divisionName }) =>
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setDivisionList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : division)
     };
 
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [division])
 
     return (
         <div>
@@ -110,6 +116,7 @@ const Division = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>
