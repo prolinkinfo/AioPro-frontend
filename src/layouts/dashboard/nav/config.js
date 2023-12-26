@@ -380,7 +380,7 @@ export const adminConfig = [
     children: [
       {
         title: 'Presentation',
-        path: `/${userRole}/dashboard`,
+        path: `/${userRole}/dashboard/eDetailing/presentation`,
       },
       {
         title: 'MediaGallery',

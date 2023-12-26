@@ -87,7 +87,6 @@ const MediaGallery = () => {
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Media Gallery</Typography>
-
                 </Stack>
                 <TableStyle>
                     <Box width="100%" pt={3}>

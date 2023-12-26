@@ -16,6 +16,8 @@ import GetFirmReducer from '../slice/GetFirmSlice'
 import GetFirmVisitReducer from '../slice/GetFirmVisitSlice';
 import GetTargetReducer from '../slice/GetTargetSlice';
 import GetLeaveEntitlementReducer from '../slice/GetLeaveEntitlementSlice';
+import GetProductReducer from '../slice/GetProductSlice';
+import GetPresentationReducer from '../slice/GetPresentationSlice';
 
 const store = configureStore({
   reducer: {
@@ -36,6 +38,8 @@ const store = configureStore({
     getFirmVisit: GetFirmVisitReducer,
     getTarget: GetTargetReducer,
     getLeaveEntitlement: GetLeaveEntitlementReducer,
+    getProduct: GetProductReducer,
+    getPresentation: GetPresentationReducer,
   },
 });
 

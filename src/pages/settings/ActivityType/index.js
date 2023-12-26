@@ -26,6 +26,7 @@ const ActivityType = () => {
   const handleCloseEdit = () => setIsOpenEdit(false)
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+  
   const columns = [
     {
       field: 'action',

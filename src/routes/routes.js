@@ -114,6 +114,8 @@ import LeaveManagement from '../pages/HrPortal/LeaveManagement';
 import Entitlements from '../pages/HrPortal/Entitlements';
 import DoctorBusiness from '../pages/Business/DoctorBusiness';
 import FirmBusiness from '../pages/Business/FirmBusiness';
+import Presentation from '../pages/eDetailing/Presentation';
+import ViewPresentation from '../pages/eDetailing/Presentation/View'
 
 // ----------------------------------------------------------------------
 
@@ -219,6 +221,8 @@ export default function Router() {
         { path: 'setting/changePassword', element: <ChangePassword /> },
         { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
+        { path: 'eDetailing/presentation', element: <Presentation /> },
+        { path: 'eDetailing/presentation/:id', element: <ViewPresentation /> },
         { path: 'expenses/allowance', element: <Allowance /> },
         { path: 'expenses/expenses', element: <Expenses /> },
         { path: 'expenses/daywiseexpenses', element: <Daywiseexpenses /> },
