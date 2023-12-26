@@ -45,6 +45,7 @@ import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
 import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
+import { fetchfirmData } from '../../../redux/slice/GetFirmSlice';
 import VisitModel from './VisitModel';
 import ImportFile from './ImportFile';
 import RejectModel from './RejectModel';
@@ -77,6 +78,8 @@ const Firms = () => {
   const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
   const employeeList = useSelector((state) => state?.getEmployee?.data);
   const firmData = useSelector((state) => state?.geFirmType?.data);
+  const { data, errro, isLoading } = useSelector((state) => state?.getFirm);
+
 
   useEffect(() => {
     dispatch(fetchCityData());
@@ -86,6 +89,7 @@ const Firms = () => {
     dispatch(fetchCategoryData());
     dispatch(fetchEmployeeData());
     dispatch(firmaTypeData());
+    dispatch(fetchfirmData());
   }, []);
 
   const handleClickOpenModel = (value) => {
@@ -149,7 +153,7 @@ const Firms = () => {
               <MenuItem onClick={() => setApproveModel(true)}>
                 <VerticalAlignBottomIcon fontSize="10" />
                 <span style={{ marginLeft: '20px' }}>
-                  {fId?.status === 'Approved'? 'Unapproved': fId?.status === 'Unapproved'? 'Approved': fId?.status}
+                  {fId?.status === 'Approved' ? 'Unapproved' : fId?.status === 'Unapproved' ? 'Approved' : fId?.status}
                 </span>
               </MenuItem>
               <MenuItem onClick={() => handleClose()}>
@@ -211,8 +215,8 @@ const Firms = () => {
             <Button
               variant="outlined"
               style={{
-                color: params.value === 'Approved' ? '#22C55E' : '#B61D18',
-                background: params.value === 'Approved' ? '#22c55e29' : '#ff563029',
+                color: params.value === 'Approved' ? '#22C55E' : params.value === 'Unapproved' ? '#B61D18' :'#BDAC17',
+                background: params.value === 'Approved' ? '#22c55e29' :params.value === 'Unapproved' ? '#ff563029' :'#fff494',
                 border: 'none',
               }}
             >
@@ -240,7 +244,6 @@ const Firms = () => {
     { label: 'Unapproved', value: 'Unapproved' },
     { label: 'Reject', value: 'Reject' },
     { label: 'Pending', value: 'Pending' },
-
   ];
 
   const handleOpenView = () => setIsOpen(true);
@@ -386,17 +389,21 @@ const Firms = () => {
               </Grid>
             </Grid>
             <Card style={{ height: '72vh', marginTop: '10px' }}>
-              <DataGrid
-                rows={firmsList}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { page: 0, pageSize: 10 },
-                  },
-                }}
-                pageSizeOptions={[10, 15, 25]}
-                getRowId={(row) => row._id}
-              />
+              {isLoading ? (
+                <Box sx={{display:'flex',justifyContent:'center',alignItems:'center',height:"72vh"}}>Loading...</Box>
+              ) : (
+                <DataGrid
+                  rows={data}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 10 },
+                    },
+                  }}
+                  pageSizeOptions={[10, 15, 25]}
+                  getRowId={(row) => row._id}
+                />
+              )}
             </Card>
           </Box>
         </TableStyle>
@@ -427,11 +434,14 @@ const Firms = () => {
         onClose={() => setApproveModel(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        maxWidth='sm'
+        maxWidth="sm"
       >
         {/* <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle> */}
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">A request for approval is a formal process in which you ask a senior team member for their approval. This could be a project manager, the head of a department, or even an external client. </DialogContentText>
+          <DialogContentText id="alert-dialog-description">
+            A request for approval is a formal process in which you ask a senior team member for their approval. This
+            could be a project manager, the head of a department, or even an external client.{' '}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button

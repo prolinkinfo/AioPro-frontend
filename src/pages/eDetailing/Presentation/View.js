@@ -3,7 +3,7 @@
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Slider from "react-slick";
+import Slider from "react-slick"
 import Iconify from '../../../components/iconify'
 import { apiget } from '../../../service/api'
 import AddSlide from './AddSlide'
