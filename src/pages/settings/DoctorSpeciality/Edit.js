@@ -12,13 +12,16 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const EditDoctorSpeciality = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit,data ,fetchSpecialityData} = props;
+    const { isOpenEdit, handleCloseEdit,data ,fetchDoctorSpecialityData} = props;
 
-    const [divisionList, setDivisionList] = useState([])
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -47,8 +50,7 @@ const EditDoctorSpeciality = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchSpecialityData();
-        }
+            dispatch(fetchDoctorSpecialityData());        }
     }
 
     const formik = useFormik({
@@ -59,15 +61,10 @@ const EditDoctorSpeciality = (props) => {
             editSpeciality(values)
         },
     });
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
+   
 
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
     }, [])
 
 
@@ -96,13 +93,12 @@ const EditDoctorSpeciality = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

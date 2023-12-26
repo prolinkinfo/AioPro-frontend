@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import React, { useState, useEffect } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
@@ -10,23 +11,27 @@ import ActivityTypeAdd from './Add';
 import { apidelete, apiget } from '../../../service/api';
 import EditActivityType from './Edit';
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchActivityTypeData } from '../../../redux/slice/GetActivityTypeSlice';
 
 const ActivityType = () => {
   const [typeList, setTypeList] = useState([]);
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [isOpenEdit, setIsOpenEdit] = useState(false)
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-  const [activityTypeData,setActivityTypeData] = useState('')
+  const [activityTypeData, setActivityTypeData] = useState('')
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
-
+  const dispatch = useDispatch();
+  const typeData = useSelector((state) => state?.getActivityType?.data)
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
   const handleCloseEdit = () => setIsOpenEdit(false)
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
-  
+
+  console.log(typeData, "typeData")
+
   const columns = [
     {
       field: 'action',
@@ -39,14 +44,14 @@ const ActivityType = () => {
           setActivityTypeData(data);
           handleOpenEdit();
         };
-      
+
         const handleClickDeleteBtn = async (data) => {
           setId(data?._id);
           handleOpenDeleteModel();
-      };
+        };
         return (
           <Box>
-            <EditActivityType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTypeData={fetchTypeData} data={activityTypeData} />
+            <EditActivityType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchActivityTypeData={fetchActivityTypeData} data={activityTypeData} />
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteActivityType} id={id} />
 
             <Stack direction={"row"} spacing={2}>
@@ -57,32 +62,33 @@ const ActivityType = () => {
         );
       },
     },
-    { field: 'activityName', headerName: 'Activity Name', flex: 1 ,cellClassName: 'name-column--cell--capitalize'},
+    { field: 'activityName', headerName: 'Activity Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
   ];
 
   const deleteActivityType = async (id) => {
     const result = await apidelete(`/api/activityType/${id}`);
     setUserAction(result)
-}
+  }
+
 
   const fetchTypeData = async (e) => {
     const searchText = e?.target?.value;
-    const result = await apiget(`/api/activityType`);
-    if (result && result.status === 200) {
-      const filteredBooks = result?.data?.filter(({ activityName }) =>
-        activityName?.toLowerCase()?.includes(searchText?.toLowerCase())
-      );
-      setTypeList(searchText?.length > 0 ? (filteredBooks?.length > 0 ? filteredBooks : []) : result?.data);
-    }
+    const filtered = typeData?.filter(({ activityName }) =>
+      activityName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+    setTypeList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : typeData)
   };
 
   useEffect(() => {
-    fetchTypeData();
+    dispatch(fetchActivityTypeData());
   }, [userAction]);
+
+  useEffect(() => {
+    fetchTypeData();
+  }, [typeData]);
 
   return (
     <div>
-      <ActivityTypeAdd isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
+      <ActivityTypeAdd isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchActivityTypeData={fetchActivityTypeData} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Activity Type</Typography>

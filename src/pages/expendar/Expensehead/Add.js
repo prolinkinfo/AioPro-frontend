@@ -1,3 +1,4 @@
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -11,38 +12,41 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
-const AddCallObjective = (props) => {
+const AddExpenseHead = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd, fetchCallObjectiveData } = props;
+  const { isOpenAdd, handleCloseAdd, fetchExpenseHeadData } = props;
   const dispatch = useDispatch();
-
+  
   // -----------  validationSchema
   const validationSchema = yup.object({
-    objectiveName: yup.string().required('Objective Name is required'),
-    abbrevation: yup.string().required('Abbrevation is required'),
+    title: yup.string().required('Title is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
-    objectiveName: '',
-    abbrevation: '',
+    title: '',
+    monthlyCap: '',
+    isEditable: '',
   };
 
-  const addCallObjective = async (values) => {
+  const addHead = async (values) => {
     const pyload = {
-      objectiveName: values.objectiveName,
-      abbrevation: values.abbrevation,
+      title: values.title,
+      monthlyCap: values.monthlyCap,
+      isEditable: values.isEditable === true ? "Yes" : "No",
+      status: "active",
     };
-    const result = await apipost('/api/callObjective', pyload);
+
+    const result = await apipost('/api/expenseHead', pyload);
 
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      dispatch(fetchCallObjectiveData());
+      dispatch(fetchExpenseHeadData());
     }
   };
 
@@ -50,7 +54,7 @@ const AddCallObjective = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      addCallObjective(values);
+      addHead(values);
     },
   });
 
@@ -64,7 +68,7 @@ const AddCallObjective = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add Call Objective</Typography>
+          <Typography variant="h6">Add Head</Typography>
           <Typography>
             <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -74,36 +78,40 @@ const AddCallObjective = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Objective Name</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <TextField
-                  id="objectiveName"
-                  name="objectiveName"
+                  id="title"
+                  name="title"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Objective Name"
-                  value={formik.values.objectiveName}
+                  placeholder="Enter Title"
+                  value={formik.values.title}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.objectiveName && Boolean(formik.errors.objectiveName)}
-                  helperText={formik.touched.objectiveName && formik.errors.objectiveName}
+                  error={formik.touched.title && Boolean(formik.errors.title)}
+                  helperText={formik.touched.title && formik.errors.title}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Abbrevation</FormLabel>
+                <FormLabel>Monthly Cap</FormLabel>
                 <TextField
-                  id="abbrevation"
-                  name="abbrevation"
+                  id="monthlyCap"
+                  name="monthlyCap"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Abbrevation"
-                  value={formik.values.abbrevation}
+                  placeholder="Enter Monthly Cap"
+                  value={formik.values.monthlyCap}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.abbrevation && Boolean(formik.errors.abbrevation)}
-                  helperText={formik.touched.abbrevation && formik.errors.abbrevation}
+                  error={formik.touched.monthlyCap && Boolean(formik.errors.monthlyCap)}
+                  helperText={formik.touched.monthlyCap && formik.errors.monthlyCap}
                 />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <FormControlLabel control={<Checkbox checked={formik.values.isEditable}
+                  onChange={(e) => formik.setFieldValue('isEditable', e.target.checked)} />} name='isEditable' labelPlacement="start" label="Is Editable" />
               </Grid>
             </Grid>
           </form>
@@ -135,4 +143,4 @@ const AddCallObjective = (props) => {
   );
 };
 
-export default AddCallObjective;
+export default AddExpenseHead;

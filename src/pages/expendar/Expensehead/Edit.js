@@ -1,3 +1,5 @@
+/* eslint-disable no-unneeded-ternary */
+/* eslint-disable react/prop-types */
 /* eslint-disable prefer-const */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -11,50 +13,53 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { apipost, apiput } from '../../../service/api';
+import { apiput } from '../../../service/api';
 
-const EditCallObjective = (props) => {
+const EditExpenseHead = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchCallObjectiveData } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchExpenseHeadData } = props;
     const dispatch = useDispatch();
-    // -----------  validationSchema
-    const validationSchema = yup.object({
-        objectiveName: yup.string().required('Objective Name is required'),
-        abbrevation: yup.string().required('Abbrevation is required'),
-    });
 
-    // -----------   initialValues
-    const initialValues = {
-        objectiveName: data?.objectiveName,
-        abbrevation: data?.abbrevation,
-    };
+// -----------  validationSchema
+const validationSchema = yup.object({
+    title: yup.string().required('Title is required'),
+  });
 
-    const editCallObjective = async (values) => {
+  // -----------   initialValues
+  const initialValues = {
+    title: data?.title,
+    monthlyCap: data?.monthlyCap,
+    isEditable: data?.isEditable === "Yes" ? true : false,
+  };
+
+    const editHead = async (values) => {
         const pyload = {
             _id: data?._id,
-            objectiveName: values.objectiveName,
-            abbrevation: values.abbrevation,
+            title: values.title,
+            monthlyCap: values.monthlyCap,
+            isEditable: values.isEditable === true ? "Yes" : "No", 
             modifiedOn: new Date()
-        };
-        const result = await apiput('/api/callObjective', pyload);
+        }
+        const result = await apiput('/api/expenseHead', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            dispatch(fetchCallObjectiveData());
+            dispatch(fetchExpenseHeadData());
         }
-    };
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
         enableReinitialize: true,
         onSubmit: async (values) => {
-            editCallObjective(values);
+            editHead(values)
         },
     });
+
 
     return (
         <div>
@@ -66,7 +71,7 @@ const EditCallObjective = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Edit Call Objective</Typography>
+                    <Typography variant="h6">Edit Activity Type </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -76,36 +81,41 @@ const EditCallObjective = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Objective Name</FormLabel>
+                                <FormLabel>Title</FormLabel>
                                 <TextField
-                                    id="objectiveName"
-                                    name="objectiveName"
+                                    id="title"
+                                    name="title"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder="Enter Objective Name"
-                                    value={formik.values.objectiveName}
+                                    disabled
+                                    placeholder="Enter Title"
+                                    value={formik.values.title}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.objectiveName && Boolean(formik.errors.objectiveName)}
-                                    helperText={formik.touched.objectiveName && formik.errors.objectiveName}
+                                    error={formik.touched.title && Boolean(formik.errors.title)}
+                                    helperText={formik.touched.title && formik.errors.title}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Abbrevation</FormLabel>
+                                <FormLabel>Monthly Cap</FormLabel>
                                 <TextField
-                                    id="abbrevation"
-                                    name="abbrevation"
+                                    id="monthlyCap"
+                                    name="monthlyCap"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder="Enter Abbrevation"
-                                    value={formik.values.abbrevation}
+                                    placeholder="Enter Monthly Cap"
+                                    value={formik.values.monthlyCap}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.abbrevation && Boolean(formik.errors.abbrevation)}
-                                    helperText={formik.touched.abbrevation && formik.errors.abbrevation}
+                                    error={formik.touched.monthlyCap && Boolean(formik.errors.monthlyCap)}
+                                    helperText={formik.touched.monthlyCap && formik.errors.monthlyCap}
                                 />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <FormControlLabel control={<Checkbox checked={formik.values.isEditable || null}
+                                    onChange={(e) => formik.setFieldValue('isEditable', e.target.checked)} />} name='isEditable' labelPlacement="start" label="Is Editable" />
                             </Grid>
                         </Grid>
                     </form>
@@ -137,4 +147,4 @@ const EditCallObjective = (props) => {
     );
 };
 
-export default EditCallObjective;
+export default EditExpenseHead;

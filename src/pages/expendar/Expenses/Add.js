@@ -11,38 +11,33 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { FormLabel, Dialog, Button, Autocomplete, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import { apipost } from '../../../service/api';
 
-const AddCallObjective = (props) => {
+const AddExpense = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd, fetchCallObjectiveData } = props;
-  const dispatch = useDispatch();
+  const { isOpenAdd, handleCloseAdd, fetchTypeData } = props;
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    objectiveName: yup.string().required('Objective Name is required'),
-    abbrevation: yup.string().required('Abbrevation is required'),
+    activityName: yup.string().required('Activity Name is required'),
   });
 
   // -----------   initialValues
   const initialValues = {
-    objectiveName: '',
-    abbrevation: '',
+    activityName: '',
   };
 
-  const addCallObjective = async (values) => {
+  const addType = async (values) => {
     const pyload = {
-      objectiveName: values.objectiveName,
-      abbrevation: values.abbrevation,
+      activityName: values.activityName,
     };
-    const result = await apipost('/api/callObjective', pyload);
+    const result = await apipost('/api/activityType', pyload);
 
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseAdd();
-      dispatch(fetchCallObjectiveData());
+      fetchTypeData();
     }
   };
 
@@ -50,7 +45,7 @@ const AddCallObjective = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      addCallObjective(values);
+      addType(values);
     },
   });
 
@@ -64,7 +59,7 @@ const AddCallObjective = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6">Add Call Objective</Typography>
+          <Typography variant="h6">Add Activity Type Name </Typography>
           <Typography>
             <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
           </Typography>
@@ -74,36 +69,24 @@ const AddCallObjective = (props) => {
           <form>
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Objective Name</FormLabel>
+                <FormLabel>Activity Type Name</FormLabel>
                 <TextField
-                  id="objectiveName"
-                  name="objectiveName"
+                  id="typeName"
+                  name="activityName"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Objective Name"
-                  value={formik.values.objectiveName}
+                  placeholder="Enter Type Name"
+                  value={formik.values.activityName}
                   onChange={formik.handleChange}
                   fullWidth
-                  error={formik.touched.objectiveName && Boolean(formik.errors.objectiveName)}
-                  helperText={formik.touched.objectiveName && formik.errors.objectiveName}
+                  error={formik.touched.activityName && Boolean(formik.errors.activityName)}
+                  helperText={formik.touched.activityName && formik.errors.activityName}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Abbrevation</FormLabel>
-                <TextField
-                  id="abbrevation"
-                  name="abbrevation"
-                  label=""
-                  size="small"
-                  maxRows={10}
-                  placeholder="Enter Abbrevation"
-                  value={formik.values.abbrevation}
-                  onChange={formik.handleChange}
-                  fullWidth
-                  error={formik.touched.abbrevation && Boolean(formik.errors.abbrevation)}
-                  helperText={formik.touched.abbrevation && formik.errors.abbrevation}
-                />
+                <FormControlLabel control={<Checkbox checked={formik.values.canCarryForward}
+                  onChange={(e) => formik.setFieldValue('canCarryForward', e.target.checked)} />} name='canCarryForward' labelPlacement="start" label="Can Carry Forward" />
               </Grid>
             </Grid>
           </form>
@@ -135,4 +118,4 @@ const AddCallObjective = (props) => {
   );
 };
 
-export default AddCallObjective;
+export default AddExpense;

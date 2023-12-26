@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
@@ -11,6 +12,7 @@ import AddBackDateVisit from './Add';
 import EditBackDateVisit from './Edit'
 import { apidelete, apiget } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchBackDateVisitData } from '../../../redux/slice/GetBackDateVisitSlice';
 
 const BackDateVisit = () => {
 
@@ -21,7 +23,8 @@ const BackDateVisit = () => {
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
-
+  const dispatch = useDispatch();
+  const backDateVisit = useSelector((state) => state?.getBackDateVisit?.data)
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
@@ -84,16 +87,20 @@ const BackDateVisit = () => {
   }
 
 
-  const fetchBackDateVisitData = async () => {
-    const result = await apiget(`/api/backDateVisit`);
-    if (result && result.status === 200) {
-      setBackDateVisitList(result?.data?.result);
-    }
+  const fetchData = async (e) => {
+    const searchText = e?.target?.value;
+    const filtered = backDateVisit?.filter(({ employeeName }) =>
+      employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+    setBackDateVisitList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : backDateVisit)
   };
 
   useEffect(() => {
-    fetchBackDateVisitData();
+    dispatch(fetchBackDateVisitData());
   }, [userAction])
+
+  useEffect(() => {
+    fetchData();
+  }, [backDateVisit])
 
   return (
     <div>
@@ -108,7 +115,7 @@ const BackDateVisit = () => {
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                 Add New
               </Button>
-              <TextField type="text" size="small" placeholder="Search" />
+              <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid

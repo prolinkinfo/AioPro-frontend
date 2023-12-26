@@ -13,12 +13,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Box, Avatar } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
 const EditDivision = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, data, fetchDivisionData } = props;
-
+    const dispatch = useDispatch();
     const [selectedFile, setSelectedFile] = useState({
         file: null,
         imagePreview: null,
@@ -50,7 +51,7 @@ const EditDivision = (props) => {
             formik.resetForm();
             setSelectedFile('')
             handleCloseEdit();
-            fetchDivisionData();
+            dispatch(fetchDivisionData());
         }
     }
 
@@ -82,7 +83,6 @@ const EditDivision = (props) => {
         setSelectedFile('');
     };
 
-    console.log(data?.appLogo, "data?.appLogo")
 
     useEffect(() => {
         setSelectedFile(data?.appLogo)

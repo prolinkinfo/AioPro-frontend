@@ -14,13 +14,14 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Box, Avatar, Stack } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddDivision = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd, fetchDivisionData } = props;
     const [selectedFile, setSelectedFile] = React.useState(null);
-
+    const dispatch = useDispatch();
     // -----------  validationSchema
     const validationSchema = yup.object({
         divisionName: yup.string().required('Division Name is required'),
@@ -43,7 +44,7 @@ const AddDivision = (props) => {
             formik.resetForm();
             setSelectedFile('')
             handleCloseAdd();
-            fetchDivisionData();
+            dispatch(fetchDivisionData());
         }
     }
 

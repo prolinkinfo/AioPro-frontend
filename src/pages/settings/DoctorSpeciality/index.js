@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,6 +11,8 @@ import AddSpeciality from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import EditDoctorSpeciality from './Edit'
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -30,13 +33,16 @@ const DoctorSpeciality = () => {
     const [activityTypeData, setActivityTypeData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const doctorspeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
+    const divisionList = useSelector((state) => state?.getDivision?.data)
 
     const columns = [
         {
@@ -57,7 +63,7 @@ const DoctorSpeciality = () => {
                 };
                 return (
                     <Box>
-                        <EditDoctorSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSpecialityData={fetchSpecialityData} data={activityTypeData} />
+                        <EditDoctorSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDoctorSpecialityData={fetchDoctorSpecialityData} data={activityTypeData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSpeciality} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -78,22 +84,38 @@ const DoctorSpeciality = () => {
         setUserAction(result)
     }
 
-
-    const fetchSpecialityData = async () => {
-        const result = await apiget(`/api/doctorspeciality`);
-        if (result && result.status === 200) {
-            setSpecialityList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = doctorspeciality?.filter(({ specialityName, divisionName, group }) =>
+            specialityName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            group?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setSpecialityList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : doctorspeciality)
     };
 
+    const filterByDivision = (dName) => {
+        const filtered = doctorspeciality?.filter(({ divisionName }) =>
+            divisionName?.toLowerCase()?.includes(dName?.toLowerCase())
+        );
+        setSpecialityList(dName?.length > 0 ? (filtered?.length > 0 ? filtered : []) : doctorspeciality)
+    }
+
+
     useEffect(() => {
-        fetchSpecialityData();
+        dispatch(fetchDoctorSpecialityData());
+        dispatch(fetchDivisionData());
     }, [userAction])
+
+
+    useEffect(() => {
+        fetchData();
+    }, [doctorspeciality])
 
     return (
         <div>
             {/* Add Speciality */}
-            <AddSpeciality isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchSpecialityData={fetchSpecialityData} />
+            <AddSpeciality isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchDoctorSpecialityData={fetchDoctorSpecialityData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -115,12 +137,34 @@ const DoctorSpeciality = () => {
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"end"}>
+                                    {/* <Autocomplete
+                                        size="small"
+                                        onChange={(event, newValue) => {
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
+                                        }}
+                                        options={divisionList}
+                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
+                                        getOptionLabel={(division) => division?.divisionName}
+                                        style={{ textTransform: 'capitalize' }}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                style={{ textTransform: 'capitalize' }}
+                                                placeholder='Select Division'
+                                                error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
+                                                helperText={formik.touched.divisionName && formik.errors.divisionName}
+                                            />
+                                        )}
+                                    /> */}
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={top100Films}
+                                        options={divisionList}
                                         size='small'
-
+                                        onChange={(event, newValue) => {
+                                            filterByDivision(newValue ? newValue.divisionName : "")
+                                        }}
+                                        getOptionLabel={(division) => division?.divisionName}
                                         renderInput={(params) => <TextField {...params} placeholder='Filter By Division' style={{ fontSize: "12px" }} />}
                                     />
                                     <TextField
@@ -128,6 +172,7 @@ const DoctorSpeciality = () => {
                                         size='small'
                                         placeholder='Search'
                                         style={{ width: "200px" }}
+                                        onChange={fetchData}
                                     />
                                 </Stack>
                             </Grid>
@@ -141,7 +186,7 @@ const DoctorSpeciality = () => {
                                         paginationModel: { page: 0, pageSize: 10 },
                                     },
                                 }}
-                                pageSizeOptions={[5,10, 25, 50]}
+                                pageSizeOptions={[5, 10, 25, 50]}
                                 getRowId={row => row._id}
                             />
                         </Card>

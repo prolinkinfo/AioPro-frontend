@@ -12,12 +12,15 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, MenuItem, Select, FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const AddSpeciality = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchSpecialityData } = props;
-    const [divisionList, setDivisionList] = useState([])
+    const { isOpenAdd, handleCloseAdd, fetchDoctorSpecialityData } = props;
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -44,7 +47,7 @@ const AddSpeciality = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchSpecialityData();
+            dispatch(fetchDoctorSpecialityData());
         }
     }
 
@@ -56,15 +59,15 @@ const AddSpeciality = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
+    // const fetchDivisionData = async () => {
+    //     const result = await apiget(`/api/division`);
+    //     if (result && result.status === 200) {
+    //         setDivisionList(result?.data?.result);
+    //     }
+    // };
 
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
     }, [])
 
 
@@ -93,13 +96,12 @@ const AddSpeciality = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

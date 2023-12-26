@@ -12,49 +12,46 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { apipost, apiput } from '../../../service/api';
+import { apiput } from '../../../service/api';
 
-const EditCallObjective = (props) => {
+const EditExpense = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchCallObjectiveData } = props;
-    const dispatch = useDispatch();
+    const { isOpenEdit, handleCloseEdit, data, fetchTypeData } = props;
+
     // -----------  validationSchema
     const validationSchema = yup.object({
-        objectiveName: yup.string().required('Objective Name is required'),
-        abbrevation: yup.string().required('Abbrevation is required'),
+        activityName: yup.string().required('Activity Name is required'),
     });
 
     // -----------   initialValues
     const initialValues = {
-        objectiveName: data?.objectiveName,
-        abbrevation: data?.abbrevation,
+        activityName: data?.activityName,
     };
 
-    const editCallObjective = async (values) => {
+    const editActivityType = async (values) => {
         const pyload = {
             _id: data?._id,
-            objectiveName: values.objectiveName,
-            abbrevation: values.abbrevation,
+            activityName: values.activityName,
             modifiedOn: new Date()
-        };
-        const result = await apiput('/api/callObjective', pyload);
+        }
+        const result = await apiput('/api/activityType', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            dispatch(fetchCallObjectiveData());
+            fetchTypeData();
         }
-    };
+    }
 
     const formik = useFormik({
         initialValues,
         validationSchema,
-        enableReinitialize: true,
+        enableReinitialize:true,
         onSubmit: async (values) => {
-            editCallObjective(values);
+            editActivityType(values)
         },
     });
+
 
     return (
         <div>
@@ -66,7 +63,7 @@ const EditCallObjective = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Edit Call Objective</Typography>
+                    <Typography variant="h6">Edit Activity Type </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>
@@ -76,35 +73,19 @@ const EditCallObjective = (props) => {
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Objective Name</FormLabel>
+                                <FormLabel>Activity Type Name</FormLabel>
                                 <TextField
-                                    id="objectiveName"
-                                    name="objectiveName"
+                                    id="typeName"
+                                    name="activityName"
                                     label=""
                                     size="small"
                                     maxRows={10}
-                                    placeholder="Enter Objective Name"
-                                    value={formik.values.objectiveName}
+                                    placeholder="Enter Type Name"
+                                    value={formik.values.activityName}
                                     onChange={formik.handleChange}
                                     fullWidth
-                                    error={formik.touched.objectiveName && Boolean(formik.errors.objectiveName)}
-                                    helperText={formik.touched.objectiveName && formik.errors.objectiveName}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Abbrevation</FormLabel>
-                                <TextField
-                                    id="abbrevation"
-                                    name="abbrevation"
-                                    label=""
-                                    size="small"
-                                    maxRows={10}
-                                    placeholder="Enter Abbrevation"
-                                    value={formik.values.abbrevation}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    error={formik.touched.abbrevation && Boolean(formik.errors.abbrevation)}
-                                    helperText={formik.touched.abbrevation && formik.errors.abbrevation}
+                                    error={formik.touched.activityName && Boolean(formik.errors.activityName)}
+                                    helperText={formik.touched.activityName && formik.errors.activityName}
                                 />
                             </Grid>
                         </Grid>
@@ -137,4 +118,4 @@ const EditCallObjective = (props) => {
     );
 };
 
-export default EditCallObjective;
+export default EditExpense;

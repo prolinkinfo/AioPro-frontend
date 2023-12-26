@@ -54,7 +54,7 @@ const EditBackDateVisit = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchBackDateVisitData();
+            dispatch(fetchBackDateVisitData());
         }
     };
 
