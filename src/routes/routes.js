@@ -116,6 +116,7 @@ import DoctorBusiness from '../pages/Business/DoctorBusiness';
 import FirmBusiness from '../pages/Business/FirmBusiness';
 import Presentation from '../pages/eDetailing/Presentation';
 import ViewPresentation from '../pages/eDetailing/Presentation/View'
+import DataManagement from '../pages/settings/dataSetting/dataManagement';
 
 // ----------------------------------------------------------------------
 
@@ -219,7 +220,8 @@ export default function Router() {
         { path: 'setting/visitCounter', element: <VisitCounter /> },
         { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
         { path: 'setting/changePassword', element: <ChangePassword /> },
-        { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
+        // { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
+        { path: 'setting/dataSetting/dataManagement', element: <DataManagement /> },
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
         { path: 'eDetailing/presentation', element: <Presentation /> },
         { path: 'eDetailing/presentation/:id', element: <ViewPresentation /> },
