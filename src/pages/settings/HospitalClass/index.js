@@ -2,17 +2,20 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddHospitalClass from './Add';
 import EditHospitalClass from './Edit'
 import { apiget } from '../../../service/api'
+import { fetchHospitalClassData } from '../../../redux/slice/GetHospitalClassSlice';
 
 const HospitalClass = () => {
 
     const [classList, setClassList] = useState([])
     const [classData, setClassData] = useState({})
+    const dispatch = useDispatch();
 
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -21,6 +24,8 @@ const HospitalClass = () => {
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+
+    const hospitalClass = useSelector((state)=>state?.getHospitalClass?.data)
 
     const columns = [
         {
@@ -36,7 +41,7 @@ const HospitalClass = () => {
                 };
                 return (
                     <Box>
-                        <EditHospitalClass isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchClassData={fetchClassData} data={classData} />
+                        <EditHospitalClass isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHospitalClassData={fetchHospitalClassData} data={classData} />
                         <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
@@ -45,21 +50,26 @@ const HospitalClass = () => {
         { field: 'hospitalClass', headerName: 'Hospital Class', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const fetchClassData = async () => {
-        const result = await apiget(`/api/hospitalclass`);
-        if (result && result.status === 200) {
-            setClassList(result?.data?.result);
-        }
-    };
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = hospitalClass?.filter(({ hospitalClass }) =>
+          hospitalClass?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setClassList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : hospitalClass)
+      };
+    
+    useEffect(() => {
+        fetchData();
+    }, [hospitalClass])
 
     useEffect(() => {
-        fetchClassData();
+        dispatch(fetchHospitalClassData());
     }, [])
 
     return (
         <div>
             {/* Add Hospital Class */}
-            <AddHospitalClass isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchClassData={fetchClassData} />
+            <AddHospitalClass isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchHospitalClassData={fetchHospitalClassData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -76,6 +86,7 @@ const HospitalClass = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

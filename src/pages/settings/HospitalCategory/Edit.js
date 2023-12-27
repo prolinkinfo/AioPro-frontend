@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
 const EditHospitalCategory = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, fetchCategoryData, data } = props;
+    const { isOpenEdit, handleCloseEdit, fetchHospitalCategoryData, data } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -39,7 +41,8 @@ const EditHospitalCategory = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchCategoryData();
+            dispatch(fetchHospitalCategoryData());
+
         }
     }
 

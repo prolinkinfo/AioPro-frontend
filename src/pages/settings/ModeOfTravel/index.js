@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,12 +11,14 @@ import AddTravel from './Add'
 import EditTravel from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchModeOfTravelData } from '../../../redux/slice/GetModeOfTravelSlice';
 
 const ModeOfTravel = () => {
 
     const [travelList, setTravelList] = useState([])
     const [travelData, setTravelData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -29,6 +32,8 @@ const ModeOfTravel = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const modeOfTravel = useSelector((state) => state?.getModeOfTravel?.data)
 
     const columns = [
         {
@@ -48,7 +53,7 @@ const ModeOfTravel = () => {
                 };
                 return (
                     <Box>
-                        <EditTravel isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTravelData={fetchTravelData} data={travelData} />
+                        <EditTravel isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchModeOfTravelData={fetchModeOfTravelData} data={travelData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteModeOfTravel} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
@@ -92,22 +97,28 @@ const ModeOfTravel = () => {
         setUserAction(result)
     }
 
-    const fetchTravelData = async () => {
-        const result = await apiget(`/api/modeoftravel`);
-        if (result && result.status === 200) {
-            setTravelList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = modeOfTravel?.filter(({ mode, status }) =>
+            mode?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            status?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setTravelList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : modeOfTravel)
     };
 
     useEffect(() => {
-        fetchTravelData();
+        dispatch(fetchModeOfTravelData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [modeOfTravel])
 
 
     return (
         <div>
             {/* Add Travel */}
-            <AddTravel isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTravelData={fetchTravelData} />
+            <AddTravel isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchModeOfTravelData={fetchModeOfTravelData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -124,6 +135,7 @@ const ModeOfTravel = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

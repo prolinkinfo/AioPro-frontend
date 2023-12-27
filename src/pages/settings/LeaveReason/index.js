@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,15 +11,16 @@ import AddLeaveReason from './Add'
 import EditLeaveReason from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchLeaveReasonData } from '../../../redux/slice/GetLeaveReasonSlice';
 
 const LeaveReason = () => {
 
     const [leaveReasonList, setLeaveReasonList] = useState([])
-
+    const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [activityTypeData, setActivityTypeData] = useState('')
+    const [leaveReasonData, setLeaveReasonData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
 
@@ -29,6 +31,8 @@ const LeaveReason = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const leaveReason = useSelector((state)=>state?.getLeaveReason?.data)
+
     const columns = [
         {
             field: 'action',
@@ -38,7 +42,7 @@ const LeaveReason = () => {
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
-                    setActivityTypeData(data);
+                    setLeaveReasonData(data);
                     handleOpenEdit();
                 };
 
@@ -48,7 +52,7 @@ const LeaveReason = () => {
                 };
                 return (
                     <Box>
-                        <EditLeaveReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchLeaveData={fetchLeaveData} data={activityTypeData} />
+                        <EditLeaveReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchLeaveReasonData={fetchLeaveReasonData} data={leaveReasonData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteReason} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -70,21 +74,27 @@ const LeaveReason = () => {
     }
 
 
-    const fetchLeaveData = async () => {
-        const result = await apiget(`/api/leavereason`);
-        if (result && result.status === 200) {
-            setLeaveReasonList(result?.data?.result);
-        }
-    };
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = leaveReason?.filter(({ leaveEntitlement,leaveReason }) =>
+        leaveEntitlement?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+        leaveReason?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        );
+        setLeaveReasonList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : leaveReason)
+      };
+    
+    useEffect(() => {
+        fetchData();
+    }, [leaveReason])
 
     useEffect(() => {
-        fetchLeaveData();
+       dispatch(fetchLeaveReasonData());
     }, [userAction])
 
     return (
         <div>
             {/* Add Leave Reason */}
-            <AddLeaveReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchLeaveData={fetchLeaveData} />
+            <AddLeaveReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchLeaveReasonData={fetchLeaveReasonData} />
            
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -101,6 +111,7 @@ const LeaveReason = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

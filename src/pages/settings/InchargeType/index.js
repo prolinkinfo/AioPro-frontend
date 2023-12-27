@@ -3,12 +3,14 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddQualification from './Add';
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchInchargeTypeData } from '../../../redux/slice/GetInchargeTypeSlice';
 
 const InchargeType = () => {
 
@@ -17,14 +19,14 @@ const InchargeType = () => {
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
-
-
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const inchargeType = useSelector((state) => state?.getInchargeType?.data)
 
     const columns = [
         {
@@ -54,22 +56,28 @@ const InchargeType = () => {
         setUserAction(result)
     }
 
-    const fetchTypeData = async () => {
-        const result = await apiget(`/api/inchargetype`);
-        if (result && result.status === 200) {
-            setTypeList(result?.data?.result);
-        }
+   ;
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = inchargeType?.filter(({ inchargeType }) =>
+            inchargeType?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setTypeList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : inchargeType)
     };
 
     useEffect(() => {
-        fetchTypeData();
+        fetchData();
+    }, [inchargeType])
+
+    useEffect(() => {
+        dispatch(fetchInchargeTypeData());
     }, [userAction])
 
     return (
         <div>
-            
+
             {/* Add Incharge Type */}
-            <AddQualification isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
+            <AddQualification isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchInchargeTypeData={fetchInchargeTypeData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -86,6 +94,7 @@ const InchargeType = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

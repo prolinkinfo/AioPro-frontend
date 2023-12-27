@@ -23,6 +23,12 @@ import GetActivityTypeReducer from '../slice/GetActivityTypeSlice';
 import GetBackDateVisitReducer from '../slice/GetBackDateVisitSlice';
 import GetCallObjectiveReducer from '../slice/GetCallObjectiveSlice';
 import GetFirmCategoryReducer from '../slice/GetFirmCategorySlice';
+import GetHospitalCategoryReducer from '../slice/GetHospitalCategorySlice';
+import GetHospitalClassReducer from '../slice/GetHospitalClassSlice';
+import GetHospitalSpecialityReducer from '../slice/GetHospitalSpecialitySlice';
+import GetInchargeTypeReducer from '../slice/GetInchargeTypeSlice';
+import GetLeaveReasonReducer from '../slice/GetLeaveReasonSlice';
+import GetModeOfTravelReducer from '../slice/GetModeOfTravelSlice';
 
 const store = configureStore({
   reducer: {
@@ -50,6 +56,12 @@ const store = configureStore({
     getBackDateVisit: GetBackDateVisitReducer,
     getCallObjective: GetCallObjectiveReducer,
     getFirmCategory: GetFirmCategoryReducer,
+    getHospitalCategory: GetHospitalCategoryReducer,
+    getHospitalClass: GetHospitalClassReducer,
+    getHospitalSpeciality: GetHospitalSpecialityReducer,
+    getInchargeType: GetInchargeTypeReducer,
+    getLeaveReason: GetLeaveReasonReducer,
+    getModeOfTravel: GetModeOfTravelReducer,
   },
 });
 

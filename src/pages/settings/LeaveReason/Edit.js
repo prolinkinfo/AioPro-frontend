@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
 const EdiLeaveReason = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit,fetchLeaveData,data } = props;
+    const { isOpenEdit, handleCloseEdit,fetchLeaveReasonData,data } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -30,6 +32,7 @@ const EdiLeaveReason = (props) => {
         leaveEntitlement: data?.leaveEntitlement
     };
 
+
     const editReason = async (values) => {
         const pyload = {
             _id: data?._id,
@@ -37,12 +40,13 @@ const EdiLeaveReason = (props) => {
             leaveEntitlement: values.leaveEntitlement,
             modifiedOn: new Date()
         }
-        const result = await apiput('/api/doctorspeciality', pyload);
+        const result = await apiput('/api/leavereason', pyload);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchLeaveData();
+            dispatch(fetchLeaveReasonData());
+
         }
     }
 
@@ -50,6 +54,7 @@ const EdiLeaveReason = (props) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize:true,
         onSubmit: async (values) => {
             editReason(values)
         },
@@ -99,7 +104,7 @@ const EdiLeaveReason = (props) => {
                                         size='small'
                                         name='leaveEntitlement'
                                         placeholder='Select Leave Entitlement'
-                                        value={formik.values.leaveEntitlement}
+                                        value={formik.values.leaveEntitlement || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.leaveEntitlement && Boolean(formik.errors.leaveEntitlement)}
                                         helperText={formik.touched.leaveEntitlement && formik.errors.leaveEntitlement}

@@ -201,7 +201,7 @@ export default function Router() {
         { path: 'setting/faqAdd', element: <FaqAdd /> },
         { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
         { path: 'setting/relationMaster', element: <RelationMaster /> },
-        { path: 'setting/modeOfTravel', element: <OtherReason /> },
+        { path: 'setting/otherReason', element: <OtherReason /> },
         { path: 'setting/firmCategory', element: <FirmCategory /> },
         { path: 'setting/hospitalCategory', element: <HospitalCategory /> },
         { path: 'setting/hospitalClass', element: <HospitalClass /> },

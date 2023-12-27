@@ -12,12 +12,16 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const EditHospitalSpeciality = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, fetchSpecialityData, data } = props;
-    const [divisionList, setDivisionList] = useState([])
+    const { isOpenEdit, handleCloseEdit, fetchHospitalSpecialityData, data } = props;
+    const dispatch = useDispatch();
+
+    const divisionList = useSelector((state)=>state?.getDivision?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -29,7 +33,7 @@ const EditHospitalSpeciality = (props) => {
         hospitalSpeciality: data?.hospitalSpeciality,
         divisionName: data?.divisionName,
     };
-    console.log(data, "ndex.php/LOGIN_URL")
+
     const editSpeciality = async (values) => {
         const pyload = {
             _id: data?._id,
@@ -42,7 +46,7 @@ const EditHospitalSpeciality = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchSpecialityData();
+            dispatch(fetchHospitalSpecialityData());
         }
     }
 
@@ -55,15 +59,8 @@ const EditHospitalSpeciality = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
     }, [])
     return (
         <div>
