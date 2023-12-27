@@ -12,18 +12,26 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchProductData } from '../../../redux/slice/GetProductSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const AddProductSample = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchProductSampleData } = props;
-    const [divisionList, setDivisionList] = useState([])
-    const [productList, setProductList] = useState([])
+    const { isOpenAdd, handleCloseAdd, fetchProSampleDetails } = props;
+
+    const [productList, setProductList] = useState('')
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const product = useSelector((state) => state?.getProduct?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        // divisionName: yup.string().required('Category Name is required'),
-        // employeeName: yup.string().required('Employee is required'),
+        divisionName: yup.string().required('Division Name is required'),
+        employeeName: yup.string().required('Employee Name is required'),
         // productName: yup.string().required('Product Name is required'),
         // quantity: yup.string().required('Quantity is required'),
     });
@@ -49,7 +57,8 @@ const AddProductSample = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchProductSampleData();
+            dispatch(fetchProSampleDetails());
+
         }
     }
 
@@ -61,23 +70,19 @@ const AddProductSample = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
-    const fetchProductData = async () => {
-        const result = await apiget(`/api/products`);
-        if (result && result.status === 200) {
-            const filterData = result?.data?.result?.map((item)=>item?.productName)
-            setProductList(filterData);
-        }
-    };
     useEffect(() => {
-        fetchDivisionData();
-        fetchProductData();
+        if (product) {
+            const filteredArray = product?.map(item => item?.productName);
+            setProductList(filteredArray);
+        }
+    }, [product]);
+
+    console.log(productList, "productList")
+
+    useEffect(() => {
+        dispatch(fetchDivisionData());
+        dispatch(fetchProductData());
+        dispatch(fetchEmployeeData());
     }, [])
     return (
         <div>
@@ -110,7 +115,6 @@ const AddProductSample = (props) => {
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -129,20 +133,20 @@ const AddProductSample = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
-                                        options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
-                                        getOptionLabel={(division) => division?.divisionName}
+                                        fullWidth
+                                        options={employeeList}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Employee'
-                                                error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
-                                                helperText={formik.touched.divisionName && formik.errors.divisionName}
+                                                error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                                                helperText={formik.touched.employeeName && formik.errors.employeeName}
                                             />
                                         )}
                                     />
@@ -157,7 +161,6 @@ const AddProductSample = (props) => {
                                             formik.setFieldValue('productName', newValue);
                                         }}
                                         options={productList}
-                                        value={productList.find(product => product === formik.values.productName)}
                                         getOptionLabel={(product) => product}
                                         style={{ textTransform: 'capitalize' }}
                                         clearIcon

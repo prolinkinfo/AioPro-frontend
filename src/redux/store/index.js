@@ -29,6 +29,12 @@ import GetHospitalSpecialityReducer from '../slice/GetHospitalSpecialitySlice';
 import GetInchargeTypeReducer from '../slice/GetInchargeTypeSlice';
 import GetLeaveReasonReducer from '../slice/GetLeaveReasonSlice';
 import GetModeOfTravelReducer from '../slice/GetModeOfTravelSlice';
+import GetOtherReasonReducer from '../slice/GetOtherReasonSlice';
+import GetProductGroupReduce from '../slice/GetProductGroupSlice';
+import GetTaxMasterReducer from '../slice/GetTaxMasterSlice';
+import GetProductIndicationReducer from '../slice/GetProductIndicationSlice';
+import GetProductSampleDetailsReducer from '../slice/GetProductSampleDetailsSlice';
+import GetPromotionalGiftReducer from '../slice/GetPromotionalGiftSlice';
 
 const store = configureStore({
   reducer: {
@@ -62,6 +68,12 @@ const store = configureStore({
     getInchargeType: GetInchargeTypeReducer,
     getLeaveReason: GetLeaveReasonReducer,
     getModeOfTravel: GetModeOfTravelReducer,
+    getOtherReason: GetOtherReasonReducer,
+    getProductGroup: GetProductGroupReduce,
+    getTaxMaster: GetTaxMasterReducer,
+    getProductIndication: GetProductIndicationReducer,
+    getProductSampleDetails: GetProductSampleDetailsReducer,
+    getPromotionalGift: GetPromotionalGiftReducer,
   },
 });
 

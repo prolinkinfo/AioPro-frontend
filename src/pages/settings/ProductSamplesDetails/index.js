@@ -2,12 +2,14 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddProductSample from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchProSampleDetails } from '../../../redux/slice/GetProductSampleDetailsSlice';
 
 const ProductSample = () => {
 
@@ -17,12 +19,14 @@ const ProductSample = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [id, setId] = useState('')
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const productSampleDetails = useSelector((state) => state?.getProductSampleDetails?.data)
 
     const columns = [
         {
@@ -54,22 +58,27 @@ const ProductSample = () => {
         const result = await apidelete(`/api/productSampleDetails/${id}`);
         setUserAction(result)
     }
-
-    const fetchProductSampleData = async () => {
-        const result = await apiget(`/api/productSampleDetails`);
-        if (result && result.status === 200) {
-            setSampleList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = productSampleDetails?.filter(({ employeeName, divisionName }) =>
+            employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        )
+        setSampleList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : productSampleDetails)
     };
 
     useEffect(() => {
-        fetchProductSampleData();
+        dispatch(fetchProSampleDetails());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [productSampleDetails])
 
     return (
         <div>
             {/* Add Product Sample */}
-            <AddProductSample isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchProductSampleData={fetchProductSampleData} />
+            <AddProductSample isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchProSampleDetails={fetchProSampleDetails} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -86,6 +95,7 @@ const ProductSample = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

@@ -13,16 +13,18 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import dayjs from 'dayjs';
+import { useDispatch } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
 
 const EditProduct = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, fetchProductGroupData, data } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        groupName: yup.string().required('Division is required'),
-        groupCategory: yup.string().required('Product Name is required'),
+        groupName: yup.string().required('Group Name is required'),
+        groupCategory: yup.string().required('Group Category is required'),
     });
 
     // -----------   initialValues
@@ -45,7 +47,7 @@ const EditProduct = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchProductGroupData();
+            dispatch(fetchProductGroupData());
         }
     }
 

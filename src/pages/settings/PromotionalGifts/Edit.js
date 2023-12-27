@@ -13,14 +13,17 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const EditCollectionCenter = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, fetchPromotionalGiftsData, data } = props;
-
-    const [divisionList, setDivisionList] = useState([])
-
+    const { isOpenEdit, handleCloseEdit, fetchPromotionalGiftData, data } = props;
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -32,10 +35,10 @@ const EditCollectionCenter = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        divisionName: '',
-        employeeName: '',
-        giftName: '',
-        quantity: '',
+        divisionName: data?.divisionName,
+        employeeName: data?.employeeName,
+        giftName: data?.giftName,
+        quantity: data?.quantity,
     };
 
     const editCollectionCenter = async (values) => {
@@ -52,7 +55,8 @@ const EditCollectionCenter = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchPromotionalGiftsData();
+            dispatch(fetchPromotionalGiftData());
+
         }
     }
 
@@ -65,17 +69,10 @@ const EditCollectionCenter = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
+        dispatch(fetchEmployeeData());
     }, [])
-
     return (
         <div>
             <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -101,13 +98,12 @@ const EditCollectionCenter = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
+                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName || null)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -126,20 +122,20 @@ const EditCollectionCenter = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('employeeName', newValue.divisionName);
+                                            formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
-                                        options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
-                                        getOptionLabel={(division) => division?.divisionName}
+                                        fullWidth
+                                        options={employeeList}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Employee'
-                                                error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
-                                                helperText={formik.touched.divisionName && formik.errors.divisionName}
+                                                error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                                                helperText={formik.touched.employeeName && formik.errors.employeeName}
                                             />
                                         )}
                                     />

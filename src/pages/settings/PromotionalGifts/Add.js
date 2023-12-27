@@ -12,13 +12,17 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const AddPromotionalGift = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchPromotionalGiftsData } = props;
-    const [divisionList, setDivisionList] = useState([])
-
+    const { isOpenAdd, handleCloseAdd, fetchPromotionalGiftData } = props;
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -42,7 +46,7 @@ const AddPromotionalGift = (props) => {
             employeeName: values.employeeName,
             giftName: values.giftName,
             quantity: values.quantity,
-            status:"active"
+            status: "active"
 
         }
         const result = await apipost('/api/promotionalGift', pyload);
@@ -50,7 +54,8 @@ const AddPromotionalGift = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchPromotionalGiftsData();
+            dispatch(fetchPromotionalGiftData());
+
         }
     }
 
@@ -62,15 +67,10 @@ const AddPromotionalGift = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
 
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
+        dispatch(fetchEmployeeData());
     }, [])
 
     return (
@@ -98,13 +98,12 @@ const AddPromotionalGift = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue.divisionName);
+                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -123,13 +122,13 @@ const AddPromotionalGift = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('employeeName', newValue.divisionName);
+                                            formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
-                                        options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName)}
-                                        getOptionLabel={(division) => division?.divisionName}
+                                        fullWidth
+                                        options={employeeList}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -157,7 +156,7 @@ const AddPromotionalGift = (props) => {
                                     helperText={formik.touched.giftName && formik.errors.giftName}
                                 />
                             </Grid>
-                          
+
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Quantity</FormLabel>
                                 <TextField

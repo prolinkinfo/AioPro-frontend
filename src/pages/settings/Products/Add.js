@@ -12,14 +12,20 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchProductGroupData } from '../../../redux/slice/GetProductGroupSlice';
+import { fetchTaxMasterData } from '../../../redux/slice/GetTaxMasterSlice';
 
 const AddProduct = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd, fetchProductData } = props;
-    const [divisionList, setDivisionList] = useState([])
-    const [productGroupList, setProductGroupList] = useState([])
-    const [taxList, setTaxList] = useState([])
+    const dispatch = useDispatch();
+
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const productGroupList = useSelector((state) => state?.getProductGroup?.data)
+    const taxList = useSelector((state) => state?.getTaxMaster?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -56,7 +62,7 @@ const AddProduct = (props) => {
         size: '',
         status: "active"
     };
-console.log(taxList)
+
     const addProduct = async (values) => {
         const pyload = {
             division: values.division,
@@ -80,7 +86,7 @@ console.log(taxList)
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchProductData();
+            dispatch(fetchProductData());
         }
     }
 
@@ -92,32 +98,10 @@ console.log(taxList)
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
-    const fetchProductGroupData = async () => {
-        const result = await apiget(`/api/productgroup`);
-        if (result && result.status === 200) {
-            setProductGroupList(result?.data?.result);
-        }
-    };
-
-    const fetchTaxData = async () => {
-        const result = await apiget(`/api/taxmaster`);
-        if (result && result.status === 200) {
-            setTaxList(result?.data?.result);
-        }
-    };
-
-
     useEffect(() => {
-        fetchDivisionData();
-        fetchProductGroupData();
-        fetchTaxData();
+        dispatch(fetchDivisionData());
+        dispatch(fetchProductGroupData());
+        dispatch(fetchTaxMasterData());
     }, [])
 
     return (
@@ -145,13 +129,12 @@ console.log(taxList)
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('division', newValue.divisionName);
+                                            formik.setFieldValue('division', newValue ? newValue.divisionName : "");
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.division)}
                                         getOptionLabel={(division) => division?.divisionName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -170,13 +153,12 @@ console.log(taxList)
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('productGroup', newValue.groupName);
+                                            formik.setFieldValue('productGroup', newValue ? newValue.groupName : "");
                                         }}
                                         options={productGroupList}
                                         value={productGroupList.find(group => group.groupName === formik.values.productGroup)}
                                         getOptionLabel={(group) => group?.groupName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -313,7 +295,6 @@ console.log(taxList)
                                         value={taxList.find(tax => tax?.taxType === formik.values.taxType)}
                                         getOptionLabel={(tax) => `${tax?.taxType}(${tax?.percent}%)`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

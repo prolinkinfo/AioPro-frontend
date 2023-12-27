@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,12 +12,15 @@ import AddPromotionalGift from './Add';
 import EditCollectionCenter from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchPromotionalGiftData } from '../../../redux/slice/GetPromotionalGiftSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const PromotionalGifts = () => {
 
     const [promotionalGiftList, setPromotionalGiftList] = useState([])
     const [promotionalGiftData, setpromotionalGiftData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -30,6 +34,9 @@ const PromotionalGifts = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const promotionalGift = useSelector((state) => state?.getPromotionalGift?.data)
+
 
     const columns = [
         {
@@ -49,7 +56,7 @@ const PromotionalGifts = () => {
                 };
                 return (
                     <Box>
-                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchPromotionalGiftsData={fetchPromotionalGiftsData} data={promotionalGiftData} />
+                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchPromotionalGiftData={fetchPromotionalGiftData} data={promotionalGiftData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
@@ -68,33 +75,33 @@ const PromotionalGifts = () => {
             field: 'status',
             headerName: 'Status',
             width: 200,
-            renderCell: (params) => 
-                // const chengStatus = async(data) => {
-                //   const pyload = {
-                //     _id: data?._id,
-                //     status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
-                //   }
-                //   const result = await apiput(`/api/users/changeStatus`, pyload);
-                //   if (result && result.status === 200) {
-                //     fetchdata();
-                //   }
-                // };
-                 (
-                  <Box>
+            renderCell: (params) =>
+            // const chengStatus = async(data) => {
+            //   const pyload = {
+            //     _id: data?._id,
+            //     status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+            //   }
+            //   const result = await apiput(`/api/users/changeStatus`, pyload);
+            //   if (result && result.status === 200) {
+            //     fetchdata();
+            //   }
+            // };
+            (
+                <Box>
                     <Button
-                      variant="outlined"
-                      style={{
-                        color: params.value === 'active' ? '#22C55E' : '#B61D18',
-                        background: params.value === 'active' ? '#22c55e29' : '#ff563029',
-                        border: 'none',
-                      }}
-                      
+                        variant="outlined"
+                        style={{
+                            color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                            background: params.value === 'active' ? '#22c55e29' : '#ff563029',
+                            border: 'none',
+                        }}
+
                     >
-                      {params.value}
+                        {params.value}
                     </Button>
-                  </Box>
-                )
-              ,
+                </Box>
+            )
+            ,
         },
     ];
 
@@ -103,26 +110,33 @@ const PromotionalGifts = () => {
         setUserAction(result)
     }
 
-    const fetchPromotionalGiftsData = async () => {
-        const result = await apiget(`/api/promotionalGift`);
-        if (result && result.status === 200) {
-            setPromotionalGiftList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = promotionalGift?.filter(({ divisionName, employeeName, giftName, status }) =>
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            giftName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            status?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setPromotionalGiftList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : promotionalGift)
     };
 
     useEffect(() => {
-        fetchPromotionalGiftsData();
+        dispatch(fetchPromotionalGiftData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [promotionalGift])
 
     return (
         <div>
             {/* Add Promotional Gift */}
-            <AddPromotionalGift isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchPromotionalGiftsData={fetchPromotionalGiftsData} />
+            <AddPromotionalGift isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchPromotionalGiftData={fetchPromotionalGiftData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Promotional Gifts</Typography>
-
                 </Stack>
                 <TableStyle>
                     <Box width="100%" pt={3}>
@@ -134,6 +148,7 @@ const PromotionalGifts = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

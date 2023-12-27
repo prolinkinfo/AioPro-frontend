@@ -2,12 +2,14 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddReason from './Add'
 import { apiget } from '../../../service/api'
 import EditReason from './Edit';
+import { fetchOtherReasonData } from '../../../redux/slice/GetOtherReasonSlice';
 
 const OtherReason = () => {
 
@@ -15,11 +17,13 @@ const OtherReason = () => {
     const [reasonData, setReasonData] = useState({})
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+
+    const otherReason = useSelector((state) => state?.getOtherReason?.data)
 
     const columns = [
         {
@@ -35,30 +39,35 @@ const OtherReason = () => {
                 };
                 return (
                     <Box >
-                        <EditReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchReasonData={fetchReasonData} data={reasonData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
+                        <EditReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchOtherReasonData={fetchOtherReasonData} data={reasonData} />
+                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
             },
         },
-        { field: 'priorityName', headerName: 'Priority Name', flex: 1,cellClassName: 'name-column--cell--capitalize' },
+        { field: 'priorityName', headerName: 'Priority Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
     ];
 
-    const fetchReasonData = async () => {
-        const result = await apiget(`/api/otherReason`);
-        if (result && result.status === 200) {
-            setReasonList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = otherReason?.filter(({ priorityName }) =>
+            priorityName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setReasonList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : otherReason)
     };
 
     useEffect(() => {
-        fetchReasonData();
+        dispatch(fetchOtherReasonData());
     }, [])
+
+    useEffect(() => {
+        fetchData();
+    }, [otherReason])
 
     return (
         <div>
             {/* Add Reason */}
-            <AddReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchReasonData={fetchReasonData} />
+            <AddReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchOtherReasonData={fetchOtherReasonData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -75,6 +84,7 @@ const OtherReason = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

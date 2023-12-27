@@ -12,7 +12,9 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiput } from '../../../service/api';
+import { fetchProductData } from '../../../redux/slice/GetProductSlice';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -26,6 +28,8 @@ const top100Films = [
 const EditProductIndication = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, fetchProductIndicationData, data } = props;
+    const dispatch = useDispatch();
+    const productList = useSelector((state) => state?.getProduct?.data);
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -35,8 +39,8 @@ const EditProductIndication = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        productName: '',
-        indication: '',
+        productName: data?.productName,
+        indication: data?.indication,
     };
     const editProductIndication = async (values) => {
         const pyload = {
@@ -50,7 +54,7 @@ const EditProductIndication = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchProductIndicationData();
+            dispatch(fetchProductIndicationData());
         }
     }
 
@@ -63,6 +67,9 @@ const EditProductIndication = (props) => {
         },
     });
 
+    useEffect(() => {
+        dispatch(fetchProductData());
+    }, [])
 
     return (
         <div>
@@ -86,20 +93,23 @@ const EditProductIndication = (props) => {
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Product Name</FormLabel>
                                 <Autocomplete
-                                    disablePortal
-                                    name="productName"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
-                                    value={formik.values.productName}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
+                                    size="small"
+                                    onChange={(event, newValue) => {
+                                        formik.setFieldValue('productName', newValue ? newValue.productName : "");
+                                    }}
+                                    options={productList}
+                                    value={productList.find(product => product.productName === formik.values.productName)}
+                                    getOptionLabel={(product) => product?.productName}
+                                    style={{ textTransform: 'capitalize' }}
+                                    renderInput={(params) => (
                                         <TextField
                                             {...params}
+                                            style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Product Name'
                                             error={formik.touched.productName && Boolean(formik.errors.productName)}
                                             helperText={formik.touched.productName && formik.errors.productName}
-                                        />}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>

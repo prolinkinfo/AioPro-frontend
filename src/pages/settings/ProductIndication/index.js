@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,13 +11,15 @@ import AddProductIndication from './Add';
 import EditProductIndication from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchProductIndicationData } from '../../../redux/slice/GetProductIndicationSlice';
 
 const ProductIndication = () => {
 
     const [productIndicationList, setProductIndicationList] = useState([])
     const [productIndicationData, setProductIndicationData] = useState({})
     const [userAction, setUserAction] = useState(null)
-    const [id,setId] = useState('')
+    const dispatch = useDispatch()
+    const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
@@ -29,6 +32,8 @@ const ProductIndication = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const productIndication = useSelector((state) => state?.getProductIndication?.data)
 
     const columns = [
         {
@@ -49,7 +54,7 @@ const ProductIndication = () => {
                 return (
                     <Box>
                         <EditProductIndication isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductIndicationData={fetchProductIndicationData} data={productIndicationData} />
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteProductIndication} id={id}/>
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteProductIndication} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
                             <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
@@ -67,16 +72,23 @@ const ProductIndication = () => {
         setUserAction(result)
     }
 
-    const fetchProductIndicationData = async () => {
-        const result = await apiget(`/api/productindication`);
-        if (result && result.status === 200) {
-            setProductIndicationList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = productIndication?.filter(({ productName, indication }) =>
+            productName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            indication?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setProductIndicationList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : productIndication)
     };
 
     useEffect(() => {
-        fetchProductIndicationData();
+        dispatch(fetchProductIndicationData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [productIndication])
 
     return (
         <div>
@@ -98,6 +110,7 @@ const ProductIndication = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>
