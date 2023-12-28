@@ -100,6 +100,7 @@
     "utils": "^0.3.1",
     "web-vitals": "^3.1.1",
     "web-worker": "^1.2.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.2.0"
   },
   "devDependencies": {
