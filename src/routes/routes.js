@@ -117,6 +117,7 @@ import FirmBusiness from '../pages/Business/FirmBusiness';
 import Presentation from '../pages/eDetailing/Presentation';
 import ViewPresentation from '../pages/eDetailing/Presentation/View'
 import DataManagement from '../pages/settings/dataSetting/dataManagement';
+import ViewDoctor from '../pages/people/doctor/View';
 
 // ----------------------------------------------------------------------
 
@@ -169,6 +170,7 @@ export default function Router() {
         { path: 'people/administrator', element: <Administrator /> },
         { path: 'people/doctor', element: <Doctor /> },
         { path: 'people/doctor/add', element: <AddDoctor /> },
+        { path: 'people/doctor/:id', element: <ViewDoctor /> },
         { path: 'people/doctor/update_doctor/:id', element: <EditDoctor /> },
         { path: 'people/doctor/update_doctor', element: <EditDoctor /> },
         { path: 'people/employees', element: <Employees /> },

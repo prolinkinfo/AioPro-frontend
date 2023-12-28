@@ -64,6 +64,7 @@ const AddVisit = (props) => {
         employee: '',
         visitDate: '',
         createdBy: id,
+        visitBy:''
     };
 
     const addVisit = async (values) => {
@@ -74,7 +75,8 @@ const AddVisit = (props) => {
             clinicAddress: values?.clinicAddress,
             doctorName: values?.doctor,
             employeeName: values?.employee,
-            visitDate: values?.visitDate
+            visitDate: values?.visitDate,
+            visitBy:values?.visitBy
         }
 
         const result = await apipost('/api/doctorvisit', payload);
@@ -189,6 +191,7 @@ const AddVisit = (props) => {
                                         onChange={(event, newValue) => {
                                             formik.setFieldValue('doctor', newValue ? newValue?.doctorName : "");
                                             formik.setFieldValue('doctorId', newValue ? newValue?.doctorId : "");
+                                            formik.setFieldValue('visitBy', newValue ? newValue?._id : "");
                                             formik.setFieldValue('clinicAddress', newValue && newValue?.clinicAddress?.length > 0 && newValue?.clinicAddress[0]?.clinicAddress);
                                         }}
                                         fullWidth

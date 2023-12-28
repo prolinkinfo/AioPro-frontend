@@ -26,24 +26,24 @@ import { allusers, apiget } from '../service/api';
 export default function DashboardAppPage() {
   const theme = useTheme();
 
-  const [allUserList, setAllUserList] = useState([])
-  const [opdList, setOpdList] = useState([])
-  const [meetingList, setMeetingList] = useState([])
+  const [allUserList, setAllUserList] = useState([]);
+  const [opdList, setOpdList] = useState([]);
+  const [meetingList, setMeetingList] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user'));
 
   async function fetchUserData() {
     const result = await apiget('/api/users');
     if (result && result.status === 200) {
-      const filter = result?.data?.filter((user) => user?.role !== "Dr")
-      setAllUserList(filter)
+      const filter = result?.data?.filter((user) => user?.role !== 'Dr');
+      setAllUserList(filter);
     }
   }
 
   async function fetchOpdData() {
     const result = await apiget('/api/opd');
     if (result && result.status === 200) {
-      setOpdList(result?.data)
+      setOpdList(result?.data);
     }
   }
 
@@ -54,7 +54,9 @@ export default function DashboardAppPage() {
       const today = new Date().toISOString().split('T')[0];
 
       // Filter meetings created today
-      const meetingsCreatedToday = result?.data?.filter(meeting => meeting?.createdOn?.split('T')[0] === today && meeting?.status === 'verified');
+      const meetingsCreatedToday = result?.data?.filter(
+        (meeting) => meeting?.createdOn?.split('T')[0] === today && meeting?.status === 'verified'
+      );
       setMeetingList(meetingsCreatedToday);
     }
   }
@@ -65,12 +67,26 @@ export default function DashboardAppPage() {
     fetchMeetingData();
   }, []);
 
+  function getFormattedDate() {
+    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+    const today = new Date();
+    const day = today.getDate();
+    const month = months[today.getMonth()];
+    const year = today.getFullYear();
+
+    const formattedDate = `${day} - ${month} - ${year}`;
+    return formattedDate;
+  }
+
+
+
   return (
     <>
       <Helmet>{/* <title> Dashboard | Minimal UI </title> */}</Helmet>
 
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5, textTransform: "capitalize" }}>
+        <Typography variant="h4" sx={{ mb: 5, textTransform: 'capitalize' }}>
           Hi, {user?.userName}
         </Typography>
 
@@ -80,20 +96,20 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="Doctors" total={opdList?.length} color="info" icon={'healthicons:health'} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
-              title="Doctors"
-              total={opdList?.length}
-              color="info"
-              icon={'healthicons:health'}
+              title="Firms"
+              total={meetingList?.length}
+              color="warning"
+              icon={'healthicons:group-discussion-meetingx3'}
             />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Firms" total={meetingList?.length} color="warning" icon={'healthicons:group-discussion-meetingx3'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Expenses" total='10' color="error" icon={'mdi:events'} />
+            <AppWidgetSummary title="Expenses" total="10" color="error" icon={'mdi:events'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -114,7 +130,6 @@ export default function DashboardAppPage() {
                 '11/01/2023',
               ]}
               chartData={[
-
                 {
                   name: 'Doctor Visit',
                   type: 'area',
@@ -135,52 +150,16 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Attendance"
               chartData={[
-                { label: 'Present', value: 4344 ,type:'radialBar'},
-                { label: 'Absent', value: 5435 ,type:'radialBar' },
-
+                { label: 'Present', value: 4344, type: 'radialBar' },
+                { label: 'Absent', value: 5435, type: 'radialBar' },
               ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-              ]}
+              chartColors={[theme.palette.primary.main, theme.palette.info.main]}
             />
           </Grid>
 
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
-              chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ]}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject
-              title="Current Subject"
-              chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}
-              chartData={[
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ]}
-              chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={6}>
             <AppNewsUpdate
-              title="News Update"
+              title={`Field Activities   (${getFormattedDate()})`}
               list={[...Array(5)].map((_, index) => ({
                 id: faker.datatype.uuid(),
                 title: faker.name.jobTitle(),
@@ -189,57 +168,11 @@ export default function DashboardAppPage() {
                 postedAt: faker.date.recent(),
               }))}
             />
-          </Grid> */}
+          </Grid>
 
-          {/* <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline
-              title="Order Timeline"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
-                ][index],
-                type: `order${index + 1}`,
-                time: faker.date.past(),
-              }))}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite
-              title="Traffic by Site"
-              list={[
-                {
-                  name: 'FaceBook',
-                  value: 323234,
-                  icon: <Iconify icon={'eva:facebook-fill'} color="#1877F2" width={32} />,
-                },
-                {
-                  name: 'Google',
-                  value: 341212,
-                  icon: <Iconify icon={'eva:google-fill'} color="#DF3E30" width={32} />,
-                },
-                {
-                  name: 'Linkedin',
-                  value: 411213,
-                  icon: <Iconify icon={'eva:linkedin-fill'} color="#006097" width={32} />,
-                },
-                {
-                  name: 'Twitter',
-                  value: 443232,
-                  icon: <Iconify icon={'eva:twitter-fill'} color="#1C9CEA" width={32} />,
-                },
-              ]}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={6}>
             <AppTasks
-              title="Tasks"
+              title={`Visit  (${getFormattedDate()})`}
               list={[
                 { id: '1', label: 'Create FireStone Logo' },
                 { id: '2', label: 'Add SCSS and JS files if required' },
@@ -248,7 +181,7 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid> */}
+          </Grid>
         </Grid>
       </Container>
     </>
