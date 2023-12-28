@@ -12,12 +12,14 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
 
 const AddHospitalSpeciality = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchSpecialityData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchHospitalSpecialityData } = props;
     const [divisionList, setDivisionList] = useState([])
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -41,7 +43,7 @@ const AddHospitalSpeciality = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchSpecialityData();
+            dispatch(fetchHospitalSpecialityData());
         }
     }
 

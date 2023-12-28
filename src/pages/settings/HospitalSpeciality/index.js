@@ -2,17 +2,20 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddHospitalSpeciality from './Add';
 import EditHospitalSpeciality from './Edit'
 import { apiget } from '../../../service/api'
+import { fetchHospitalSpecialityData } from '../../../redux/slice/GetHospitalSpecialitySlice';
 
 const HospitalSpeciality = () => {
 
     const [specialityList, setSpecialityList] = useState([])
     const [specialityData, setSpecialityData] = useState({})
+    const dispatch = useDispatch();
 
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -21,6 +24,9 @@ const HospitalSpeciality = () => {
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+
+    const hospitalSpeciality = useSelector((state)=>state?.getHospitalSpeciality?.data)
+
 
     const columns = [
         {
@@ -36,7 +42,7 @@ const HospitalSpeciality = () => {
                 };
                 return (
                     <Box>
-                        <EditHospitalSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSpecialityData={fetchSpecialityData} data={specialityData} />
+                        <EditHospitalSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHospitalSpecialityData={fetchHospitalSpecialityData} data={specialityData} />
                         <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
@@ -46,21 +52,27 @@ const HospitalSpeciality = () => {
         { field: 'divisionName', headerName: 'Division Name', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const fetchSpecialityData = async () => {
-        const result = await apiget(`/api/hospitalspeciality`);
-        if (result && result.status === 200) {
-            setSpecialityList(result?.data?.result);
-        }
-    };
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = hospitalSpeciality?.filter(({ hospitalSpeciality,divisionName }) =>
+        hospitalSpeciality?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+        divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        )
+        setSpecialityList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : hospitalSpeciality)
+      };
 
     useEffect(() => {
-        fetchSpecialityData();
+       dispatch(fetchHospitalSpecialityData());
     }, [])
+
+    useEffect(() => {
+      fetchData();
+    }, [hospitalSpeciality])
 
     return (
         <div>
             {/* Add Hospital Speciality */}
-            <AddHospitalSpeciality isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchSpecialityData={fetchSpecialityData} />
+            <AddHospitalSpeciality isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchHospitalSpecialityData={fetchHospitalSpecialityData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -77,6 +89,7 @@ const HospitalSpeciality = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

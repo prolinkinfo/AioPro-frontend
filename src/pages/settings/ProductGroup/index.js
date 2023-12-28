@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,12 +12,14 @@ import AddProduct from './Add';
 import EditProduct from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchProductGroupData } from '../../../redux/slice/GetProductGroupSlice';
 
 const ProductGroup = () => {
 
     const [productGroupList, setProductGroupList] = useState([])
     const [productGroupData, setProductGroupData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -31,12 +34,14 @@ const ProductGroup = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const productGroup = useSelector((state) => state?.getProductGroup?.data)
+
     const columns = [
         {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            flex:1,
+            flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
@@ -59,9 +64,9 @@ const ProductGroup = () => {
                 );
             },
         },
-        { field: 'groupName', headerName: 'Group Name', flex:1 },
-        { field: 'groupCategory', headerName: 'Group Category', flex:1 },
-        { field: 'orderBy', headerName: 'Order By', flex:1 },
+        { field: 'groupName', headerName: 'Group Name', flex: 1 },
+        { field: 'groupCategory', headerName: 'Group Category', flex: 1 },
+        { field: 'orderBy', headerName: 'Order By', flex: 1 },
     ];
 
     const deleteGroup = async (id) => {
@@ -69,16 +74,23 @@ const ProductGroup = () => {
         setUserAction(result)
     }
 
-    const fetchProductGroupData = async () => {
-        const result = await apiget(`/api/productgroup`);
-        if (result && result.status === 200) {
-            setProductGroupList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = productGroup?.filter(({ groupCategory, groupName, orderBy }) =>
+            groupCategory?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            groupName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            orderBy?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        )
+        setProductGroupList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : productGroup)
     };
 
     useEffect(() => {
-        fetchProductGroupData();
+        dispatch(fetchProductGroupData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [productGroup])
 
     return (
         <div>
@@ -100,6 +112,7 @@ const ProductGroup = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

@@ -23,6 +23,18 @@ import GetActivityTypeReducer from '../slice/GetActivityTypeSlice';
 import GetBackDateVisitReducer from '../slice/GetBackDateVisitSlice';
 import GetCallObjectiveReducer from '../slice/GetCallObjectiveSlice';
 import GetFirmCategoryReducer from '../slice/GetFirmCategorySlice';
+import GetHospitalCategoryReducer from '../slice/GetHospitalCategorySlice';
+import GetHospitalClassReducer from '../slice/GetHospitalClassSlice';
+import GetHospitalSpecialityReducer from '../slice/GetHospitalSpecialitySlice';
+import GetInchargeTypeReducer from '../slice/GetInchargeTypeSlice';
+import GetLeaveReasonReducer from '../slice/GetLeaveReasonSlice';
+import GetModeOfTravelReducer from '../slice/GetModeOfTravelSlice';
+import GetOtherReasonReducer from '../slice/GetOtherReasonSlice';
+import GetProductGroupReduce from '../slice/GetProductGroupSlice';
+import GetTaxMasterReducer from '../slice/GetTaxMasterSlice';
+import GetProductIndicationReducer from '../slice/GetProductIndicationSlice';
+import GetProductSampleDetailsReducer from '../slice/GetProductSampleDetailsSlice';
+import GetPromotionalGiftReducer from '../slice/GetPromotionalGiftSlice';
 
 const store = configureStore({
   reducer: {
@@ -50,6 +62,18 @@ const store = configureStore({
     getBackDateVisit: GetBackDateVisitReducer,
     getCallObjective: GetCallObjectiveReducer,
     getFirmCategory: GetFirmCategoryReducer,
+    getHospitalCategory: GetHospitalCategoryReducer,
+    getHospitalClass: GetHospitalClassReducer,
+    getHospitalSpeciality: GetHospitalSpecialityReducer,
+    getInchargeType: GetInchargeTypeReducer,
+    getLeaveReason: GetLeaveReasonReducer,
+    getModeOfTravel: GetModeOfTravelReducer,
+    getOtherReason: GetOtherReasonReducer,
+    getProductGroup: GetProductGroupReduce,
+    getTaxMaster: GetTaxMasterReducer,
+    getProductIndication: GetProductIndicationReducer,
+    getProductSampleDetails: GetProductSampleDetailsReducer,
+    getPromotionalGift: GetPromotionalGiftReducer,
   },
 });
 

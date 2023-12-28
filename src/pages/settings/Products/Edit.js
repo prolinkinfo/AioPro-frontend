@@ -13,24 +13,21 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchProductGroupData } from '../../../redux/slice/GetProductGroupSlice';
+import { fetchTaxMasterData } from '../../../redux/slice/GetTaxMasterSlice';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 const EditProduct = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, fetchProductData, data } = props;
+    const dispatch = useDispatch();
 
-    const [divisionList, setDivisionList] = useState([])
-    const [productGroupList, setProductGroupList] = useState([])
-    const [taxList, setTaxList] = useState([])
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const productGroupList = useSelector((state) => state?.getProductGroup?.data)
+    const taxList = useSelector((state) => state?.getTaxMaster?.data)
+
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -43,7 +40,7 @@ const EditProduct = (props) => {
         // baseUnitConversion: yup.string().required('Base Unit Conversion is required'),
         outPrice: yup.string().required('Out Price is required'),
         packaging: yup.string().required('Packaging is required'),
-        tax: yup.string().required('Tax Slab is required'),
+        // tax: yup.string().required('Tax Slab is required'),
         // hsn: yup.string().required('HSN is required'),
         // grade: yup.string().required('Grade is required'),
         // size: yup.string().required('Size is required'),
@@ -91,7 +88,7 @@ const EditProduct = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchProductData();
+            dispatch(fetchProductData());
         }
     }
 
@@ -104,32 +101,10 @@ const EditProduct = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
-    const fetchProductGroupData = async () => {
-        const result = await apiget(`/api/productgroup`);
-        if (result && result.status === 200) {
-            setProductGroupList(result?.data?.result);
-        }
-    };
-
-    const fetchTaxData = async () => {
-        const result = await apiget(`/api/taxmaster`);
-        if (result && result.status === 200) {
-            setTaxList(result?.data?.result);
-        }
-    };
-
-
     useEffect(() => {
-        fetchDivisionData();
-        fetchProductGroupData();
-        fetchTaxData();
+        dispatch(fetchDivisionData());
+        dispatch(fetchProductGroupData());
+        dispatch(fetchTaxMasterData());
     }, [])
 
     return (

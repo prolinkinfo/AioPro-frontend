@@ -2,18 +2,20 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddHospitalCategory from './Add'
 import EditHospitalCategory from './Edit'
 import { apiget } from '../../../service/api'
+import { fetchHospitalCategoryData } from '../../../redux/slice/GetHospitalCategorySlice';
 
 const HospitalCategory = () => {
 
     const [categoryList, setCategoryList] = useState([])
     const [categoryData, setCategoryData] = useState({})
-
+    const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
 
@@ -21,6 +23,8 @@ const HospitalCategory = () => {
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+
+    const hospitalCategory = useSelector((state)=>state?.getHospitalCategory?.data);
 
     const columns = [
         {
@@ -36,7 +40,7 @@ const HospitalCategory = () => {
                 };
                 return (
                     <Box>
-                        <EditHospitalCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCategoryData={fetchCategoryData} data={categoryData} />
+                        <EditHospitalCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHospitalCategoryData={fetchHospitalCategoryData} data={categoryData} />
                         <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
                     </Box>
                 );
@@ -45,26 +49,30 @@ const HospitalCategory = () => {
         { field: 'hospitalCategory', headerName: 'Hospital Category', flex: 1, cellClassName: 'name-column--cell--capitalize', },
     ];
 
-    const fetchCategoryData = async () => {
-        const result = await apiget(`/api/hospitalcategory`);
-        if (result && result.status === 200) {
-            setCategoryList(result?.data?.result);
-        }
-    };
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = hospitalCategory?.filter(({ hospitalCategory }) =>
+          hospitalCategory?.toLowerCase()?.includes(searchText?.toLowerCase()))
+        setCategoryList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : hospitalCategory)
+      };
+    
 
     useEffect(() => {
-        fetchCategoryData();
+        fetchData();
+    }, [hospitalCategory])
+
+    useEffect(() => {
+        dispatch(fetchHospitalCategoryData());
     }, [])
 
     return (
         <div>
             {/* Add Hospital Category */}
-            <AddHospitalCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCategoryData={fetchCategoryData} />
+            <AddHospitalCategory isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchHospitalCategoryData={fetchHospitalCategoryData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Hospital Category</Typography>
-
                 </Stack>
                 <TableStyle>
                     <Box width="100%" pt={3}>
@@ -76,6 +84,7 @@ const HospitalCategory = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,6 +13,8 @@ import AddProduct from './Add';
 import EditProduct from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchProductData } from '../../../redux/slice/GetProductSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -22,11 +26,17 @@ const top100Films = [
     { label: 'Pulp Fiction', year: 1994 },
 ]
 
+const statusList = [
+    "Active",
+    "Inactive"
+]
+
 const Product = () => {
 
     const [productList, setProductList] = useState([])
     const [productData, setProductData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -40,6 +50,11 @@ const Product = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userRole = user?.role.toLowerCase();
+
+    const product = useSelector((state) => state?.getProduct?.data);
+    const divisionList = useSelector((state) => state?.getDivision?.data);
 
     const columns = [
         {
@@ -54,7 +69,7 @@ const Product = () => {
                     handleOpenEdit();
                 };
                 const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
+                    // setId(data?._id);
                     handleOpenDeleteModel();
                 };
                 return (
@@ -63,7 +78,7 @@ const Product = () => {
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSchemeMaster} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                            {/* <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button> */}
                         </Stack>
                     </Box>
                 );
@@ -126,16 +141,41 @@ const Product = () => {
         setUserAction(result)
     }
 
-    const fetchProductData = async () => {
-        const result = await apiget(`/api/products`);
-        if (result && result.status === 200) {
-            setProductList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = product?.filter(({ productName, division, compositionName, mrp, outPrice, packaging, taxType, hsn, productGroup, grade, size, status }) =>
+            productName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            compositionName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            outPrice?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            packaging?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            taxType?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            hsn?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            productGroup?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            grade?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            size?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            status?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setProductList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : product)
     };
 
+    const filterData = (value) => {
+        const filtered = product?.filter(({ division, status }) =>
+            division?.toLowerCase()?.includes(value?.toLowerCase()) ||
+            status?.toLowerCase()?.includes(value?.toLowerCase())
+        );
+        setProductList(value?.length > 0 ? (filtered?.length > 0 ? filtered : []) : product)
+    }
+
     useEffect(() => {
-        fetchProductData();
+        dispatch(fetchProductData());
+        dispatch(fetchDivisionData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+        filterData();
+    }, [product])
 
     return (
         <div>
@@ -149,11 +189,16 @@ const Product = () => {
                 </Stack>
                 <TableStyle>
                     <Box width="100%" pt={3}>
-                    <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mb={2}>
+                        <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mb={2}>
                             <Grid item xs={12} sm={6} md={6}>
                                 <Stack direction={"row"} spacing={2}>
                                     <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                                         Add New
+                                    </Button>
+                                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                                        <Link to={`/${userRole}/dashboard/setting/productGroup`} style={{ color: 'white', textDecoration: 'none' }}>
+                                            Add Group
+                                        </Link>
                                     </Button>
                                     <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} style={{ marginLeft: '10px' }}>
                                         Export
@@ -165,17 +210,23 @@ const Product = () => {
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={top100Films}
+                                        onChange={(event, newValue) => {
+                                            filterData(newValue ? newValue.divisionName : "")
+                                        }}
+                                        options={divisionList}
                                         size='small'
-
+                                        getOptionLabel={(division) => division?.divisionName}
                                         renderInput={(params) => <TextField {...params} placeholder='Filter By Division' style={{ fontSize: "12px" }} />}
                                     />
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={top100Films}
+                                        options={statusList}
                                         size='small'
-
+                                        onChange={(event, newValue) => {
+                                            filterData(newValue || "")
+                                        }}
+                                        getOptionLabel={(status) => status}
                                         renderInput={(params) => <TextField {...params} placeholder='Filter By Status' style={{ fontSize: "12px" }} />}
                                     />
                                     <TextField
@@ -183,6 +234,7 @@ const Product = () => {
                                         size='small'
                                         placeholder='Search'
                                         style={{ width: "200px" }}
+                                        onChange={fetchData}
                                     />
                                 </Stack>
                             </Grid>
