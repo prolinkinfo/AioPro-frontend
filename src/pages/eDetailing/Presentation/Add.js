@@ -30,7 +30,7 @@ const assigedType = [
 
 const AddPresentation = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd,fetchData } = props;
+    const { isOpenAdd, handleCloseAdd,fetchPresentationData } = props;
 
     const dispatch = useDispatch();
     const employeeList = useSelector((state) => state?.getEmployee?.data)
@@ -68,7 +68,8 @@ const AddPresentation = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchData();
+            dispatch(fetchPresentationData());
+
         }
     };
 

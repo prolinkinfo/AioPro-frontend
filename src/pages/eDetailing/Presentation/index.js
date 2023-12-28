@@ -20,6 +20,7 @@ const Presentation = () => {
 
     const [data, setData] = useState([])
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
@@ -42,11 +43,17 @@ const Presentation = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role.toLowerCase();
 
-    const fetchData = async () => {
-        const result = await apiget(`/api/presentation`);
-        if (result && result.status === 200) {
-            setData(result?.data?.result);
-        }
+    const presentation = useSelector((state) => state?.getPresentation?.data)
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = presentation?.filter(({ presentationName, assigedType, assigedTo, division }) =>
+            presentationName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            assigedType?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            assigedTo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            division?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setData(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : presentation)
     }
 
     const openView = (id) => {
@@ -58,23 +65,21 @@ const Presentation = () => {
         setUserAction(result)
     }
 
-    const text = (item) => {
-        const a = item.length > 10 ? item.slice(0, 20) + "..." : item;
-        return a
-    }
-
-
     useEffect(() => {
         fetchData();
+    }, [presentation])
+
+    useEffect(() => {
+        dispatch(fetchPresentationData());
     }, [userAction])
 
     return (
         <div>
             {/* Add Presentation */}
-            <AddPresentation isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchData={fetchData} />
+            <AddPresentation isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchPresentationData={fetchPresentationData} />
 
             {/* Edit Presentation */}
-            <EdiPresentation isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} presentationData={presentationData} fetchData={fetchData} />
+            <EdiPresentation isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} presentationData={presentationData} fetchPresentationData={fetchPresentationData} />
 
             {/* Delete Model */}
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteData} id={id} />
@@ -88,7 +93,7 @@ const Presentation = () => {
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                             Add New
                         </Button>
-                        <TextField type="text" size="small" placeholder="Search" />
+                        <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
                     </Stack>
                     <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                         {
@@ -112,19 +117,19 @@ const Presentation = () => {
                                                     <table className='presantationTable'>
                                                         <tr >
                                                             <th style={{ textAlign: "start" }}>Name :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{text(item.presentationName)}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.presentationName}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning Type :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{text(item.assigedType)}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.assigedType}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning To :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{text(item.assigedTo)}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.assigedTo}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>division :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{text(item.division)}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.division}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Date :</th>
@@ -132,7 +137,7 @@ const Presentation = () => {
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Description :</th>
-                                                            <td style={{ paddingLeft: "100px" }}>{text(item?.description)}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item?.description}</td>
                                                         </tr>
                                                     </table>
                                                 </div>

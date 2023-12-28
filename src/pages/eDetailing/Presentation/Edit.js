@@ -30,7 +30,7 @@ const assigedType = [
 
 const EdiPresentation = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, presentationData, fetchData } = props;
+    const { isOpenEdit, handleCloseEdit, presentationData, fetchPresentationData } = props;
 
     const dispatch = useDispatch();
     const employeeList = useSelector((state) => state?.getEmployee?.data)
@@ -70,7 +70,8 @@ const EdiPresentation = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchData();
+            dispatch(fetchPresentationData());
+
         }
     };
 
