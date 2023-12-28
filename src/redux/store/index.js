@@ -41,6 +41,7 @@ import GetSchemeMasterReducer from '../slice/GetSchemeMasterSlice';
 import GetSkippedReasonReducer from '../slice/GetSkippedReasonSlice';
 import GetTestTypologyReducer from '../slice/GetTestTypologySlice';
 import GetVisitCounterReducer from '../slice/GetVisitCounterSlice';
+import GetWorkAgendaSlice from '../slice/GetWorkAgendaSlice'
 
 const store = configureStore({
   reducer: {
@@ -86,6 +87,7 @@ const store = configureStore({
     getSkippedReason: GetSkippedReasonReducer,
     getTestTypology: GetTestTypologyReducer,
     getVisitCounter: GetVisitCounterReducer,
+    getWorkAgenda: GetWorkAgendaSlice,
   },
 });
 

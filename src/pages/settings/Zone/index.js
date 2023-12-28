@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,6 +12,7 @@ import AddZone from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import EditZone from './Edit';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 
 const Zone = () => {
 
@@ -24,7 +26,7 @@ const Zone = () => {
     const [zoneData, setZoneData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -32,6 +34,7 @@ const Zone = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const zone = useSelector((state) => state?.getZone?.data)
 
 
     const columns = [
@@ -73,17 +76,23 @@ const Zone = () => {
         setUserAction(result)
     }
 
-
-    const fetchZoneData = async () => {
-        const result = await apiget(`/api/zone`);
-        if (result && result.status === 200) {
-            setZoneList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = zone?.filter(({ zoneName, zoneCode }) =>
+            zoneName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            zoneCode?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setZoneList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : zone)
     };
 
+
     useEffect(() => {
-        fetchZoneData();
+        dispatch(fetchZoneData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [zone])
 
     return (
         <div>
@@ -102,12 +111,13 @@ const Zone = () => {
                                 <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                                     Add New
                                 </Button>
-                                
+
                             </div>
                             <TextField
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>
