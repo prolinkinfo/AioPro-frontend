@@ -20,7 +20,7 @@ import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 
 const EditVisit = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenEdit, handleCloseEdit,fetchCounterData,data } = props;
+  const { isOpenEdit, handleCloseEdit, fetchVisitCounterData, data } = props;
   const dispatch = useDispatch()
   const employeeList = useSelector((state) => state?.getEmployee?.data)
   const doctorSpeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
@@ -45,6 +45,7 @@ const EditVisit = (props) => {
 
   const editCounter = async (values) => {
     const pyload = {
+      _id: data?._id,
       type: values.type,
       clientId: values.clientId,
       employeeCode: values.employeeCode,
@@ -59,14 +60,14 @@ const EditVisit = (props) => {
     if (result && result.status === 200) {
       formik.resetForm();
       handleCloseEdit();
-      fetchCounterData();
+      dispatch(fetchVisitCounterData());
     }
   }
 
   const formik = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize:true,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       editCounter(values)
     },
@@ -105,7 +106,7 @@ const EditVisit = (props) => {
                     id="demo-simple-select"
                     size='small'
                     name='type'
-                    value={formik.values.type}
+                    value={formik.values.type || null}
                     onChange={formik.handleChange}
                     error={formik.touched.type && Boolean(formik.errors.type)}
                     helperText={formik.touched.type && formik.errors.type}
@@ -160,13 +161,12 @@ const EditVisit = (props) => {
                   <Autocomplete
                     size="small"
                     onChange={(event, newValue) => {
-                      formik.setFieldValue('employeeName', newValue ? newValue.basicInformation?.employeesName
-                        : "");
+                      formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                     }}
                     fullWidth
                     options={employeeList}
-                    value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.employeeName) || null}
-                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                    value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                     style={{ textTransform: 'capitalize' }}
                     renderInput={(params) => (
                       <TextField
@@ -241,28 +241,25 @@ const EditVisit = (props) => {
                   <Autocomplete
                     size="small"
                     onChange={(event, newValue) => {
-                      formik.setFieldValue('clientName', newValue ? newValue.basicInformation?.employeesName
-                        : "");
+                      formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                     }}
                     fullWidth
                     options={employeeList}
-                    value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.clientName) || null}
-                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                    value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                     style={{ textTransform: 'capitalize' }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         style={{ textTransform: 'capitalize' }}
-                        placeholder='Select Client Name'
-                        error={formik.touched.clientName && Boolean(formik.errors.clientName)}
-                        helperText={formik.touched.clientName && formik.errors.clientName}
+                        placeholder='Select Employee Name'
+                        error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                        helperText={formik.touched.employeeName && formik.errors.employeeName}
                       />
                     )}
                   />
                 </Grid>
               )}
-
-
               <Grid Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Visit Counter</FormLabel>
                 <TextField

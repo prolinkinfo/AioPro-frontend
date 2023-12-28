@@ -20,7 +20,7 @@ import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 
 const AddVisit = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchCounterData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchVisitCounterData } = props;
     const dispatch = useDispatch()
     const employeeList = useSelector((state) => state?.getEmployee?.data)
     const doctorSpeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
@@ -59,7 +59,7 @@ const AddVisit = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchCounterData();
+            dispatch(fetchVisitCounterData());
         }
     }
 
@@ -75,7 +75,6 @@ const AddVisit = (props) => {
         dispatch(fetchEmployeeData());
         dispatch(fetchDoctorSpecialityData());
         dispatch(fetchCategoryData());
-
     }, [])
     return (
         <div>
@@ -160,13 +159,12 @@ const AddVisit = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('employeeName', newValue ? newValue.basicInformation?.employeesName
-                                                : "");
+                                            formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
                                         fullWidth
                                         options={employeeList}
-                                        value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.employeeName) || null}
-                                        getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField
@@ -178,6 +176,7 @@ const AddVisit = (props) => {
                                             />
                                         )}
                                     />
+                                    
                                 </Grid>
                             )}
                             {(formik.values.type === "speciality") && (
@@ -241,13 +240,12 @@ const AddVisit = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('clientName', newValue ? newValue.basicInformation?.employeesName
-                                                : "");
+                                            formik.setFieldValue('clientName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
                                         fullWidth
                                         options={employeeList}
-                                        value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.clientName) || null}
-                                        getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.clientName) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField

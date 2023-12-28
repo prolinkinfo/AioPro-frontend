@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,10 +11,11 @@ import AddTax from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import EditTax from './Edit';
+import { fetchTaxMasterData } from '../../../redux/slice/GetTaxMasterSlice';
 
 const TaxMaster = () => {
 
-    const[taxList,setTaxList] = useState([])
+    const [taxList, setTaxList] = useState([])
 
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -21,13 +23,15 @@ const TaxMaster = () => {
     const [taxData, setTaxData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const taxMaster = useSelector((state) => state?.getTaxMaster?.data)
 
     const columns = [
         {
@@ -48,7 +52,7 @@ const TaxMaster = () => {
                 };
                 return (
                     <Box>
-                        <EditTax isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTaxData={fetchTaxData} data={taxData} />
+                        <EditTax isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTaxMasterData={fetchTaxMasterData} data={taxData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteTax} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -60,7 +64,7 @@ const TaxMaster = () => {
             },
         },
         { field: 'id', headerName: 'Id', flex: 1 },
-        { field: 'taxType', headerName: 'Tax Type', flex: 1 ,cellClassName: 'name-column--cell--capitalize'},
+        { field: 'taxType', headerName: 'Tax Type', flex: 1, cellClassName: 'name-column--cell--capitalize' },
         { field: 'percent', headerName: 'Percentage Of Tax', flex: 1 },
     ];
 
@@ -69,20 +73,28 @@ const TaxMaster = () => {
         setUserAction(result)
     }
 
-    const fetchTaxData = async () => {
-        const result = await apiget(`/api/taxmaster`);
-        if (result && result.status === 200) {
-            setTaxList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = taxMaster?.filter(({ id, taxType, percent }) =>
+            id?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            taxType?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            percent?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setTaxList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : taxMaster)
     };
 
-    useEffect(()=>{
-        fetchTaxData();
-    },[userAction])
+    useEffect(() => {
+        dispatch(fetchTaxMasterData());
+    }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [taxMaster])
     return (
         <div>
             {/* Add Tax */}
-            <AddTax isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTaxData={fetchTaxData}/>
+            <AddTax isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTaxMasterData={fetchTaxMasterData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -99,6 +111,7 @@ const TaxMaster = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

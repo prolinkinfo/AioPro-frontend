@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddRelation = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd,fetchRelationData } = props;
+    const { isOpenAdd, handleCloseAdd,fetchRelationMasterData } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -37,7 +39,8 @@ const AddRelation = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchRelationData();
+            dispatch(fetchRelationMasterData());
+
         }
     }
 
@@ -60,7 +63,7 @@ const AddRelation = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Zone </Typography>
+                    <Typography variant="h6">Add Relation</Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
                     </Typography>

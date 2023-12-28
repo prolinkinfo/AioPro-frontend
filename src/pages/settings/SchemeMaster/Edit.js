@@ -13,21 +13,15 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchProductData } from '../../../redux/slice/GetProductSlice';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 const EditSchemeMaster = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenEdit, handleCloseEdit, fetchSchemeMasterData, data } = props;
-    const [productList, setProductList] = useState([])
+    const dispatch = useDispatch();
+    const productList = useSelector((state) => state?.getProduct?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -64,7 +58,7 @@ const EditSchemeMaster = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchSchemeMasterData();
+            dispatch(fetchSchemeMasterData());
         }
     }
 
@@ -77,15 +71,9 @@ const EditSchemeMaster = (props) => {
         },
     });
 
-    const fetchProductData = async () => {
-        const result = await apiget(`/api/products`);
-        if (result && result.status === 200) {
-            setProductList(result?.data?.result);
-        }
-    };
 
     useEffect(() => {
-        fetchProductData();
+        dispatch(fetchProductData());
     }, [])
     return (
         <div>
@@ -145,6 +133,9 @@ const EditSchemeMaster = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
+                                    inputProps={{
+                                        min: dayjs(formik.values.startDate).format('YYYY-MM-DD')
+                                    }}
                                     value={dayjs(formik.values.endDate).format('YYYY-MM-DD')}
                                     onChange={formik.handleChange}
                                     fullWidth

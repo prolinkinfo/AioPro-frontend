@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddQualification = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd,fetchQualificationData} = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -29,7 +31,7 @@ const AddQualification = (props) => {
         fullName: '',
     };
 
-    const addClass = async (values) => {
+    const addQualification = async (values) => {
         const pyload = {
             qualification: values.qualification,
             fullName: values.fullName,
@@ -39,7 +41,8 @@ const AddQualification = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchQualificationData();
+            dispatch(fetchQualificationData());
+
         }
     }
 
@@ -47,7 +50,7 @@ const AddQualification = (props) => {
         initialValues,
         validationSchema,
         onSubmit: async (values) => {
-            addClass(values)
+            addQualification(values)
         },
     });
 

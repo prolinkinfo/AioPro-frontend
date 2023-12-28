@@ -12,14 +12,20 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const AddCollectionCenter = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchCollectionCenterData } = props;
-    const [cityList, setCityList] = useState([])
-    const [zoneList, setZoneList] = useState([])
+    const { isOpenAdd, handleCloseAdd, fetchSamCollectionCenterData } = props;
+    const dispatch = useDispatch();
 
+    const cityList = useSelector((state) => state?.getCity?.data)
+    const zoneList = useSelector((state) => state?.getZone?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -61,7 +67,8 @@ const AddCollectionCenter = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchCollectionCenterData();
+            dispatch(fetchSamCollectionCenterData());
+
         }
     }
 
@@ -73,23 +80,12 @@ const AddCollectionCenter = (props) => {
         },
     });
 
-    const fetchCityData = async () => {
-        const result = await apiget(`/api/cityMaster`);
-        if (result && result.status === 200) {
-            setCityList(result?.data?.result);
-        }
-    };
 
-    const fetchZoneData = async () => {
-        const result = await apiget(`/api/zone`);
-        if (result && result.status === 200) {
-            setZoneList(result?.data?.result);
-        }
-    };
-    
+
     useEffect(() => {
-        fetchCityData();
-        fetchZoneData();
+        dispatch(fetchCityData());
+        dispatch(fetchZoneData());
+        dispatch(fetchEmployeeData());
     }, [])
 
     return (
@@ -172,7 +168,6 @@ const AddCollectionCenter = (props) => {
                                         value={zoneList.find(city => city.zoneName === formik.values.zoneName) || null}
                                         getOptionLabel={(city) => city?.zoneName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -197,7 +192,6 @@ const AddCollectionCenter = (props) => {
                                         value={cityList.find(city => city.cityName === formik.values.cityName) || null}
                                         getOptionLabel={(city) => city?.cityName}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -235,18 +229,18 @@ const AddCollectionCenter = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('assignTo', newValue.cityName);
+                                            formik.setFieldValue('assignTo', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
-                                        options={cityList}
-                                        value={cityList.find(city => city.cityName === formik.values.cityName) || null}
-                                        getOptionLabel={(city) => city?.cityName}
+                                        fullWidth
+                                        options={employeeList}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.assignTo) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select Assign To'
+                                                placeholder='Select Employee'
                                                 error={formik.touched.assignTo && Boolean(formik.errors.assignTo)}
                                                 helperText={formik.touched.assignTo && formik.errors.assignTo}
                                             />

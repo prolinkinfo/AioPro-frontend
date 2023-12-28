@@ -35,6 +35,12 @@ import GetTaxMasterReducer from '../slice/GetTaxMasterSlice';
 import GetProductIndicationReducer from '../slice/GetProductIndicationSlice';
 import GetProductSampleDetailsReducer from '../slice/GetProductSampleDetailsSlice';
 import GetPromotionalGiftReducer from '../slice/GetPromotionalGiftSlice';
+import GetRelationMasterReducer from '../slice/GetRelationMasterSlice';
+import GetSampleCollectionCenterReducer from '../slice/GetSampleCollectionCenterSlice';
+import GetSchemeMasterReducer from '../slice/GetSchemeMasterSlice';
+import GetSkippedReasonReducer from '../slice/GetSkippedReasonSlice';
+import GetTestTypologyReducer from '../slice/GetTestTypologySlice';
+import GetVisitCounterReducer from '../slice/GetVisitCounterSlice';
 
 const store = configureStore({
   reducer: {
@@ -74,6 +80,12 @@ const store = configureStore({
     getProductIndication: GetProductIndicationReducer,
     getProductSampleDetails: GetProductSampleDetailsReducer,
     getPromotionalGift: GetPromotionalGiftReducer,
+    getRelationMaster: GetRelationMasterReducer,
+    getSampleCollectionCenter: GetSampleCollectionCenterReducer,
+    getSchemeMaster: GetSchemeMasterReducer,
+    getSkippedReason: GetSkippedReasonReducer,
+    getTestTypology: GetTestTypologyReducer,
+    getVisitCounter: GetVisitCounterReducer,
   },
 });
 

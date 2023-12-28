@@ -12,21 +12,16 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchProductData } from '../../../redux/slice/GetProductSlice';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 const AddSchemeMaster = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd, fetchSchemeMasterData } = props;
-    const [productList, setProductList] = useState([])
+    const dispatch = useDispatch();
+
+    const productList = useSelector((state)=>state?.getProduct?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -64,7 +59,7 @@ const AddSchemeMaster = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchSchemeMasterData();
+            dispatch(fetchSchemeMasterData());
         }
     }
 
@@ -76,15 +71,8 @@ const AddSchemeMaster = (props) => {
         },
     });
 
-    const fetchProductData = async () => {
-        const result = await apiget(`/api/products`);
-        if (result && result.status === 200) {
-            setProductList(result?.data?.result);
-        }
-    };
-
     useEffect(() => {
-        fetchProductData();
+        dispatch(fetchProductData());
     }, [])
 
 
@@ -146,6 +134,9 @@ const AddSchemeMaster = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
+                                    inputProps={{
+                                        min: formik.values.startDate
+                                    }}
                                     value={formik.values.endDate}
                                     onChange={formik.handleChange}
                                     fullWidth

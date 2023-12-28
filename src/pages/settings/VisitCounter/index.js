@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,6 +11,7 @@ import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import AddVisit from './Add'
 import EditVisit from './Edit';
+import { fetchVisitCounterData } from '../../../redux/slice/GetVisitCounterSlice';
 
 const VisitCounter = () => {
 
@@ -21,7 +23,7 @@ const VisitCounter = () => {
     const [counterData, setCounterData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -29,6 +31,7 @@ const VisitCounter = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const visitCounter = useSelector((state) => state?.getVisitCounter?.data)
 
     const columns = [
         {
@@ -49,7 +52,7 @@ const VisitCounter = () => {
                 };
                 return (
                     <Box>
-                        <EditVisit isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCounterData={fetchCounterData} data={counterData} />
+                        <EditVisit isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchVisitCounterData={fetchVisitCounterData} data={counterData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCounter} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -72,21 +75,30 @@ const VisitCounter = () => {
         setUserAction(result)
     }
 
-    const fetchCounterData = async () => {
-        const result = await apiget(`/api/visitCounter`);
-        if (result && result.status === 200) {
-            setCounterList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = visitCounter?.filter(({ clientId, clientName, employeeCode, employeeName, visitCounter, }) =>
+            clientId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            clientName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            employeeCode?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            visitCounter?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setCounterList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : visitCounter)
     };
 
     useEffect(() => {
-        fetchCounterData();
+        dispatch(fetchVisitCounterData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [visitCounter])
 
     return (
         <div>
             {/* Add Visit */}
-            <AddVisit isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCounterData={fetchCounterData} />
+            <AddVisit isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchVisitCounterData={fetchVisitCounterData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -103,6 +115,7 @@ const VisitCounter = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

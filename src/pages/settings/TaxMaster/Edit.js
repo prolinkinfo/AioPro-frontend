@@ -12,20 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apiput } from '../../../service/api';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 const EditTax = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, data, fetchTaxData } = props;
+    const { isOpenEdit, handleCloseEdit, data, fetchTaxMasterData } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -51,7 +44,8 @@ const EditTax = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchTaxData();
+            dispatch(fetchTaxMasterData());
+
         }
     }
 

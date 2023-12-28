@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,6 +11,7 @@ import AddSkippedReason from './Add'
 import EditSkippedReason from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchSkippedReasonData } from '../../../redux/slice/GetSkippedReasonSlice';
 
 const SkippedReason = () => {
 
@@ -21,13 +23,15 @@ const SkippedReason = () => {
     const [reasonData, setReasonData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const skippedReason = useSelector((state) => state?.getSkippedReason?.data)
 
     const columns = [
         {
@@ -48,7 +52,7 @@ const SkippedReason = () => {
                 };
                 return (
                     <Box>
-                        <EditSkippedReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchReasonData={fetchReasonData} data={reasonData} />
+                        <EditSkippedReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSkippedReasonData={fetchSkippedReasonData} data={reasonData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteReason} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -67,21 +71,27 @@ const SkippedReason = () => {
         setUserAction(result)
     }
 
-    const fetchReasonData = async () => {
-        const result = await apiget(`/api/skippedreason`);
-        if (result && result.status === 200) {
-            setReasonList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = skippedReason?.filter(({ reason }) =>
+            reason?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setReasonList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : skippedReason)
     };
 
     useEffect(() => {
-        fetchReasonData();
-    }, [])
+        dispatch(fetchSkippedReasonData());
+    }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [skippedReason])
 
     return (
         <div>
             {/* Add Skipped Reason */}
-            <AddSkippedReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchReasonData={fetchReasonData} />
+            <AddSkippedReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchSkippedReasonData={fetchSkippedReasonData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -98,6 +108,7 @@ const SkippedReason = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,13 +11,15 @@ import AddQualification from './Add';
 import EditQualification from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchQualificationData } from '../../../redux/slice/GetQualificationSlice';
 
 const Qualification = () => {
 
     const [qualificationList, setQualificationList] = useState([])
     const [qualificationData, setQualificationData] = useState({})
     const [userAction, setUserAction] = useState(null)
-    const [id,setId] = useState('')
+    const dispatch = useDispatch();
+    const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
@@ -29,6 +32,8 @@ const Qualification = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const qualification = useSelector((state) => state?.getQualification?.data)
 
     const columns = [
         {
@@ -49,7 +54,7 @@ const Qualification = () => {
                 return (
                     <Box>
                         <EditQualification isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchQualificationData={fetchQualificationData} data={qualificationData} />
-                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteQualification} id={id}/>
+                        <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteQualification} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
                             <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
@@ -67,16 +72,23 @@ const Qualification = () => {
         setUserAction(result)
     }
 
-    const fetchQualificationData = async () => {
-        const result = await apiget(`/api/qualification`);
-        if (result && result.status === 200) {
-            setQualificationList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = qualification?.filter(({ qualification, fullName }) =>
+            qualification?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            fullName?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setQualificationList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : qualification)
     };
 
     useEffect(() => {
-        fetchQualificationData();
+        dispatch(fetchQualificationData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [qualification])
 
     return (
         <div>
@@ -98,6 +110,7 @@ const Qualification = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

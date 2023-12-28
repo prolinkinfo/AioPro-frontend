@@ -13,14 +13,20 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apiput } from '../../../service/api';
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const EditCollectionCenter = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenEdit, handleCloseEdit, fetchCollectionCenterData, data } = props;
+    const { isOpenEdit, handleCloseEdit, fetchSamCollectionCenterData, data } = props;
+    const dispatch = useDispatch();
 
-    const [cityList, setCityList] = useState([])
-    const [zoneList, setZoneList] = useState([])
+    const cityList = useSelector((state) => state?.getCity?.data)
+    const zoneList = useSelector((state) => state?.getZone?.data)
+    const employeeList = useSelector((state) => state?.getEmployee?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -64,7 +70,7 @@ const EditCollectionCenter = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseEdit();
-            fetchCollectionCenterData();
+            dispatch(fetchSamCollectionCenterData());
         }
     }
 
@@ -77,25 +83,12 @@ const EditCollectionCenter = (props) => {
         },
     });
 
-
-    const fetchCityData = async () => {
-        const result = await apiget(`/api/cityMaster`);
-        if (result && result.status === 200) {
-            setCityList(result?.data?.result);
-        }
-    };
-
-    const fetchZoneData = async () => {
-        const result = await apiget(`/api/zone`);
-        if (result && result.status === 200) {
-            setZoneList(result?.data?.result);
-        }
-    };
-    
     useEffect(() => {
-        fetchCityData();
-        fetchZoneData();
+        dispatch(fetchCityData());
+        dispatch(fetchZoneData());
+        dispatch(fetchEmployeeData());
     }, [])
+
     return (
         <div>
             <Dialog open={isOpenEdit} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -114,7 +107,7 @@ const EditCollectionCenter = (props) => {
 
                 <DialogContent dividers>
                     <form>
-                    <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+                        <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Center Name</FormLabel>
                                 <TextField
@@ -153,7 +146,7 @@ const EditCollectionCenter = (props) => {
                                         id="demo-simple-select"
                                         size='small'
                                         name='type'
-                                        value={formik.values.type}
+                                        value={formik.values.type || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.type && Boolean(formik.errors.type)}
                                         helperText={formik.touched.type && formik.errors.type}
@@ -223,7 +216,7 @@ const EditCollectionCenter = (props) => {
                                         size='small'
                                         name='category'
                                         placeholder='Select Category'
-                                        value={formik.values.category}
+                                        value={formik.values.category || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.category && Boolean(formik.errors.category)}
                                         helperText={formik.touched.category && formik.errors.category}
@@ -239,18 +232,18 @@ const EditCollectionCenter = (props) => {
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
-                                            formik.setFieldValue('assignTo', newValue.cityName);
+                                            formik.setFieldValue('assignTo', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
                                         }}
-                                        options={cityList}
-                                        value={cityList.find(city => city.cityName === formik.values.cityName) || null}
-                                        getOptionLabel={(city) => city?.cityName}
+                                        fullWidth
+                                        options={employeeList}
+                                        value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.assignTo) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                         style={{ textTransform: 'capitalize' }}
-                                        clearIcon
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select Assign To'
+                                                placeholder='Select Employee'
                                                 error={formik.touched.assignTo && Boolean(formik.errors.assignTo)}
                                                 helperText={formik.touched.assignTo && formik.errors.assignTo}
                                             />

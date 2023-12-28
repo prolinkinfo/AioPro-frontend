@@ -2,12 +2,14 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddTypology from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchTestTypologyData } from '../../../redux/slice/GetTestTypologySlice';
 
 const TestTypology = () => {
 
@@ -17,12 +19,14 @@ const TestTypology = () => {
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const typology = useSelector((state) => state?.getTestTypology?.data)
 
     const columns = [
         {
@@ -55,21 +59,26 @@ const TestTypology = () => {
         setUserAction(result)
     }
 
-    const fetchTypologyData = async () => {
-        const result = await apiget(`/api/testTypology`);
-        if (result && result.status === 200) {
-            setTypologyList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = typology?.filter(({ typology }) =>
+            typology?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setTypologyList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : typology)
     };
 
     useEffect(() => {
-        fetchTypologyData();
+        dispatch(fetchTestTypologyData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [typology])
 
     return (
         <div>
             {/* Add Typology */}
-            <AddTypology isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypologyData={fetchTypologyData} />
+            <AddTypology isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTestTypologyData={fetchTestTypologyData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -86,6 +95,7 @@ const TestTypology = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

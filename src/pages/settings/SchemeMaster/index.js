@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,12 +12,14 @@ import AddProductIndication from './Add';
 import EditProductIndication from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchSchemeMasterData } from '../../../redux/slice/GetSchemeMasterSlice';
 
 const SchemeMaster = () => {
 
     const [schemeMasterList, setSchemeMasterList] = useState([])
     const [schemeMasterData, setSchemeMasterListData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -30,6 +33,8 @@ const SchemeMaster = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const schemeMaster = useSelector((state) => state?.getSchemeMaster?.data)
 
     const columns = [
         {
@@ -93,8 +98,8 @@ const SchemeMaster = () => {
                         <Button
                             variant="outlined"
                             style={{
-                                color: params.value === 'active' ? '#B61D18' : '#22C55E',
-                                background: params.value === 'active' ? '#ff563029' : '#22c55e29',
+                                color: params.value === 'active' ? '#22C55E' : '#B61D18',
+                                background: params.value === 'active' ? '#22c55e29' : '#ff563029',
                                 border: 'none',
                             }}
                             onClick={() => chengStatus(params?.row)}
@@ -112,16 +117,26 @@ const SchemeMaster = () => {
         setUserAction(result)
     }
 
-    const fetchSchemeMasterData = async () => {
-        const result = await apiget(`/api/schememaster`);
-        if (result && result.status === 200) {
-            setSchemeMasterList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = schemeMaster?.filter(({ srNo, schemeName, productName, status }) =>
+            srNo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            schemeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            productName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            status?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setSchemeMasterList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : schemeMaster)
     };
 
+
+
     useEffect(() => {
-        fetchSchemeMasterData();
+        dispatch(fetchSchemeMasterData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [schemeMaster])
 
     return (
         <div>
@@ -143,6 +158,7 @@ const SchemeMaster = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

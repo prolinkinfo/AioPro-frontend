@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,12 +12,14 @@ import AddCollectionCenter from './Add';
 import EditCollectionCenter from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
+import { fetchSamCollectionCenterData } from '../../../redux/slice/GetSampleCollectionCenterSlice';
 
 const SampleCollectionCenter = () => {
 
     const [collectionCenterList, setCollectionCenterList] = useState([])
     const [collectionCenterData, setCollectionCenterData] = useState({})
     const [userAction, setUserAction] = useState(null)
+    const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -31,12 +34,14 @@ const SampleCollectionCenter = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const collectionCenter = useSelector((state) => state?.getSampleCollectionCenter?.data)
+
     const columns = [
         {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            width:200,
+            width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClick = async (data) => {
@@ -49,7 +54,7 @@ const SampleCollectionCenter = () => {
                 };
                 return (
                     <Box>
-                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCollectionCenterData={fetchCollectionCenterData} data={collectionCenterData} />
+                        <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSamCollectionCenterData={fetchSamCollectionCenterData} data={collectionCenterData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
                         <Stack direction={"row"} spacing={2}>
                             <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
@@ -59,14 +64,14 @@ const SampleCollectionCenter = () => {
                 );
             },
         },
-        { field: 'centerName', headerName: 'Center Name', width:200 },
-        { field: 'centerCode', headerName: 'Center Code', width:200 },
-        { field: 'assignTo', headerName: 'Assigned To', width:200 },
-        { field: 'category', headerName: 'Category', width:200 },
-        { field: 'type', headerName: 'Center Type', width:200 },
-        { field: 'zoneName', headerName: 'Zone', width:200 },
-        { field: 'cityName', headerName: 'City', width:200 },
-        { field: 'centerAddress', headerName: 'Center Address', width:200 },
+        { field: 'centerName', headerName: 'Center Name', width: 200 },
+        { field: 'centerCode', headerName: 'Center Code', width: 200 },
+        { field: 'assignTo', headerName: 'Assigned To', width: 200 },
+        { field: 'category', headerName: 'Category', width: 200 },
+        { field: 'type', headerName: 'Center Type', width: 200 },
+        { field: 'zoneName', headerName: 'Zone', width: 200 },
+        { field: 'cityName', headerName: 'City', width: 200 },
+        { field: 'centerAddress', headerName: 'Center Address', width: 200 },
     ];
 
     const deleteGroup = async (id) => {
@@ -74,21 +79,35 @@ const SampleCollectionCenter = () => {
         setUserAction(result)
     }
 
-    const fetchCollectionCenterData = async () => {
-        const result = await apiget(`/api/sampleCollectionCenter`);
-        if (result && result.status === 200) {
-            setCollectionCenterList(result?.data?.result);
-        }
+
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = collectionCenter?.filter(({ centerName, centerCode, assignTo, category, type, zoneName, cityName, centerAddress }) =>
+            centerName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            centerCode?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            assignTo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            category?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            type?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            zoneName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            cityName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            centerAddress?.toLowerCase()?.includes(searchText?.toLowerCase())
+        );
+        setCollectionCenterList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : collectionCenter)
     };
 
+
     useEffect(() => {
-        fetchCollectionCenterData();
+        dispatch(fetchSamCollectionCenterData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [collectionCenter])
 
     return (
         <div>
             {/* Add Collection Center */}
-            <AddCollectionCenter isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchCollectionCenterData={fetchCollectionCenterData} />
+            <AddCollectionCenter isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchSamCollectionCenterData={fetchSamCollectionCenterData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -105,6 +124,7 @@ const SampleCollectionCenter = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

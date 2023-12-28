@@ -156,7 +156,6 @@ const EditCollectionCenter = (props) => {
                                     helperText={formik.touched.giftName && formik.errors.giftName}
                                 />
                             </Grid>
-
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Quantity</FormLabel>
                                 <TextField
