@@ -36,7 +36,6 @@ const Doctor = () => {
   const userRole = user?.role.toLowerCase();
   const dispatch = useDispatch();
   const [id, setId] = useState('');
-  const doctorList = useSelector((state) => state?.getDoctor?.data);
   const navigate = useNavigate();
   const [userAction, setUserAction] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,6 +47,8 @@ const Doctor = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { data, errro, isLoading } = useSelector((state) => state?.getDoctor);
 
   const columns = [
     {
@@ -93,7 +94,12 @@ const Doctor = () => {
               </MenuItem>
 
               <MenuItem>
-                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
+                <Link
+                  to={`/${userRole}/dashboard/people/doctor/${id}`}
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
+                  <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
@@ -279,6 +285,9 @@ const Doctor = () => {
             <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
               Export
             </Button>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Import
+            </Button>
           </Stack>
         </Stack>
         <TableStyle>
@@ -396,17 +405,23 @@ const Doctor = () => {
               </Grid>
             </Grid>
             <Card style={{ height: '72vh', marginTop: '10px' }}>
-              <DataGrid
-                rows={doctorList}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
-                  },
-                }}
-                pageSizeOptions={[5, 10]}
-                getRowId={(row) => row._id}
-              />
+              {isLoading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '72vh' }}>
+                  Loading...
+                </Box>
+              ) : (
+                <DataGrid
+                  rows={data}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  getRowId={(row) => row._id}
+                />
+              )}
             </Card>
           </Box>
         </TableStyle>
