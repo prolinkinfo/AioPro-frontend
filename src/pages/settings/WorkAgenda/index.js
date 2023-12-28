@@ -3,6 +3,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -10,6 +11,7 @@ import AddAgenda from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import EditWorkAgenda from './Edit';
+import { fetchWorkAgendaData } from '../../../redux/slice/GetWorkAgendaSlice';
 
 const WorkAgenda = () => {
 
@@ -21,7 +23,7 @@ const WorkAgenda = () => {
     const [agendaData, setAgendaData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -29,6 +31,7 @@ const WorkAgenda = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const workAgenda = useSelector((state) => state?.getWorkAgenda?.data)
 
     const columns = [
         {
@@ -49,7 +52,7 @@ const WorkAgenda = () => {
                 };
                 return (
                     <Box>
-                        <EditWorkAgenda isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchAgendaData={fetchAgendaData} data={agendaData} />
+                        <EditWorkAgenda isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchWorkAgendaData={fetchWorkAgendaData} data={agendaData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteAgenda} id={id} />
 
                         <Stack direction={"row"} spacing={2}>
@@ -68,21 +71,26 @@ const WorkAgenda = () => {
         setUserAction(result)
     }
 
-    const fetchAgendaData = async () => {
-        const result = await apiget(`/api/workagenda`);
-        if (result && result.status === 200) {
-            setAgendaList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = workAgenda?.filter(({ workAgenda }) =>
+            workAgenda?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setAgendaList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : workAgenda)
     };
 
     useEffect(() => {
-        fetchAgendaData();
+        dispatch(fetchWorkAgendaData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [workAgenda])
 
     return (
         <div>
             {/* Add Agenda */}
-            <AddAgenda isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchAgendaData={fetchAgendaData} />
+            <AddAgenda isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchWorkAgendaData={fetchWorkAgendaData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -99,6 +107,7 @@ const WorkAgenda = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

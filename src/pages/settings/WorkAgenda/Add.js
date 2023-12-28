@@ -12,11 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddWorkAgenda = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd,fetchAgendaData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchWorkAgendaData } = props;
+    const dispatch = useDispatch();
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -37,7 +39,8 @@ const AddWorkAgenda = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchAgendaData();
+            dispatch(fetchWorkAgendaData());
+
         }
     }
 
