@@ -33,6 +33,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import * as XLSX from 'xlsx'
 
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
@@ -104,6 +105,7 @@ const Firms = () => {
     if (result && result.status === 200) {
       setOpenModel(false);
       fetchdata();
+      dispatch(fetchfirmData());  
     }
   };
 
@@ -251,6 +253,14 @@ const Firms = () => {
 
   const approvedFirm = (id) => {};
 
+  const convertJsonToExcel = (jsonArray, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(jsonArray);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, `${fileName}.xls`);
+  };
+  
+
   return (
     <div>
       <ImportFile isOpen={fileImport} handleClose={setFileImport} />
@@ -268,7 +278,7 @@ const Firms = () => {
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenView}>
               Add Visit
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
+            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(data, 'firms')}>
               Export
             </Button>
             <Button
