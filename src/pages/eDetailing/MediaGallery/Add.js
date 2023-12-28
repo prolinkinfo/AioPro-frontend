@@ -12,12 +12,15 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../service/api';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
 const AddMedia = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd, fetchMediaData } = props;
-    const [divisionList, setDivisionList] = useState([])
+    const { isOpenAdd, handleCloseAdd, fetchMediaGalleryData } = props;
+    const dispatch = useDispatch();
+    const divisionList = useSelector((state) => state?.getDivision?.data)
 
     // -----------  validationSchema
     const validationSchema = yup.object({
@@ -30,21 +33,22 @@ const AddMedia = (props) => {
     const initialValues = {
         name: '',
         divisionName: '',
-        image:''
+        image: ''
     };
 
     const addMedia = async (values) => {
-        const data = new FormData()
+        const data = new FormData();
         data.append('name', values?.name);
         data.append('divisionName', values?.divisionName);
         data.append('image', values?.image);
-        
+
         const result = await apipost('/api/mediaGallery', data);
 
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchMediaData();
+            dispatch(fetchMediaGalleryData());
+
         }
     }
 
@@ -56,15 +60,8 @@ const AddMedia = (props) => {
         },
     });
 
-    const fetchDivisionData = async () => {
-        const result = await apiget(`/api/division`);
-        if (result && result.status === 200) {
-            setDivisionList(result?.data?.result);
-        }
-    };
-
     useEffect(() => {
-        fetchDivisionData();
+        dispatch(fetchDivisionData());
     }, [])
 
     const handleFileChange = (e) => {

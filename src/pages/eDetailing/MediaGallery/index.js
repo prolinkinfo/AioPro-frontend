@@ -2,19 +2,21 @@ import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typograph
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddMedia from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import { fetchMediaGalleryData } from '../../../redux/slice/GetMediaGallerySlice';
 
 const MediaGallery = () => {
 
     const [mediaList, setMediaList] = useState([])
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const handleOpenAdd = () => setIsOpenAdd(true)
@@ -22,6 +24,8 @@ const MediaGallery = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const mediaGallery = useSelector((state) => state?.getMediaGallery?.data)
 
     const columns = [
         { field: 'srNo', headerName: 'Sr.No', flex: 1 },
@@ -33,17 +37,17 @@ const MediaGallery = () => {
             flex: 1,
             renderCell: (params) => (
                 <a href={params?.row?.image} target='_blank' rel="noreferrer"><img
-                src={params?.row?.image}
-                alt="Avatar"
-                style={{ width: 50, height: 50, borderRadius: '50%' }}
-            /></a>
+                    src={params?.row?.image}
+                    alt="Avatar"
+                    style={{ width: 50, height: 50, borderRadius: '50%' }}
+                /></a>
             ),
         },
         {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            width:200,
+            width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
                 const handleClickDeleteBtn = async (data) => {
@@ -68,21 +72,28 @@ const MediaGallery = () => {
     }
 
 
-    const fetchMediaData = async () => {
-        const result = await apiget(`/api/mediaGallery`);
-        if (result && result.status === 200) {
-            setMediaList(result?.data?.result);
-        }
+    const fetchData = async (e) => {
+        const searchText = e?.target?.value;
+        const filtered = mediaGallery?.filter(({ srNo, divisionName, name }) =>
+            srNo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            name?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setMediaList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : mediaGallery)
     };
 
     useEffect(() => {
-        fetchMediaData();
+        dispatch(fetchMediaGalleryData());
     }, [userAction])
+
+    useEffect(() => {
+        fetchData();
+    }, [mediaGallery])
 
     return (
         <div>
             {/* Add Media */}
-            <AddMedia isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchMediaData={fetchMediaData} />
+            <AddMedia isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchMediaGalleryData={fetchMediaGalleryData} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -98,6 +109,7 @@ const MediaGallery = () => {
                                 type='text'
                                 size='small'
                                 placeholder='Search'
+                                onChange={fetchData}
                             />
                         </Stack>
                         <Card style={{ height: '72vh' }}>

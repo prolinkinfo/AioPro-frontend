@@ -23,7 +23,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx'
 
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';

@@ -42,6 +42,7 @@ import GetSkippedReasonReducer from '../slice/GetSkippedReasonSlice';
 import GetTestTypologyReducer from '../slice/GetTestTypologySlice';
 import GetVisitCounterReducer from '../slice/GetVisitCounterSlice';
 import GetWorkAgendaSlice from '../slice/GetWorkAgendaSlice'
+import GetMediaGalleryReducer from '../slice/GetMediaGallerySlice';
 
 const store = configureStore({
   reducer: {
@@ -88,6 +89,7 @@ const store = configureStore({
     getTestTypology: GetTestTypologyReducer,
     getVisitCounter: GetVisitCounterReducer,
     getWorkAgenda: GetWorkAgendaSlice,
+    getMediaGallery: GetMediaGalleryReducer,
   },
 });
 

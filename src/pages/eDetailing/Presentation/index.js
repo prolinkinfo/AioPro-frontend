@@ -65,6 +65,11 @@ const Presentation = () => {
         setUserAction(result)
     }
 
+    const text = (item) => {
+        const a = item.length > 10 ? item.slice(0, 20) + "..." : item;
+        return a
+    }
+
     useEffect(() => {
         fetchData();
     }, [presentation])
@@ -117,19 +122,19 @@ const Presentation = () => {
                                                     <table className='presantationTable'>
                                                         <tr >
                                                             <th style={{ textAlign: "start" }}>Name :</th>
-                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.presentationName}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text(item.presentationName)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning Type :</th>
-                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.assigedType}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text(item.assigedType)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Assigning To :</th>
-                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.assigedTo}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text(item.assigedTo)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>division :</th>
-                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.division}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text(item.division)}</td>
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Date :</th>
@@ -137,7 +142,7 @@ const Presentation = () => {
                                                         </tr>
                                                         <tr>
                                                             <th style={{ textAlign: "start" }}>Description :</th>
-                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item?.description}</td>
+                                                            <td style={{ paddingLeft: "100px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text(item?.description)}</td>
                                                         </tr>
                                                     </table>
                                                 </div>
