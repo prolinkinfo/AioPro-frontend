@@ -23,6 +23,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import * as XLSX from 'xlsx';
 
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
@@ -271,6 +272,17 @@ const Doctor = () => {
     dispatch(fetchDoctorData());
   }, [userAction]);
 
+
+  
+// ======================== XLS File ================================================
+
+const convertJsonToExcel = (jsonArray, fileName) => {
+  const ws = XLSX.utils.json_to_sheet(jsonArray);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+  XLSX.writeFile(wb, `${fileName}.xls`);
+};
+
   return (
     <div>
       <Container maxWidth="xl">
@@ -282,7 +294,7 @@ const Doctor = () => {
                 Add Doctor
               </Link>
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
+            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(data, 'doctors')}>
               Export
             </Button>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
