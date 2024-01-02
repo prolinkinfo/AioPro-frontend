@@ -43,6 +43,7 @@ import GetTestTypologyReducer from '../slice/GetTestTypologySlice';
 import GetVisitCounterReducer from '../slice/GetVisitCounterSlice';
 import GetWorkAgendaSlice from '../slice/GetWorkAgendaSlice'
 import GetMediaGalleryReducer from '../slice/GetMediaGallerySlice';
+import GetHolidayCalendarReducer from '../slice/GetHolidayCalendarSlice';
 
 const store = configureStore({
   reducer: {
@@ -90,6 +91,7 @@ const store = configureStore({
     getVisitCounter: GetVisitCounterReducer,
     getWorkAgenda: GetWorkAgendaSlice,
     getMediaGallery: GetMediaGalleryReducer,
+    getHolidayCalendar: GetHolidayCalendarReducer,
   },
 });
 

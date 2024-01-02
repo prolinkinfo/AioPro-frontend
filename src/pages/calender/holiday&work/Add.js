@@ -22,15 +22,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apipost } from '../../../service/api';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 
-const zoneList = [
-    "mp",
-    "gj"
-]
-
-
 
 const Add = (props) => {
-    const { isOpenAdd, handleCloseAdd, fetchHolidayData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchHolidayCalendarData } = props;
 
     const [allUser, setAllUser] = useState([]);
     const { id } = JSON.parse(localStorage.getItem('user'));
@@ -62,7 +56,8 @@ const Add = (props) => {
         const result = await apipost('/api/holidaycalendar', pyload)
         if (result && result.status === 200) {
             handleCloseAdd()
-            fetchHolidayData()
+            dispatch(fetchHolidayCalendarData());
+
         }
     }
 
