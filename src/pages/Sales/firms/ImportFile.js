@@ -27,6 +27,7 @@ import {
   Select,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { apiget, apipost, allusers } from '../../../service/api';
 
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
@@ -40,24 +41,17 @@ import { fetchfirmData } from '../../../redux/slice/GetFirmSlice';
 
 const ImportFile = (props) => {
   const { isOpen, handleClose } = props;
+  const [selectedFile, setSelectedFile] = useState(null);
   const dispatch = useDispatch();
   const [firmList, setFirmList] = useState([]);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
-    // date: yup.string().required('Date is required'),
-    // location: yup.string().required('Location is required'),
+    csvFile: yup.string().required('file is required'),
   });
 
   const initialValues = {
-    firmType: '',
-    employeeName: '',
-    firmId: '',
-    address: '',
-    city: '',
-    zone: '',
-    firmName: '',
-    visitDate: '',
+    csvFile: '',
   };
 
   const employeeList = useSelector((state) => state?.getEmployee?.data);
@@ -76,18 +70,10 @@ const ImportFile = (props) => {
   }, []);
 
   const addVisit = async (values) => {
-    const data = {
-      firmType: values.firmType,
-      employeeName: values.employeeName,
-      firmId: values.firmId,
-      visitAddress: values.address,
-      firmAddress: values.address,
-      city: values.city,
-      zone: values.zone,
-      firmName: values.firmName,
-      visitDate: values.visitDate,
-    };
-    const result = await apipost('/api/firmVisit', data);
+    const data = new FormData();
+    data.append('csvFile', values?.csvFile);
+
+    const result = await apipost('/api/firm/csv', data);
     if (result && result.status === 200) {
       formik.resetForm();
       handleClose(false);
@@ -109,6 +95,18 @@ const ImportFile = (props) => {
     setFirmList(filteredFirm);
   };
 
+  const handleFileChange = (e) => {
+    const file = e?.currentTarget?.files[0];
+    if (file?.type === 'text/csv' ) {
+      setSelectedFile(e?.target?.files[0]);
+      formik.setFieldValue('csvFile', file);
+    } else {
+      alert('Invalid file. Please select a CSV file');
+    }
+  };
+
+
+
   return (
     <div>
       <Dialog open={isOpen} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
@@ -129,35 +127,49 @@ const ImportFile = (props) => {
           <form>
             <DialogContentText id="scroll-dialog-description" tabIndex={-1} height="200px">
               <Box width="500px">
-                <Box
-                  sx={{
-                    border: '1px dotted #000',
-                    height: '120px',
-                    width: '100%',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    // textAlign:'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CloudUploadIcon />
-                  <Input
-                    type="file"
+                {selectedFile ? (
+                  <Box>
+                    <DescriptionIcon />
+                    <Typography>{selectedFile?.name}</Typography>
+                    <Typography>{selectedFile.size}</Typography>
+                  </Box>
+                ) : (
+                  <Box
                     sx={{
-                      // position: 'absolute',
+                      border: '1px dotted #000',
+                      height: '120px',
                       width: '100%',
-                      height: '100%',
-                      top: '0',
-                      left: '0',
-                      opacity: '0',
+                      borderRadius: '8px',
                       cursor: 'pointer',
-                      backgroundColor: 'greenyellow',
+                      // textAlign:'center',
+                      // display: 'flex',
+                      // alignItems: 'center',
+                      // justifyContent: 'center',
+                      // flexDirection:'column'
                     }}
-                  />
-                </Box>
+                  >
+                    {/* <CloudUploadIcon style={{position:'absolute'}} /> */}
+                    <Input
+                      type="file"
+                      onChange={handleFileChange}
+                      sx={{
+                        // position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        top: '0',
+                        left: '0',
+                        opacity: '0',
+                        cursor: 'pointer',
+                        // display:'none',
+                        // backgroundColor: 'greenyellow',
+                      }}
+                    />
+                  </Box>
+                )}
               </Box>
+              {/* <Box>
+                <img src={selectedFile}/>
+              </Box> */}
             </DialogContentText>
           </form>
         </DialogContent>
@@ -178,6 +190,7 @@ const ImportFile = (props) => {
             onClick={() => {
               formik.resetForm();
               handleClose(false);
+              setSelectedFile(null);
             }}
             color="error"
           >
