@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Container, Stack } from '@mui/material';
 import Holiday from './holiday&work';
+import { WorkCalender } from './work';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -63,7 +64,7 @@ export default function BasicTabs() {
                     <Holiday />
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
-                    Item Two
+                   <WorkCalender/>
                 </CustomTabPanel>
             </Box>
         </Container>
