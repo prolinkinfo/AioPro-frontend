@@ -13,25 +13,28 @@ import EditCallObjective from './Edit';
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api';
 import { fetchCallObjectiveData } from '../../../redux/slice/GetCallObjectiveSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const CallObjective = () => {
 
-  const [callObjectiveList, setCallObjectiveList] = useState([])
-  const [callObjectiveData, setCallObjectiveData] = useState('')
+  const [callObjectiveList, setCallObjectiveList] = useState([]);
+  const [callObjectiveData, setCallObjectiveData] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [isOpenEdit, setIsOpenEdit] = useState(false)
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
   const dispatch = useDispatch();
-  const callObjective = useSelector((state)=>state?.getCallObjective?.data)
+  const callObjective = useSelector((state) => state?.getCallObjective?.data)
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
   const handleCloseEdit = () => setIsOpenEdit(false)
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
-
+  const handleClose = () => setAnchorEl(null);
+  const open = Boolean(anchorEl);
 
   const columns = [
     {
@@ -41,24 +44,25 @@ const CallObjective = () => {
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          setCallObjectiveData(data);
-          handleOpenEdit();
-        };
-
-        const handleClickDeleteBtn = async (data) => {
-          setId(data?._id);
-          handleOpenDeleteModel();
+        const handleClick = async (data, e) => {
+          setAnchorEl(e.currentTarget);
+          setCallObjectiveData(data)
+          setId(data?._id)
         };
         return (
           <Box>
             <EditCallObjective isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchCallObjectiveData={fetchCallObjectiveData} data={callObjectiveData} />
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCallObjective} id={id} />
 
-            <Stack direction={"row"} spacing={2}>
-              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-              <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-            </Stack>
+            <CustomMenu
+              open={open}
+              handleClick={handleClick}
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              handleOpenEdit={handleOpenEdit}
+              params={params}
+              handleOpenDeleteModel={handleOpenDeleteModel}
+            />
           </Box>
         );
       },
@@ -88,7 +92,7 @@ const CallObjective = () => {
   const fetchData = async (e) => {
     const searchText = e?.target?.value;
     const filtered = callObjective?.filter(({ objectiveName }) =>
-    objectiveName?.toLowerCase()?.includes(searchText?.toLowerCase()))
+      objectiveName?.toLowerCase()?.includes(searchText?.toLowerCase()))
     setCallObjectiveList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : callObjective)
   };
 
@@ -114,7 +118,7 @@ const CallObjective = () => {
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                 Add New
               </Button>
-              <TextField type="text" size="small" placeholder="Search" onChange={fetchData}/>
+              <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid

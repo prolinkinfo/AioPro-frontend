@@ -22,7 +22,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import * as XLSX from 'xlsx'
 
 import TableStyle from '../../../components/TableStyle';
@@ -31,6 +31,7 @@ import ActionBtn from '../../../components/actionbtn/ActionBtn';
 import { fetchDoctorData } from '../../../redux/slice/GetDoctorSlice';
 import { apidelete } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle';
+import CustomMenu from '../../../components/CustomMenu';
 
 const Doctor = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -74,7 +75,7 @@ const Doctor = () => {
               aria-expanded={open ? 'true' : undefined}
               onClick={(e) => handleClick(params?.row?._id, e)}
             >
-              <DragIndicatorIcon />
+              <MoreVertIcon />
             </Button>
             <Menu
               id="demo-positioned-menu"
@@ -108,6 +109,16 @@ const Doctor = () => {
               </MenuItem>
             </Menu>
           </div>
+          // <Box>
+          //   <CustomMenu
+          //     open={open}
+          //     handleClick={handleClick}
+          //     anchorEl={anchorEl}
+          //     handleClose={handleClose}
+          //     id={id}
+          //     params={params}
+          //   />
+          // </Box>
         );
       },
     },
@@ -270,7 +281,7 @@ const Doctor = () => {
   ];
 
   const fetchData = async (searchText) => {
-    const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber,qualification,email,gender }) =>
+    const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber, qualification, email, gender }) =>
       doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       doctorName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       // addressInformation?.city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||

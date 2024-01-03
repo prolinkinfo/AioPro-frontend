@@ -13,18 +13,21 @@ import EditProductIndication from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 import { fetchSchemeMasterData } from '../../../redux/slice/GetSchemeMasterSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const SchemeMaster = () => {
 
     const [schemeMasterList, setSchemeMasterList] = useState([])
-    const [schemeMasterData, setSchemeMasterListData] = useState({})
+    const [schemeMasterData, setSchemeMasterData] = useState({})
     const [userAction, setUserAction] = useState(null)
     const dispatch = useDispatch();
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -44,22 +47,25 @@ const SchemeMaster = () => {
             width: 250,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setSchemeMasterListData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setSchemeMasterData(data);
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditProductIndication isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSchemeMasterData={fetchSchemeMasterData} data={schemeMasterData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSchemeMaster} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },

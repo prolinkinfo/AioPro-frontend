@@ -13,24 +13,17 @@ import DeleteModel from '../../../components/Deletemodle'
 import EditDoctorSpeciality from './Edit'
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 const DoctorSpeciality = () => {
 
     const [specialityList, setSpecialityList] = useState([])
 
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-    const [activityTypeData, setActivityTypeData] = useState('')
+    const [specialityData, setSpecialityData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
     const dispatch = useDispatch();
@@ -40,6 +33,8 @@ const DoctorSpeciality = () => {
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const doctorspeciality = useSelector((state) => state?.getDoctorSpeciality?.data)
     const divisionList = useSelector((state) => state?.getDivision?.data)
@@ -49,27 +44,28 @@ const DoctorSpeciality = () => {
             field: 'action',
             headerName: 'Action',
             sortable: false,
-            flex: 1,
+            width: 100,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setActivityTypeData(data);
-                    handleOpenEdit();
-                };
-
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setSpecialityData(data)
+                    setId(data?._id)
                 };
                 return (
                     <Box>
-                        <EditDoctorSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDoctorSpecialityData={fetchDoctorSpecialityData} data={activityTypeData} />
+                        <EditDoctorSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDoctorSpecialityData={fetchDoctorSpecialityData} data={specialityData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSpeciality} id={id} />
 
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            handleOpenEdit={handleOpenEdit}
+                            params={params}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
@@ -137,25 +133,6 @@ const DoctorSpeciality = () => {
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"end"}>
-                                    {/* <Autocomplete
-                                        size="small"
-                                        onChange={(event, newValue) => {
-                                            formik.setFieldValue('divisionName', newValue ? newValue.divisionName : "");
-                                        }}
-                                        options={divisionList}
-                                        value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
-                                        getOptionLabel={(division) => division?.divisionName}
-                                        style={{ textTransform: 'capitalize' }}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select Division'
-                                                error={formik.touched.divisionName && Boolean(formik.errors.divisionName)}
-                                                helperText={formik.touched.divisionName && formik.errors.divisionName}
-                                            />
-                                        )}
-                                    /> */}
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"

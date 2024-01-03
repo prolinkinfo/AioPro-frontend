@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +14,7 @@ import EditCollectionCenter from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 import { fetchSamCollectionCenterData } from '../../../redux/slice/GetSampleCollectionCenterSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const SampleCollectionCenter = () => {
 
@@ -24,7 +26,9 @@ const SampleCollectionCenter = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -35,7 +39,15 @@ const SampleCollectionCenter = () => {
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const collectionCenter = useSelector((state) => state?.getSampleCollectionCenter?.data)
+    
+    const fullName = (name) => {
+        let separatedNames = name.split(/(?=[A-Z])/);
+        let firstName = separatedNames[0];
+        let lastName = separatedNames[1];
 
+        return `${firstName} ${lastName}`
+    }
+    
     const columns = [
         {
             field: 'action',
@@ -44,29 +56,41 @@ const SampleCollectionCenter = () => {
             width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
                     setCollectionCenterData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchSamCollectionCenterData={fetchSamCollectionCenterData} data={collectionCenterData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
         },
         { field: 'centerName', headerName: 'Center Name', width: 200 },
         { field: 'centerCode', headerName: 'Center Code', width: 200 },
-        { field: 'assignTo', headerName: 'Assigned To', width: 200 },
+        {
+            field: 'assignTo',
+            headerName: 'Assigned To',
+            width: 200,
+            renderCell: (params) => (
+                <Box>
+                    {fullName(params?.row?.assignTo)}
+                </Box>
+            )
+        },
         { field: 'category', headerName: 'Category', width: 200 },
         { field: 'type', headerName: 'Center Type', width: 200 },
         { field: 'zoneName', headerName: 'Zone', width: 200 },

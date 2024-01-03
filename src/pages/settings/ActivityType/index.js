@@ -12,6 +12,7 @@ import { apidelete, apiget } from '../../../service/api';
 import EditActivityType from './Edit';
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchActivityTypeData } from '../../../redux/slice/GetActivityTypeSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const ActivityType = () => {
   const [typeList, setTypeList] = useState([]);
@@ -29,8 +30,9 @@ const ActivityType = () => {
   const handleCloseEdit = () => setIsOpenEdit(false)
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
-
-  console.log(typeData, "typeData")
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => setAnchorEl(null);
 
   const columns = [
     {
@@ -40,24 +42,25 @@ const ActivityType = () => {
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          setActivityTypeData(data);
-          handleOpenEdit();
-        };
-
-        const handleClickDeleteBtn = async (data) => {
-          setId(data?._id);
-          handleOpenDeleteModel();
+        const handleClick = async (data, e) => {
+          setAnchorEl(e.currentTarget);
+          setActivityTypeData(data)
+          setId(data?._id)
         };
         return (
           <Box>
             <EditActivityType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchActivityTypeData={fetchActivityTypeData} data={activityTypeData} />
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteActivityType} id={id} />
-
-            <Stack direction={"row"} spacing={2}>
-              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-              <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-            </Stack>
+            
+            <CustomMenu
+              open={open}
+              handleClick={handleClick}
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              handleOpenEdit={handleOpenEdit}
+              params={params}
+              handleOpenDeleteModel={handleOpenDeleteModel}
+            />
           </Box>
         );
       },

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
@@ -14,6 +15,7 @@ import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 import { fetchPromotionalGiftData } from '../../../redux/slice/GetPromotionalGiftSlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const PromotionalGifts = () => {
 
@@ -25,7 +27,9 @@ const PromotionalGifts = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -38,6 +42,14 @@ const PromotionalGifts = () => {
     const promotionalGift = useSelector((state) => state?.getPromotionalGift?.data)
 
 
+    const fullName = (name) => {
+        let separatedNames = name.split(/(?=[A-Z])/);
+        let firstName = separatedNames[0];
+        let lastName = separatedNames[1];
+
+        return `${firstName} ${lastName}`
+    }
+
     const columns = [
         {
             field: 'action',
@@ -46,28 +58,40 @@ const PromotionalGifts = () => {
             width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
                     setpromotionalGiftData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditCollectionCenter isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchPromotionalGiftData={fetchPromotionalGiftData} data={promotionalGiftData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
         },
         { field: 'divisionName', headerName: 'Division Name', width: 200 },
-        { field: 'employeeName', headerName: 'Employee Name', width: 200 },
+        {
+            field: 'employeeName',
+            headerName: 'Employee Name',
+            width: 200,
+            renderCell: (params) => (
+                <Box>
+                    {fullName(params?.row?.employeeName)}
+                </Box>
+            )
+        },
         { field: 'giftName', headerName: 'Gift Name', width: 200 },
         { field: 'quantity', headerName: 'Quantity', width: 200 },
         { field: 'remaining', headerName: 'Remaining', width: 200 },

@@ -12,6 +12,7 @@ import EditLeaveReason from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchLeaveReasonData } from '../../../redux/slice/GetLeaveReasonSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const LeaveReason = () => {
 
@@ -23,15 +24,17 @@ const LeaveReason = () => {
     const [leaveReasonData, setLeaveReasonData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
-    const leaveReason = useSelector((state)=>state?.getLeaveReason?.data)
+    const leaveReason = useSelector((state) => state?.getLeaveReason?.data)
 
     const columns = [
         {
@@ -41,34 +44,36 @@ const LeaveReason = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setLeaveReasonData(data);
-                    handleOpenEdit();
-                };
-
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setLeaveReasonData(data)
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditLeaveReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchLeaveReasonData={fetchLeaveReasonData} data={leaveReasonData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteReason} id={id} />
 
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
         },
-        { field: 'leaveReason', headerName: 'Leave Reason Name', flex: 1  ,cellClassName: 'name-column--cell--capitalize'},
-        { field: 'leaveEntitlement', headerName: 'Leave Entitlement', flex: 1 ,cellClassName: 'name-column--cell--capitalize' },
+        { field: 'leaveReason', headerName: 'Leave Reason Name', flex: 1, cellClassName: 'name-column--cell--capitalize' },
+        { field: 'leaveEntitlement', headerName: 'Leave Entitlement', flex: 1, cellClassName: 'name-column--cell--capitalize' },
     ];
 
 
-    const deleteReason= async (id) => {
+    const deleteReason = async (id) => {
         const result = await apidelete(`/api/leavereason/${id}`);
         setUserAction(result)
     }
@@ -76,26 +81,26 @@ const LeaveReason = () => {
 
     const fetchData = async (e) => {
         const searchText = e?.target?.value;
-        const filtered = leaveReason?.filter(({ leaveEntitlement,leaveReason }) =>
-        leaveEntitlement?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-        leaveReason?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        const filtered = leaveReason?.filter(({ leaveEntitlement, leaveReason }) =>
+            leaveEntitlement?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            leaveReason?.toLowerCase()?.includes(searchText?.toLowerCase())
         );
         setLeaveReasonList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : leaveReason)
-      };
-    
+    };
+
     useEffect(() => {
         fetchData();
     }, [leaveReason])
 
     useEffect(() => {
-       dispatch(fetchLeaveReasonData());
+        dispatch(fetchLeaveReasonData());
     }, [userAction])
 
     return (
         <div>
             {/* Add Leave Reason */}
             <AddLeaveReason isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchLeaveReasonData={fetchLeaveReasonData} />
-           
+
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Leave Reason</Typography>

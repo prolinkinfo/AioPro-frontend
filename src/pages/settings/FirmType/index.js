@@ -12,6 +12,7 @@ import AddType from './Add';
 import EditType from './Edit'
 import { apiget, apiput } from '../../../service/api'
 import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const FirmType = () => {
 
@@ -22,11 +23,14 @@ const FirmType = () => {
     const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const firmType = useSelector((state) => state?.geFirmType?.data)
 
@@ -34,7 +38,6 @@ const FirmType = () => {
         setChecked(e.target.checked)
     }
 
-    console.log(firmType, "firmType")
 
     const columns = [
         {
@@ -44,14 +47,22 @@ const FirmType = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setTypeData(data);
-                    handleOpenEdit();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setTypeData(data)
                 };
                 return (
                     <Box>
                         <EditType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} firmaTypeData={firmaTypeData} data={typeData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            handleOpenEdit={handleOpenEdit}
+                            type={"delete"}
+                        />
                     </Box>
                 );
             },
@@ -88,7 +99,7 @@ const FirmType = () => {
         const searchText = e?.target?.value;
         const filtered = firmType?.filter(({ firmTypeId, firmType, level }) =>
             firmTypeId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-            firmType?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+            firmType?.toLowerCase()?.includes(searchText?.toLowerCase())
         );
         setTypeList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : firmType)
     };

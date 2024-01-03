@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -10,10 +10,9 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl, Select, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { apipost, apiput } from '../../../service/api';
+import { apiput } from '../../../service/api';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
 import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';

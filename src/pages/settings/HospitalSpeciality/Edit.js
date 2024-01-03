@@ -107,7 +107,7 @@ const EditHospitalSpeciality = (props) => {
                                         }}
                                         options={divisionList}
                                         value={divisionList.find(division => division.divisionName === formik.values.divisionName) || null}
-                                        getOptionLabel={(division) => division?.divisionName}
+                                        getOptionLabel={(division) => division?.divisionName || null}
                                         style={{ textTransform: 'capitalize' }}
                                         renderInput={(params) => (
                                             <TextField

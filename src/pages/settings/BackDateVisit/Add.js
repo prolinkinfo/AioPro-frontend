@@ -89,23 +89,19 @@ const AddBackDateVisit = (props) => {
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Employee</FormLabel>
                 <Autocomplete
-                  size="small"
-                  onChange={(event, newValue) => {
-                    formik.setFieldValue('employeeName', newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
-                  }}
-                  fullWidth
+                  disablePortal
+                  name="employeeName"
+                  id="combo-box-demo"
+                  onChange={(event, newValue) =>
+                    formik.setFieldValue("employeeName", newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : "")
+                  }
                   options={employeeList}
-                  value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName) || null}
+                  value={employeeList.find((employee) => `${employee?.basicInformation?.firstName}${employee?.basicInformation?.surname}` === formik.values.employeeName) || null}
                   getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
-                  style={{ textTransform: 'capitalize' }}
+                  size="small"
+                  fullWidth
                   renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      style={{ textTransform: 'capitalize' }}
-                      placeholder='Select Employee'
-                      error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
-                      helperText={formik.touched.employeeName && formik.errors.employeeName}
-                    />
+                    <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
                   )}
                 />
               </Grid>

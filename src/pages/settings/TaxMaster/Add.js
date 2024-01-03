@@ -1,6 +1,5 @@
 /* eslint-disable prefer-const */
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -10,8 +9,7 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { toast } from 'react-toastify';
-import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { FormLabel, Dialog, Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
@@ -76,25 +74,6 @@ const AddTax = (props) => {
                 <DialogContent dividers>
                     <form>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-                            {/* <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Tax Type</FormLabel>
-                                <Autocomplete
-                                    disablePortal
-                                    name="taxType"
-                                    options={top100Films}
-                                    fullWidth
-                                    size='small'
-                                    value={formik.values.taxType}
-                                    onChange={formik.handleChange}
-                                    renderInput={(params) =>
-                                        <TextField
-                                            {...params}
-                                            placeholder='Select Tax Type'
-                                            error={formik.touched.taxType && Boolean(formik.errors.taxType)}
-                                            helperText={formik.touched.taxType && formik.errors.taxType}
-                                        />}
-                                />
-                            </Grid> */}
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Tax Type</FormLabel>
                                 <TextField
