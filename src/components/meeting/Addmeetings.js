@@ -22,7 +22,6 @@ import { apiget, apipost, addmeeting, getsingleuser } from '../../service/api';
 const Addmeetings = (props) => {
   const { open, handleClose, id, setUserAction, fetchApiMeeting, user } = props;
 
-  
   const userName = localStorage.getItem('userName');
   const [singleuser, setsingleuser] = useState({});
 
@@ -39,7 +38,6 @@ const Addmeetings = (props) => {
     duration: yup.string().required('Duration is required'),
     note: yup.string().required('Note is required'),
   });
-
 
   const initialValues = {
     subject: '',
@@ -73,9 +71,8 @@ const Addmeetings = (props) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values) => {
       addMeeting(values);
-      resetForm();
     },
   });
 
@@ -215,13 +212,8 @@ const Addmeetings = (props) => {
                     fullWidth
                     value={formik.values.backgroundColor}
                     onChange={formik.handleChange}
-                    error={
-                      formik.touched.backgroundColor &&
-                      Boolean(formik.errors.backgroundColor)
-                    }
-                    helperText={
-                      formik.touched.backgroundColor && formik.errors.backgroundColor
-                    }
+                    error={formik.touched.backgroundColor && Boolean(formik.errors.backgroundColor)}
+                    helperText={formik.touched.backgroundColor && formik.errors.backgroundColor}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
@@ -235,13 +227,8 @@ const Addmeetings = (props) => {
                     fullWidth
                     value={formik.values.textColor}
                     onChange={formik.handleChange}
-                    error={
-                      formik.touched.textColor &&
-                      Boolean(formik.errors.textColor)
-                    }
-                    helperText={
-                      formik.touched.textColor && formik.errors.textColor
-                    }
+                    error={formik.touched.textColor && Boolean(formik.errors.textColor)}
+                    helperText={formik.touched.textColor && formik.errors.textColor}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12}>

@@ -118,6 +118,8 @@ import Presentation from '../pages/eDetailing/Presentation';
 import ViewPresentation from '../pages/eDetailing/Presentation/View'
 import DataManagement from '../pages/settings/dataSetting/dataManagement';
 import ViewDoctor from '../pages/people/doctor/View';
+import Addtourplan from '../pages/calender/work/Addtourplan';
+import { Scheduler } from '../pages/calender/scheduler';
 
 // ----------------------------------------------------------------------
 
@@ -178,6 +180,11 @@ export default function Router() {
         { path: 'people/employees/:id', element: <AddEmployees /> },
         { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'calendar/leave', element: <LeaveCalendar /> },
+        { path: 'calendar/addtourplan', element: <Addtourplan /> },
+        { path: 'calendar/scheduler', element: <Scheduler /> },
+
+
+        // setting
         { path: 'setting/manageActivityType', element: <ActivityType /> },
         { path: 'setting/backDateVisit', element: <BackDateVisit /> },
         { path: 'setting/callObjective', element: <CallObjective /> },
