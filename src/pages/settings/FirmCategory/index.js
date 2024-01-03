@@ -10,6 +10,7 @@ import AddCategory from './Add'
 import EditCategory from './Edit'
 import { apiget } from '../../../service/api'
 import { fetchFirmCategoryData } from '../../../redux/slice/GetFirmCategorySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const FirmCategory = () => {
 
@@ -18,11 +19,13 @@ const FirmCategory = () => {
     const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const firmCategory = useSelector((state) => state?.getFirmCategory?.data)
 
@@ -34,14 +37,22 @@ const FirmCategory = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setCategoryData(data);
-                    handleOpenEdit();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setCategoryData(data)
                 };
                 return (
                     <Box>
                         <EditCategory isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchFirmCategoryData={fetchFirmCategoryData} data={categoryData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            handleOpenEdit={handleOpenEdit}
+                            type={"delete"}
+                        />
                     </Box>
                 );
             },

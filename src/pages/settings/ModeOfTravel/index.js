@@ -12,6 +12,7 @@ import EditTravel from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchModeOfTravelData } from '../../../redux/slice/GetModeOfTravelSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const ModeOfTravel = () => {
 
@@ -23,7 +24,7 @@ const ModeOfTravel = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -32,6 +33,9 @@ const ModeOfTravel = () => {
 
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const modeOfTravel = useSelector((state) => state?.getModeOfTravel?.data)
 
@@ -43,22 +47,25 @@ const ModeOfTravel = () => {
             width: 250,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
                     setTravelData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditTravel isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchModeOfTravelData={fetchModeOfTravelData} data={travelData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteModeOfTravel} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                            handleOpenEdit={handleOpenEdit}
+                        />
                     </Box>
                 );
             },

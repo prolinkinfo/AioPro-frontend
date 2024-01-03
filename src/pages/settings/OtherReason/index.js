@@ -10,6 +10,7 @@ import AddReason from './Add'
 import { apiget } from '../../../service/api'
 import EditReason from './Edit';
 import { fetchOtherReasonData } from '../../../redux/slice/GetOtherReasonSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const OtherReason = () => {
 
@@ -18,6 +19,9 @@ const OtherReason = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const dispatch = useDispatch();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -33,14 +37,22 @@ const OtherReason = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setReasonData(data);
-                    handleOpenEdit();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setReasonData(data)
                 };
                 return (
                     <Box >
                         <EditReason isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchOtherReasonData={fetchOtherReasonData} data={reasonData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            type={"delete"}
+                            handleOpenEdit={handleOpenEdit}
+                        />
                     </Box>
                 );
             },

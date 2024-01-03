@@ -12,23 +12,14 @@ import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddProduct from './Add';
 import EditProduct from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
-import { apidelete, apiget } from '../../../service/api'
+import { apidelete, apiget, apiput } from '../../../service/api'
 import { fetchProductData } from '../../../redux/slice/GetProductSlice';
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
-
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
+import CustomMenu from '../../../components/CustomMenu';
 
 const statusList = [
     "Active",
-    "Inactive"
+    "Deactive"
 ]
 
 const Product = () => {
@@ -41,7 +32,9 @@ const Product = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -64,22 +57,23 @@ const Product = () => {
             width: 130,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setProductData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
-                    // setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setProductData(data)
                 };
                 return (
                     <Box>
                         <EditProduct isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductData={fetchProductData} data={productData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteSchemeMaster} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            {/* <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button> */}
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            type={"delete"}
+                            handleOpenEdit={handleOpenEdit}
+                        />
                     </Box>
                 );
             },
@@ -90,7 +84,14 @@ const Product = () => {
             width: 150,
             renderCell: (params) => {
                 const chengStatus = async (data) => {
-
+                    const pyload = {
+                        _id: data?._id,
+                        status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+                    }
+                    const result = await apiput(`/api/products/changeStatus`, pyload);
+                    if (result && result.status === 200) {
+                        dispatch(fetchProductData());
+                    }
                 };
                 return (
                     <Box>

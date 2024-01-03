@@ -1,15 +1,14 @@
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
-import { DataGrid, nbNO } from '@mui/x-data-grid'
+import { Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
-import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddTypology from './Add'
-import { apidelete, apiget } from '../../../service/api'
+import { apidelete } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchTestTypologyData } from '../../../redux/slice/GetTestTypologySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const TestTypology = () => {
 
@@ -20,6 +19,9 @@ const TestTypology = () => {
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
     const dispatch = useDispatch();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
 
@@ -36,17 +38,24 @@ const TestTypology = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteTypology} id={id} />
 
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            type={"edit"}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },

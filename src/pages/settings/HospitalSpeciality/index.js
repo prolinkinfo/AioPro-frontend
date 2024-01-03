@@ -10,13 +10,14 @@ import AddHospitalSpeciality from './Add';
 import EditHospitalSpeciality from './Edit'
 import { apiget } from '../../../service/api'
 import { fetchHospitalSpecialityData } from '../../../redux/slice/GetHospitalSpecialitySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const HospitalSpeciality = () => {
 
     const [specialityList, setSpecialityList] = useState([])
     const [specialityData, setSpecialityData] = useState({})
     const dispatch = useDispatch();
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
 
@@ -24,8 +25,9 @@ const HospitalSpeciality = () => {
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
-
-    const hospitalSpeciality = useSelector((state)=>state?.getHospitalSpeciality?.data)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
+    const hospitalSpeciality = useSelector((state) => state?.getHospitalSpeciality?.data)
 
 
     const columns = [
@@ -36,14 +38,22 @@ const HospitalSpeciality = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setSpecialityData(data);
-                    handleOpenEdit();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setSpecialityData(data)
                 };
                 return (
                     <Box>
                         <EditHospitalSpeciality isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHospitalSpecialityData={fetchHospitalSpecialityData} data={specialityData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            handleOpenEdit={handleOpenEdit}
+                            type={"delete"}
+                        />
                     </Box>
                 );
             },
@@ -54,19 +64,19 @@ const HospitalSpeciality = () => {
 
     const fetchData = async (e) => {
         const searchText = e?.target?.value;
-        const filtered = hospitalSpeciality?.filter(({ hospitalSpeciality,divisionName }) =>
-        hospitalSpeciality?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-        divisionName?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+        const filtered = hospitalSpeciality?.filter(({ hospitalSpeciality, divisionName }) =>
+            hospitalSpeciality?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            divisionName?.toLowerCase()?.includes(searchText?.toLowerCase())
         )
         setSpecialityList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : hospitalSpeciality)
-      };
+    };
 
     useEffect(() => {
-       dispatch(fetchHospitalSpecialityData());
+        dispatch(fetchHospitalSpecialityData());
     }, [])
 
     useEffect(() => {
-      fetchData();
+        fetchData();
     }, [hospitalSpeciality])
 
     return (

@@ -10,20 +10,23 @@ import AddCategory from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const DoctorCategory = () => {
 
     const [categoryList, setCategoryList] = useState([])
     const [userAction, setUserAction] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [id, setId] = useState('')
     const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
-
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const doctorCategory = useSelector((state) => state?.getDoctorCategory?.data)
 
@@ -35,14 +38,22 @@ const DoctorCategory = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    console.log(data, 'data')
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
                     setId(data?._id)
                 };
                 return (
-                    <Box onClick={() => handleClick(params?.row)}>
+                    <Box>
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteCategory} id={id} fetchData={fetchCategoryData} />
-                        <Button variant='outlined' color='error' size='small' onClick={handleOpenDeleteModel} startIcon={<DeleteIcon />}> Delete</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            type={"edit"}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },

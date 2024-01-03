@@ -98,7 +98,7 @@ const EditDivision = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Edit Work Agenda </Typography>
+                    <Typography variant="h6">Edit Division </Typography>
                     <Typography>
                         <ClearIcon onClick={handleCloseEdit} style={{ cursor: 'pointer' }} />
                     </Typography>

@@ -10,22 +10,24 @@ import AddHospitalClass from './Add';
 import EditHospitalClass from './Edit'
 import { apiget } from '../../../service/api'
 import { fetchHospitalClassData } from '../../../redux/slice/GetHospitalClassSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const HospitalClass = () => {
 
     const [classList, setClassList] = useState([])
     const [classData, setClassData] = useState({})
     const dispatch = useDispatch();
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
-
+    const open = Boolean(anchorEl);
+    const handleClose = () => setAnchorEl(null);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
     const handleOpenEdit = () => setIsOpenEdit(true)
     const handleCloseEdit = () => setIsOpenEdit(false)
 
-    const hospitalClass = useSelector((state)=>state?.getHospitalClass?.data)
+    const hospitalClass = useSelector((state) => state?.getHospitalClass?.data)
 
     const columns = [
         {
@@ -35,14 +37,22 @@ const HospitalClass = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setClassData(data);
-                    handleOpenEdit();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setClassData(data)
                 };
                 return (
                     <Box>
                         <EditHospitalClass isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchHospitalClassData={fetchHospitalClassData} data={classData} />
-                        <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={()=>handleClick(params?.row)}> Edit</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            handleOpenEdit={handleOpenEdit}
+                            type={"delete"}
+                        />
                     </Box>
                 );
             },
@@ -54,10 +64,10 @@ const HospitalClass = () => {
     const fetchData = async (e) => {
         const searchText = e?.target?.value;
         const filtered = hospitalClass?.filter(({ hospitalClass }) =>
-          hospitalClass?.toLowerCase()?.includes(searchText?.toLowerCase()))
+            hospitalClass?.toLowerCase()?.includes(searchText?.toLowerCase()))
         setClassList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : hospitalClass)
-      };
-    
+    };
+
     useEffect(() => {
         fetchData();
     }, [hospitalClass])

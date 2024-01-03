@@ -13,6 +13,7 @@ import EditProduct from './Edit'
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 import { fetchProductGroupData } from '../../../redux/slice/GetProductGroupSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const ProductGroup = () => {
 
@@ -24,7 +25,9 @@ const ProductGroup = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
 
@@ -44,22 +47,25 @@ const ProductGroup = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
                     setProductGroupData(data);
-                    handleOpenEdit();
-                };
-                const handleClickDeleteBtn = async (data) => {
                     setId(data?._id);
-                    handleOpenDeleteModel();
                 };
                 return (
                     <Box>
                         <EditProduct isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchProductGroupData={fetchProductGroupData} data={productGroupData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteGroup} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
@@ -79,7 +85,7 @@ const ProductGroup = () => {
         const filtered = productGroup?.filter(({ groupCategory, groupName, orderBy }) =>
             groupCategory?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
             groupName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-            orderBy?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+            orderBy?.toLowerCase()?.includes(searchText?.toLowerCase())
         )
         setProductGroupList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : productGroup)
     };

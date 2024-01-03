@@ -1,17 +1,15 @@
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
-import { DataGrid, nbNO } from '@mui/x-data-grid';
+import { Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
-import ActionBtn from '../../../components/actionbtn/ActionBtn';
 import AddType from './Add';
-import { apidelete, apiget } from '../../../service/api';
+import { apidelete } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle'
 import EdiType from './Edit';
 import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const Type = () => {
   const [typeList, setTypeList] = useState([]);
@@ -23,6 +21,9 @@ const Type = () => {
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
   const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClose = () => setAnchorEl(null);
+  const open = Boolean(anchorEl);
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
@@ -40,24 +41,26 @@ const Type = () => {
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
+        const handleClick = async (data, e) => {
+          setAnchorEl(e.currentTarget);
           setTypeData(data);
-          handleOpenEdit();
-        };
-
-        const handleClickDeleteBtn = async (data) => {
-          setId(data?._id);
-          handleOpenDeleteModel();
+          setId(data?._id)
         };
         return (
           <Box>
             <EdiType isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchTypeData={fetchTypeData} data={typeData} />
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteType} id={id} />
 
-            <Stack direction={"row"} spacing={2}>
-              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-              <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-            </Stack>
+            <CustomMenu
+              open={open}
+              handleClick={handleClick}
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              params={params}
+              id={id}
+              handleOpenEdit={handleOpenEdit}
+              handleOpenDeleteModel={handleOpenDeleteModel}
+            />
           </Box>
         );
       },

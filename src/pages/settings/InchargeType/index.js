@@ -11,6 +11,7 @@ import AddQualification from './Add';
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete, apiget } from '../../../service/api'
 import { fetchInchargeTypeData } from '../../../redux/slice/GetInchargeTypeSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const InchargeType = () => {
 
@@ -22,7 +23,9 @@ const InchargeType = () => {
     const dispatch = useDispatch();
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
@@ -36,14 +39,23 @@ const InchargeType = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteType} id={id} />
-                        <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                            type={"edit"}
+                        />
                     </Box>
                 );
             },
@@ -56,7 +68,7 @@ const InchargeType = () => {
         setUserAction(result)
     }
 
-   ;
+        ;
 
     const fetchData = async (e) => {
         const searchText = e?.target?.value;

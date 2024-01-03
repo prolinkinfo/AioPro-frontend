@@ -12,12 +12,14 @@ import EditDivision from './Edit'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const Division = () => {
 
     const [divisionList, setDivisionList] = useState([])
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [divisionData, setDivisionData] = useState('')
     const [id, setId] = useState('')
@@ -30,6 +32,8 @@ const Division = () => {
     const handleCloseEdit = () => setIsOpenEdit(false)
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
 
     const columns = [
         {
@@ -39,24 +43,25 @@ const Division = () => {
             flex: 1,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setDivisionData(data);
-                    handleOpenEdit();
-                };
-
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setDivisionData(data)
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <EditDivision isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchDivisionData={fetchDivisionData} data={divisionData} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteDivision} id={id} />
 
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            handleOpenEdit={handleOpenEdit}
+                            params={params}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
