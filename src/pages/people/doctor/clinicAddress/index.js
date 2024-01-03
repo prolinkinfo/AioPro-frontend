@@ -12,8 +12,11 @@ import { apiget } from '../../../../service/api'
 const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
 
     const [isOpen, setIsOpen] = useState(false)
+    const [isOpenEdit, setIsOpenEdit] = useState(false)
     const handleOpenAdd = () => setIsOpen(true)
     const handleCloseAdd = () => setIsOpen(false)
+    const handleOpenEdit = () => setIsOpenEdit(true)
+    const handleCloseEdit = () => setIsOpenEdit(false)
     const params = useParams();
     // const [data, setData] = useState({});
 
@@ -22,7 +25,8 @@ const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
             field: "",
             headerName: "Action",
             cellClassName: "name-column--cell name-column--cell--capitalize",
-            width: 100
+            width: 100,
+            sortable: false,
         },
         {
             field: "doctorName",

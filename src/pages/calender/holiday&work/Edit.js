@@ -25,7 +25,7 @@ import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 
 
 const Edit = (props) => {
-    const { isOpenEdit, handleCloseEdit, fetchHolidayData,data } = props;
+    const { isOpenEdit, handleCloseEdit, fetchHolidayCalendarData, data } = props;
 
     const { id } = JSON.parse(localStorage.getItem('user'));
     const dispatch = useDispatch()
@@ -48,7 +48,7 @@ const Edit = (props) => {
 
     const editHoliday = async (values) => {
         const pyload = {
-            _id:data?._id,
+            _id: data?._id,
             zone: values.zone,
             holidayDate: values.holidayDate,
             holidayName: values.holidayName,
@@ -57,7 +57,8 @@ const Edit = (props) => {
         const result = await apiput('/api/holidaycalendar', pyload)
         if (result && result.status === 200) {
             handleCloseEdit()
-            fetchHolidayData()
+            dispatch(fetchHolidayCalendarData());
+
         }
     }
 
@@ -66,7 +67,7 @@ const Edit = (props) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
-        enableReinitialize:true,
+        enableReinitialize: true,
         onSubmit: async (values, { resetForm }) => {
             resetForm();
             editHoliday(values)

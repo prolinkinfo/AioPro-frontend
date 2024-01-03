@@ -23,7 +23,7 @@ import { apipost } from '../../../service/api';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 
 const Add = (props) => {
-  const { isOpenAdd, handleCloseAdd, fetchHolidayData } = props;
+  const { isOpenAdd, handleCloseAdd, fetchHolidayCalendarData } = props;
   const { id } = JSON.parse(localStorage.getItem('user'));
   const dispatch = useDispatch();
   const zoneList = useSelector((state) => state?.getZone?.data);
@@ -52,10 +52,9 @@ const Add = (props) => {
     const result = await apipost('/api/holidaycalendar', pyload);
     if (result && result.status === 200) {
       handleCloseAdd();
-      fetchHolidayData();
+      dispatch(fetchHolidayCalendarData());
     }
   };
-
   // formik
   const formik = useFormik({
     initialValues,

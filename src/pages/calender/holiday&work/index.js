@@ -25,6 +25,7 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../../components/iconify';
 import TableStyle from '../../../components/TableStyle';
 import AddHoliday from './Add';
@@ -32,6 +33,8 @@ import Edit from './Edit';
 import { apidelete, apiget } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle';
 import ImportFile from './ImportFile';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchHolidayCalendarData } from '../../../redux/slice/GetHolidayCalendarSlice';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +48,18 @@ const Holiday = () => {
   const [id, setId] = useState('');
   const [userAction, setUserAction] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [holidayId, setHolidayId] = useState('');
+  const dispatch = useDispatch();
+  const handleOpenAdd = () => setIsOpenAdd(true);
+  const handleCloseAdd = () => setIsOpenAdd(false);
+  const handleOpenEdit = () => setIsOpenEdit(true);
+  const handleCloseEdit = () => setIsOpenEdit(false);
+  const handleOpenDeleteModel = (id) => {
+    setId(id)
+    setIsOpenDeleteModel(true);
+  };
+  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false);
+  const holidayCalendar = useSelector((state) => state?.getHolidayCalendar?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
 
   const open = Boolean(anchorEl);
 
@@ -56,20 +70,6 @@ const Holiday = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const [fileImport, setFileImport] = useState(false);
-  const handleOpenAdd = () => setIsOpenAdd(true);
-  const handleCloseAdd = () => setIsOpenAdd(false);
-  const handleCloseEdit = () => setIsOpenEdit(false);
-  const handleCloseDeleteModel = () => setIsOpenDeleteModel(false);
-
-  const handleOpenDeleteModel = (data) => {
-    setId(data);
-    setIsOpenDeleteModel(true);
-  };
-
-  const handleOpenEdit = () => {
-    setIsOpenEdit(true);
-    setAnchorEl(null);
-  };
 
   const handleClick = async (data, event) => {
     setHolidayData(data);
@@ -165,23 +165,30 @@ const Holiday = () => {
     setUserAction(result);
   };
 
-  const fetchHolidayData = async () => {
-    const result = await apiget(`/api/holidaycalendar`);
-    if (result && result.status === 200) {
-      setHolidayList(result?.data?.result);
-    }
+  const fetchData = async (searchText) => {
+    const filtered = holidayCalendar?.filter(
+      ({ holidayName, zone }) =>
+        holidayName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+        zone?.toLowerCase()?.includes(searchText?.toLowerCase())
+    );
+    setHolidayList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : holidayCalendar);
   };
 
   useEffect(() => {
-    fetchHolidayData();
+    dispatch(fetchHolidayCalendarData());
+    dispatch(fetchZoneData());
   }, [userAction]);
+
+  useEffect(() => {
+    fetchData();
+  }, [holidayCalendar]);
 
   return (
     <>
       <Edit
         isOpenEdit={isOpenEdit}
         handleCloseEdit={handleCloseEdit}
-        fetchHolidayData={fetchHolidayData}
+        fetchHolidayCalendarData={fetchHolidayCalendarData}
         data={holidayData}
       />
       <DeleteModel
@@ -192,7 +199,11 @@ const Holiday = () => {
       />
       <ImportFile isOpen={fileImport} handleClose={setFileImport} />
 
-      <AddHoliday isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchHolidayData={fetchHolidayData} />
+      <AddHoliday
+        isOpenAdd={isOpenAdd}
+        handleCloseAdd={handleCloseAdd}
+        fetchHolidayCalendarData={fetchHolidayCalendarData}
+      />
 
       <Stack direction="row" alignItems="center" justifyContent="end">
         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
@@ -214,7 +225,11 @@ const Holiday = () => {
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                options={top100Films}
+                onChange={(event, newValue) => {
+                  fetchData(newValue ? newValue.zoneName : '');
+                }}
+                options={zoneList}
+                getOptionLabel={(zone) => zone?.zoneName}
                 size="small"
                 renderInput={(params) => (
                   <TextField {...params} style={{ fontSize: '12px' }} placeholder="Select Zone" />
@@ -222,10 +237,7 @@ const Holiday = () => {
               />
             </Grid>
             <Grid item xs={12} sm={9} md={9} display={'flex'} justifyContent={'end'}>
-              <TextField type="text" size="small" placeholder="Search" />
-              <Button variant="contained" style={{ marginLeft: '10px' }}>
-                Go
-              </Button>
+              <TextField type="text" size="small" placeholder="Search" onChange={(e) => fetchData(e.target.value)} />
             </Grid>
           </Grid>
 

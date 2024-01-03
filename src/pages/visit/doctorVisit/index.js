@@ -1,5 +1,6 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable arrow-body-style */
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid, nbNO } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,16 +16,37 @@ import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
+
+const filterType = [
+  {
+    label: "Closed Visits",
+    value: "Closed"
+  },
+  {
+    label: "Open Visits",
+    value: "Open"
+  },
+  {
+    label: "Rescheduled Visits",
+    value: "Rescheduled"
+  },
+  {
+    label: "Skipped Visits",
+    value: "Skipped"
+  },
+]
 const Visit = () => {
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const dispatch = useDispatch();
+  const [doctorVisitList, setDoctorVisitList] = useState([])
+  const [employeeList, setEmployeeList] = useState([]);
 
   const doctorVisit = useSelector((state) => state?.getDoctorVisit?.data);
   const zoneList = useSelector((state) => state?.getZone?.data);
   const cityList = useSelector((state) => state?.getCity?.data);
-  const employeeList = useSelector((state) => state?.getEmployee?.data);
+  const employee = useSelector((state) => state?.getEmployee?.data);
 
   const columns = [
     {
@@ -33,7 +55,7 @@ const Visit = () => {
       width: 250,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async () => {};
+        const handleClick = async () => { };
         return (
           <Box onClick={handleClick}>
             <Stack direction={'row'} spacing={2}>
@@ -98,23 +120,75 @@ const Visit = () => {
     },
   ];
 
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-  ];
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentYear = currentDate.getFullYear();
+
+  const getLastWeekDates = () => {
+    const today = new Date();
+    const lastWeekStart = new Date(today);
+    lastWeekStart.setDate(today.getDate() - 7);
+
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(lastWeekStart);
+      date.setDate(lastWeekStart.getDate() + i);
+      dates.push(date.toISOString().split('T')[0]).toString();
+    }
+
+    return dates;
+  };
+
+  const lastWeekDates = getLastWeekDates();
+
+
+  const visitList = [
+    {
+      name: "Today Visits",
+      date: moment(currentDate).format("YYYY-MM-DD")
+    },
+    {
+      name: "This Week Visits",
+      date: lastWeekDates
+    },
+    {
+      name: "This Month Visits",
+      date: currentMonth.toString()
+    },
+    {
+      name: "This Year Visits",
+      date: currentYear.toString()
+    },
+  ]
+
+
+  const fetchEmployee = (name) => {
+    if (employee) {
+      const filtered = employee?.filter(({ contactInformation }) =>
+        contactInformation?.division?.toLowerCase() === name?.toLowerCase() ||
+        contactInformation?.zone?.toLowerCase() === name?.toLowerCase()
+      )
+      setEmployeeList(name?.length > 0 ? (filtered?.length > 0 ? filtered : []) : employee)
+
+    }
+  }
+
+  const fetchData = (searchText) => {
+    const filtered = doctorVisit?.filter(({ visitId, doctorId, doctorName, clinicAddress, zoneName, cityName, employeeName, visitDate, status }) =>
+      visitId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      doctorName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      clinicAddress?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      zoneName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      cityName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      moment(visitDate)?.format("YYYY-MM-DD")?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      moment(visitDate)?.format("MM")?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      moment(visitDate)?.format("YYYY")?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      status?.toLowerCase()?.includes(searchText?.toLowerCase())
+    );
+    setDoctorVisitList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : doctorVisit);
+  }
 
   const downloadCSV = async () => {
     await apiget('/api/doctorvisit/export-csv');
@@ -126,6 +200,10 @@ const Visit = () => {
     dispatch(fetchCityData());
     dispatch(fetchEmployeeData());
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [doctorVisit]);
 
   return (
     <div>
@@ -144,81 +222,89 @@ const Visit = () => {
         </Stack>
         <TableStyle>
           <Box width="100%" pt={3}>
-            <Stack  width="60%" direction="row" spacing={2} my={2}>
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                options={top100Films}
-                size="small"
-                fullWidth
-                renderInput={(params) => (
-                  <TextField {...params} placeholder="All Visits" style={{ fontSize: '12px' }} />
-                )}
-              />
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                options={top100Films}
-                size="small"
-                fullWidth
-                renderInput={(params) => <TextField {...params} placeholder="" style={{ fontSize: '12px' }} />}
-              />
-              <Autocomplete
-                size="small"
-                // onChange={(event, newValue) => {
-                //     formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
-                //     fetchDoctor(newValue ? newValue.zoneName : "")
-                //     fetchEmployee(newValue ? newValue.zoneName : "")
-                // }}
-                fullWidth
-                options={zoneList}
-                value={zoneList.find((zone) => zone.zoneName) || null}
-                getOptionLabel={(zone) => zone?.zoneName}
-                style={{ textTransform: 'capitalize' }}
-                renderInput={(params) => (
-                  <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Zone" />
-                )}
-              />
-              <Autocomplete
-                size="small"
-                // onChange={(event, newValue) => {
-                //     formik.setFieldValue('city', newValue ? newValue.cityName : "");
-                // }}
-                fullWidth
-                options={cityList}
-                value={cityList.find((city) => city.cityName) || null}
-                getOptionLabel={(city) => city?.cityName}
-                style={{ textTransform: 'capitalize' }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    style={{ textTransform: 'capitalize' }}
-                    placeholder="Select City"
-                    // error={formik.touched.city && Boolean(formik.errors.city)}
-                    // helperText={formik.touched.city && formik.errors.city}
-                  />
-                )}
-              />
-              <Autocomplete
-                size="small"
-                // onChange={(event, newValue) => {
-                //     formik.setFieldValue('employee', newValue ? newValue?.basicInformation?.employeesName : "");
-                // }}
-                fullWidth
-                options={employeeList}
-                value={employeeList.find((employee) => employee?.basicInformation?.employeesName) || null}
-                getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
-                style={{ textTransform: 'capitalize' }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    style={{ textTransform: 'capitalize' }}
-                    placeholder="Select Employee"
-                    // error={formik.touched.employee && Boolean(formik.errors.employee)}
-                    // helperText={formik.touched.employee && formik.errors.employee}
-                  />
-                )}
-              />
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 2, md: 1 }}>
+              <Grid item xs={12} sm={4} md={2}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue?.value : "");
+                  }}
+                  options={filterType}
+                  getOptionLabel={(type) => type?.label}
+                  size='small'
+                  fullWidth
+                  style={{ textTransform: "capitalize" }}
+                  renderInput={(params) => <TextField {...params} placeholder='Select Type' style={{ fontSize: "12px", textTransform: "capitalize" }} />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4} md={2}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue?.date : "");
+                  }}
+                  options={visitList}
+                  getOptionLabel={(visit) => visit?.name}
+                  size='small'
+                  fullWidth
+                  renderInput={(params) => <TextField {...params} placeholder='Select Type' style={{ fontSize: "12px" }} />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4} md={2}>
+                <Autocomplete
+                  disablePortal
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.zoneName : "");
+                    fetchEmployee(newValue ? newValue.zoneName : "");
+                  }}
+                  id="combo-box-demo"
+                  options={zoneList}
+                  getOptionLabel={(zone) => zone?.zoneName}
+                  size='small'
+                  fullWidth
+                  renderInput={(params) => <TextField {...params} placeholder='Select Zone' style={{ fontSize: "12px" }} />}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4} md={2}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.cityName : "");
+                  }}
+                  options={cityList}
+                  getOptionLabel={(city) => city?.cityName}
+                  fullWidth
+                  size='small'
+                  renderInput={(params) => <TextField {...params} placeholder='Select City' />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4} md={2}>
+                <Autocomplete
+                  disablePortal
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
+                  }}
+                  id="combo-box-demo"
+                  options={employeeList}
+                  size='small'
+                  fullWidth
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
+                  renderInput={(params) => <TextField {...params} placeholder='Select Employee' style={{ fontSize: "12px" }} />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4} md={2}>
+                <TextField
+                  type='text'
+                  size='small'
+                  fullWidth
+                  placeholder='Search'
+                  onChange={(e) => fetchData(e.target.value)}
+                />
+              </Grid>
               {/* <TextField
                                 type='date'
                                 size='small'
@@ -232,14 +318,11 @@ const Visit = () => {
                                 label='To Date'
                                 fullWidth
                             /> */}
-            </Stack>
+
+            </Grid>
             <Card style={{ height: '72vh', paddingTop: '15px' }}>
-              <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'end'} mb={2}>
-                <TextField type="text" size="small" placeholder="Search" />
-                <Button variant="contained">Go</Button>
-              </Stack>
               <DataGrid
-                rows={doctorVisit}
+                rows={doctorVisitList}
                 columns={columns}
                 initialState={{
                   pagination: {

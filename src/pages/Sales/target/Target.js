@@ -1,9 +1,11 @@
+/* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
+import * as XLSX from 'xlsx'
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -11,6 +13,9 @@ import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import AddTarget from './AddTarget';
 import { fetchTargetData } from '../../../redux/slice/GetTargetSlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const yearList = [
     "2019",
@@ -44,12 +49,16 @@ const quarterList = [
 
 const Target = () => {
 
-    const [taxList, setTaxList] = useState([])
+    const [targetList, setTargetList] = useState([])
+    const [employeeList, setEmployeeList] = useState([])
     const dispatch = useDispatch();
 
-    const targetList = useSelector((state) => state?.getTarget?.data)
 
-    console.log(targetList, "targetList")
+    const target = useSelector((state) => state?.getTarget?.data)
+    const zoneList = useSelector((state) => state?.getZone?.data)
+    const divisionList = useSelector((state) => state?.getDivision?.data)
+    const employee = useSelector((state) => state?.getEmployee?.data)
+
 
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -65,24 +74,29 @@ const Target = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
-    const top100Films = [
-        { label: 'The Shawshank Redemption', year: 1994 },
-        { label: 'The Godfather', year: 1972 },
-        { label: 'The Godfather: Part II', year: 1974 },
-        { label: 'The Dark Knight', year: 2008 },
-        { label: '12 Angry Men', year: 1957 },
-        { label: "Schindler's List", year: 1993 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-        { label: 'Pulp Fiction', year: 1994 },
-    ]
-
+    const convertJsonToExcel = (jsonArray, fileName) => {
+        const field = jsonArray?.map((item) => {
+            return {
+                "Sr No": item?.srNo,
+                "Employee Name": item?.employeeName,
+                "Headquarter": "",
+                "Frequency": item?.frequency,
+                "Month": item?.month,
+                "Quarter": item?.quarter,
+                "Year": item?.year,
+                "Pob Sec Value": item?.pobSec,
+                "Firm Sec Value": item?.firmSec,
+                "No Of Dr Visit": item?.noOfDrVisit,
+                "No Of Chemist Visit": item?.noOfChemistVisit,
+                "No Of New Chemist Addition": item?.noOfNewChemistAdddition,
+                "No Of New Doctor Addition": item?.noOfNewDoctorAdddition,
+            };
+        });
+        const ws = XLSX.utils.json_to_sheet(field);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+        XLSX.writeFile(wb, `${fileName}.xls`);
+    };
 
     const columns = [
         // {
@@ -137,11 +151,36 @@ const Target = () => {
         },
     ];
 
+    const fetchData = async (searchText) => {
+        const filtered = target?.filter(({ zone, employeeName, month, quarter, year }) =>
+            zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            month?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            quarter?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+            year?.toLowerCase()?.includes(searchText?.toLowerCase())
+        )
+        setTargetList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : target)
+    };
 
+    const fetchEmployee = (division) => {
+        if (employee) {
+            const filterEmp = employee?.filter((employee) => employee?.contactInformation?.division?.toLowerCase() === division?.toLowerCase())
+            setEmployeeList(filterEmp);
+        }
+    }
 
     useEffect(() => {
         dispatch(fetchTargetData());
+        dispatch(fetchZoneData());
+        dispatch(fetchDivisionData());
+        dispatch(fetchEmployeeData());
     }, [])
+
+    useEffect(() => {
+        fetchData();
+    }, [target])
+
+
     return (
         <div>
             {/* Add Target */}
@@ -154,8 +193,12 @@ const Target = () => {
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
                                 disablePortal
+                                onChange={(event, newValue) => {
+                                    fetchData(newValue ? newValue.zoneName : "");
+                                }}
                                 id="combo-box-demo"
-                                options={top100Films}
+                                options={zoneList}
+                                getOptionLabel={(zone) => zone?.zoneName}
                                 size='small'
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} placeholder='Select Zone' style={{ fontSize: "12px" }} />}
@@ -165,7 +208,11 @@ const Target = () => {
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                options={top100Films}
+                                onChange={(event, newValue) => {
+                                    fetchEmployee(newValue ? newValue.divisionName : "");
+                                }}
+                                options={divisionList}
+                                getOptionLabel={(division) => division?.divisionName}
                                 size='small'
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} placeholder='Select Division' style={{ fontSize: "12px" }} />}
@@ -174,22 +221,25 @@ const Target = () => {
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
                                 disablePortal
+                                onChange={(event, newValue) => {
+                                    fetchData(newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
+                                }}
                                 id="combo-box-demo"
-                                options={top100Films}
+                                options={employeeList}
                                 size='small'
                                 fullWidth
+                                getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                 renderInput={(params) => <TextField {...params} placeholder='Select Employee' style={{ fontSize: "12px" }} />}
                             />
                         </Grid>
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
                                 size="small"
-                                // onChange={(event, newValue) => {
-                                //     formik.setFieldValue('month', newValue || "");
-                                // }}
+                                onChange={(event, newValue) => {
+                                    fetchData(newValue || '');
+                                }}
                                 fullWidth
                                 options={monthList}
-                                // value={monthList.find(month => month === formik.values.month) || null}
                                 getOptionLabel={(month) => month}
                                 style={{ textTransform: 'capitalize' }}
                                 renderInput={(params) => (
@@ -197,8 +247,6 @@ const Target = () => {
                                         {...params}
                                         style={{ textTransform: 'capitalize' }}
                                         placeholder='Select Month'
-                                    // error={formik.touched.month && Boolean(formik.errors.month)}
-                                    // helperText={formik.touched.month && formik.errors.month}
                                     />
                                 )}
                             />
@@ -206,12 +254,11 @@ const Target = () => {
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
                                 size="small"
-                                // onChange={(event, newValue) => {
-                                //     formik.setFieldValue('quarter', newValue || "");
-                                // }}
+                                onChange={(event, newValue) => {
+                                    fetchData(newValue || '');
+                                }}
                                 fullWidth
                                 options={quarterList}
-                                // value={quarterList.find(quarter => quarter === formik.values.quarter) || null}
                                 getOptionLabel={(quarter) => quarter}
                                 style={{ textTransform: 'capitalize' }}
                                 renderInput={(params) => (
@@ -219,8 +266,6 @@ const Target = () => {
                                         {...params}
                                         style={{ textTransform: 'capitalize' }}
                                         placeholder='Select Quarter'
-                                    // error={formik.touched.quarter && Boolean(formik.errors.quarter)}
-                                    // helperText={formik.touched.quarter && formik.errors.quarter}
                                     />
                                 )}
                             />
@@ -228,12 +273,11 @@ const Target = () => {
                         <Grid item xs={12} sm={2} md={2}>
                             <Autocomplete
                                 size="small"
-                                // onChange={(event, newValue) => {
-                                //     formik.setFieldValue('year', newValue || "");
-                                // }}
+                                onChange={(event, newValue) => {
+                                    fetchData(newValue || '');
+                                }}
                                 fullWidth
                                 options={yearList}
-                                // value={yearList.find(year => year === formik.values.year) || null}
                                 getOptionLabel={(year) => year}
                                 style={{ textTransform: 'capitalize' }}
                                 renderInput={(params) => (
@@ -241,19 +285,16 @@ const Target = () => {
                                         {...params}
                                         style={{ textTransform: 'capitalize' }}
                                         placeholder='Select Year'
-                                        // error={formik.touched.year && Boolean(formik.errors.year)}
-                                        // helperText={formik.touched.year && formik.errors.year}
                                     />
                                 )}
                             />
                         </Grid>
-
                     </Grid>
                     <Stack direction={"row"} spacing={2} my={2}>
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                             Add New
                         </Button>
-                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={handleOpenAdd}>
+                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(target, 'target')}>
                             Export
                         </Button>
                     </Stack>

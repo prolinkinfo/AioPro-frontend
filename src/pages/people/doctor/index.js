@@ -35,6 +35,7 @@ import DeleteModel from '../../../components/Deletemodle';
 const Doctor = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
+  const [doctorList, setDoctorList] = useState([]);
   const dispatch = useDispatch();
   const [id, setId] = useState('');
   const navigate = useNavigate();
@@ -268,20 +269,43 @@ const Doctor = () => {
     { label: 'Pulp Fiction', year: 1994 },
   ];
 
+  const fetchData = async (searchText) => {
+    const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber,qualification,email,gender }) =>
+      doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      doctorName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // addressInformation?.city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // addressInformation?.division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // addressInformation?.pincode?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // addressInformation?.state?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // addressInformation?.zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // workInformation?.assignedTo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // workInformation?.category?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // workInformation?.firmName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // workInformation?.type?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      hospitalName?.toLowerCase()?.includes(searchText?.toLowerCase())
+    )
+    setDoctorList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : data)
+  };
+
+
   useEffect(() => {
     dispatch(fetchDoctorData());
   }, [userAction]);
 
+  useEffect(() => {
+    fetchData();
+  }, [data]);
 
-  
-// ======================== XLS File ================================================
 
-const convertJsonToExcel = (jsonArray, fileName) => {
-  const ws = XLSX.utils.json_to_sheet(jsonArray);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-  XLSX.writeFile(wb, `${fileName}.xls`);
-};
+
+  // ======================== XLS File ================================================
+
+  const convertJsonToExcel = (jsonArray, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(jsonArray);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, `${fileName}.xls`);
+  };
 
   return (
     <div>
@@ -411,8 +435,7 @@ const convertJsonToExcel = (jsonArray, fileName) => {
               </Grid>
               <Grid item xs={12} sm={3} md={3}>
                 <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'end'} mb={2}>
-                  <TextField type="text" size="small" placeholder="Search" />
-                  <Button variant="contained">Go</Button>
+                  <TextField type="text" size="small" placeholder="Search" onChange={(e) => fetchData(e.target.value)} />
                 </Stack>
               </Grid>
             </Grid>
@@ -423,7 +446,7 @@ const convertJsonToExcel = (jsonArray, fileName) => {
                 </Box>
               ) : (
                 <DataGrid
-                  rows={data}
+                  rows={doctorList}
                   columns={columns}
                   initialState={{
                     pagination: {
