@@ -64,7 +64,7 @@ const AddVisit = (props) => {
         employee: '',
         visitDate: '',
         createdBy: id,
-        visitBy:''
+        visitBy: ''
     };
 
     const addVisit = async (values) => {
@@ -76,7 +76,7 @@ const AddVisit = (props) => {
             doctorName: values?.doctor,
             employeeName: values?.employee,
             visitDate: values?.visitDate,
-            visitBy:values?.visitBy
+            visitBy: values?.visitBy
         }
 
         const result = await apipost('/api/doctorvisit', payload);
@@ -213,23 +213,19 @@ const AddVisit = (props) => {
                                 <Grid item xs={12} sm={12} md={12}>
                                     <FormLabel>Employee</FormLabel>
                                     <Autocomplete
-                                        size="small"
-                                        onChange={(event, newValue) => {
-                                            formik.setFieldValue('employee', newValue ? newValue?.basicInformation?.employeesName : "");
-                                        }}
-                                        fullWidth
+                                        disablePortal
+                                        name="employee"
+                                        id="combo-box-demo"
+                                        onChange={(event, newValue) =>
+                                            formik.setFieldValue("employee", newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : "")
+                                        }
                                         options={employeeList}
-                                        value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik?.values?.employee) || null}
-                                        getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
-                                        style={{ textTransform: 'capitalize' }}
+                                        value={employeeList.find((employee) => `${employee?.basicInformation?.firstName}${employee?.basicInformation?.surname}` === formik.values.employee) || null}
+                                        getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
+                                        size="small"
+                                        fullWidth
                                         renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                style={{ textTransform: 'capitalize' }}
-                                                placeholder='Select Employee'
-                                                error={formik.touched.employee && Boolean(formik.errors.employee)}
-                                                helperText={formik.touched.employee && formik.errors.employee}
-                                            />
+                                            <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
                                         )}
                                     />
                                 </Grid>

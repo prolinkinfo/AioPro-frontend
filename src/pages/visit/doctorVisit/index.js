@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-plusplus */
 /* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material';
@@ -47,6 +48,14 @@ const Visit = () => {
   const zoneList = useSelector((state) => state?.getZone?.data);
   const cityList = useSelector((state) => state?.getCity?.data);
   const employee = useSelector((state) => state?.getEmployee?.data);
+
+  const fullName = (name) => {
+    let separatedNames = name.split(/(?=[A-Z])/);
+    let firstName = separatedNames[0];
+    let lastName = separatedNames[1];
+
+    return `${firstName} ${lastName}`
+  }
 
   const columns = [
     {
@@ -104,6 +113,9 @@ const Visit = () => {
       field: 'employeeName',
       headerName: 'Employee Name',
       width: 200,
+      renderCell: (params) => {
+        return <Box>{fullName(params?.row?.employeeName)}</Box>;
+      },
     },
     {
       field: 'visitDate',

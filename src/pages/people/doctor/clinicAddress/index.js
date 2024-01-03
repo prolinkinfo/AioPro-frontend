@@ -3,14 +3,17 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import EditIcon from '@mui/icons-material/Edit';
 import TableStyleTwo from '../../../../components/TableStyleTwo'
 import Iconify from '../../../../components/iconify'
 import AddClinicAddress from './Add'
 import { fetchDoctorData } from '../../../../redux/slice/GetDoctorSlice'
 import { apiget } from '../../../../service/api'
+import Edit from "./Edit"
 
 const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
 
+    const [clinicAddressDetails, setClinicAddressDetails] = useState({})
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
     const handleOpenAdd = () => setIsOpen(true)
@@ -20,6 +23,13 @@ const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
     const params = useParams();
     // const [data, setData] = useState({});
 
+    const d =(value1,value2)=>{
+        const percentage = (value1 / value2) * 100;
+        return percentage
+    }
+
+    console.log(d(10,50));
+
     const columns = [
         {
             field: "",
@@ -27,6 +37,21 @@ const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
             cellClassName: "name-column--cell name-column--cell--capitalize",
             width: 100,
             sortable: false,
+            renderCell: (params) => {
+                const handleClick = async (data) => {
+                    setClinicAddressDetails(data);
+                    handleOpenEdit();
+                };
+                return (
+                    <Box>
+                        <Edit isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit}  data={clinicAddressDetails} />
+
+                        <Stack direction={"row"} spacing={2}>
+                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
+                        </Stack>
+                    </Box>
+                );
+            },
         },
         {
             field: "doctorName",
@@ -78,7 +103,7 @@ const ClinicAddress = ({ data, setUserAction, clinicAddress }) => {
         },
     ];
 
-console.log(clinicAddress,"clinicAddress")
+    console.log(clinicAddress, "clinicAddress")
 
     return (
         <div>

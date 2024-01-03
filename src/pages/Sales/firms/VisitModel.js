@@ -150,11 +150,11 @@ const VisitModel = (props) => {
                     name="employeeName"
                     id="combo-box-demo"
                     onChange={(event, newValue) =>
-                      formik.setFieldValue("employeeName", newValue ? newValue?.basicInformation?.firstName : "")
+                      formik.setFieldValue("employeeName", newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : "")
                     }
                     options={employeeList}
-                    value={employeeList.find((item) => item.basicInformation?.firstName === formik.values.employeeName) || null}
-                    getOptionLabel={(employee) => employee?.basicInformation?.firstName}
+                    value={employeeList.find((employee) => `${employee?.basicInformation?.firstName}${employee?.basicInformation?.surname}` === formik.values.employeeName) || null}
+                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                     size="small"
                     fullWidth
                     renderInput={(params) => (

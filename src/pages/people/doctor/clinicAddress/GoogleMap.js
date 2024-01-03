@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 import axios from 'axios';
 
-const GoogleMap = ({ google, location, stateLocation }) => {
+const GoogleMap = ({ google,data, location, stateLocation }) => {
   const [latLng, setLatLng] = useState({});
 
   const onMarkerDragEnd = ({ latLng }, event) => {

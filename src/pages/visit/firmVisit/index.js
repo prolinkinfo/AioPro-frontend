@@ -74,6 +74,13 @@ const FirmVisit = () => {
             field: 'employeeName',
             headerName: 'Employee Name',
             width: 300,
+            renderCell: (params) => {
+                return (
+                    <Box>
+                        {fullName(params?.row?.employeeName)}
+                    </Box>
+                );
+            },
         },
         {
             field: 'visitDate',
@@ -99,6 +106,15 @@ const FirmVisit = () => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
+
+
+    const fullName = (name) => {
+        let separatedNames = name.split(/(?=[A-Z])/);
+        let firstName = separatedNames[0];
+        let lastName = separatedNames[1];
+    
+        return `${firstName} ${lastName}`
+      }
 
     const getLastWeekDates = () => {
         const today = new Date();

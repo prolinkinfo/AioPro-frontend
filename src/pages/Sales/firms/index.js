@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 /* eslint-disable arrow-body-style */
 import React, { useState, useEffect } from 'react';
 import {
@@ -72,14 +73,38 @@ const Firms = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const open = Boolean(anchorEl);
+  const [employeeList, setEmployeeList] = useState([])
 
   const cityData = useSelector((state) => state?.getCity?.data);
   const zoneList = useSelector((state) => state?.getZone?.data);
   const divisionList = useSelector((state) => state?.getDivision?.data);
   const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data);
-  const employeeList = useSelector((state) => state?.getEmployee?.data);
+  const employee = useSelector((state) => state?.getEmployee?.data);
   const firmData = useSelector((state) => state?.geFirmType?.data);
   const { data, errro, isLoading } = useSelector((state) => state?.getFirm);
+
+
+  const fetchData = async (searchText) => {
+    const filtered = data?.filter(({ division, status, firmType, zone, city, assignedTo }) =>
+      division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      status?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      firmType?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      assignedTo?.toLowerCase()?.includes(searchText?.toLowerCase())
+    )
+    setFirmsList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : data)
+  };
+
+  const fetchEmployee = (searchText) => {
+    if (employee) {
+      const filterEmp = employee?.filter((employee) =>
+        employee?.contactInformation?.zone?.toLowerCase() === searchText?.toLowerCase() ||
+        employee?.contactInformation?.division?.toLowerCase() === searchText?.toLowerCase()
+      )
+      setEmployeeList(searchText?.length > 0 ? (filterEmp?.length > 0 ? filterEmp : []) : employee);
+    }
+  }
 
 
   useEffect(() => {
@@ -93,6 +118,11 @@ const Firms = () => {
     dispatch(fetchfirmData());
   }, []);
 
+  useEffect(() => {
+    fetchData();
+    fetchEmployee();
+  }, [data, employee])
+
   const handleClickOpenModel = (value) => {
     // console.log("value",value)
     setFirmId(value);
@@ -105,7 +135,7 @@ const Firms = () => {
     if (result && result.status === 200) {
       setOpenModel(false);
       fetchdata();
-      dispatch(fetchfirmData());  
+      dispatch(fetchfirmData());
     }
   };
 
@@ -116,6 +146,12 @@ const Firms = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const fullName = (name) => {
+    console.log(name)
+
+    // return `${firstName} ${lastName}`
+  }
 
   const columns = [
     {
@@ -188,7 +224,14 @@ const Firms = () => {
     { field: 'division', headerName: 'Division', width: 130 },
     { field: 'category', headerName: 'Firm Category', width: 130 },
 
-    { field: 'assignedTo', headerName: 'Employee Assigned', width: 130 },
+    {
+      field: 'assignedTo',
+      headerName: 'Employee Assigned',
+      width: 130,
+      renderCell: (params) => {
+        return <Box>{fullName(params?.row?.employeeName)} </Box>;
+      },
+    },
     { field: 'assignedFirm', headerName: 'Assigned Firm', width: 130 },
     { field: 'email', headerName: 'Email', width: 130 },
     { field: 'address', headerName: 'Address', width: 130 },
@@ -217,8 +260,8 @@ const Firms = () => {
             <Button
               variant="outlined"
               style={{
-                color: params.value === 'Approved' ? '#22C55E' : params.value === 'Unapproved' ? '#B61D18' :'#BDAC17',
-                background: params.value === 'Approved' ? '#22c55e29' :params.value === 'Unapproved' ? '#ff563029' :'#fff494',
+                color: params.value === 'Approved' ? '#22C55E' : params.value === 'Unapproved' ? '#B61D18' : '#BDAC17',
+                background: params.value === 'Approved' ? '#22c55e29' : params.value === 'Unapproved' ? '#ff563029' : '#fff494',
                 border: 'none',
               }}
             >
@@ -251,7 +294,7 @@ const Firms = () => {
   const handleOpenView = () => setIsOpen(true);
   const handleCloseView = () => setIsOpen(false);
 
-  const approvedFirm = (id) => {};
+  const approvedFirm = (id) => { };
 
   const convertJsonToExcel = (jsonArray, fileName) => {
 
@@ -259,29 +302,29 @@ const Firms = () => {
 
     jsonArray?.forEach((item) => {
 
-        jsonData.push({
-            'Firm Id': item?.firmId,
-            'Date': item?.date,
-            'Firm Code': item?.firmCode,
-            'Firm Name': item?.firmName,
-            'Firm Type': item?.firmType,
-            'Contact Number': item?.contactNumber,
-            'Contact Person Name': item?.contactPersonName,
-            'City': item?.city,
-            'Zone': item?.zone,
-            'Division': item?.division,
-            'Category': item?.category,
-            'Employee Assigned': item?.employeeAssigned,
-            'Assigned Firm Email': '',
-            'Email': item?.email,
-            'Address': item?.address,
-            'First Level Manager': item?.firstLevelManager,
-            'Second Level Manager': item?.secondLevelManager,
-            'Third Level Manager': item?.thirdLevelManager,
-            'Date of Birth': item?.dateOfBirth,
-            'Drug License Number': item?.drugLicenseNumber,
-            'Food License Number': item?.foodLicenseNumber,
-        });
+      jsonData.push({
+        'Firm Id': item?.firmId,
+        'Date': item?.date,
+        'Firm Code': item?.firmCode,
+        'Firm Name': item?.firmName,
+        'Firm Type': item?.firmType,
+        'Contact Number': item?.contactNumber,
+        'Contact Person Name': item?.contactPersonName,
+        'City': item?.city,
+        'Zone': item?.zone,
+        'Division': item?.division,
+        'Category': item?.category,
+        'Employee Assigned': item?.employeeAssigned,
+        'Assigned Firm Email': '',
+        'Email': item?.email,
+        'Address': item?.address,
+        'First Level Manager': item?.firstLevelManager,
+        'Second Level Manager': item?.secondLevelManager,
+        'Third Level Manager': item?.thirdLevelManager,
+        'Date of Birth': item?.dateOfBirth,
+        'Drug License Number': item?.drugLicenseNumber,
+        'Food License Number': item?.foodLicenseNumber,
+      });
 
     });
 
@@ -289,7 +332,7 @@ const Firms = () => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, `${fileName}.xls`);
-};
+  };
 
 
   return (
@@ -331,35 +374,39 @@ const Firms = () => {
                   options={StatusList}
                   size="small"
                   fullWidth
-                  // value={StatusList.find((option) => option.value === formik.values.Language)}
-                  // onChange={(e, value) => formik.setFieldValue('status', value?.value || null)}
+                  onChange={(e, value) =>
+                    fetchData(value ? value?.value : "")
+                  }
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select Status" style={{ fontSize: '12px' }} />
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Autocomplete
+                  disablePortal
                   size="small"
                   name="firmType"
-                  onChange={(event, newValue) => setFirmType(newValue?.firmType)}
+                  onChange={(e, value) =>
+                    fetchData(value ? value?.firmType : "")
+                  }
                   fullWidth
                   options={firmData}
-                  value={firmData.find((item) => item.firmType === firmType) || null}
                   getOptionLabel={(firm) => firm?.firmType}
-                  // style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
                     <TextField {...params} style={{ textTransform: 'capitalize' }} placeholder="Select Firm Type" />
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Autocomplete
                   disablePortal
-                  onChange={(event, newValue) => setFirmDivision(newValue?.divisionName)}
+                  onChange={(e, value) => {
+                    fetchData(value ? value?.divisionName : "");
+                    fetchEmployee(value ? value?.divisionName : "")
+                  }}
                   id="combo-box-demo"
                   options={divisionList}
-                  value={divisionList.find((item) => item.divisionName === firmDivision) || null}
                   getOptionLabel={({ divisionName }) => divisionName}
                   size="small"
                   fullWidth
@@ -368,13 +415,15 @@ const Firms = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  onChange={(event, newValue) => setFirmZone(newValue?.zoneName)}
+                  onChange={(e, value) => {
+                    fetchData(value ? value?.zoneName : "");
+                    fetchEmployee(value ? value?.zoneName : "")
+                  }}
                   options={zoneList}
-                  value={zoneList.find((item) => item.zoneName === firmZone) || null}
                   getOptionLabel={({ zoneName }) => zoneName}
                   size="small"
                   fullWidth
@@ -383,13 +432,14 @@ const Firms = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  onChange={(event, newValue) => setFirmCity(newValue?.cityName)}
+                  onChange={(e, value) => {
+                    fetchData(value ? value?.cityName : "");
+                  }}
                   options={cityData}
-                  value={cityData.find((item) => item.cityName === firmCity) || null}
                   getOptionLabel={({ cityName }) => cityName}
                   size="small"
                   fullWidth
@@ -398,22 +448,21 @@ const Firms = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Autocomplete
                   disablePortal
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? `${newValue.basicInformation?.firstName}${newValue.basicInformation?.surname}` : '');
+                  }}
                   id="combo-box-demo"
-                  onChange={(event, newValue) => setFirmEmployee(newValue?.basicInformation?.employeesName)}
                   options={employeeList}
-                  value={employeeList.find((item) => item.basicInformation?.employeesName === firmEmployee) || null}
-                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
-                  size="small"
+                  size='small'
                   fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
-                  )}
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
+                  renderInput={(params) => <TextField {...params} placeholder='Select Employee' style={{ fontSize: "12px" }} />}
                 />
               </Grid>
-              <Grid item xs={12} sm={2} md={1.7}>
+              {/* <Grid item xs={12} sm={2} md={1.7}>
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
@@ -427,14 +476,14 @@ const Firms = () => {
                     <TextField {...params} placeholder="Select Manager" style={{ fontSize: '12px' }} />
                   )}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Card style={{ height: '72vh', marginTop: '10px' }}>
               {isLoading ? (
-                <Box sx={{display:'flex',justifyContent:'center',alignItems:'center',height:"72vh"}}>Loading...</Box>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: "72vh" }}>Loading...</Box>
               ) : (
                 <DataGrid
-                  rows={data}
+                  rows={firmsList}
                   columns={columns}
                   initialState={{
                     pagination: {
