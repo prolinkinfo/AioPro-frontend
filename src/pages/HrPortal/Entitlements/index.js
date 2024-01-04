@@ -14,6 +14,7 @@ import Edit from './Edit'
 import { fetchLeaveEntitlementData } from '../../../redux/slice/GetLeaveEntitlementSlice';
 import DeleteModel from '../../../components/Deletemodle'
 import { apidelete } from '../../../service/api';
+import CustomMenu from '../../../components/CustomMenu';
 
 const Entitlements = () => {
 
@@ -26,7 +27,9 @@ const Entitlements = () => {
     const [data, setData] = useState('')
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = () => setIsOpenEdit(true)
@@ -43,24 +46,26 @@ const Entitlements = () => {
             width: 250,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClick = async (data) => {
-                    setData(data);
-                    handleOpenEdit();
-                };
-
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setData(data)
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <Edit isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchLeaveEntitlementData={fetchLeaveEntitlementData} data={data} />
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteData} id={id} />
 
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            handleOpenEdit={handleOpenEdit}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },
@@ -136,7 +141,7 @@ const Entitlements = () => {
         const result = await apidelete(`/api/leaveEntitlement/${id}`);
         setUserAction(result)
     }
- 
+
 
     useEffect(() => {
         dispatch(fetchLeaveEntitlementData());

@@ -10,6 +10,7 @@ import AddMedia from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchMediaGalleryData } from '../../../redux/slice/GetMediaGallerySlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const MediaGallery = () => {
 
@@ -21,7 +22,9 @@ const MediaGallery = () => {
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const handleOpenAdd = () => setIsOpenAdd(true)
     const handleCloseAdd = () => setIsOpenAdd(false)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClose = () => setAnchorEl(null);
+    const open = Boolean(anchorEl);
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
@@ -50,16 +53,23 @@ const MediaGallery = () => {
             width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteMedia} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            id={id}
+                            type={"edit"}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },

@@ -7,6 +7,7 @@ import Iconify from '../../../components/iconify'
 import AddAdministrator from './Add'
 import { apidelete, apiget } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
+import CustomMenu from '../../../components/CustomMenu';
 
 const Administrator = () => {
 
@@ -15,7 +16,9 @@ const Administrator = () => {
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [id, setId] = useState('')
     const [userAction, setUserAction] = useState(null)
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClose = () => setAnchorEl(null);
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
@@ -28,16 +31,22 @@ const Administrator = () => {
             width: 200,
             // eslint-disable-next-line arrow-body-style
             renderCell: (params) => {
-                const handleClickDeleteBtn = async (data) => {
-                    setId(data?._id);
-                    handleOpenDeleteModel();
+                const handleClick = async (data, e) => {
+                    setAnchorEl(e.currentTarget);
+                    setId(data?._id)
                 };
                 return (
                     <Box>
                         <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteAdministrator} id={id} />
-                        <Stack direction={"row"} spacing={2}>
-                            <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button>
-                        </Stack>
+                        <CustomMenu
+                            open={open}
+                            handleClick={handleClick}
+                            anchorEl={anchorEl}
+                            handleClose={handleClose}
+                            params={params}
+                            type={"edit"}
+                            handleOpenDeleteModel={handleOpenDeleteModel}
+                        />
                     </Box>
                 );
             },

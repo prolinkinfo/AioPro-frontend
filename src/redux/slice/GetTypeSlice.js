@@ -21,7 +21,7 @@ export const fetchTypeData = createAsyncThunk('fetchTypeData', async () => {
 
 
 const getTypeSlice = createSlice({
-  name: 'stateData',
+  name: 'typeData',
   initialState: {
     data: [],
     isLoading: false,

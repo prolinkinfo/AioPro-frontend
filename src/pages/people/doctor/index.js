@@ -32,11 +32,28 @@ import { fetchDoctorData } from '../../../redux/slice/GetDoctorSlice';
 import { apidelete } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle';
 import CustomMenu from '../../../components/CustomMenu';
+import { fetchDoctorSpecialityData } from '../../../redux/slice/GetDoctorSpecialitySlice';
+import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
+import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
+import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { fetchCityData } from '../../../redux/slice/GetCitySlice';
+import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+
+const statusList = [
+  "Active",
+  "Inactive",
+  "Deleted",
+  "Unassign",
+  "Add Client Request",
+  "Delete Client Request",
+]
 
 const Doctor = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const [doctorList, setDoctorList] = useState([]);
+  const [employeeList, setEmployeeList] = useState([]);
   const dispatch = useDispatch();
   const [id, setId] = useState('');
   const navigate = useNavigate();
@@ -52,6 +69,12 @@ const Doctor = () => {
   };
 
   const { data, errro, isLoading } = useSelector((state) => state?.getDoctor);
+  const specialityList = useSelector((state) => state?.getDoctorSpeciality?.data);
+  const categoryList = useSelector((state) => state?.getDoctorCategory?.data);
+  const divisionList = useSelector((state) => state?.getDivision?.data);
+  const zoneList = useSelector((state) => state?.getZone?.data);
+  const cityList = useSelector((state) => state?.getCity?.data);
+  const employee = useSelector((state) => state?.getEmployee?.data);
 
   const columns = [
     {
@@ -284,28 +307,46 @@ const Doctor = () => {
     const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber, qualification, email, gender }) =>
       doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       doctorName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      // addressInformation?.city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      // addressInformation?.division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      addressInformation?.city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      addressInformation?.division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       // addressInformation?.pincode?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       // addressInformation?.state?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      // addressInformation?.zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      // workInformation?.assignedTo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      // workInformation?.category?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      addressInformation?.zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      workInformation?.assignedTo?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      workInformation?.category?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       // workInformation?.firmName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       // workInformation?.type?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      hospitalName?.toLowerCase()?.includes(searchText?.toLowerCase())
+      hospitalName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // contactNumber?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      qualification?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      email?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      gender?.toLowerCase()?.includes(searchText?.toLowerCase()) 
     )
     setDoctorList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : data)
   };
 
+  const fetchEmployee = (searchText) => {
+    if (employee) {
+        const filterEmp = employee?.filter((employee) => employee?.contactInformation?.zone?.toLowerCase() === searchText?.toLowerCase())
+        setEmployeeList(searchText?.length > 0 ? (filterEmp?.length > 0 ? filterEmp : []) : employee);
+    }
+}
 
   useEffect(() => {
     dispatch(fetchDoctorData());
+    dispatch(fetchDoctorSpecialityData());
+    dispatch(fetchCategoryData());
+    dispatch(fetchTypeData());
+    dispatch(fetchDivisionData());
+    dispatch(fetchZoneData());
+    dispatch(fetchCityData());
+    dispatch(fetchEmployeeData());
   }, [userAction]);
 
   useEffect(() => {
     fetchData();
-  }, [data]);
+    fetchEmployee();
+  }, [data,employee]);
 
 
 
@@ -344,7 +385,11 @@ const Doctor = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.specialityName : "");
+                  }}
+                  options={specialityList}
+                  getOptionLabel={(speciality) => speciality?.specialityName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -356,7 +401,11 @@ const Doctor = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.categoryName : "");
+                  }}
+                  options={categoryList}
+                  getOptionLabel={(category) => category?.categoryName}
                   size="small"
                   fullWidth
                   renderInput={(params) => (
@@ -380,7 +429,10 @@ const Doctor = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue || "");
+                  }}
+                  options={statusList}
                   fullWidth
                   size="small"
                   renderInput={(params) => <TextField {...params} placeholder="Select Status" />}
@@ -390,9 +442,13 @@ const Doctor = () => {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.divisionName : "");
+                  }}
+                  options={divisionList}
                   fullWidth
                   size="small"
+                  getOptionLabel={(division) => division?.divisionName}
                   renderInput={(params) => <TextField {...params} placeholder="Select Division" />}
                 />
               </Grid>
@@ -401,7 +457,12 @@ const Doctor = () => {
                   disablePortal
                   id="combo-box-demo"
                   fullWidth
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.zoneName : "");
+                    fetchEmployee(newValue ? newValue.zoneName : "")
+                  }}
+                  options={zoneList}
+                  getOptionLabel={(zone) => zone?.zoneName}
                   size="small"
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select Zone" style={{ fontSize: '15px' }} />
@@ -413,7 +474,11 @@ const Doctor = () => {
                   disablePortal
                   id="combo-box-demo"
                   fullWidth
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? newValue.cityName : "");
+                  }}
+                  options={cityList}
+                  getOptionLabel={(city) => city?.cityName}
                   size="small"
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select City" style={{ fontSize: '15px' }} />
@@ -425,7 +490,12 @@ const Doctor = () => {
                   disablePortal
                   id="combo-box-demo"
                   fullWidth
-                  options={top100Films}
+                  onChange={(event, newValue) => {
+                    fetchData(newValue ? `${newValue?.basicInformation?.firstName}${newValue?.basicInformation?.surname}` : "");
+                  }}
+                  options={employeeList}
+                  value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname)}
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                   size="small"
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Select Employee" style={{ fontSize: '15px' }} />

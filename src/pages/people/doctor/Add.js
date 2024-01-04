@@ -74,15 +74,15 @@ const Add = () => {
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        doctorName: yup.string().required('Doctor Name is required'),
-        hospitalName: yup.string().required('Hospital Name is required'),
-        gender: yup.string().required('Gender is required'),
-        state: yup.string().required('State is required'),
-        city: yup.string().required('City is required'),
-        division: yup.string().required('Division is required'),
-        zone: yup.string().required('Zone is required'),
+        // doctorName: yup.string().required('Doctor Name is required'),
+        // hospitalName: yup.string().required('Hospital Name is required'),
+        // gender: yup.string().required('Gender is required'),
+        // state: yup.string().required('State is required'),
+        // city: yup.string().required('City is required'),
+        // division: yup.string().required('Division is required'),
+        // zone: yup.string().required('Zone is required'),
         // speciality: yup.string().required('Speciality is required'),
-        assignedTo: yup.string().required('Assigned To is required'),
+        // assignedTo: yup.string().required('Assigned To is required'),
     });
 
     const initialValues = {
@@ -148,7 +148,6 @@ const Add = () => {
 
     }
 
-
     // formik
     const formik = useFormik({
         initialValues,
@@ -157,6 +156,7 @@ const Add = () => {
             addDoctor(values)
         },
     });
+    console.log(formik.values.assignedTo)
 
 
     const fetchCityDatas = async (stateName) => {
@@ -572,13 +572,13 @@ const Add = () => {
                                 <Autocomplete
                                     size="small"
                                     onChange={(event, newValue) => {
-                                        formik.setFieldValue('assignedTo', newValue ? newValue.basicInformation?.employeesName
+                                        formik.setFieldValue('assignedTo', newValue ? `${newValue?.basicInformation?.firstName}${newValue?.basicInformation?.surname}`
                                             : "");
                                     }}
                                     fullWidth
                                     options={employeeList}
-                                    value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.assignedTo) || null}
-                                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                    value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.assignedTo)}
+                                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                     style={{ textTransform: 'capitalize' }}
                                     renderInput={(params) => (
                                         <TextField
