@@ -34,6 +34,7 @@ import { fetchQualificationData } from '../../../redux/slice/GetQualificationSli
 import { fetchCountryData } from '../../../redux/slice/getCountrySlice';
 import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import {fetchDesignation} from '../../../redux/slice/GetDesignationSlice'
 
 const names = [
   'Oliver Hansen',
@@ -148,6 +149,7 @@ const AddEmployees = () => {
   const qualificationList = useSelector((state) => state?.getQualification?.data);
   const country = useSelector((state) => state?.getCountry?.data);
   const state = useSelector((state) => state?.getState?.data);
+  const designation =useSelector((state)=>state?.getDesignation?.data)
 
   useEffect(() => {
     dispatch(fetchCityData());
@@ -156,6 +158,7 @@ const AddEmployees = () => {
     dispatch(fetchQualificationData());
     dispatch(fetchCountryData());
     dispatch(fetchStateData());
+    dispatch(fetchDesignation())
   }, [dispatch]);
 
   async function fetchdata() {
@@ -891,11 +894,12 @@ const AddEmployees = () => {
                 <Autocomplete
                   disablePortal
                   name="designation"
-                  options={top100Films}
+                  options={designation}
                   fullWidth
                   size="small"
-                  value={formik.values.designation}
-                  onChange={formik.handleChange}
+                  value={designation.find((item) => item.designation === formik.values.designation) || null}
+                  onChange={(e, value) => formik.setFieldValue('designation', value ? value.designation : '')}
+                  getOptionLabel={({ designation }) => designation}
                   renderInput={(params) => (
                     <TextField
                       {...params}

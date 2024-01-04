@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, Checkbox, Container, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useState, useEffect } from 'react';
 import TableStyle from '../../../components/TableStyle';
@@ -32,20 +32,26 @@ const Designations = () => {
         );
       },
     },
-    { field: 'designationName', headerName: 'Designation Name', width: 250 },
+    { field: 'designation', headerName: 'Designation Name', width: 250 },
     { field: 'abbreviation', headerName: 'Abbreviation', width: 250 },
     { field: 'leval', headerName: 'Lavel', width: 250 },
-    { field: 'managerApproval', headerName: 'Manager Approval', width: 250 },
+    {
+      field: 'managerApproval',
+      headerName: 'Manager Approval',
+      width: 250,
+      renderCell: (params) => {
+        const isChecked = params?.row?.approval;
+        console.log('params', params?.row?.approval);
+        return <Checkbox checked={isChecked} />;
+      },
+    },
   ];
 
   const fetchTypeData = async (e) => {
     const searchText = e?.target?.value;
-    const result = await apiget(`/api/activityType`);
+    const result = await apiget(`/api/designationsan`);
     if (result && result.status === 200) {
-      const filteredBooks = result?.data.filter(({ activityName }) =>
-        activityName?.toLowerCase()?.includes(searchText?.toLowerCase())
-      );
-      setTypeList(searchText?.length > 0 ? (filteredBooks?.length > 0 ? filteredBooks : []) : result?.data);
+      setTypeList(result?.data?.result);
     }
   };
 
@@ -53,6 +59,7 @@ const Designations = () => {
     fetchTypeData();
   }, []);
 
+  console.log('typeList', typeList);
   return (
     <div>
       <ActivityTypeAdd isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchTypeData={fetchTypeData} />
