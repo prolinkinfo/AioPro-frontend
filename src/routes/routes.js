@@ -120,6 +120,7 @@ import DataManagement from '../pages/settings/dataSetting/dataManagement';
 import ViewDoctor from '../pages/people/doctor/View';
 import Addtourplan from '../pages/calender/work/Addtourplan';
 import { Scheduler } from '../pages/calender/scheduler';
+import { Viewtourplan } from '../pages/calender/work/Viewtourplan';
 
 // ----------------------------------------------------------------------
 
@@ -182,6 +183,7 @@ export default function Router() {
         { path: 'calendar/leave', element: <LeaveCalendar /> },
         { path: 'calendar/addtourplan', element: <Addtourplan /> },
         { path: 'calendar/scheduler', element: <Scheduler /> },
+        { path: 'calendar/viewtourplan', element: <Viewtourplan /> },
 
 
         // setting

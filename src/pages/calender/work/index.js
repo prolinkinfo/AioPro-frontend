@@ -56,7 +56,7 @@ export const WorkCalender = () => {
 
           <Box sx={{ margin: '10px 5px', border: '2px solid #eee', borderRadius: '10px' }}>
             <Box sx={{ backgroundColor: '#eee', color: '#000', padding: '8px 10px' }}>
-              <Link to={`/${userRole}/dashboard/reports/firmvisits`} style={{ textDecoration: 'none', color: '#000' }}>
+              <Link to={`/${userRole}/dashboard/calendar/viewtourplan`} style={{ textDecoration: 'none', color: '#000' }}>
                 <Typography variant="h6">View Tour Plan</Typography>
               </Link>
             </Box>
