@@ -1,3 +1,4 @@
+import { Container, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
 export const Viewtourplan = () => {
@@ -28,7 +29,9 @@ export const Viewtourplan = () => {
       ];
 
       // Format the date string using template literal
-      const dateString = `${currentDay.toString().padStart(2, '0')}/${(currentMonth + 1).toString().padStart(2, '0')}/${currentYear}`;
+      const dateString = `${currentDay.toString().padStart(2, '0')}/${(currentMonth + 1)
+        .toString()
+        .padStart(2, '0')}/${currentYear}`;
 
       // Add the formatted date string to the array
       formattedDateStrings.push(`${dateString} (${dayOfWeekName})`);
@@ -41,15 +44,20 @@ export const Viewtourplan = () => {
     setDateStrings(formattedDateStrings);
   }, []); // Empty dependency array to ensure useEffect runs only once on component mount
 
-
   return (
-    <div>
-      {/* Render your component content here */}
-      <ul>
-        {dateStrings.map((dateString, index) => (
-          <li key={index}>{dateString}</li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="xl">
+      <Typography variant="h4">Monthly Tour Plan</Typography>
+      <Container sx={{ mt: '30px' }}>
+        <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 2, md: 1 }}>
+          <Grid item xs={12} sm={6} md={4}>
+            <ul style={{ height: '300px', overflowY: 'auto' }}>
+              {dateStrings.map((dateString, index) => (
+                <li key={index}>{dateString}</li>
+              ))}
+            </ul>
+          </Grid>
+        </Grid>
+      </Container>
+    </Container>
   );
 };
