@@ -47,7 +47,7 @@ export const Viewtourplan = () => {
   return (
     <Container maxWidth="xl">
       <Typography variant="h4">Monthly Tour Plan</Typography>
-      <Container sx={{ mt: '30px' }}>
+      <Container  maxWidth="xl" sx={{ mt: '30px' }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 2, md: 1 }}>
           <Grid item xs={12} sm={6} md={4}>
             <ul style={{ height: '300px', overflowY: 'auto' }}>
@@ -56,6 +56,7 @@ export const Viewtourplan = () => {
               ))}
             </ul>
           </Grid>
+          
         </Grid>
       </Container>
     </Container>
