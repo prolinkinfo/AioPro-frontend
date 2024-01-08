@@ -1,11 +1,13 @@
 /* eslint-disable prefer-const */
-import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, Container, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
+import { RxUpload, RxDownload } from "react-icons/rx";
+
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
@@ -15,13 +17,16 @@ import { apidelete, apiget } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchBackDateVisitData } from '../../../redux/slice/GetBackDateVisitSlice';
 import CustomMenu from '../../../components/CustomMenu';
+import BackDateListSample from '../../../assets/files/BackDateListSample.xls'
+import ImportFile from '../../../components/ImportFile';
 
 const BackDateVisit = () => {
 
   const [backDateVisitList, setBackDateVisitList] = useState([])
-  const [backDateVisitData, setBackDateVisitData] = useState('')
+  const [backDateVisitData, setBackDateVisitData] = useState({})
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [isOpenEdit, setIsOpenEdit] = useState(false)
+  const [isOpenImport, setIsOpenImport] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
   const [id, setId] = useState('')
@@ -95,6 +100,10 @@ const BackDateVisit = () => {
     },
   ];
 
+  const downloadSamFile = () => {
+    window.open(BackDateListSample);
+  }
+
   const fullName = (name) => {
     let separatedNames = name.split(/(?=[A-Z])/);
     let firstName = separatedNames[0];
@@ -126,6 +135,10 @@ const BackDateVisit = () => {
 
   return (
     <div>
+      {/* Import File */}
+      <ImportFile isOpenImport={isOpenImport} setIsOpenImport={setIsOpenImport} />
+
+      {/* Add BackDateVisit */}
       <AddBackDateVisit isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchBackDateVisitData={fetchBackDateVisitData} />
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
@@ -134,10 +147,24 @@ const BackDateVisit = () => {
         <TableStyle>
           <Box width="100%" pt={3}>
             <Stack direction={'row'} spacing={2} display={'flex'} justifyContent={'space-between'} mb={2}>
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                Add New
-              </Button>
-              <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
+              <Stack direction={'row'} spacing={2}>
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                  Add New
+                </Button>
+              </Stack>
+              <Stack direction={'row'} spacing={1} display={"flex"} alignItems={"center"}>
+                <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
+                <Tooltip title="Upload File" arrow>
+                  <Button sx={{ minWidth: "0px", padding: "0px" }}>
+                    <RxUpload fontSize={"28px"} cursor={"pointer"} onClick={() => setIsOpenImport(true)} />
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Download Sample File" arrow>
+                  <Button sx={{ minWidth: "0px", padding: "0px" }}>
+                    <RxDownload fontSize={"28px"} cursor={"pointer"} onClick={downloadSamFile} />
+                  </Button>
+                </Tooltip>
+              </Stack>
             </Stack>
             <Card style={{ height: '72vh' }}>
               <DataGrid

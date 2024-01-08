@@ -9,7 +9,7 @@ import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import AddTravel from './Add'
 import EditTravel from './Edit'
-import { apidelete, apiget } from '../../../service/api'
+import { apidelete, apiget, apiput } from '../../../service/api'
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchModeOfTravelData } from '../../../redux/slice/GetModeOfTravelSlice';
 import CustomMenu from '../../../components/CustomMenu';
@@ -77,7 +77,14 @@ const ModeOfTravel = () => {
             flex: 1,
             renderCell: (params) => {
                 const chengStatus = async (data) => {
-
+                    const pyload = {
+                        _id: data?._id,
+                        status: data?.status === "active" ? "deactive" : data?.status === "deactive" ? "active" : "",
+                    }
+                    const result = await apiput(`/api/modeoftravel/changeStatus`, pyload);
+                    if (result && result.status === 200) {
+                        dispatch(fetchModeOfTravelData());
+                    }
                 };
                 return (
                     <Box>

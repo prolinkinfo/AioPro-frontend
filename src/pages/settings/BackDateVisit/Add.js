@@ -101,7 +101,12 @@ const AddBackDateVisit = (props) => {
                   size="small"
                   fullWidth
                   renderInput={(params) => (
-                    <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
+                    <TextField {...params}
+                      placeholder="Select Employee"
+                      style={{ fontSize: '12px' }}
+                      error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                      helperText={formik.touched.employeeName && formik.errors.employeeName}
+                    />
                   )}
                 />
               </Grid>

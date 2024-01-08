@@ -3,38 +3,26 @@ import {
   Card,
   Stack,
   Button,
-  Container,
-  Typography,
   Box,
   TextField,
   Autocomplete,
   Grid,
-  Menu,
-  MenuItem,
 } from '@mui/material';
-import { DataGrid, GridToolbar, GridToolbarContainer, nbNO } from '@mui/x-data-grid';
-import { DeleteOutline } from '@mui/icons-material';
-import { useNavigate, Link } from 'react-router-dom';
-import MapIcon from '@mui/icons-material/Map';
+import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
 // import DeleteIcon from '@mui/icons-material/Delete';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../../components/iconify';
 import TableStyle from '../../../components/TableStyle';
 import AddHoliday from './Add';
 import Edit from './Edit';
-import { apidelete, apiget } from '../../../service/api';
+import { apidelete } from '../../../service/api';
 import DeleteModel from '../../../components/Deletemodle';
 import ImportFile from './ImportFile';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchHolidayCalendarData } from '../../../redux/slice/GetHolidayCalendarSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 // ----------------------------------------------------------------------
 
@@ -53,10 +41,7 @@ const Holiday = () => {
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true);
   const handleCloseEdit = () => setIsOpenEdit(false);
-  const handleOpenDeleteModel = (id) => {
-    setId(id)
-    setIsOpenDeleteModel(true);
-  };
+  const handleOpenDeleteModel = () => setIsOpenDeleteModel(true);
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false);
   const holidayCalendar = useSelector((state) => state?.getHolidayCalendar?.data);
   const zoneList = useSelector((state) => state?.getZone?.data);
@@ -71,11 +56,6 @@ const Holiday = () => {
   const userRole = user?.role.toLowerCase();
   const [fileImport, setFileImport] = useState(false);
 
-  const handleClick = async (data, event) => {
-    setHolidayData(data);
-    setAnchorEl(event.currentTarget);
-  };
-
   const columns = [
     {
       field: 'action',
@@ -84,37 +64,33 @@ const Holiday = () => {
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
+        const handleClick = async (data, event) => {
+          setHolidayData(data);
+          setAnchorEl(event.currentTarget);
+        };
         return (
           <Box>
-            <div>
-              <Button
-                id="demo-positioned-button"
-                aria-controls={open ? 'demo-positioned-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={(e) => handleClick(params?.row, e)}
-              >
-                <DragIndicatorIcon />
-              </Button>
-              <Menu
-                id="demo-positioned-menu"
-                aria-labelledby="demo-positioned-button"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button',
-                }}
-              >
-                <MenuItem onClick={() => handleOpenEdit()}>
-                  <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
-                </MenuItem>
-
-                <MenuItem onClick={() => handleOpenDeleteModel(holidayData?._id)}>
-                  <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
-                </MenuItem>
-              </Menu>
-            </div>
+            <Edit
+              isOpenEdit={isOpenEdit}
+              handleCloseEdit={handleCloseEdit}
+              fetchHolidayCalendarData={fetchHolidayCalendarData}
+              data={holidayData}
+            />
+            <DeleteModel
+              isOpenDeleteModel={isOpenDeleteModel}
+              handleCloseDeleteModel={handleCloseDeleteModel}
+              deleteData={deleteHolidayData}
+              id={id}
+            />
+            <CustomMenu
+              open={open}
+              handleClick={handleClick}
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              handleOpenEdit={handleOpenEdit}
+              params={params}
+              handleOpenDeleteModel={handleOpenDeleteModel}
+            />
           </Box>
         );
       },
@@ -141,23 +117,6 @@ const Holiday = () => {
     },
   ];
 
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-    { label: 'Pulp Fiction', year: 1994 },
-  ];
 
   const deleteHolidayData = async (id) => {
     console.log('data', id);
@@ -185,18 +144,6 @@ const Holiday = () => {
 
   return (
     <>
-      <Edit
-        isOpenEdit={isOpenEdit}
-        handleCloseEdit={handleCloseEdit}
-        fetchHolidayCalendarData={fetchHolidayCalendarData}
-        data={holidayData}
-      />
-      <DeleteModel
-        isOpenDeleteModel={isOpenDeleteModel}
-        handleCloseDeleteModel={handleCloseDeleteModel}
-        deleteData={deleteHolidayData}
-        id={id}
-      />
       <ImportFile isOpen={fileImport} handleClose={setFileImport} />
 
       <AddHoliday
