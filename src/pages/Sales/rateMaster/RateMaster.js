@@ -6,11 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../../components/iconify';
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-}
-
-
 
 const RateMaster = () => {
 
@@ -126,7 +121,6 @@ const RateMaster = () => {
                     //     formik.setFieldValue('division', newValue ? newValue.divisionName : "");
                     // }}
                     options={divisionList}
-                    value={divisionList.find(division => division.divisionName ) || null}
                     getOptionLabel={(division) => division?.divisionName}
                     style={{ textTransform: 'capitalize' }}
                     renderInput={(params) => (
@@ -134,8 +128,8 @@ const RateMaster = () => {
                             {...params}
                             style={{ textTransform: 'capitalize' }}
                             placeholder='Select Division'
-                            // error={formik.touched.division && Boolean(formik.errors.division)}
-                            // helperText={formik.touched.division && formik.errors.division}
+                        // error={formik.touched.division && Boolean(formik.errors.division)}
+                        // helperText={formik.touched.division && formik.errors.division}
                         />
                     )}
                 />
@@ -163,8 +157,14 @@ const RateMaster = () => {
                                 <TableCell align="left">
                                     {row.srNo}
                                 </TableCell>
-                                <TableCell align="left">
-                                    <TextField size='small' value={row.productName} disabled /></TableCell>
+                                <TableCell align="left" style={{ cursor: "not-allowed" }}>
+                                    <TextField size='small'
+                                        value={row.productName}
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                        disabled
+                                    /></TableCell>
                                 <TableCell align="left"><TextField size='small' value={row.distributor} /></TableCell>
                                 <TableCell align="left"><TextField size='small' value={row.stockist} /></TableCell>
                                 <TableCell align="left"><TextField size='small' value={row.retailer} /></TableCell>

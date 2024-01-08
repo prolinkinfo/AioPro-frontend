@@ -13,6 +13,7 @@ import { apidelete, apiget, apiput } from '../../../service/api';
 import EditExpenseHead from './Edit';
 import DeleteModel from '../../../components/Deletemodle'
 import { fetchExpenseHeadData } from '../../../redux/slice/GetExpenseHeadSlice';
+import CustomMenu from '../../../components/CustomMenu';
 
 const ExpenesHead = () => {
   const [headList, setHeadList] = useState([]);
@@ -23,7 +24,9 @@ const ExpenesHead = () => {
   const [headData, setHeadData] = useState('')
   const [id, setId] = useState('')
   const [userAction, setUserAction] = useState(null)
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClose = () => setAnchorEl(null);
+  const open = Boolean(anchorEl);
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
   const handleOpenEdit = () => setIsOpenEdit(true)
@@ -42,24 +45,26 @@ const ExpenesHead = () => {
       flex: 1,
       // eslint-disable-next-line arrow-body-style
       renderCell: (params) => {
-        const handleClick = async (data) => {
-          setHeadData(data);
-          handleOpenEdit();
-        };
-
-        const handleClickDeleteBtn = async (data) => {
-          setId(data?._id);
-          handleOpenDeleteModel();
+        const handleClick = async (data, e) => {
+          setAnchorEl(e.currentTarget);
+          setHeadData(data)
+          setId(data?._id)
         };
         return (
           <Box>
             <EditExpenseHead isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} data={headData} fetchExpenseHeadData={fetchExpenseHeadData} />
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteHead} id={id} />
 
-            <Stack direction={"row"} spacing={2}>
-              <Button variant='outlined' startIcon={<EditIcon />} size='small' onClick={() => handleClick(params?.row)}> Edit</Button>
-              {/* <Button variant='outlined' color='error' startIcon={<DeleteIcon />} size='small' onClick={() => handleClickDeleteBtn(params?.row)}> Delete</Button> */}
-            </Stack>
+            <CustomMenu
+              open={open}
+              handleClick={handleClick}
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              handleOpenEdit={handleOpenEdit}
+              params={params}
+              type={"delete"}
+              handleOpenDeleteModel={handleOpenDeleteModel}
+            />
           </Box>
         );
       },
@@ -141,7 +146,7 @@ const ExpenesHead = () => {
       title?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       monthlyCap?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       status?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      isEditable?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+      isEditable?.toLowerCase()?.includes(searchText?.toLowerCase())
     )
     setHeadList(searchText?.length > 0 ? (filteredHead?.length > 0 ? filteredHead : []) : expenseHeadData)
   };

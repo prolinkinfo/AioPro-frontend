@@ -225,7 +225,7 @@ const Firms = () => {
     { field: 'category', headerName: 'Firm Category', width: 130 },
 
     {
-      field: 'assignedTo',
+      field: 'employeeAssigned',
       headerName: 'Employee Assigned',
       width: 130,
       renderCell: (params) => {
