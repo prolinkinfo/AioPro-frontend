@@ -26,6 +26,7 @@ import { Link } from 'react-router-dom';
 import { Dayjs } from 'dayjs';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import { apiget, apipost } from '../../../service/api';
 
 const steps = ['Step 1', 'Step 2'];
 
@@ -34,6 +35,7 @@ const Addtourplan = () => {
   const [doctor, setDoctor] = useState(false);
   const [doctorZone, setDoctorZone] = useState(0);
   const [index, setIndex] = useState(0);
+  const [data,setData]=useState([])
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
@@ -66,15 +68,28 @@ const Addtourplan = () => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setData(values)
       console.log('values', values);
     },
   });
 
   const currentYear = new Date().getFullYear();
 
-  const staptwo = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    console.log('11111', doctor, '22222', doctorZone);
+  const staptwo = async () => {
+    const pyload = {
+      zone: data?.zone,
+      employee: data?.employee,
+      month: data?.month,
+      year: data?.year,
+      Doctor:doctor,
+      DoctorZone:doctorZone
+    };
+
+    const result = await apipost('/api/tourplan', pyload);
+    if (result && result.status === 200) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      formik.resetForm();
+    }
   };
 
   const handleBack = () => {

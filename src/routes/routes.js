@@ -121,6 +121,7 @@ import ViewDoctor from '../pages/people/doctor/View';
 import Addtourplan from '../pages/calender/work/Addtourplan';
 import { Scheduler } from '../pages/calender/scheduler';
 import { Viewtourplan } from '../pages/calender/work/Viewtourplan';
+import Approveplan from '../pages/calender/work/Approveplan';
 
 // ----------------------------------------------------------------------
 
@@ -184,6 +185,7 @@ export default function Router() {
         { path: 'calendar/addtourplan', element: <Addtourplan /> },
         { path: 'calendar/scheduler', element: <Scheduler /> },
         { path: 'calendar/viewtourplan', element: <Viewtourplan /> },
+        { path: 'calendar/approveplan', element: <Approveplan /> },
 
 
         // setting
