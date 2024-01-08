@@ -13,7 +13,7 @@ export const WorkCalender = () => {
         <Grid item xs={12} sm={6} md={4}>
           <Box sx={{ margin: '10px 5px', border: '2px solid #eee', borderRadius: '10px' }}>
             <Box sx={{ backgroundColor: '#eee', color: '#000', padding: '8px 10px' }}>
-              <Link to={`/${userRole}/dashboard/reports/visit`} style={{ textDecoration: 'none', color: '#000' }}>
+              <Link to={`/${userRole}/dashboard/calendar/approveplan`} style={{ textDecoration: 'none', color: '#000' }}>
                 <Typography variant="h6">Approvel Tour Plan</Typography>
               </Link>
             </Box>

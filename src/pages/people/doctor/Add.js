@@ -62,7 +62,6 @@ const Add = () => {
     const doctorCategoryList = useSelector((state) => state?.getDoctorCategory?.data)
     const employeeList = useSelector((state) => state?.getEmployee?.data)
 
-    console.log(employeeList, "employeeList")
 
     useEffect(() => {
         if (doctorSpeciality) {
