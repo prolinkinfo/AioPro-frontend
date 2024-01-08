@@ -1,12 +1,8 @@
 // StepForm.js
-import React, { useState, useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import {
   Autocomplete,
   Box,
@@ -22,11 +18,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import dayjs from 'dayjs';
+import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Dayjs } from 'dayjs';
-import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import * as yup from 'yup';
+import AddTaskMOdel from '../../../components/calendar/AddTask';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
-import { apiget, apipost } from '../../../service/api';
+import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
+import { apipost } from '../../../service/api';
 
 const steps = ['Step 1', 'Step 2'];
 
@@ -35,7 +36,10 @@ const Addtourplan = () => {
   const [doctor, setDoctor] = useState(false);
   const [doctorZone, setDoctorZone] = useState(0);
   const [index, setIndex] = useState(0);
-  const [data,setData]=useState([])
+  const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [date, setDate] = useState('');
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
@@ -68,7 +72,7 @@ const Addtourplan = () => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setData(values)
+      setData(values);
       console.log('values', values);
     },
   });
@@ -81,8 +85,10 @@ const Addtourplan = () => {
       employee: data?.employee,
       month: data?.month,
       year: data?.year,
-      Doctor:doctor,
-      DoctorZone:doctorZone
+      Doctor: doctor,
+      DoctorZone: events?.zone,
+      city: events?.city,
+      Date: new Date(date),
     };
 
     const result = await apipost('/api/tourplan', pyload);
@@ -111,13 +117,6 @@ const Addtourplan = () => {
     { label: 'December', i: 11 },
   ];
   const yearList = [
-    { label: '2015' },
-    { label: '2016' },
-    { label: '2017' },
-    { label: '2018' },
-    { label: '2019' },
-    { label: '2020' },
-    { label: '2021' },
     { label: '2022' },
     { label: '2023' },
     { label: '2024' },
@@ -125,6 +124,19 @@ const Addtourplan = () => {
     { label: '2026' },
     { label: '2027' },
   ];
+
+  const handleEventClick = (clickInfo) => {
+    setDate(clickInfo?.start);
+
+    setOpen(true);
+  };
+
+  const eventData = (e) => {
+    setEvents(e);
+
+    console.log(e, 'eeeeeeeeeeeeeeeeeeeeeee');
+  };
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4">Add tour Plan</Typography>
@@ -288,56 +300,47 @@ const Addtourplan = () => {
                             label="Do you want to create tourplan with Doctor"
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6} my="2">
-                          <FormLabel>Zone</FormLabel>
-                          <Autocomplete
-                            size="small"
-                            onChange={(event, newValue) => {
-                              setDoctorZone(newValue ? newValue.zoneName : '');
-                            }}
-                            fullWidth
-                            options={zoneList}
-                            value={zoneList.find((zone) => zone?.zoneName === doctorZone) || null}
-                            getOptionLabel={(zone) => zone?.zoneName}
-                            style={{ textTransform: 'capitalize' }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                style={{ textTransform: 'capitalize' }}
-                                placeholder="Select Zone"
-                              />
-                            )}
-                          />
-                        </Grid>
 
-                        <Grid item xs={12} sm={6} md={6} my={2}>
-                          <FullCalendar
-                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                            initialView="dayGridMonth"
-                            initialDate={new Date(formik?.values?.year || currentYear, index, 1)}
-                            // minHeight="300px"
-                            // height="100%"
-                            // events={meetingList}
-                            headerToolbar={{
-                              right: 'dayGridMonth',
-                            }}
-                            // eventClick={handleEventClick}
-                            // eventContent={renderEventContent}
-                            views={{
-                              listWeek: { buttonText: 'List' },
-                              multiMonthFourMonth: {
-                                type: 'multiMonth',
-                                buttonText: 'multiMonth',
-                                duration: { months: 4 },
-                              },
-                            }}
-                            // buttonText={{
-                            //   today: 'Today',
-                            //   dayGridMonth: 'Month',
-                            // }}
-                            eventClassNames="custom-fullcalendar"
-                          />
-                        </Grid>
+                        {doctor ? (
+                          <Grid item xs={12} sm={6} md={6} my={2}>
+                            <FullCalendar
+                              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                              initialView="dayGridMonth"
+                              initialDate={new Date(formik?.values?.year || currentYear, index, 1)}
+                              // minHeight="300px"
+                              // height="100%"
+                              events={[{ title: events?.city,date }]}
+                              headerToolbar={{
+                                right: 'dayGridMonth',
+                              }}
+                              // eventClick={handleEventClick}
+                              editable
+                              selectable
+                              selectMirror
+                              dayMaxEvents
+                              select={handleEventClick}
+                              // eventContent={handleEventClick}
+                              // eventClick={handleEventClick}
+                              // eventsSet={handleEventClick}
+                              // eventContent={renderEventContent}
+                              views={{
+                                listWeek: { buttonText: 'List' },
+                                multiMonthFourMonth: {
+                                  type: 'multiMonth',
+                                  buttonText: 'multiMonth',
+                                  duration: { months: 4 },
+                                },
+                              }}
+                              // buttonText={{
+                              //   today: 'Today',
+                              //   dayGridMonth: 'Month',
+                              // }}
+                              eventClassNames="custom-fullcalendar"
+                            />
+                          </Grid>
+                        ) : (
+                          ''
+                        )}
                       </Grid>
                     </Grid>
                   </Box>
@@ -355,6 +358,10 @@ const Addtourplan = () => {
             </div>
           )}
         </div>
+
+        {/* add model */}
+
+        <AddTaskMOdel modelOpen={open} modelClose={setOpen} event={eventData} />
       </Container>
     </Container>
   );

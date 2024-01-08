@@ -19,13 +19,16 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import CircleIcon from '@mui/icons-material/Circle';
 import PersonIcon from '@mui/icons-material/Person';
 import { fetchZoneData } from '../../redux/slice/GetZoneSlice';
 import { fetchEmployeeData } from '../../redux/slice/GetEmployeeSlice';
 import NavSection from '../../components/nav-section/NavSection';
+import { apiget } from '../../service/api';
 
 export const Scheduler = () => {
   const [zone, setZone] = useState('');
+  const [meetingList, setMeetingList] = useState([]);
 
   const dispatch = useDispatch();
   const zoneList = useSelector((state) => state?.getZone?.data);
@@ -36,7 +39,6 @@ export const Scheduler = () => {
     dispatch(fetchEmployeeData());
   }, []);
 
-  console.log('employee', employee);
   const data = [
     {
       title: 'Dashboard',
@@ -44,6 +46,34 @@ export const Scheduler = () => {
       icon: <PersonIcon />,
     },
   ];
+
+  console.log('meetingList', meetingList);
+
+  const fetchApiMeeting = async () => {
+    const result = await apiget(`/api/tourplan`);
+
+    console.log(result?.result);
+    if (result?.statusText === 'OK') {
+      const meetingData = result?.data?.result.map((item) => ({
+        _id: item._id,
+        title: item.city,
+        start: item.Date,
+        status: item.status,
+        bgcolor: item.status === 'Pending' ? 'yello' : 'green',
+        // bgcolor:
+        //   item.status === 'Pending' ? (
+        //     <CircleIcon style={{ color: 'yello', fontSize: '15px' }} />
+        //   ) : (
+        //     <CircleIcon style={{ color: 'green', fontSize: '15px' }} />
+        //   ),
+      }));
+      setMeetingList(meetingData);
+    }
+  };
+
+  useEffect(() => {
+    fetchApiMeeting();
+  }, []);
 
   return (
     <Container maxWidth="xl">
@@ -97,7 +127,7 @@ export const Scheduler = () => {
                   initialView="dayGridMonth"
                   // minHeight="300px"
                   // height="100%"
-                  // events={meetingList}
+                  events={meetingList}
                   headerToolbar={{
                     right: 'dayGridMonth',
                   }}

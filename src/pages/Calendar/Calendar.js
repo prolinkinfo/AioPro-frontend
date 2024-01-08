@@ -49,12 +49,12 @@ const Calendar = () => {
     };
 
     const handleEventClick = (clickInfo) => {
-        setTaskId(clickInfo?.event?._def?.extendedProps?._id)
+        // setTaskId(clickInfo?.event?._def?.extendedProps?._id)
         handleOpenViewEdit()
-        if (clickInfo.event.url) {
-            clickInfo.jsEvent.preventDefault();
-            window.open(clickInfo.event.url);
-        }
+        // if (clickInfo.event.url) {
+        //     clickInfo.jsEvent.preventDefault();
+        //     window.open(clickInfo.event.url);
+        // }
 
     };
     const handleEvents = (events) => {
