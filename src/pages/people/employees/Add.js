@@ -1332,7 +1332,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="AAccount Holder Name"
+                  placeholder="Account Holder Name"
                   value={formik.values.accountHolderName}
                   onChange={formik.handleChange}
                   error={formik.touched.accountHolderName && Boolean(formik.errors.accountHolderName)}
@@ -1438,7 +1438,7 @@ const AddEmployees = () => {
                   {params?.id ? 'Edit Employee' : 'Add Employee'}
                 </Button>
                 <Button variant="outlined" color="error">
-                  Cancle
+                  Cancel
                 </Button>
               </Stack>
             </Grid>

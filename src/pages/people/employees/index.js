@@ -142,7 +142,7 @@ const Employees = () => {
       field: 'contact',
       headerName: 'Contact',
       renderCell: (params) => {
-        return <Box>{params?.row?.basicInformation?.contact} </Box>;
+        return <Box>{params?.row?.contactInformation?.primaryContact} </Box>;
       },
       width: 200,
     },
@@ -158,7 +158,7 @@ const Employees = () => {
       field: 'zone',
       headerName: 'Zone',
       renderCell: (params) => {
-        return <Box>{params?.row?.basicInformation?.zone} </Box>;
+        return <Box>{params?.row?.contactInformation?.zone} </Box>;
       },
       width: 200,
     },
