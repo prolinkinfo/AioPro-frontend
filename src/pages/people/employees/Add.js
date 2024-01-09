@@ -34,7 +34,7 @@ import { fetchQualificationData } from '../../../redux/slice/GetQualificationSli
 import { fetchCountryData } from '../../../redux/slice/getCountrySlice';
 import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
-import {fetchDesignation} from '../../../redux/slice/GetDesignationSlice'
+import { fetchDesignation } from '../../../redux/slice/GetDesignationSlice';
 
 const names = [
   'Oliver Hansen',
@@ -88,7 +88,7 @@ const AddEmployees = () => {
     gender: Yup.string().required('Gender is required'),
     workType: Yup.string().required('Work type is required'),
     Dob: Yup.string().required('Date of birth is required'),
-    maritalStatus: Yup.string().required('Marital status is required'),
+    maritalStatus: Yup.string(),
     anniversaryDate: Yup.string(),
     primaryContact: Yup.string()
       .matches(/^[0-9]{10}$/, 'Invalid mobile number')
@@ -149,7 +149,7 @@ const AddEmployees = () => {
   const qualificationList = useSelector((state) => state?.getQualification?.data);
   const country = useSelector((state) => state?.getCountry?.data);
   const state = useSelector((state) => state?.getState?.data);
-  const designation =useSelector((state)=>state?.getDesignation?.data)
+  const designation = useSelector((state) => state?.getDesignation?.data);
 
   useEffect(() => {
     dispatch(fetchCityData());
@@ -158,7 +158,7 @@ const AddEmployees = () => {
     dispatch(fetchQualificationData());
     dispatch(fetchCountryData());
     dispatch(fetchStateData());
-    dispatch(fetchDesignation())
+    dispatch(fetchDesignation());
   }, [dispatch]);
 
   async function fetchdata() {
@@ -307,6 +307,7 @@ const AddEmployees = () => {
     data.append('bankName', values?.bankName);
     data.append('branchName', values?.branchName);
     data.append('nomineeName', values?.nomineeName);
+    data.append('status', 'pending');
     data.append('_id', values?._id);
 
     const result = params?.id ? await apiput('/api/employees', data) : await apipost('/api/employees', data);
@@ -433,7 +434,9 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={8} md={8} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                 <Grid item xs={12} sm={12} md={12} mt={1}>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>
+                    First Name <span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
                   <TextField
                     id="doctorName"
                     name="firstName"
@@ -463,7 +466,9 @@ const AddEmployees = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} mt={1}>
-                  <FormLabel>Surname</FormLabel>
+                  <FormLabel>
+                    Surname <span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
                   <TextField
                     id="doctorName"
                     name="surname"
@@ -501,7 +506,9 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    Gender <span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
@@ -520,7 +527,9 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">Work Type</FormLabel>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    Work Type <span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
@@ -537,7 +546,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <FormLabel>Date Of Birth</FormLabel>
+                <FormLabel>
+                  Date Of Birth <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="dateOfBirth"
                   name="Dob"
@@ -545,7 +556,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.Dob).format('YYYY-MM-DD')}
+                  value={params?.id ? dayjs(formik.values.Dob).format('YYYY-MM-DD') : formik.values.Dob}
                   onChange={formik.handleChange}
                   error={formik.touched.Dob && Boolean(formik.errors.Dob)}
                   helperText={formik.touched.Dob && formik.errors.Dob}
@@ -554,7 +565,7 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Marital Status</FormLabel>
+                  <FormLabel>Marital Status </FormLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
@@ -581,7 +592,11 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.anniversaryDate).format('YYYY-MM-DD')}
+                  value={
+                    params?.id
+                      ? dayjs(formik.values.anniversaryDate).format('YYYY-MM-DD')
+                      : formik.values.anniversaryDate
+                  }
                   onChange={formik.handleChange}
                   error={formik.touched.anniversaryDate && Boolean(formik.errors.anniversaryDate)}
                   helperText={formik.touched.anniversaryDate && formik.errors.anniversaryDate}
@@ -595,7 +610,9 @@ const AddEmployees = () => {
             <Divider />
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mt={2}>
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Primary Contact Number</FormLabel>
+                <FormLabel>
+                  Primary Contact Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="pincode"
                   name="primaryContact"
@@ -626,7 +643,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>
+                  Email <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="pincode"
                   name="email"
@@ -642,7 +661,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Country</FormLabel>
+                <FormLabel>
+                  Country <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="country"
@@ -664,7 +685,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>State</FormLabel>
+                <FormLabel>
+                  State <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="state"
@@ -707,7 +730,7 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Multiple HQ</FormLabel>
+                <FormLabel>Multiple HQ </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="multipleHq"
@@ -728,7 +751,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Division</FormLabel>
+                <FormLabel>
+                  Division <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="division"
@@ -750,7 +775,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Zones</FormLabel>
+                <FormLabel>
+                  Zones <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="zone"
@@ -772,7 +799,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Home Loction</FormLabel>
+                <FormLabel>
+                  Home Loction <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="address"
                   name="homeLocation"
@@ -789,7 +818,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Permanent Loction</FormLabel>
+                <FormLabel>
+                  Permanent Loction <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="address"
                   name="permanentLoction"
@@ -805,7 +836,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Zip/Postal Code</FormLabel>
+                <FormLabel>
+                  Zip/Postal Code <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   id="pincode"
                   name="pincode"
@@ -890,7 +923,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Designation</FormLabel>
+                <FormLabel>
+                  Designation <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <Autocomplete
                   disablePortal
                   name="designation"
@@ -961,7 +996,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.Doj).format('YYYY-MM-DD')}
+                  value={params?.id ? dayjs(formik.values.Doj).format('YYYY-MM-DD') : formik.values.Doj}
                   onChange={formik.handleChange}
                   error={formik.touched.Doj && Boolean(formik.errors.Doj)}
                   helperText={formik.touched.Doj && formik.errors.Doj}
@@ -976,7 +1011,11 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.endProbationDate).format('YYYY-MM-DD')}
+                  value={
+                    params?.id
+                      ? dayjs(formik.values.endProbationDate).format('YYYY-MM-DD')
+                      : formik.values.endProbationDate
+                  }
                   onChange={formik.handleChange}
                   error={formik.touched.endProbationDate && Boolean(formik.errors.endProbationDate)}
                   helperText={formik.touched.endProbationDate && formik.errors.endProbationDate}
@@ -991,7 +1030,11 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.endConfirmationDate).format('YYYY-MM-DD')}
+                  value={
+                    params?.id
+                      ? dayjs(formik.values.endConfirmationDate).format('YYYY-MM-DD')
+                      : formik.values.endConfirmationDate
+                  }
                   onChange={formik.handleChange}
                   error={formik.touched.endConfirmationDate && Boolean(formik.errors.endConfirmationDate)}
                   helperText={formik.touched.endConfirmationDate && formik.errors.endConfirmationDate}
@@ -999,7 +1042,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Daily Work Hours (In numbers)</FormLabel>
+                <FormLabel>
+                  Daily Work Hours (In numbers) <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="dailyWorkHours"
                   size="small"
@@ -1049,7 +1094,11 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
-                  value={dayjs(formik.values.dateOfResignation).format('YYYY-MM-DD')}
+                  value={
+                    params?.id
+                      ? dayjs(formik.values.dateOfResignation).format('YYYY-MM-DD')
+                      : formik.values.dateOfResignation
+                  }
                   onChange={formik.handleChange}
                   error={formik.touched.dateOfResignation && Boolean(formik.errors.dateOfResignation)}
                   helperText={formik.touched.dateOfResignation && formik.errors.dateOfResignation}
@@ -1091,7 +1140,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Aadhar Number</FormLabel>
+                <FormLabel>
+                  Aadhar Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="aadharNumber"
                   size="small"
@@ -1106,7 +1157,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>PAN Number</FormLabel>
+                <FormLabel>
+                  PAN Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="PanNumber"
                   size="small"
@@ -1121,7 +1174,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>PF Number</FormLabel>
+                <FormLabel>
+                  PF Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="pfNumber"
                   size="small"
@@ -1136,7 +1191,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>ESIC Number</FormLabel>
+                <FormLabel>
+                  ESIC Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="ESICNumber"
                   size="small"
@@ -1151,7 +1208,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>PF UAN Number</FormLabel>
+                <FormLabel>
+                  PF UAN Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="PfUanNumber"
                   size="small"
@@ -1326,13 +1385,15 @@ const AddEmployees = () => {
             <Divider />
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mt={2}>
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Account Holder Name</FormLabel>
+                <FormLabel>
+                  Account Holder Name <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="accountHolderName"
                   size="small"
                   maxRows={10}
                   fullWidth
-                  placeholder="AAccount Holder Name"
+                  placeholder="Account Holder Name"
                   value={formik.values.accountHolderName}
                   onChange={formik.handleChange}
                   error={formik.touched.accountHolderName && Boolean(formik.errors.accountHolderName)}
@@ -1341,7 +1402,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Account Number</FormLabel>
+                <FormLabel>
+                  Account Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="accountNumber"
                   size="small"
@@ -1356,7 +1419,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>IFSC Number</FormLabel>
+                <FormLabel>
+                  IFSC Number <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="IFSCNumber"
                   size="small"
@@ -1371,7 +1436,7 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Beneficiary ID</FormLabel>
+                <FormLabel>Beneficiary ID </FormLabel>
                 <TextField
                   name="beneficiaryID"
                   size="small"
@@ -1386,7 +1451,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Bank Name</FormLabel>
+                <FormLabel>
+                  Bank Name <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="bankName"
                   size="small"
@@ -1401,7 +1468,9 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>Branch Name</FormLabel>
+                <FormLabel>
+                  Branch Name <span style={{ color: 'red' }}>*</span>
+                </FormLabel>
                 <TextField
                   name="branchName"
                   size="small"
@@ -1438,7 +1507,7 @@ const AddEmployees = () => {
                   {params?.id ? 'Edit Employee' : 'Add Employee'}
                 </Button>
                 <Button variant="outlined" color="error">
-                  Cancle
+                  Cancel
                 </Button>
               </Stack>
             </Grid>
