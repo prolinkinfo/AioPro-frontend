@@ -103,7 +103,7 @@ export const adminConfig = [
   },
   {
     title: 'Sales',
-    // path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/sales`,
     icon: icon('ic_sales'),
     children: [
       {
@@ -164,208 +164,194 @@ export const adminConfig = [
   },
   {
     title: 'Setting',
-    // path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/setting`,
     icon: icon('ic_setting'),
     children: [
       {
         title: 'Application Master',
-        // path: `/${userRole}/dashboard`,
-        subLink: [
+        path: `/${userRole}/dashboard/applicationMaster`,
+        icon: icon(''),
+        nestedChildren: [
           {
             title: 'Activity Type',
-            path: `/${userRole}/dashboard/setting/manageActivityType`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/manageActivityType`,
           },
           {
             title: 'Back Date Visit',
-            path: `/${userRole}/dashboard/setting/backDateVisit`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/backDateVisit`,
           },
           {
             title: 'Call Objective',
-            path: `/${userRole}/dashboard/setting/callObjective`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/callObjective`,
           },
           {
             title: 'Campaingn',
-            path: `/${userRole}/dashboard/setting/campaingn`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/campaingn`,
           },
           {
             title: 'Designation',
-            path: `/${userRole}/dashboard/setting/designations`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/designations`,
           },
           {
             title: 'Division',
-            path: `/${userRole}/dashboard/setting/division`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/division`,
           },
           {
             title: 'Doctor Speciality',
-            path: `/${userRole}/dashboard/setting/doctorSpeciality`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/doctorSpeciality`,
           },
           {
             title: 'Doctor Category',
-            path: `/${userRole}/dashboard/setting/doctorCategory`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/doctorCategory`,
           },
           {
             title: 'FAQ Master',
-            path: `/${userRole}/dashboard/setting/faqMaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/faqMaster`,
           },
           {
             title: 'Firm Category',
-            path: `/${userRole}/dashboard/setting/firmCategory`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/firmCategory`,
           },
           {
             title: 'Firm type',
-            path: `/${userRole}/dashboard/setting/firmType`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/firmType`,
           },
           {
             title: 'Fixed Allowance',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/applicationMaster`,
           },
           {
             title: 'Hospital Category',
-            path: `/${userRole}/dashboard/setting/hospitalCategory`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/hospitalCategory`,
           },
           {
             title: 'Hospital Class',
-            path: `/${userRole}/dashboard/setting/hospitalClass`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/hospitalClass`,
           },
 
           {
             title: 'Hospital Speciality',
-            path: `/${userRole}/dashboard/setting/hospitalSpeciality`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/hospitalSpeciality`,
           },
 
           {
             title: 'Import Data',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/applicationMaster`,
           },
           {
             title: 'Incharge Type',
-            path: `/${userRole}/dashboard/setting/inchargeType`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/inchargeType`,
           },
           {
             title: 'Leave Reasons',
-            path: `/${userRole}/dashboard/setting/leaveReason`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/leaveReason`,
           },
           {
             title: 'Mode Of Travel',
-            path: `/${userRole}/dashboard/setting/modeOfTravel`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/modeOfTravel`,
           },
           {
             title: 'Others Reason',
-            path: `/${userRole}/dashboard/setting/otherReason`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/otherReason`,
           },
           {
             title: 'Product',
-            path: `/${userRole}/dashboard/setting/product`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/product`,
           },
           {
             title: 'Product Indication',
-            path: `/${userRole}/dashboard/setting/productIndication`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/productIndication`,
           },
           {
             title: 'Product Samples',
-            path: `/${userRole}/dashboard/setting/productSampleDetails`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/productSampleDetails`,
           },
           {
             title: 'Promotional Gifts',
-            path: `/${userRole}/dashboard/setting/promotionalGifts`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/promotionalGifts`,
           },
           {
             title: 'Qualification',
-            path: `/${userRole}/dashboard/setting/qualification`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/qualification`,
           },
           {
             title: 'Radius Settings',
-            path: `/${userRole}/dashboard`,
+            path: `/${userRole}/dashboard/setting/applicationMaster`,
           },
           {
             title: 'Relation Master',
-            path: `/${userRole}/dashboard/setting/relationMaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/relationMaster`,
           },
           {
             title: 'Sample Collection',
-            path: `/${userRole}/dashboard/setting/SampleCollectionCenter`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/SampleCollectionCenter`,
           },
           {
             title: 'Sample / Gift With Challan',
-            path: `/${userRole}/dashboard/setting/`,
+            path: `/${userRole}/dashboard/setting/applicationMaster`,
           },
           {
             title: 'Scheme Master',
-            path: `/${userRole}/dashboard/setting/schemeMaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/schemeMaster`,
           },
           {
             title: 'Skipped Reasons',
-            path: `/${userRole}/dashboard/setting/skippedreason`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/skippedReason`,
           },
           {
             title: 'Tax Master',
-            path: `/${userRole}/dashboard/setting/taxmaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/taxMaster`,
           },
           {
             title: 'Test Typology',
-            path: `/${userRole}/dashboard/setting/testTypology`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/testTypology`,
           },
           {
             title: 'Type',
-            path: `/${userRole}/dashboard/setting/type`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/type`,
           },
           {
             title: 'Visit Counter',
-            path: `/${userRole}/dashboard/setting/visitCounter`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/visitCounter`,
           },
           {
             title: 'Work Agenda',
-            path: `/${userRole}/dashboard/setting/workAgenda`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/workAgenda`,
           },
           {
             title: 'Zone',
-            path: `/${userRole}/dashboard/setting/zone`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/zone`,
           },
         ],
       },
-      {
-        title: 'Approval and Email Setting',
-        // path: `/${userRole}/dashboard`,
-        subLink: [
-          {
-            title: 'Branding',
-            path: `/${userRole}/dashboard`,
-          },
-          {
-            title: 'Change Password',
-            path: `/${userRole}/dashboard/setting/changePassword`,
-          },
-          {
-            title: 'General Settings',
-            path: `/${userRole}/dashboard`,
-          },
-          {
-            title: 'Personal Settings',
-            path: `/${userRole}/dashboard`,
-          },
-        ],
-      },
+
       {
         title: 'Company Settings',
-        subLink: [
+        path: `/${userRole}/dashboard/setting/companySettings`,
+        nestedChildren: [
           {
             title: 'Change Password',
-            path: `/${userRole}/dashboard/setting/changePassword`,
+            path: `/${userRole}/dashboard/setting/companySettings/changePassword`,
           },
         ],
       },
       {
         title: 'Data Settings',
-        subLink: [
+        // path: `${userRole}/dashboard/setting/dataSetting`,
+        nestedChildren: [
           {
             title: 'Data Management',
             path: `${userRole}/dashboard/setting/dataSetting/dataManagement`,
           },
           {
             title: 'Less Call',
-            path: `${userRole}/dashboard`,
+            path: `${userRole}/dashboard/setting/dataSetting/lessCall`,
           },
         ],
+      },
+      {
+        title: 'Approval and Email Setting',
+        path: `/${userRole}/dashboard/setting/emailSetting`,
       },
       {
         title: 'Tutorial Master',
@@ -375,7 +361,7 @@ export const adminConfig = [
   },
   {
     title: 'E-detailing',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/eDetailling`,
     icon: icon('ic_presentation'),
     children: [
       {
@@ -390,7 +376,7 @@ export const adminConfig = [
   },
   {
     title: 'Business',
-    path: `/${userRole}/dashboard/user`,
+    path: `/${userRole}/dashboard/business`,
     icon: icon('ic_business'),
     children: [
       {

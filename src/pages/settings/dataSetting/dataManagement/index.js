@@ -5,6 +5,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SpecialityManagement from './SpecialityManagement';
 import CityManagement from './CityManagement'
 import ConutryMaster from './countryMaster';
+import ZoneManagement from './ZoneManagement';
 
 const DataManagement = () => {
   const [activeTab, setActiveTab] = useState('1'); // Use string for value
@@ -30,10 +31,11 @@ const DataManagement = () => {
               >
                 <Tab label="Doctor Management" value="1" />
                 <Tab label="City Management" value="2" />
-                <Tab label="Speciality Management" value="3" />
-                <Tab label="Logs" value="4" />
-                <Tab label="SFC Cities" value="5" />
-                <Tab label="Country Master" value="6" />
+                <Tab label="Zone Management" value="3" />
+                <Tab label="Speciality Management" value="4" />
+                <Tab label="Logs" value="5" />
+                <Tab label="SFC Cities" value="6" />
+                <Tab label="Country Master" value="7" />
               </Tabs>
             </Container>
           </Grid>
@@ -45,15 +47,18 @@ const DataManagement = () => {
               <CityManagement />
             </TabPanel>
             <TabPanel value="3">
-              <SpecialityManagement />
+              <ZoneManagement />
             </TabPanel>
             <TabPanel value="4">
-              xcvdc
+              <SpecialityManagement />
             </TabPanel>
             <TabPanel value="5">
               xcvdc
             </TabPanel>
             <TabPanel value="6">
+              xcvdc
+            </TabPanel>
+            <TabPanel value="7">
               <ConutryMaster />
             </TabPanel>
           </Grid>

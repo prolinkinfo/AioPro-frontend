@@ -73,7 +73,8 @@ function NavItem({ item, active, isShow }) {
   const isActiveRoot = active(item?.path);
   const { title, path, icon, info, children } = item;
   const [open, setOpen] = useState(isActiveRoot);
-  const [openSub, setOpenSub] = useState(isActiveRoot);
+  const [openSub, setOpenSub] = useState(false);
+  const [openSupSub, setOpenSupSub] = useState(isActiveRoot);
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
@@ -93,6 +94,9 @@ function NavItem({ item, active, isShow }) {
 
   const handleOpenSub = () => {
     setOpenSub((prev) => !prev);
+  };
+  const handleOpenSupSub = () => {
+    setOpenSupSub((prev) => !prev);
   };
 
   if (children) {
@@ -114,15 +118,15 @@ function NavItem({ item, active, isShow }) {
 
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children?.map((item) => {
-              const { title, path, subLink } = item;
+            {children?.map((item, i) => {
+              const { title, path, icon, nestedChildren } = item;
               const isActiveSub = active(path);
 
-              if (subLink) {
+              if (nestedChildren) {
                 return (
                   <>
                     <ListItemStyle
-                      onClick={handleOpenSub}
+                      onClick={() => setOpenSub((pre) => (pre === i ? null : i))}
                       sx={{
                         ...(isActiveRoot && activeRootStyle),
                       }}
@@ -132,18 +136,19 @@ function NavItem({ item, active, isShow }) {
                       <ListItemText disableTypography primary={title} />
                       {info && info}
 
-                      {openSub ? <ExpandMoreIcon /> : <KeyboardArrowRightIcon />}
+                      {openSub === i ? <ExpandMoreIcon /> : <KeyboardArrowRightIcon />}
                     </ListItemStyle>
 
-                    <Collapse in={openSub} timeout="auto" unmountOnExit>
+                    <Collapse in={openSub === i} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
-                        {subLink?.map((items,index) => {
+                        {nestedChildren?.map((items, index) => {
+                          const { title, path } = items;
                           const isActiveSub = active(path);
                           return (
                             <ListItemStyle
                               key={index}
                               component={RouterLink}
-                              to={items?.path}
+                              to={path}
                               sx={{
                                 ...(isActiveSub && activeSubStyle),
                               }}
@@ -167,7 +172,9 @@ function NavItem({ item, active, isShow }) {
                                   }}
                                 />
                               </ListItemIconStyle>
-                              <ListItemText disableTypography primary={items?.title} />
+                              {/* <ListItemIconStyle>{icon && icon}</ListItemIconStyle> */}
+
+                              <ListItemText disableTypography primary={title} />
                             </ListItemStyle>
                           );
                         })}

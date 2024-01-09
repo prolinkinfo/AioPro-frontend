@@ -12,26 +12,19 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiget, apipost } from '../../../../../service/api';
+import { fetchStateData } from '../../../../../redux/slice/GetStateSlice';
+import { fetchCountryData } from '../../../../../redux/slice/getCountrySlice';
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 const AddCity = (props) => {
   // eslint-disable-next-line react/prop-types
   const { isOpenCity, handleCloseCity, fetchCityData } = props;
 
-  const [countryList, setCountryList] = useState([]);
-  const [stateList, setStateList] = useState([]);
+  const dispatch = useDispatch();
+
+  const stateList = useSelector((state) => state?.getState?.data);
+  const countryList = useSelector((state) => state?.getCountry?.data);
 
   // -----------  validationSchema
   const validationSchema = yup.object({
@@ -45,17 +38,13 @@ const AddCity = (props) => {
     countryName: '',
     stateName: '',
     cityName: '',
-    zoneName:'',
-    zoneId:''
   };
 
   const addCity = async (values) => {
     const pyload = {
       countryName: values.countryName,
       stateName: values.stateName,
-      cityName: values.cityName,
-      zoneName:values.zoneName,
-      zoneId:values.zoneId
+      cityName: values.cityName
     };
     const result = await apipost('/api/citymaster', pyload);
 
@@ -74,24 +63,11 @@ const AddCity = (props) => {
     },
   });
 
-  const fetchCountryData = async () => {
-    const result = await apiget(`/api/countryMaster`);
-    if (result && result.status === 200) {
-      setCountryList(result?.data?.result);
-    }
-  };
-
-  const fetchStateData = async () => {
-    const result = await apiget(`/api/stateMaster`);
-    if (result && result.status === 200) {
-      setStateList(result?.data?.result);
-    }
-  };
 
   useEffect(() => {
-    fetchCountryData();
-    fetchStateData();
-  }, []);
+    dispatch(fetchStateData());
+    dispatch(fetchCountryData());
+  }, [])
 
   return (
     <div>
@@ -138,32 +114,6 @@ const AddCity = (props) => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>Zone</FormLabel>
-                <FormControl fullWidth>
-                  <Autocomplete
-                    size="small"
-                    onChange={(event, newValue) => {
-                      formik.setFieldValue('zoneName', newValue ? newValue.countryName : '');
-                      formik.setFieldValue('zoneId', newValue ? newValue.countryName : '');
-                    }}
-                    options={countryList}
-                    value={countryList.find((country) => country.countryName === formik.values.countryName) || null}
-                    getOptionLabel={(country) => country?.countryName}
-                    style={{ textTransform: 'capitalize' }}
-                    clearIcon
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        style={{ textTransform: 'capitalize' }}
-                        placeholder="Select Zone"
-                        error={formik.touched.countryName && Boolean(formik.errors.countryName)}
-                        helperText={formik.touched.countryName && formik.errors.countryName}
-                      />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>State</FormLabel>
                 <FormControl fullWidth>

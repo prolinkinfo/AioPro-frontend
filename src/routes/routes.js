@@ -56,18 +56,14 @@ import TaxMaster from '../pages/settings/TaxMaster';
 import SkippedReason from '../pages/settings/SkippedReason';
 import LeaveReason from '../pages/settings/LeaveReason';
 import Designations from '../pages/settings/Designations';
-import ConutryMaster from '../pages/settings/dataSetting/dataManagement/countryMaster';
-// import Card from './pages/card/CardTemplate'
-// import AddCard from './pages/card/Add'
-// import GreetingCardView from './pages/card/View'
 import Zone from '../pages/settings/Zone'
 import DoctorCategory from '../pages/settings/DoctorCategory'
 import Division from '../pages/settings/Division';
 import DoctorSpeciality from '../pages/settings/DoctorSpeciality';
 import RelationMaster from '../pages/settings/RelationMaster';
 import OtherReason from '../pages/settings/OtherReason';
-import  FaqAdd  from '../pages/settings/FAQ/AddFAQ';
-import  FaqMaster  from '../pages/settings/FAQ';
+import FaqAdd from '../pages/settings/FAQ/AddFAQ';
+import FaqMaster from '../pages/settings/FAQ';
 import FirmCategory from '../pages/settings/FirmCategory'
 import HospitalCategory from '../pages/settings/HospitalCategory';
 import HospitalClass from '../pages/settings/HospitalClass'
@@ -189,52 +185,53 @@ export default function Router() {
 
 
         // setting
-        { path: 'setting/manageActivityType', element: <ActivityType /> },
-        { path: 'setting/backDateVisit', element: <BackDateVisit /> },
-        { path: 'setting/callObjective', element: <CallObjective /> },
-        { path: 'setting/campaingn', element: <Campaingn /> },
-        { path: 'setting/workAgenda', element: <WorkAgenda /> },
-        { path: 'setting/type', element: <Type /> },
-        { path: 'setting/testTypology', element: <TestTypology /> },
-        { path: 'setting/taxmaster', element: <TaxMaster /> },
-        { path: 'setting/skippedReason', element: <SkippedReason /> },
-        { path: 'setting/leaveReason', element: <LeaveReason /> },
-        { path: 'setting/skippedreason', element: <SkippedReason /> },
-        { path: 'setting/leavereason', element: <LeaveReason /> },
-        { path: 'setting/designations', element: <Designations /> },
-        { path: 'setting/zone', element: <Zone /> },
-        { path: 'setting/doctorCategory', element: <DoctorCategory /> },
-        { path: 'setting/division', element: <Division /> },
-        { path: 'setting/doctorspeciality', element: <DoctorSpeciality /> },
-        { path: 'setting/relationmaster', element: <RelationMaster /> },
-        { path: 'setting/otherreason', element: <OtherReason /> },
-        { path: 'setting/faqMaster', element: <FaqMaster /> },
-        { path: 'setting/faqMaster/add', element: <FaqAdd /> },
+        // application Master
+        { path: 'setting/applicationMaster/manageActivityType', element: <ActivityType /> },
+        { path: 'setting/applicationMaster/backDateVisit', element: <BackDateVisit /> },
+        { path: 'setting/applicationMaster/callObjective', element: <CallObjective /> },
+        { path: 'setting/applicationMaster/campaingn', element: <Campaingn /> },
+        { path: 'setting/applicationMaster/designations', element: <Designations /> },
+        { path: 'setting/applicationMaster/division', element: <Division /> },
+        { path: 'setting/applicationMaster/doctorSpeciality', element: <DoctorSpeciality /> },
+        { path: 'setting/applicationMaster/doctorCategory', element: <DoctorCategory /> },
+        { path: 'setting/applicationMaster/faqMaster', element: <FaqMaster /> },
+        { path: 'setting/applicationMaster/faqMaster/add', element: <FaqAdd /> },
+        { path: 'setting/applicationMaster/firmCategory', element: <FirmCategory /> },
+        { path: 'setting/applicationMaster/firmType', element: <FirmType /> },
+        { path: 'setting/applicationMaster/hospitalCategory', element: <HospitalCategory /> },
+        { path: 'setting/applicationMaster/hospitalClass', element: <HospitalClass /> },
+        { path: 'setting/applicationMaster/hospitalSpeciality', element: <HospitalSpeciality /> },
+        { path: 'setting/applicationMaster/inchargeType', element: <InchargeType /> },
+        { path: 'setting/applicationMaster/leaveReason', element: <LeaveReason /> },
+        { path: 'setting/applicationMaster/modeOfTravel', element: <ModeOfTravel /> },
+        { path: 'setting/applicationMaster/otherReason', element: <OtherReason /> },
+        { path: 'setting/applicationMaster/product', element: <Product /> },
+        { path: 'setting/applicationMaster/productGroup', element: <ProductGroup /> },
+        { path: 'setting/applicationMaster/productIndication', element: <ProductIndication /> },
+        { path: 'setting/applicationMaster/productSampleDetails', element: <ProductSample /> },
+        { path: 'setting/applicationMaster/promotionalGifts', element: <PromotionalGifts /> },
+        { path: 'setting/applicationMaster/qualification', element: <Qualification /> },
+        { path: 'setting/applicationMaster/relationMaster', element: <RelationMaster /> },
+        { path: 'setting/applicationMaster/SampleCollectionCenter', element: <SampleCollectionCenter /> },
+        { path: 'setting/applicationMaster/schemeMaster', element: <SchemeMaster /> },
+        { path: 'setting/applicationMaster/skippedReason', element: <SkippedReason /> },
+        { path: 'setting/applicationMaster/taxMaster', element: <TaxMaster /> },
+        { path: 'setting/applicationMaster/testTypology', element: <TestTypology /> },
+        { path: 'setting/applicationMaster/type', element: <Type /> },
+        { path: 'setting/applicationMaster/visitCounter', element: <VisitCounter /> },
+        { path: 'setting/applicationMaster/workAgenda', element: <WorkAgenda /> },
+        { path: 'setting/applicationMaster/zone', element: <Zone /> },
 
-        { path: 'setting/faqAdd', element: <FaqAdd /> },
-        { path: 'setting/doctorSpeciality', element: <DoctorSpeciality /> },
-        { path: 'setting/relationMaster', element: <RelationMaster /> },
-        { path: 'setting/otherReason', element: <OtherReason /> },
-        { path: 'setting/firmCategory', element: <FirmCategory /> },
-        { path: 'setting/hospitalCategory', element: <HospitalCategory /> },
-        { path: 'setting/hospitalClass', element: <HospitalClass /> },
-        { path: 'setting/hospitalSpeciality', element: <HospitalSpeciality /> },
-        { path: 'setting/qualification', element: <Qualification /> },
-        { path: 'setting/inchargeType', element: <InchargeType /> },
-        { path: 'setting/firmType', element: <FirmType /> },
-        { path: 'setting/productIndication', element: <ProductIndication /> },
-        { path: 'setting/schemeMaster', element: <SchemeMaster /> },
-        { path: 'setting/product', element: <Product /> },
-        { path: 'setting/productGroup', element: <ProductGroup /> },
-        { path: 'setting/modeOfTravel', element: <ModeOfTravel /> },
-        { path: 'setting/productSampleDetails', element: <ProductSample /> },
-        { path: 'setting/SampleCollectionCenter', element: <SampleCollectionCenter /> },
-        { path: 'setting/promotionalGifts', element: <PromotionalGifts /> },
-        { path: 'setting/visitCounter', element: <VisitCounter /> },
+        // setting
         { path: 'setting/tutorialMaster', element: <TutorialMaster /> },
-        { path: 'setting/changePassword', element: <ChangePassword /> },
-        // { path: 'setting/dataSetting/dataManagement', element: <ConutryMaster /> },
+
+        // Company Settings
+        { path: 'setting/companySettings/changePassword', element: <ChangePassword /> },
+
+        // Data Settings
         { path: 'setting/dataSetting/dataManagement', element: <DataManagement /> },
+
+
         { path: 'eDetailing/mediaGallery', element: <MediaGallery /> },
         { path: 'eDetailing/presentation', element: <Presentation /> },
         { path: 'eDetailing/presentation/:id', element: <ViewPresentation /> },
