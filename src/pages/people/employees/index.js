@@ -74,7 +74,12 @@ const Employees = () => {
               }}
             >
               <MenuItem onClick={() => handleClose()}>
-                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View</span>
+                <Link
+                  to={`/${userRole}/dashboard/people/view/employees/${employeeId}`}
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
+                  <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View</span>
+                </Link>
               </MenuItem>
               <MenuItem onClick={() => handleClose()}>
                 <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log</span>

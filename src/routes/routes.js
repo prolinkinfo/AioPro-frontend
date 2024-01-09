@@ -118,6 +118,7 @@ import Addtourplan from '../pages/calender/work/Addtourplan';
 import { Scheduler } from '../pages/calender/scheduler';
 import { Viewtourplan } from '../pages/calender/work/Viewtourplan';
 import Approveplan from '../pages/calender/work/Approveplan';
+import ViewEmployees from '../pages/people/employees/EmployeeView';
 
 // ----------------------------------------------------------------------
 
@@ -176,6 +177,7 @@ export default function Router() {
         { path: 'people/employees', element: <Employees /> },
         { path: 'people/employees/add', element: <AddEmployees /> },
         { path: 'people/employees/:id', element: <AddEmployees /> },
+        { path: 'people/view/employees/:id', element: <ViewEmployees /> },
         { path: 'calendar/holiday&work', element: <Holiday /> },
         { path: 'calendar/leave', element: <LeaveCalendar /> },
         { path: 'calendar/addtourplan', element: <Addtourplan /> },
