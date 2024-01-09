@@ -18,6 +18,7 @@ import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const Employees = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [employeeId, setEmployeeId] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const dispatch = useDispatch();
@@ -25,17 +26,23 @@ const Employees = () => {
 
   const employeeData = useSelector((state) => state?.getEmployee?.data);
 
-  const handleClick = (event) => {
+  const handleClick = (event, id) => {
     setAnchorEl(event.currentTarget);
+    setEmployeeId(id);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  const deleteEmployee = async (id) => {
+    const result = await apidelete(`/api/employees/${id}`);
+    if (result.status === 200) {
+      dispatch(fetchEmployeeData());
+    }
+  };
+
   const handleClickOpenModel = (value) => {
-    // console.log("value",value)
-    // setFirmId(value);
-    // setOpenModel(true);
+    deleteEmployee(value);
     setAnchorEl(null);
   };
 
@@ -57,7 +64,7 @@ const Employees = () => {
               aria-controls={open ? 'demo-positioned-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
+              onClick={(e) => handleClick(e, params?.row?._id)}
             >
               <DragIndicatorIcon />
             </Button>
@@ -77,10 +84,10 @@ const Employees = () => {
               <MenuItem onClick={() => handleClose()}>
                 <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log</span>
               </MenuItem>
-              
+
               <MenuItem>
                 <Link
-                  to={`/${userRole}/dashboard/people/employees/${params?.row?._id}`}
+                  to={`/${userRole}/dashboard/people/employees/${employeeId}`}
                   style={{ color: '#000', textDecoration: 'none' }}
                 >
                   <BorderColorIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Edit</span>
@@ -90,7 +97,7 @@ const Employees = () => {
                 <VerticalAlignBottomIcon fontSize="10" />
                 <span style={{ marginLeft: '20px' }}>Unapprove</span>
               </MenuItem>
-              <MenuItem onClick={() => handleClickOpenModel(params?.row?._id)}>
+              <MenuItem onClick={() => handleClickOpenModel(employeeId)}>
                 <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
               </MenuItem>
             </Menu>
@@ -187,12 +194,12 @@ const Employees = () => {
       width: 200,
     },
     { field: 'signup', headerName: 'Signup Date & Time', width: 200 },
-    { field: 'lastSyncDate', headerName: 'Last sync Date & time', width: 200 },
-    { field: 'ApkVersion', headerName: 'Apk Version', width: 200 },
+    // { field: 'lastSyncDate', headerName: 'Last sync Date & time', width: 200 },
+    // { field: 'ApkVersion', headerName: 'Apk Version', width: 200 },
     // { field: 'mobile', headerName: 'Mobile',width:200 },
-    { field: 'os', headerName: 'OS', width: 200 },
-    { field: 'inactiveDate', headerName: 'Inactive Date', width: 200 },
-    { field: 'inactiveReson', headerName: 'Inactive Reson', width: 200 },
+    // { field: 'os', headerName: 'OS', width: 200 },
+    // { field: 'inactiveDate', headerName: 'Inactive Date', width: 200 },
+    // { field: 'inactiveReson', headerName: 'Inactive Reson', width: 200 },
     { field: 'status', headerName: 'Status', width: 200 },
   ];
 

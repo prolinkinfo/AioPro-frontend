@@ -307,6 +307,7 @@ const AddEmployees = () => {
     data.append('bankName', values?.bankName);
     data.append('branchName', values?.branchName);
     data.append('nomineeName', values?.nomineeName);
+    data.append('status', 'pending');
     data.append('_id', values?._id);
 
     const result = params?.id ? await apiput('/api/employees', data) : await apipost('/api/employees', data);
