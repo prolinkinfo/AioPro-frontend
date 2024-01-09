@@ -107,7 +107,7 @@ const AddEmployees = () => {
     additionalDivision: Yup.string(),
     // exStations: Yup.string().required('Ex stations are required'),
     // outStations: Yup.string().required('Out stations are required'),
-    // designation: Yup.string().required('Designation is required'),
+    designation: Yup.string().required('Designation is required'),
     // assignedTo: Yup.string().required('Assigned to is required'),
     // additionalSupervisor: Yup.string(),
     // Doj: Yup.string().required('Date of joining is required'),
