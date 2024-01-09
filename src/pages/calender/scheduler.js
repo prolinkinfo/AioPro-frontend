@@ -28,7 +28,10 @@ import { apiget } from '../../service/api';
 
 export const Scheduler = () => {
   const [zone, setZone] = useState('');
-  const [meetingList, setMeetingList] = useState([]);
+  const [tourList, setTourList] = useState([]);
+  const [employeList, setEmployeeList] = useState([]);
+
+  const [tour, setTour] = useState([]);
 
   const dispatch = useDispatch();
   const zoneList = useSelector((state) => state?.getZone?.data);
@@ -47,19 +50,15 @@ export const Scheduler = () => {
     },
   ];
 
-  console.log('meetingList', meetingList);
-
   const fetchApiMeeting = async () => {
     const result = await apiget(`/api/tourplan`);
-
-    console.log(result?.result);
-    if (result?.statusText === 'OK') {
-      const meetingData = result?.data?.result.map((item) => ({
+    if (result?.status === 200) {
+      const data = result?.data?.result.map((item) => ({
         _id: item._id,
         title: item.city,
         start: item.Date,
+        employeeId: item.employeeId,
         status: item.status,
-        bgcolor: item.status === 'Pending' ? 'yello' : 'green',
         // bgcolor:
         //   item.status === 'Pending' ? (
         //     <CircleIcon style={{ color: 'yello', fontSize: '15px' }} />
@@ -67,13 +66,38 @@ export const Scheduler = () => {
         //     <CircleIcon style={{ color: 'green', fontSize: '15px' }} />
         //   ),
       }));
-      setMeetingList(meetingData);
+      setTourList(data);
     }
+  };
+
+  const fetchData = async (searchText) => {
+    const filtered = employee?.filter(({ contactInformation }) =>
+      contactInformation?.zone?.toLowerCase()?.includes(searchText?.toLowerCase())
+    );
+    setEmployeeList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : employee);
+  };
+
+  const fetchTour = async (id) => {
+    const filter = tourList?.filter((item) => item?.employeeId === id);
+    setTour(id?.length > 0 ? (filter?.length > 0 ? filter : []) : tourList);
   };
 
   useEffect(() => {
     fetchApiMeeting();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+    fetchTour();
+  }, [employee]);
+
+
+  useEffect(()=>{
+    fetchTour();
+  },[tourList])
+
+
+  console.log("tour",tour)
 
   return (
     <Container maxWidth="xl">
@@ -93,6 +117,7 @@ export const Scheduler = () => {
                     size="small"
                     onChange={(event, newValue) => {
                       setZone(newValue ? newValue.zoneName : '');
+                      fetchData(newValue ? newValue.zoneName : '');
                     }}
                     fullWidth
                     options={zoneList}
@@ -105,9 +130,9 @@ export const Scheduler = () => {
                   />
                   <Box>
                     <List>
-                      {employee.map((text, index) => (
+                      {employeList?.map((text, index) => (
                         <ListItem key={index}>
-                          <Button variant="text" wo>
+                          <Button variant="text" onClick={() => fetchTour(text?._id)}>
                             <PersonIcon />
                             <span
                               style={{ marginLeft: '8px' }}
@@ -125,14 +150,10 @@ export const Scheduler = () => {
                 <FullCalendar
                   plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                   initialView="dayGridMonth"
-                  // minHeight="300px"
-                  // height="100%"
-                  events={meetingList}
+                  events={tour}
                   headerToolbar={{
                     right: 'dayGridMonth',
                   }}
-                  // eventClick={handleEventClick}
-                  // eventContent={renderEventContent}
                   views={{
                     listWeek: { buttonText: 'List' },
                     multiMonthFourMonth: {
@@ -141,11 +162,23 @@ export const Scheduler = () => {
                       duration: { months: 4 },
                     },
                   }}
-                  // buttonText={{
-                  //   today: 'Today',
-                  //   dayGridMonth: 'Month',
-                  // }}
                   eventClassNames="custom-fullcalendar"
+                  eventContent={(eventInfo) => {
+                    return (
+                      <Box
+                        style={{
+                          backgroundColor: eventInfo.event.backgroundColor || 'blue', 
+                          color: eventInfo.event.textColor || 'white', 
+                          padding:'5px 20px',
+                          width: '100%',
+                          borderRadius: '5px',
+                          
+                        }}
+                      >
+                        {eventInfo.event.title}
+                      </Box>
+                    );
+                  }}
                 />
               </Box>
             </Grid>

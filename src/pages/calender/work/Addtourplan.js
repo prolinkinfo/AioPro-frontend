@@ -63,6 +63,7 @@ const Addtourplan = () => {
   const initialValues = {
     zone: '',
     employee: '',
+    employeeId: '',
     month: '',
     year: '',
   };
@@ -83,6 +84,7 @@ const Addtourplan = () => {
     const pyload = {
       zone: data?.zone,
       employee: data?.employee,
+      employeeId: data?.employeeId,
       month: data?.month,
       year: data?.year,
       Doctor: doctor,
@@ -131,11 +133,7 @@ const Addtourplan = () => {
     setOpen(true);
   };
 
-  const eventData = (e) => {
-    setEvents(e);
-
-    console.log(e, 'eeeeeeeeeeeeeeeeeeeeeee');
-  };
+  const eventData = (e) => setEvents(e);
 
   return (
     <Container maxWidth="xl">
@@ -199,6 +197,7 @@ const Addtourplan = () => {
                         <Autocomplete
                           size="small"
                           onChange={(event, newValue) => {
+                            formik.setFieldValue('employeeId', newValue ? newValue?._id : '');
                             formik.setFieldValue(
                               'employee',
                               newValue
@@ -303,13 +302,13 @@ const Addtourplan = () => {
 
                         {doctor ? (
                           <Grid item xs={12} sm={6} md={6} my={2}>
-                            <FullCalendar
+                            {/* <FullCalendar
                               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                               initialView="dayGridMonth"
                               initialDate={new Date(formik?.values?.year || currentYear, index, 1)}
                               // minHeight="300px"
                               // height="100%"
-                              events={[{ title: events?.city,date }]}
+                              events={[{ title: events?.city, date }]}
                               headerToolbar={{
                                 right: 'dayGridMonth',
                               }}
@@ -331,11 +330,46 @@ const Addtourplan = () => {
                                   duration: { months: 4 },
                                 },
                               }}
-                              // buttonText={{
-                              //   today: 'Today',
-                              //   dayGridMonth: 'Month',
-                              // }}
                               eventClassNames="custom-fullcalendar"
+                            /> */}
+
+                            <FullCalendar
+                              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                              initialView="dayGridMonth"
+                              events={[{ title: events?.city, date }]}
+                              initialDate={new Date(formik?.values?.year || currentYear, index, 1)}
+                              headerToolbar={{
+                                right: 'dayGridMonth',
+                              }}
+                              views={{
+                                listWeek: { buttonText: 'List' },
+                                multiMonthFourMonth: {
+                                  type: 'multiMonth',
+                                  buttonText: 'multiMonth',
+                                  duration: { months: 4 },
+                                },
+                              }}
+                              editable
+                              selectable
+                              selectMirror
+                              dayMaxEvents
+                              select={handleEventClick}
+                              eventClassNames="custom-fullcalendar"
+                              eventContent={(eventInfo) => {
+                                return (
+                                  <Box
+                                    style={{
+                                      backgroundColor: eventInfo.event.backgroundColor || 'blue',
+                                      color: eventInfo.event.textColor || 'white',
+                                      padding: '5px 20px',
+                                      width: '100%',
+                                      borderRadius: '5px',
+                                    }}
+                                  >
+                                    {eventInfo.event.title}
+                                  </Box>
+                                );
+                              }}
                             />
                           </Grid>
                         ) : (

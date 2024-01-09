@@ -65,7 +65,6 @@ const Approveplan = () => {
   ];
 
   const fetchData = async (searchText) => {
-    console.log(searchText, 'searchText');
     const filtered = tourList?.filter(
       ({ month, year, status }) =>
         month?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
