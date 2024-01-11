@@ -39,9 +39,10 @@ const AddVisit = (props) => {
     const { id } = JSON.parse(localStorage.getItem('user'));
     const [doctorList, setDoctorList] = useState([])
     const [employeeList, setEmployeeList] = useState([])
+    const [cityList, setCityList] = useState([])
     const dispatch = useDispatch()
     const zoneList = useSelector((state) => state?.getZone?.data)
-    const cityList = useSelector((state) => state?.getCity?.data)
+    const cityData = useSelector((state) => state?.getCity?.data)
     const doctorData = useSelector((state) => state?.getDoctor?.data)
     const employeeData = useSelector((state) => state?.getEmployee?.data)
 
@@ -85,7 +86,6 @@ const AddVisit = (props) => {
             formik.resetForm();
             handleClose();
             dispatch(fetchDoctorVisitData());
-
         }
     }
 
@@ -100,13 +100,14 @@ const AddVisit = (props) => {
         },
     });
 
-    const fetchDoctor = (zoneName) => {
-        const filtered = doctorData?.filter((doctor) => doctor?.addressInformation?.zone?.toLowerCase() === zoneName?.toLowerCase())
-        setDoctorList(filtered);
-    }
-    const fetchEmployee = (zoneName) => {
-        const filtered = employeeData?.filter((employee) => employee?.contactInformation?.zone?.toLowerCase() === zoneName?.toLowerCase())
-        setEmployeeList(filtered);
+
+    const fetchData = (zone) => {
+        const filteredDoctor = doctorData?.filter((doctor) => doctor?.addressInformation?.zone?.toLowerCase() === zone?.toLowerCase())
+        const filteredCity = cityData?.filter(({ zoneName }) => zoneName?.toLowerCase() === zone?.toLowerCase())
+        const filteredEmp = employeeData?.filter((employee) => employee?.contactInformation?.zone?.toLowerCase() === zone?.toLowerCase())
+        setDoctorList(filteredDoctor);
+        setCityList(filteredCity);
+        setEmployeeList(filteredEmp);
     }
 
     useEffect(() => {
@@ -142,8 +143,9 @@ const AddVisit = (props) => {
                                         size="small"
                                         onChange={(event, newValue) => {
                                             formik.setFieldValue('zone', newValue ? newValue.zoneName : "");
-                                            fetchDoctor(newValue ? newValue.zoneName : "")
-                                            fetchEmployee(newValue ? newValue.zoneName : "")
+                                            fetchData(newValue ? newValue.zoneName : "")
+                                            // fetchEmployee(newValue ? newValue.zoneName : "")
+                                            // fetchCity(newValue ? newValue.zoneName : "")
                                         }}
                                         fullWidth
                                         options={zoneList}

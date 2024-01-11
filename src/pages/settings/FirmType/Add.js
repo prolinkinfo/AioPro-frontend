@@ -36,6 +36,7 @@ const AddType = (props) => {
         const pyload = {
             firmType: values.firmType,
             level: values.level,
+            business: "yes"
         }
         const result = await apipost('/api/firmtype', pyload);
 
@@ -95,7 +96,7 @@ const AddType = (props) => {
                                 <TextField
                                     id="level"
                                     name="level"
-                                    type='number' 
+                                    type='number'
                                     size="small"
                                     maxRows={10}
                                     placeholder='Enter Level'

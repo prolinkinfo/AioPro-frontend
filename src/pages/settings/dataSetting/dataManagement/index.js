@@ -31,7 +31,7 @@ const DataManagement = () => {
               >
                 <Tab label="Doctor Management" value="1" />
                 <Tab label="City Management" value="2" />
-                <Tab label="Zone Management" value="3" />
+                <Tab label="Zone Mapping" value="3" />
                 <Tab label="Speciality Management" value="4" />
                 <Tab label="Logs" value="5" />
                 <Tab label="SFC Cities" value="6" />

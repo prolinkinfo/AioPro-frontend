@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable no-unneeded-ternary */
 import { Autocomplete, Box, Button, Card, Checkbox, Container, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
@@ -19,7 +21,7 @@ const FirmType = () => {
     const [typeList, setTypeList] = useState([])
     const [typeData, setTypeData] = useState({})
     const [id, setId] = useState('')
-    const [checked, setChecked] = useState('');
+    // const [checked, setChecked] = useState('');
     const dispatch = useDispatch();
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
@@ -33,11 +35,6 @@ const FirmType = () => {
     const open = Boolean(anchorEl);
 
     const firmType = useSelector((state) => state?.geFirmType?.data)
-
-    const handleChange = (e) => {
-        setChecked(e.target.checked)
-    }
-
 
     const columns = [
         {
@@ -75,20 +72,29 @@ const FirmType = () => {
             headerName: 'Business',
             flex: 1,
             renderCell: (params) => {
-                const handleClick = async (e, params) => {
-                    setChecked(e.target.checked)
-                    console.log(checked)
+                const chengStatus = async (data) => {
                     const pyload = {
-                        _id: params?.row?._id,
-                        business: e.target.checked,
-                        modifiedOn: new Date()
+                        _id: data?._id,
+                        business: data?.business === "yes" ? "no" : data?.business === "no" ? "yes" : "",
                     }
-                    const result = await apiput('/api/firmtype', pyload);
-
+                    const result = await apiput(`/api/firmtype/changeStatus`, pyload);
+                    if (result && result.status === 200) {
+                        dispatch(firmaTypeData());
+                    }
                 };
                 return (
                     <Box>
-                        <Checkbox checked={params?.row?.business} handleChange={handleClick} />
+                        <Button
+                            variant="outlined"
+                            style={{
+                                color: params.value === 'yes' ? '#22C55E' : '#B61D18',
+                                background: params.value === 'yes' ? '#22c55e29' : '#ff563029',
+                                border: 'none',
+                            }}
+                            onClick={() => chengStatus(params?.row)}
+                        >
+                            {params.value}
+                        </Button>
                     </Box>
                 );
             },

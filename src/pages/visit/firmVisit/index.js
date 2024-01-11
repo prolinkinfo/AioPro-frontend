@@ -7,6 +7,7 @@ import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import * as XLSX from 'xlsx'
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -133,7 +134,6 @@ const FirmVisit = () => {
 
     const lastWeekDates = getLastWeekDates();
 
-    console.log(lastWeekDates, "lastWeekDates")
 
     const visitList = [
         {
@@ -172,24 +172,54 @@ const FirmVisit = () => {
         setFirmVisitList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : firmVisit);
     }
 
-    // const fetchData = (searchText) => {
-    //     const filtered = firmVisit?.filter(({ firmId, firmName, visitAddress, firmAddress, city, zone, employeeName, visitDate }) =>
-    //         firmId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         firmName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         visitAddress?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         firmAddress?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         zone?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         employeeName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         moment(visitDate)?.format("YYYY-MM-DD")?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         moment(visitDate)?.format("MM")?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-    //         moment(visitDate)?.format("YYYY")?.toLowerCase()?.includes(searchText?.toLowerCase())
-
-    //     );
-    //     setFirmVisitList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : firmVisit)
-    // }
-
-
+ 
+    const convertJsonToExcel = (jsonArray, fileName) => {
+        const field = jsonArray?.map((item) => {
+            return {
+                "Firm Id": item?.firmId,
+                "Firm Name": item?.firmName,
+                "Visit Address": item?.visitAddress,
+                "Firm Address": item?.firmAddress,
+                "City": item?.city,
+                "Zone": item?.zone,
+                "Employee Name": fullName(item?.employeeName),
+                "Visit Date": moment(item?.visitDate).format("DD/MM/YYYY"),
+                "Status": item?.status,
+            };
+        });
+    
+        const ws = XLSX.utils.json_to_sheet(field);
+    
+        // Bold the header
+        const headerRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+            const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+            if (ws[headerCell]) {
+                ws[headerCell].s = { font: { bold: true } };
+            }
+        }
+    
+        // Auto-size columns based on data content
+        const dataRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
+            let maxLen = 0;
+            for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+                const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                if (ws[cell] && ws[cell].v) {
+                    const cellValue = ws[cell].v.toString().length + 2;
+                    if (cellValue > maxLen) {
+                        maxLen = cellValue;
+                    }
+                }
+            }
+            ws['!cols'] = ws['!cols'] || [];
+            ws['!cols'][C] = { wch: maxLen };
+        }
+    
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+        XLSX.writeFile(wb, `${fileName}.xls`);
+    };
 
     const fetchEmployee = (name) => {
         if (employee) {
@@ -219,7 +249,7 @@ const FirmVisit = () => {
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Firm Visit</Typography>
-                    <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />}>
+                    <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={()=>convertJsonToExcel(firmVisitList,"firm_visit")}>
                         Export
                     </Button>
                 </Stack>
