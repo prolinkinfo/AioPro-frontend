@@ -41,21 +41,16 @@ const Employees = () => {
     }
   };
 
-  const handleClickOpenModel = (value) => {
-    deleteEmployee(value);
-    setAnchorEl(null);
-  };
-
   const columns = [
     {
       headerName: 'Action',
       sortable: false,
       width: 120,
       renderCell: (params) => {
-        // console.log("params",params?.row?._id)
-        // const handleClick = async (data) => {
-        //   console.log(data, 'data');
-        // };
+        const handleClickOpenModel = (value) => {
+          deleteEmployee(value);
+          setAnchorEl(null);
+        };
 
         return (
           <div>
@@ -79,7 +74,12 @@ const Employees = () => {
               }}
             >
               <MenuItem onClick={() => handleClose()}>
-                <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View</span>
+                <Link
+                  to={`/${userRole}/dashboard/people/view/employees/${employeeId}`}
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
+                  <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View</span>
+                </Link>
               </MenuItem>
               <MenuItem onClick={() => handleClose()}>
                 <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log</span>
@@ -181,7 +181,7 @@ const Employees = () => {
       field: 'designation',
       headerName: 'Designation',
       renderCell: (params) => {
-        return <Box>{params?.row?.basicInformation?.designation} </Box>;
+        return <Box>{params?.row?.workInformation?.designation} </Box>;
       },
       width: 200,
     },
@@ -203,21 +203,6 @@ const Employees = () => {
     { field: 'status', headerName: 'Status', width: 200 },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      firmId: '1001383',
-      firmName: 'T.k. Saikiya',
-      visitAddress: '1, Akurli Road, Ashok Nagar, Kandivali East, Mumbai, Maharashtra 400101, India',
-      firmAddress: '1, Akurli Road, Ashok Nagar, Kandivali East, Mumbai, Maharashtra 400101, India',
-      zone: 'Madhya Pradesh',
-      city: 'Jabalpur',
-      employeeName: 'Vaibhav Shrivastava',
-      visitDate: '20/11/2016',
-      status: 'open',
-    },
-  ];
-
   useEffect(() => {
     dispatch(fetchEmployeeData());
   }, []);
@@ -227,11 +212,19 @@ const Employees = () => {
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Employees</Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            <Link to={`/${userRole}/dashboard/people/employees/add`} style={{ color: 'white', textDecoration: 'none' }}>
-              Add Employees
-            </Link>
-          </Button>
+          <Box>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              <Link
+                to={`/${userRole}/dashboard/people/employees/add`}
+                style={{ color: 'white', textDecoration: 'none' }}
+              >
+                Add Employees
+              </Link>
+            </Button>
+            <Button variant="contained" sx={{ m: '10px' }} startIcon={<Iconify icon="eva:plus-fill" />}>
+              import
+            </Button>
+          </Box>
         </Stack>
         <TableStyle>
           <Box width="100%" pt={3}>

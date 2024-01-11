@@ -36,18 +36,6 @@ import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { fetchDesignation } from '../../../redux/slice/GetDesignationSlice';
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 const top100Films = [
   { label: 'The Shawshank Redemption', year: 1994 },
   { label: 'The Godfather', year: 1972 },
@@ -69,7 +57,7 @@ const BloodGroup = [
 
 const Language = [{ label: 'Gujrati' }, { label: 'Hindi' }, { label: 'English' }];
 
-const AddEmployees = () => {
+const ViewEmployees = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role.toLowerCase();
   const navigate = useNavigate();
@@ -335,60 +323,13 @@ const AddEmployees = () => {
     navigate(`/${userRole}/dashboard/people/employees`);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedFile(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    formik.setFieldValue('profileImg', file);
-  };
 
-  const clear = () => {
-    setSelectedFile('');
-  };
-
-  const FileUploadButton = ({ onChange }) => {
-    const handleButtonClick = () => {
-      document.getElementById('avatar-upload').click();
-    };
-
-    const handleFileChange = (e) => {
-      onChange(e);
-    };
-
-    return (
-      <>
-        <Button
-          component="span"
-          variant="outlined"
-          color="primary"
-          style={{ marginTop: '20px' }}
-          onClick={handleButtonClick}
-        >
-          Upload
-        </Button>
-
-        <input
-          accept="image/*"
-          type="file"
-          id="avatar-upload"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-          aria-labelledby="avatar-upload"
-        />
-      </>
-    );
-  };
 
   return (
     <div>
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
-          <Typography variant="h4"> {params?.id ? 'Edit Employees' : 'Add Employees'}</Typography>
+          <Typography variant="h4"> Employees</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={back}>
               Back
@@ -407,36 +348,21 @@ const AddEmployees = () => {
                     <Avatar
                       alt="Avatar"
                       src={selectedFile || formik?.values?.profileImg}
-                      sx={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                      sx={{ width: 150, height: 150, margin: '16px auto', borderRadius: '50%' }}
                     />
                   ) : (
                     <img
                       src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
-                      style={{ width: 100, height: 100, margin: '16px auto', borderRadius: '50%' }}
+                      style={{ width: 150, height: 150, margin: '16px auto', borderRadius: '50%' }}
                       alt="profile-img"
                     />
                   )}
-                  <Typography variant="h6">Upload Avatar</Typography>
-
-                  <FileUploadButton onChange={handleFileChange} />
-
-                  <Button
-                    component="span"
-                    variant="outlined"
-                    color="error"
-                    style={{ marginTop: '20px', marginLeft: '10px' }}
-                    onClick={clear}
-                  >
-                    Clear
-                  </Button>
                 </Box>
               </Grid>
 
               <Grid item xs={12} sm={8} md={8} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
                 <Grid item xs={12} sm={12} md={12} mt={1}>
-                  <FormLabel>
-                    First Name <span style={{ color: 'red' }}>*</span>
-                  </FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <TextField
                     id="doctorName"
                     name="firstName"
@@ -444,6 +370,7 @@ const AddEmployees = () => {
                     maxRows={10}
                     placeholder="Enter First Name"
                     fullWidth
+                    disabled
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     error={formik.touched.firstName && Boolean(formik.errors.firstName)}
@@ -456,6 +383,7 @@ const AddEmployees = () => {
                     id="doctorName"
                     name="middleName"
                     size="small"
+                    disabled
                     maxRows={10}
                     placeholder="Enter Middle Name"
                     fullWidth
@@ -466,13 +394,12 @@ const AddEmployees = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} mt={1}>
-                  <FormLabel>
-                    Surname <span style={{ color: 'red' }}>*</span>
-                  </FormLabel>
+                  <FormLabel>Surname</FormLabel>
                   <TextField
                     id="doctorName"
                     name="surname"
                     size="small"
+                    disabled
                     maxRows={10}
                     placeholder="Enter Surname"
                     fullWidth
@@ -506,20 +433,20 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">
-                    Gender <span style={{ color: 'red' }}>*</span>
-                  </FormLabel>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+                  {/* <Typography>{formik?.values.gender}</Typography> */}
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="gender"
                     value={formik.values.gender}
+                    disabled
                     onChange={formik.handleChange}
                     error={formik.touched.gender && Boolean(formik.errors.gender)}
                     helperText={formik.touched.gender && formik.errors.gender}
                   >
-                    <FormControlLabel value="female" control={<Radio />} label="Female" />
-                    <FormControlLabel value="male" control={<Radio />} label="Male" />
+                    <FormControlLabel value="female" disabled control={<Radio />} label="Female" />
+                    <FormControlLabel value="male" disabled control={<Radio />} label="Male" />
                     <FormControlLabel value="disabled" disabled control={<Radio />} label="other" />
                   </RadioGroup>
                 </FormControl>
@@ -527,34 +454,32 @@ const AddEmployees = () => {
 
               <Grid item xs={12} sm={6} md={6}>
                 <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">
-                    Work Type <span style={{ color: 'red' }}>*</span>
-                  </FormLabel>
+                  <FormLabel id="demo-row-radio-buttons-group-label">Work Type</FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="workType"
                     value={formik.values.workType}
+                    disabled
                     onChange={formik.handleChange}
                     error={formik.touched.workType && Boolean(formik.errors.workType)}
                     helperText={formik.touched.workType && formik.errors.workType}
                   >
-                    <FormControlLabel value="office" control={<Radio />} label="office" />
-                    <FormControlLabel value="onField" control={<Radio />} label="on Field" />
+                    <FormControlLabel value="office" disabled control={<Radio />} label="office" />
+                    <FormControlLabel value="onField" disabled control={<Radio />} label="on Field" />
                   </RadioGroup>
                 </FormControl>
               </Grid>
 
               <Grid item xs={12}>
-                <FormLabel>
-                  Date Of Birth <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Date Of Birth</FormLabel>
                 <TextField
                   id="dateOfBirth"
                   name="Dob"
                   size="small"
                   type="date"
                   maxRows={10}
+                  disabled
                   fullWidth
                   value={params?.id ? dayjs(formik.values.Dob).format('YYYY-MM-DD') : formik.values.Dob}
                   onChange={formik.handleChange}
@@ -571,6 +496,7 @@ const AddEmployees = () => {
                     id="demo-simple-select"
                     size="small"
                     name="maritalStatus"
+                    disabled
                     value={formik.values.maritalStatus || ''}
                     onChange={formik.handleChange}
                     error={formik.touched.maritalStatus && Boolean(formik.errors.maritalStatus)}
@@ -592,6 +518,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
+                  disabled
                   value={
                     params?.id
                       ? dayjs(formik.values.anniversaryDate).format('YYYY-MM-DD')
@@ -610,15 +537,14 @@ const AddEmployees = () => {
             <Divider />
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mt={2}>
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Primary Contact Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Primary Contact Number</FormLabel>
                 <TextField
                   id="pincode"
                   name="primaryContact"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Primary Contact Number"
                   value={formik.values.primaryContact}
                   onChange={formik.handleChange}
@@ -634,6 +560,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Alternate Contact Number"
                   value={formik.values.alternateContact}
                   onChange={formik.handleChange}
@@ -643,15 +570,14 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>
-                  Email <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Email</FormLabel>
                 <TextField
                   id="pincode"
                   name="email"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Enter Eamil"
                   value={formik.values.email}
                   onChange={formik.handleChange}
@@ -661,14 +587,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Country <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Country</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="country"
                   options={country}
                   fullWidth
+                  disabled
                   size="small"
                   value={country.find((item) => item.countryName === formik.values.country) || null}
                   onChange={(e, value) => formik.setFieldValue('country', value ? value.countryName : '')}
@@ -685,14 +610,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  State <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>State</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="state"
                   options={state}
                   fullWidth
+                  disabled
                   size="small"
                   value={state.find((item) => item.stateName === formik.values.state) || null}
                   onChange={(e, value) => formik.setFieldValue('state', value ? value.stateName : '')}
@@ -715,6 +639,7 @@ const AddEmployees = () => {
                   name="hq"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.hq}
                   onChange={formik.handleChange}
@@ -736,6 +661,7 @@ const AddEmployees = () => {
                   name="multipleHq"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.multipleHq}
                   onChange={formik.handleChange}
@@ -751,15 +677,14 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Division <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Division</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="division"
                   options={divisionList}
                   fullWidth
                   size="small"
+                  disabled
                   value={divisionList.find((division) => division.divisionName === formik.values.division) || null}
                   onChange={(e, value) => formik.setFieldValue('division', value ? value.divisionName : '')}
                   getOptionLabel={({ divisionName }) => divisionName} // Set the label to the 'divisionName' property
@@ -775,14 +700,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Zones <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Zones</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="zone"
                   options={zoneList}
                   fullWidth
+                  disabled
                   size="small"
                   value={zoneList.find((zone) => zone.zoneName === formik.values.zone) || null}
                   onChange={(e, value) => formik.setFieldValue('zone', value ? value.zoneName : '')}
@@ -799,15 +723,14 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>
-                  Home Loction <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Home Loction</FormLabel>
                 <TextField
                   id="address"
                   name="homeLocation"
                   size="small"
                   rows={2}
                   multiline
+                  disabled
                   fullWidth
                   placeholder="201, Deepkamal mall 1, near Sarthana Nature Park, Sarthana Jakat Naka, Nature Park and Zoo, Nana Varachha, Surat, Gujarat"
                   value={formik.values.homeLocation}
@@ -818,15 +741,14 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <FormLabel>
-                  Permanent Loction <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Permanent Loction</FormLabel>
                 <TextField
                   id="address"
                   name="permanentLoction"
                   size="small"
                   rows={2}
                   multiline
+                  disabled
                   fullWidth
                   value={formik.values.permanentLoction}
                   onChange={formik.handleChange}
@@ -836,15 +758,14 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Zip/Postal Code <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Zip/Postal Code</FormLabel>
                 <TextField
                   id="pincode"
                   name="pincode"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Postal Code / Zip Pincode"
                   value={formik.values.pincode}
                   onChange={formik.handleChange}
@@ -860,6 +781,7 @@ const AddEmployees = () => {
                   name="additionalDivision"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.additionalDivision}
                   onChange={formik.handleChange}
@@ -887,6 +809,7 @@ const AddEmployees = () => {
                   name="exStations"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.exStations}
                   onChange={formik.handleChange}
@@ -908,6 +831,7 @@ const AddEmployees = () => {
                   name="outStations"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.outStations}
                   onChange={formik.handleChange}
@@ -923,14 +847,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Designation <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Designation</FormLabel>
                 <Autocomplete
                   disablePortal
                   name="designation"
                   options={designation}
                   fullWidth
+                  disabled
                   size="small"
                   value={designation.find((item) => item.designation === formik.values.designation) || null}
                   onChange={(e, value) => formik.setFieldValue('designation', value ? value.designation : '')}
@@ -953,6 +876,7 @@ const AddEmployees = () => {
                   name="assignedTo"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.assignedTo}
                   onChange={formik.handleChange}
@@ -974,6 +898,7 @@ const AddEmployees = () => {
                   name="additionalSupervisor"
                   options={top100Films}
                   fullWidth
+                  disabled
                   size="small"
                   value={formik.values.additionalSupervisor}
                   onChange={formik.handleChange}
@@ -996,6 +921,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
+                  disabled
                   value={params?.id ? dayjs(formik.values.Doj).format('YYYY-MM-DD') : formik.values.Doj}
                   onChange={formik.handleChange}
                   error={formik.touched.Doj && Boolean(formik.errors.Doj)}
@@ -1011,6 +937,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
+                  disabled
                   value={
                     params?.id
                       ? dayjs(formik.values.endProbationDate).format('YYYY-MM-DD')
@@ -1030,6 +957,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
+                  disabled
                   value={
                     params?.id
                       ? dayjs(formik.values.endConfirmationDate).format('YYYY-MM-DD')
@@ -1042,14 +970,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Daily Work Hours (In numbers) <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Daily Work Hours (In numbers)</FormLabel>
                 <TextField
                   name="dailyWorkHours"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Enter Working Hours"
                   value={formik.values.dailyWorkHours}
                   onChange={formik.handleChange}
@@ -1063,6 +990,7 @@ const AddEmployees = () => {
                   control={
                     <Checkbox
                       checked={formik.values.showAccompanied}
+                      disabled
                       onChange={(e) => formik.setFieldValue('showAccompanied', e.target.checked)}
                       name="requiredCheckbox"
                     />
@@ -1078,6 +1006,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Enter Working Hours"
                   value={formik.values.accompaniedEmployee}
                   onChange={formik.handleChange}
@@ -1094,6 +1023,7 @@ const AddEmployees = () => {
                   type="date"
                   maxRows={10}
                   fullWidth
+                  disabled
                   value={
                     params?.id
                       ? dayjs(formik.values.dateOfResignation).format('YYYY-MM-DD')
@@ -1110,6 +1040,7 @@ const AddEmployees = () => {
                   control={
                     <Checkbox
                       checked={formik.values.showInTransit}
+                      disabled
                       onChange={(e) => formik.setFieldValue('showInTransit', e.target.checked)}
                       name="showInTransit"
                     />
@@ -1131,6 +1062,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Employee Qualification"
                   value={formik.values.employeeQualification}
                   onChange={formik.handleChange}
@@ -1140,14 +1072,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Aadhar Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Aadhar Number</FormLabel>
                 <TextField
                   name="aadharNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Aadhar Number"
                   value={formik.values.aadharNumber}
                   onChange={formik.handleChange}
@@ -1157,14 +1088,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  PAN Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>PAN Number</FormLabel>
                 <TextField
                   name="PanNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="PAN Number"
                   value={formik.values.PanNumber}
                   onChange={formik.handleChange}
@@ -1174,14 +1104,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  PF Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>PF Number</FormLabel>
                 <TextField
                   name="pfNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="PF Number"
                   value={formik.values.pfNumber}
                   onChange={formik.handleChange}
@@ -1191,14 +1120,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  ESIC Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>ESIC Number</FormLabel>
                 <TextField
                   name="ESICNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="ESIC Number"
                   value={formik.values.ESICNumber}
                   onChange={formik.handleChange}
@@ -1208,14 +1136,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  PF UAN Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>PF UAN Number</FormLabel>
                 <TextField
                   name="PfUanNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="PF UAN Number"
                   value={formik.values.PfUanNumber}
                   onChange={formik.handleChange}
@@ -1231,6 +1158,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Driver's License Number"
                   value={formik.values.driverLicenseNumber}
                   onChange={formik.handleChange}
@@ -1247,6 +1175,7 @@ const AddEmployees = () => {
                   options={BloodGroup}
                   getOptionLabel={(option) => option.label} // Specify the label property
                   fullWidth
+                  disabled
                   size="small"
                   value={BloodGroup.find((option) => option.label === formik.values.bloodGroup)}
                   onChange={(e, value) => formik.setFieldValue('bloodGroup', value?.label || null)} // Set the label as the value
@@ -1268,6 +1197,7 @@ const AddEmployees = () => {
                   name="Language"
                   options={Language}
                   fullWidth
+                  disabled
                   size="small"
                   value={Language.find((option) => option.label === formik.values.Language)}
                   onChange={(e, value) => formik.setFieldValue('Language', value?.label || null)}
@@ -1295,6 +1225,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_HO}
                   onChange={formik.handleChange}
@@ -1310,6 +1241,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_EX}
                   onChange={formik.handleChange}
@@ -1325,6 +1257,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_OUT}
                   onChange={formik.handleChange}
@@ -1340,6 +1273,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_RHO}
                   onChange={formik.handleChange}
@@ -1355,6 +1289,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_TRANSIT}
                   onChange={formik.handleChange}
@@ -1370,6 +1305,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="0"
                   value={formik.values.DA_OTHER}
                   onChange={formik.handleChange}
@@ -1385,14 +1321,13 @@ const AddEmployees = () => {
             <Divider />
             <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mt={2}>
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Account Holder Name <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Account Holder Name</FormLabel>
                 <TextField
                   name="accountHolderName"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Account Holder Name"
                   value={formik.values.accountHolderName}
                   onChange={formik.handleChange}
@@ -1402,14 +1337,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Account Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Account Number</FormLabel>
                 <TextField
                   name="accountNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Account Number"
                   value={formik.values.accountNumber}
                   onChange={formik.handleChange}
@@ -1419,14 +1353,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  IFSC Number <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>IFSC Number</FormLabel>
                 <TextField
                   name="IFSCNumber"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="IFSC Number"
                   value={formik.values.IFSCNumber}
                   onChange={formik.handleChange}
@@ -1442,6 +1375,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Beneficiary ID"
                   value={formik.values.beneficiaryID}
                   onChange={formik.handleChange}
@@ -1451,13 +1385,12 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Bank Name <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Bank Name</FormLabel>
                 <TextField
                   name="bankName"
                   size="small"
                   maxRows={10}
+                  disabled
                   fullWidth
                   placeholder="Bank Name"
                   value={formik.values.bankName}
@@ -1468,14 +1401,13 @@ const AddEmployees = () => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6}>
-                <FormLabel>
-                  Branch Name <span style={{ color: 'red' }}>*</span>
-                </FormLabel>
+                <FormLabel>Branch Name</FormLabel>
                 <TextField
                   name="branchName"
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Branch Name"
                   value={formik.values.branchName}
                   onChange={formik.handleChange}
@@ -1491,6 +1423,7 @@ const AddEmployees = () => {
                   size="small"
                   maxRows={10}
                   fullWidth
+                  disabled
                   placeholder="Nominee Name"
                   value={formik.values.nomineeName}
                   onChange={formik.handleChange}
@@ -1500,7 +1433,7 @@ const AddEmployees = () => {
               </Grid>
             </Grid>
 
-            <Divider />
+            {/* <Divider />
             <Grid item xs={12} sm={12} md={12} display={'flex'} justifyContent={'end'} style={{ marginTop: '15px' }}>
               <Stack direction={'row'} spacing={2}>
                 <Button variant="contained" onClick={formik.handleSubmit}>
@@ -1510,7 +1443,7 @@ const AddEmployees = () => {
                   Cancel
                 </Button>
               </Stack>
-            </Grid>
+            </Grid> */}
           </Card>
         </Box>
       </Container>
@@ -1518,4 +1451,4 @@ const AddEmployees = () => {
   );
 };
 
-export default AddEmployees;
+export default ViewEmployees;
