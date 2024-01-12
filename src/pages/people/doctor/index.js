@@ -1,3 +1,5 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable prefer-const */
 /* eslint-disable arrow-body-style */
 import React, { useEffect, useState } from 'react';
 import {
@@ -24,7 +26,6 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import * as XLSX from 'xlsx'
-
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import ActionBtn from '../../../components/actionbtn/ActionBtn';
@@ -151,6 +152,11 @@ const Doctor = () => {
       width: 120,
     },
     {
+      field: 'registrationNumber',
+      headerName: 'Registration Number',
+      width: 120,
+    },
+    {
       field: 'doctorName',
       headerName: 'Doctor Name',
       width: 200,
@@ -173,7 +179,7 @@ const Doctor = () => {
       headerName: 'Employee Name',
       width: 250,
       renderCell: (params) => {
-        return <Box>{params?.row?.workInformation?.assignedTo}</Box>;
+        return <Box>{fullName(params?.row?.workInformation?.assignedTo)}</Box>;
       },
     },
     {
@@ -191,7 +197,7 @@ const Doctor = () => {
       headerName: 'Speciality',
       width: 130,
       renderCell: (params) => {
-        return <Box>{params?.row?.workInformation?.speciality}</Box>;
+        return <Box>{params?.row?.workInformation?.speciality[0]}</Box>;
       },
     },
     {
@@ -266,11 +272,11 @@ const Doctor = () => {
       },
     },
     {
-      field: 'country',
+      field: 'countryName',
       headerName: 'Country',
       width: 130,
       renderCell: (params) => {
-        return <Box>{params?.row?.workInformation?.country}</Box>;
+        return <Box>{params?.row?.addressInformation?.countryName}</Box>;
       },
     },
     {
@@ -303,9 +309,78 @@ const Doctor = () => {
     { label: 'Pulp Fiction', year: 1994 },
   ];
 
+  const fullName = (name) => {
+    let separatedNames = name.split(/(?=[A-Z])/);
+    let firstName = separatedNames[0];
+    let lastName = separatedNames[1];
+
+    return `${firstName} ${lastName}`
+  }
+
+  const convertJsonToExcel = (jsonArray, fileName) => {
+    const field = jsonArray?.map((item) => {
+        return {
+            "Doctor Id": item?.doctorId,
+            "Registration Number": item?.registrationNumber,
+            "Doctor Name": item?.doctorName,
+            "City": item?.addressInformation?.city,
+            "Hospital Name": item?.hospitalName,
+            "Employee Name": fullName(item?.workInformation?.assignedTo),
+            "Immediate Senior": item?.immediateSenior,
+            "Contact Number": item?.contactNumber,
+            "Speciality": item?.workInformation?.speciality,
+            "Qualification": item?.qualification,
+            "Division": item?.addressInformation?.division,
+            "Category": item?.workInformation?.category,
+            "Zone": item?.addressInformation?.zone,
+            "Email": item?.email,
+            "Gender": item?.gender,
+            "DOB": moment(item?.dateOfBirth).format("DD/MM/YYYY"),
+            "Anniversary": moment(item?.anniversaryDate).format("DD/MM/YYYY"),
+            "Type": item?.workInformation?.type,
+            "Firm": item?.workInformation?.firmName,
+            "Country": item?.addressInformation?.countryName,
+            "Status": item?.status,
+        };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(field);
+
+    // Bold the header
+    const headerRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+        const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+        if (ws[headerCell]) {
+            ws[headerCell].s = { font: { bold: true } };
+        }
+    }
+
+    // Auto-size columns based on data content
+    const dataRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
+        let maxLen = 0;
+        for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+            const cell = XLSX.utils.encode_cell({ r: R, c: C });
+            if (ws[cell] && ws[cell].v) {
+                const cellValue = ws[cell].v.toString().length + 2;
+                if (cellValue > maxLen) {
+                    maxLen = cellValue;
+                }
+            }
+        }
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][C] = { wch: maxLen };
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, `${fileName}.xls`);
+};
+
+
   const fetchData = async (searchText) => {
     const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber, qualification, email, gender }) =>
-      doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
+      // doctorId?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       doctorName?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       addressInformation?.city?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       addressInformation?.division?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
@@ -352,12 +427,6 @@ const Doctor = () => {
 
   // ======================== XLS File ================================================
 
-  const convertJsonToExcel = (jsonArray, fileName) => {
-    const ws = XLSX.utils.json_to_sheet(jsonArray);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-    XLSX.writeFile(wb, `${fileName}.xls`);
-  };
 
   return (
     <div>
@@ -370,7 +439,7 @@ const Doctor = () => {
                 Add Doctor
               </Link>
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(data, 'doctors')}>
+            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(doctorList, 'doctors')}>
               Export
             </Button>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
@@ -531,7 +600,7 @@ const Doctor = () => {
                   columns={columns}
                   initialState={{
                     pagination: {
-                      paginationModel: { page: 0, pageSize: 5 },
+                      paginationModel: { page: 0, pageSize: 10 },
                     },
                   }}
                   pageSizeOptions={[5, 10]}

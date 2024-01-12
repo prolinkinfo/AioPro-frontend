@@ -17,28 +17,6 @@ import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
-
 const Add = () => {
 
     // const [qualificationList, setQualificationList] = useState([]);
@@ -73,15 +51,15 @@ const Add = () => {
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        // doctorName: yup.string().required('Doctor Name is required'),
-        // hospitalName: yup.string().required('Hospital Name is required'),
-        // gender: yup.string().required('Gender is required'),
-        // state: yup.string().required('State is required'),
-        // city: yup.string().required('City is required'),
-        // division: yup.string().required('Division is required'),
-        // zone: yup.string().required('Zone is required'),
-        // speciality: yup.string().required('Speciality is required'),
-        // assignedTo: yup.string().required('Assigned To is required'),
+        doctorName: yup.string().required('Doctor Name is required'),
+        email: yup.string().email(),
+        contactNumber: yup.string().matches(/^[0-9]{10}$/, 'Contact Number must be 10 digits'),
+        pincode: yup.string().matches(/^\d{6}$/, 'Pin code must be exactly 6 digits'),
+        state: yup.string().required('State is required'),
+        city: yup.string().required('City is required'),
+        division: yup.string().required('Division is required'),
+        zone: yup.string().required('Zone is required'),
+        assignedTo: yup.string().required('Assigned To is required'),
     });
 
     const initialValues = {
@@ -98,7 +76,7 @@ const Add = () => {
         city: '',
         division: '',
         zone: '',
-        Pincode: '',
+        pincode: '',
         speciality: [],
         type: '',
         category: '',
@@ -106,6 +84,7 @@ const Add = () => {
         assignedTo: '',
         firmName: '',
         registrationNumber: '',
+        countryName: ''
         // createdBy: id,
     };
 
@@ -129,6 +108,7 @@ const Add = () => {
                 division: values.division,
                 zone: values.zone,
                 pincode: values.pincode,
+                countryName: values.countryName
             },
             workInformation: {
                 speciality: values.speciality,
@@ -137,7 +117,9 @@ const Add = () => {
                 approximatedBusiness: values.approximatedBusiness,
                 assignedTo: values.assignedTo,
                 firmName: values.firmName,
-            }
+            },
+
+            status: "active"
         }
         const result = await apipost('/api/doctor', pyload);
 
@@ -155,7 +137,6 @@ const Add = () => {
             addDoctor(values)
         },
     });
-    console.log(formik.values.assignedTo)
 
 
     const fetchCityDatas = async (stateName) => {
@@ -254,6 +235,7 @@ const Add = () => {
                                     name="contactNumber"
                                     size="small"
                                     maxRows={10}
+                                    type='number'
                                     fullWidth
                                     placeholder='Enter Contact Number'
                                     value={formik.values.contactNumber}
@@ -363,6 +345,7 @@ const Add = () => {
                                     size="small"
                                     onChange={(event, newValue) => {
                                         formik.setFieldValue('state', newValue ? newValue.stateName : "");
+                                        formik.setFieldValue('countryName', newValue ? newValue.countryName : "");
                                         fetchCityDatas(newValue ? newValue.stateName : "")
                                     }}
                                     fullWidth

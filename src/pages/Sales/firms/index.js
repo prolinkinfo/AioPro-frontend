@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-var */
 /* eslint-disable arrow-body-style */
 import React, { useState, useEffect } from 'react';
@@ -36,6 +37,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import * as XLSX from 'xlsx'
 
+import moment from 'moment';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import { apidelete, apiget } from '../../../service/api';
@@ -297,14 +299,10 @@ const Firms = () => {
   const approvedFirm = (id) => { };
 
   const convertJsonToExcel = (jsonArray, fileName) => {
-
-    const jsonData = [];
-
-    jsonArray?.forEach((item) => {
-
-      jsonData.push({
+    const field = jsonArray?.map((item) => {
+      return {
         'Firm Id': item?.firmId,
-        'Date': item?.date,
+        'Date': moment(item?.date).format("DD/MM/YYYY"),
         'Firm Code': item?.firmCode,
         'Firm Name': item?.firmName,
         'Firm Type': item?.firmType,
@@ -313,27 +311,55 @@ const Firms = () => {
         'City': item?.city,
         'Zone': item?.zone,
         'Division': item?.division,
-        'Category': item?.category,
-        'Employee Assigned': item?.employeeAssigned,
-        'Assigned Firm Email': '',
+        'Firm Category': item?.category,
+        'Assigned Employee': item?.employeeAssigned,
+        'Assigned Firm': item?.assignedTo,
+        'Assigned Firm Email': item?.assignedFirmEmail,
         'Email': item?.email,
         'Address': item?.address,
         'First Level Manager': item?.firstLevelManager,
         'Second Level Manager': item?.secondLevelManager,
         'Third Level Manager': item?.thirdLevelManager,
-        'Date of Birth': item?.dateOfBirth,
+        'Date of Birth': moment(item?.dateOfBirth).format("DD/MM/YYYY"),
+        'Pan Number': item?.panNumber,
         'Drug License Number': item?.drugLicenseNumber,
         'Food License Number': item?.foodLicenseNumber,
-      });
-
+        'Status': item?.status,
+      };
     });
 
-    const ws = XLSX.utils.json_to_sheet(jsonData);
+    const ws = XLSX.utils.json_to_sheet(field);
+
+    // Bold the header
+    const headerRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+      const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+      if (ws[headerCell]) {
+        ws[headerCell].s = { font: { bold: true } };
+      }
+    }
+
+    // Auto-size columns based on data content
+    const dataRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
+      let maxLen = 0;
+      for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+        if (ws[cell] && ws[cell].v) {
+          const cellValue = ws[cell].v.toString().length + 2;
+          if (cellValue > maxLen) {
+            maxLen = cellValue;
+          }
+        }
+      }
+      ws['!cols'] = ws['!cols'] || [];
+      ws['!cols'][C] = { wch: maxLen };
+    }
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, `${fileName}.xls`);
   };
-
 
   return (
     <div>
@@ -352,7 +378,7 @@ const Firms = () => {
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenView}>
               Add Visit
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(data, 'firms')}>
+            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(firmsList, 'firms')}>
               Export
             </Button>
             <Button

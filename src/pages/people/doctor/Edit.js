@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 import Iconify from '../../../components/iconify'
 import ClinicAddress from './clinicAddress';
 import { apiget, apiput } from '../../../service/api';
@@ -16,28 +17,6 @@ import { fetchTypeData } from '../../../redux/slice/GetTypeSlice';
 import { fetchStateData } from '../../../redux/slice/GetStateSlice';
 import { fetchCategoryData } from '../../../redux/slice/GetDoctorCategorySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
-
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-]
 
 const Edit = () => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -70,13 +49,13 @@ const Edit = () => {
     // -----------  validationSchema
     const validationSchema = yup.object({
         doctorName: yup.string().required('Doctor Name is required'),
-        hospitalName: yup.string().required('Hospital Name is required'),
-        gender: yup.string().required('Gender is required'),
+        email: yup.string().email(),
+        contactNumber: yup.string().matches(/^[0-9]{10}$/, 'Contact Number must be 10 digits'),
+        pincode: yup.string().matches(/^\d{6}$/, 'Pin code must be exactly 6 digits'),
         state: yup.string().required('State is required'),
         city: yup.string().required('City is required'),
         division: yup.string().required('Division is required'),
         zone: yup.string().required('Zone is required'),
-        // speciality: yup.string().required('Speciality is required'),
         assignedTo: yup.string().required('Assigned To is required'),
     });
 
@@ -102,6 +81,7 @@ const Edit = () => {
         assignedTo: data?.workInformation?.assignedTo,
         firmName: data?.workInformation?.firmName,
         registrationNumber: data?.registrationNumber,
+        countryName: data?.countryName,
         // createdBy: id,
     };
 
@@ -125,6 +105,7 @@ const Edit = () => {
                 division: values.division,
                 zone: values.zone,
                 pincode: values.pincode,
+                countryName: values.countryName,
             },
             workInformation: {
                 speciality: values.speciality,
@@ -156,7 +137,7 @@ const Edit = () => {
 
     const fetchCityDatas = async (stateName) => {
         const filtered = cityData?.filter((city) => city?.stateName?.toLowerCase() === stateName?.toLowerCase())
-        setCityList(filtered);
+        setCityList(stateName?.length > 0 ? (filtered?.length > 0 ? filtered : []) : cityData);
     };
 
     const fetchDoctorData = async (e) => {
@@ -180,6 +161,10 @@ const Edit = () => {
         dispatch(fetchCategoryData());
         dispatch(fetchEmployeeData());
     }, [userAction]);
+
+    useEffect(() => {
+        fetchCityDatas()
+    }, [cityData]);
 
 
     const back = () => {
@@ -239,7 +224,7 @@ const Edit = () => {
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="gender"
-                                        value={formik.values.gender}
+                                        value={formik.values.gender || null}
                                         onChange={formik.handleChange}
                                         error={formik.touched.gender && Boolean(formik.errors.gender)}
                                         helperText={formik.touched.gender && formik.errors.gender}
@@ -293,7 +278,7 @@ const Edit = () => {
                                     type='date'
                                     maxRows={10}
                                     fullWidth
-                                    value={formik.values.dateOfBirth}
+                                    value={dayjs(formik.values.dateOfBirth).format("YYYY-MM-DD")}
                                     onChange={formik.handleChange}
                                     error={formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)}
                                     helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
@@ -328,7 +313,7 @@ const Edit = () => {
                                     type='date'
                                     maxRows={10}
                                     fullWidth
-                                    value={formik.values.anniversaryDate}
+                                    value={dayjs(formik.values.anniversaryDate).format("YYYY-MM-DD")}
                                     onChange={formik.handleChange}
                                     error={formik.touched.anniversaryDate && Boolean(formik.errors.anniversaryDate)}
                                     helperText={formik.touched.anniversaryDate && formik.errors.anniversaryDate}
@@ -370,7 +355,8 @@ const Edit = () => {
                                     size="small"
                                     onChange={(event, newValue) => {
                                         formik.setFieldValue('state', newValue ? newValue.stateName : "");
-                                        fetchCityDatas(newValue ? newValue.stateName : "")
+                                        formik.setFieldValue('countryName', newValue ? newValue.countryName : "");
+                                        fetchCityDatas(newValue ? newValue.stateName : "");
                                     }}
                                     fullWidth
                                     options={stateData}
@@ -578,13 +564,13 @@ const Edit = () => {
                                 <Autocomplete
                                     size="small"
                                     onChange={(event, newValue) => {
-                                        formik.setFieldValue('assignedTo', newValue ? newValue.basicInformation?.employeesName
+                                        formik.setFieldValue('assignedTo', newValue ? `${newValue?.basicInformation?.firstName}${newValue?.basicInformation?.surname}`
                                             : "");
                                     }}
                                     fullWidth
                                     options={employeeList}
-                                    value={employeeList.find(employee => employee?.basicInformation?.employeesName === formik.values.assignedTo) || null}
-                                    getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                                    value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.assignedTo) || null}
+                                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                                     style={{ textTransform: 'capitalize' }}
                                     renderInput={(params) => (
                                         <TextField
@@ -637,7 +623,7 @@ const Edit = () => {
                         </Grid>
                     </Card>
                     <Card style={{ marginTop: "30px" }}>
-                        <ClinicAddress data={data} clinicAddress={addressList} setUserAction={setUserAction}/>
+                        <ClinicAddress data={data} clinicAddress={addressList} setUserAction={setUserAction} />
                     </Card>
                 </Box>
             </Container>

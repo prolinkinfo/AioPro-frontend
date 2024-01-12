@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable no-plusplus */
 /* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
@@ -74,11 +76,19 @@ const Target = () => {
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
+    const fullName = (name) => {
+        let separatedNames = name.split(/(?=[A-Z])/);
+        let firstName = separatedNames[0];
+        let lastName = separatedNames[1];
+
+        return `${firstName} ${lastName}`
+    }
+
     const convertJsonToExcel = (jsonArray, fileName) => {
         const field = jsonArray?.map((item) => {
             return {
                 "Sr No": item?.srNo,
-                "Employee Name": item?.employeeName,
+                "Employee Name": fullName(item?.employeeName),
                 "Headquarter": "",
                 "Frequency": item?.frequency,
                 "Month": item?.month,
@@ -92,7 +102,35 @@ const Target = () => {
                 "No Of New Doctor Addition": item?.noOfNewDoctorAdddition,
             };
         });
+
         const ws = XLSX.utils.json_to_sheet(field);
+
+        // Bold the header
+        const headerRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+            const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+            if (ws[headerCell]) {
+                ws[headerCell].s = { font: { bold: true } };
+            }
+        }
+
+        // Auto-size columns based on data content
+        const dataRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
+            let maxLen = 0;
+            for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+                const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                if (ws[cell] && ws[cell].v) {
+                    const cellValue = ws[cell].v.toString().length + 2;
+                    if (cellValue > maxLen) {
+                        maxLen = cellValue;
+                    }
+                }
+            }
+            ws['!cols'] = ws['!cols'] || [];
+            ws['!cols'][C] = { wch: maxLen };
+        }
+
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
         XLSX.writeFile(wb, `${fileName}.xls`);
@@ -133,7 +171,10 @@ const Target = () => {
             field: 'employeeName',
             headerName: 'Employee Name',
             width: 300,
-            cellClassName: 'name-column--cell--capitalize'
+            cellClassName: 'name-column--cell--capitalize',
+            renderCell: (params) => {
+                return <Box>{fullName(params?.row?.employeeName)}</Box>;
+            },
 
         },
         { field: 'headquarter', headerName: 'Headquarter', width: 150, cellClassName: 'name-column--cell--capitalize' },
@@ -294,7 +335,7 @@ const Target = () => {
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                             Add New
                         </Button>
-                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(target, 'target')}>
+                        <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(targetList, 'target')}>
                             Export
                         </Button>
                     </Stack>
