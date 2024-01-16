@@ -1,6 +1,7 @@
 .css-1byr0tz {
   padding: 90px !important;
 }
+
 .template_container {
   flex-grow: 2;
   height: 100%;
@@ -62,6 +63,7 @@
   body {
     visibility: hidden;
   }
+
   #section-to-print {
     visibility: visible;
     position: absolute;
@@ -69,42 +71,51 @@
     top: 0;
   }
 }
+
 .css-1byr0tz {
   padding: 90px 0px !important;
 }
+
 .share-btn {
   display: flex;
   justify-content: center;
   flex-direction: column;
 }
+
 .share-btn-text {
   margin: 0px;
   text-align: center;
 }
-.ql-editor{
+
+.ql-editor {
   height: 50vh !important;
 }
+
 .css-1sp8c2x-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
   padding: 8.5px 13px !important;
 }
+
 .fc .fc-toolbar-title {
   font-size: 1.2rem !important;
 }
-.presantationTable tr th{
+
+.presantationTable tr th {
   padding: 8px;
-    line-height: 20px;
-    text-align: left;
-    vertical-align: middle;
-    border-bottom: 1px solid #ccc;
+  line-height: 20px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #ccc;
 }
-.presantationTable tr td{
+
+.presantationTable tr td {
   padding: 8px;
-    line-height: 20px;
-    text-align: left;
-    vertical-align: middle;
-    border-bottom: 1px solid #ccc;
+  line-height: 20px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #ccc;
 }
-.presantationTable{
+
+.presantationTable {
   border-collapse: collapse;
   border-spacing: 0;
 }
@@ -168,4 +179,8 @@
   right: 0px;
   bottom: 0px;
   left: 0px;
+}
+
+.select-dialog .css-154lg22-MuiPaper-root-MuiDialog-paper {
+  max-width: 700px !important;
 }

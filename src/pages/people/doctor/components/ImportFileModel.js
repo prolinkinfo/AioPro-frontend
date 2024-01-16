@@ -13,61 +13,48 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useState } from 'react';
 import {
-    Box,
-    Input,
     TextField,
 } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { apipost } from '../service/api';
+import { useNavigate } from 'react-router-dom';
+import FieldSelectModel from './FieldSelectModel';
 
-
-const ImportFile = (props) => {
-    const { isOpenImport, setIsOpenImport } = props;
-    const [selectedFile, setSelectedFile] = useState(null);
+const ImportFileModel = (props) => {
+    const { isOpenImport, close } = props;
+    const [open, setOpen] = useState(false);
+    const [fileData, setFileData] = useState(null);
 
     // -----------  validationSchema
     const validationSchema = yup.object({
-        csvFile: yup.string().required('file is required'),
+        backDateVisit: yup.string().required('file is required'),
     });
 
     const initialValues = {
-        csvFile: '',
+        backDateVisit: '',
     };
 
-    const importFile = async (values) => {
-        const data = new FormData();
-        data.append('csvFile', values?.csvFile);
-
-        // const result = await apipost('/api/firm/csv', data);
-        // if (result && result.status === 200) {
-        //     formik.resetForm();
-        //     setIsOpenImport(false);
-        // }
-    };
 
     // formik
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values, { resetForm }) => {
-            importFile(values);
-            resetForm();
+            if (values.backDateVisit) {
+                // navigate(`/${userRole}/dashboard/visits/doctorvisit/backDateImport`, { state: { fileData: values.backDateVisit } });
+                setFileData(values.backDateVisit)
+                close();
+                setOpen(true);
+            }
         },
     });
 
     const handleFileChange = (e) => {
         const file = e?.currentTarget?.files[0];
-        if (file?.type === 'text/csv') {
-            setSelectedFile(e?.target?.files[0]);
-            formik.setFieldValue('csvFile', file);
-        } else {
-            alert('Invalid file. Please select a CSV file');
-        }
+        formik.setFieldValue('backDateVisit', file);
     };
 
     return (
         <div>
+            <FieldSelectModel open={open} close={() => setOpen(false)} fileData={fileData}/>
             <Dialog open={isOpenImport} aria-labelledby="scroll-dialog-title" aria-describedby="scroll-dialog-description">
                 <DialogTitle
                     id="scroll-dialog-title"
@@ -78,14 +65,14 @@ const ImportFile = (props) => {
                 >
                     <Typography variant="h6">Import File</Typography>
                     <Typography>
-                        <ClearIcon onClick={() => setIsOpenImport(false)} style={{ cursor: 'pointer' }} />
+                        <ClearIcon onClick={() => close()} style={{ cursor: 'pointer' }} />
                     </Typography>
                 </DialogTitle>
 
                 <DialogContent dividers>
                     <form>
                         <DialogContentText id="scroll-dialog-description" tabIndex={-1} >
-                            <TextField type='file' fullWidth size='small' onChange={handleFileChange}/>
+                            <TextField type='file' fullWidth size='small' onChange={handleFileChange} />
                         </DialogContentText>
                     </form>
                 </DialogContent>
@@ -93,9 +80,9 @@ const ImportFile = (props) => {
                     <Button
                         type="submit"
                         variant="contained"
-                        onClick={formik.handleSubmit}
                         style={{ textTransform: 'capitalize' }}
                         color="secondary"
+                        onClick={formik.handleSubmit}
                     >
                         Save
                     </Button>
@@ -105,8 +92,7 @@ const ImportFile = (props) => {
                         style={{ textTransform: 'capitalize' }}
                         onClick={() => {
                             formik.resetForm();
-                            setIsOpenImport(false);
-                            setSelectedFile(null);
+                            close();
                         }}
                         color="error"
                     >
@@ -118,4 +104,4 @@ const ImportFile = (props) => {
     );
 };
 
-export default ImportFile;
+export default ImportFileModel;

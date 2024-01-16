@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-var */
 /* eslint-disable arrow-body-style */
@@ -38,6 +39,7 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import * as XLSX from 'xlsx'
 
 import moment from 'moment';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import TableStyle from '../../../components/TableStyle';
 import Iconify from '../../../components/iconify';
 import { apidelete, apiget } from '../../../service/api';
@@ -150,9 +152,11 @@ const Firms = () => {
   };
 
   const fullName = (name) => {
-    console.log(name)
+    let separatedNames = name.split(/(?=[A-Z])/);
+    let firstName = separatedNames[0];
+    let lastName = separatedNames[1];
 
-    // return `${firstName} ${lastName}`
+    return `${firstName} ${lastName}`
   }
 
   const columns = [
@@ -170,7 +174,7 @@ const Firms = () => {
               aria-expanded={open ? 'true' : undefined}
               onClick={(e) => handleClick(params?.row, e)}
             >
-              <DragIndicatorIcon />
+              <MoreVertIcon />
             </Button>
             <Menu
               id="demo-positioned-menu"
@@ -219,28 +223,28 @@ const Firms = () => {
     { field: 'firmCode', headerName: 'Firm Code', width: 130 },
     { field: 'firmName', headerName: 'Firm Name', width: 200 },
     { field: 'firmType', headerName: 'Firm Type', width: 120 },
-    { field: 'contactNumber', headerName: 'Contact Number', width: 130 },
-    { field: 'contactPersonName', headerName: 'Contact Person Name', width: 130 },
+    { field: 'contactNumber', headerName: 'Contact Number', width: 150 },
+    { field: 'contactPersonName', headerName: 'Contact Person Name', width: 180 },
     { field: 'city', headerName: 'City', width: 130 },
-    { field: 'zone', headerName: 'Zone', width: 130 },
+    { field: 'zone', headerName: 'Zone', width: 150 },
     { field: 'division', headerName: 'Division', width: 130 },
     { field: 'category', headerName: 'Firm Category', width: 130 },
 
     {
       field: 'employeeAssigned',
       headerName: 'Employee Assigned',
-      width: 130,
+      width: 180,
       renderCell: (params) => {
-        return <Box>{fullName(params?.row?.employeeName)} </Box>;
+        return <Box>{fullName(params?.row?.employeeAssigned)} </Box>;
       },
     },
     { field: 'assignedFirm', headerName: 'Assigned Firm', width: 130 },
-    { field: 'email', headerName: 'Email', width: 130 },
-    { field: 'address', headerName: 'Address', width: 130 },
+    { field: 'email', headerName: 'Email', width: 180 },
+    { field: 'address', headerName: 'Address', width: 180 },
 
-    { field: 'firstLevelManager', headerName: 'First Level Manager', width: 130 },
-    { field: 'secondLevelManager', headerName: 'Second Level Manager', width: 130 },
-    { field: 'thirdLevelManager', headerName: 'Third Level Manager', width: 130 },
+    { field: 'firstLevelManager', headerName: 'First Level Manager', width: 180 },
+    { field: 'secondLevelManager', headerName: 'Second Level Manager', width: 200 },
+    { field: 'thirdLevelManager', headerName: 'Third Level Manager', width: 180 },
     {
       field: 'dateOfBirth',
       headerName: 'DOB',
@@ -250,8 +254,8 @@ const Firms = () => {
       width: 130,
     },
     { field: 'panNumber', headerName: 'Pan Number', width: 130 },
-    { field: 'drugLicenseNumber', headerName: 'Drug License Number', width: 130 },
-    { field: 'foodLicenseNumber', headerName: 'Food License Number', width: 130 },
+    { field: 'drugLicenseNumber', headerName: 'Drug License Number', width: 200 },
+    { field: 'foodLicenseNumber', headerName: 'Food License Number', width: 200 },
 
     {
       field: 'status',
@@ -358,7 +362,7 @@ const Firms = () => {
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-    XLSX.writeFile(wb, `${fileName}.xls`);
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
   };
 
   return (

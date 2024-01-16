@@ -40,6 +40,7 @@ import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice';
 import { fetchCityData } from '../../../redux/slice/GetCitySlice';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
+import ImportFileModel from './components/ImportFileModel';
 
 const statusList = [
   "Active",
@@ -62,6 +63,7 @@ const Doctor = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
+  const [isOpenImport, setisOpenImport] = useState(false);
   const handleOpenDeleteModel = () => setIsOpenDeleteModel(true);
   const handleCloseDeleteModel = () => setIsOpenDeleteModel(false);
 
@@ -92,6 +94,8 @@ const Doctor = () => {
 
         return (
           <div>
+            <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteDoctor} id={id} />
+
             <Button
               id="demo-positioned-button"
               aria-controls={open ? 'demo-positioned-menu' : undefined}
@@ -128,8 +132,8 @@ const Doctor = () => {
                   <VisibilityIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>View Log(s)</span>
                 </Link>
               </MenuItem>
-              <MenuItem>
-                <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }}>Delete</span>
+              <MenuItem onClick={isOpenDeleteModel}>
+                <DeleteIcon fontSize="10" /> <span style={{ marginLeft: '20px' }} >Delete</span>
               </MenuItem>
             </Menu>
           </div>
@@ -286,6 +290,30 @@ const Doctor = () => {
     },
   ];
 
+  const csvColumns = [
+    { Header: 'Doctor Id', accessor: 'doctorId' },
+    { Header: "Registration Number", accessor: "registrationNumber" },
+    { Header: "Doctor Name", accessor: "doctorName" },
+    { Header: "City", accessor: "city" },
+    { Header: "Hospital Name", accessor: "hospitalName" },
+    { Header: "Employee Name", accessor: "workInformation.assignedTo" },
+    { Header: "Immediate Senior", accessor: "immediateSenior" },
+    { Header: "Contact Number", accessor: "contactNumber" },
+    { Header: "Speciality", accessor: "workInformation.speciality" },
+    { Header: "Qualification", accessor: "qualification" },
+    { Header: "Division", accessor: "addressInformation.division" },
+    { Header: "Category", accessor: "workInformation.category" },
+    { Header: "Zone", accessor: "addressInformation.zone" },
+    { Header: "Email", accessor: "email" },
+    { Header: "Gender", accessor: "gender" },
+    { Header: "DOB", accessor: "dateOfBirth" },
+    { Header: "Anniversary", accessor: "anniversaryDate" },
+    { Header: "Type", accessor: "workInformation.type" },
+    { Header: "Firm", accessor: "workInformation.firmName" },
+    { Header: "Country", accessor: "addressInformation.countryName" },
+    { Header: "Status", accessor: "status" },
+  ];
+
   const deleteDoctor = async (id) => {
     const result = await apidelete(`/api/doctor/${id}`);
     setUserAction(result);
@@ -310,73 +338,117 @@ const Doctor = () => {
   ];
 
   const fullName = (name) => {
-    let separatedNames = name.split(/(?=[A-Z])/);
-    let firstName = separatedNames[0];
-    let lastName = separatedNames[1];
+    let separatedNames = name?.split(/(?=[A-Z])/);
+    let firstName = separatedNames && separatedNames[0];
+    let lastName = separatedNames && separatedNames[1];
 
     return `${firstName} ${lastName}`
   }
 
-  const convertJsonToExcel = (jsonArray, fileName) => {
-    const field = jsonArray?.map((item) => {
-        return {
-            "Doctor Id": item?.doctorId,
-            "Registration Number": item?.registrationNumber,
-            "Doctor Name": item?.doctorName,
-            "City": item?.addressInformation?.city,
-            "Hospital Name": item?.hospitalName,
-            "Employee Name": fullName(item?.workInformation?.assignedTo),
-            "Immediate Senior": item?.immediateSenior,
-            "Contact Number": item?.contactNumber,
-            "Speciality": item?.workInformation?.speciality,
-            "Qualification": item?.qualification,
-            "Division": item?.addressInformation?.division,
-            "Category": item?.workInformation?.category,
-            "Zone": item?.addressInformation?.zone,
-            "Email": item?.email,
-            "Gender": item?.gender,
-            "DOB": moment(item?.dateOfBirth).format("DD/MM/YYYY"),
-            "Anniversary": moment(item?.anniversaryDate).format("DD/MM/YYYY"),
-            "Type": item?.workInformation?.type,
-            "Firm": item?.workInformation?.firmName,
-            "Country": item?.addressInformation?.countryName,
-            "Status": item?.status,
-        };
+  // const convertJsonToExcel = (jsonArray, fileName) => {
+  //   const field = jsonArray?.map((item) => {
+  //     return {
+  //       "Doctor Id": item?.doctorId,
+  //       "Registration Number": item?.registrationNumber,
+  //       "Doctor Name": item?.doctorName,
+  //       "City": item?.addressInformation?.city,
+  //       "Hospital Name": item?.hospitalName,
+  //       "Employee Name": fullName(item?.workInformation?.assignedTo),
+  //       "Immediate Senior": item?.immediateSenior,
+  //       "Contact Number": item?.contactNumber,
+  //       "Speciality": item?.workInformation?.speciality,
+  //       "Qualification": item?.qualification,
+  //       "Division": item?.addressInformation?.division,
+  //       "Category": item?.workInformation?.category,
+  //       "Zone": item?.addressInformation?.zone,
+  //       "Email": item?.email,
+  //       "Gender": item?.gender,
+  //       "DOB": moment(item?.dateOfBirth).format("DD/MM/YYYY"),
+  //       "Anniversary": moment(item?.anniversaryDate).format("DD/MM/YYYY"),
+  //       "Type": item?.workInformation?.type,
+  //       "Firm": item?.workInformation?.firmName,
+  //       "Country": item?.addressInformation?.countryName,
+  //       "Status": item?.status,
+  //     };
+  //   });
+
+  //   const ws = XLSX.utils.json_to_sheet(field);
+
+  //   // Bold the header
+  //   const headerRange = XLSX.utils.decode_range(ws['!ref']);
+  //   for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+  //     const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+  //     if (ws[headerCell]) {
+  //       ws[headerCell].s = { font: { bold: true } };
+  //     }
+  //   }
+
+  //   // Auto-size columns based on data content
+  //   const dataRange = XLSX.utils.decode_range(ws['!ref']);
+  //   for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
+  //     let maxLen = 0;
+  //     for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+  //       const cell = XLSX.utils.encode_cell({ r: R, c: C });
+  //       if (ws[cell] && ws[cell].v) {
+  //         const cellValue = ws[cell].v.toString().length + 2;
+  //         if (cellValue > maxLen) {
+  //           maxLen = cellValue;
+  //         }
+  //       }
+  //     }
+  //     ws['!cols'] = ws['!cols'] || [];
+  //     ws['!cols'][C] = { wch: maxLen };
+  //   }
+
+  //   const wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+  //   XLSX.writeFile(wb, `${fileName}.xlsx`);
+  // };
+  // const downloadExcel =  () => {
+  //   const AllRecords = doctorList?.map((rec) => {
+  //     const selectedFieldsData = {};
+  //     csvColumns.forEach((doctor) => {
+  //       selectedFieldsData[doctor.accessor] = rec[doctor.accessor];
+  //     });
+  //     return selectedFieldsData;
+  //   });
+  //   convertJsonToExcel(AllRecords, csvColumns,'doctor');
+  // };
+  const downloadExcel = () => {
+    const AllRecords = doctorList?.map((rec) => {
+      const selectedFieldsData = {};
+      csvColumns.forEach((doctor) => {
+        const accessor = doctor.accessor;
+        // Check if the accessor has nested properties
+        if (accessor.includes('.')) {
+          const nestedProperties = accessor.split('.');
+          let nestedValue = rec;
+          nestedProperties.forEach((prop) => {
+            nestedValue = nestedValue?.[prop];
+          });
+          selectedFieldsData[accessor] = nestedValue;
+        } else {
+          selectedFieldsData[accessor] = rec[accessor];
+        }
+      });
+      return selectedFieldsData;
     });
+    convertJsonToExcel(AllRecords, csvColumns, 'doctor');
+  };
 
-    const ws = XLSX.utils.json_to_sheet(field);
+  const convertJsonToExcel = (jsonArray, csvColumns, fileName) => {
+    const csvHeader = csvColumns.map((col) => col.Header);
+    console.log(jsonArray, "convertJsonToExcel")
+    const csvContent = [
+      csvHeader,
+      ...jsonArray.map((row) => csvColumns.map((col) => row[col.accessor]))
+    ];
 
-    // Bold the header
-    const headerRange = XLSX.utils.decode_range(ws['!ref']);
-    for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-        const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
-        if (ws[headerCell]) {
-            ws[headerCell].s = { font: { bold: true } };
-        }
-    }
-
-    // Auto-size columns based on data content
-    const dataRange = XLSX.utils.decode_range(ws['!ref']);
-    for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
-        let maxLen = 0;
-        for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
-            const cell = XLSX.utils.encode_cell({ r: R, c: C });
-            if (ws[cell] && ws[cell].v) {
-                const cellValue = ws[cell].v.toString().length + 2;
-                if (cellValue > maxLen) {
-                    maxLen = cellValue;
-                }
-            }
-        }
-        ws['!cols'] = ws['!cols'] || [];
-        ws['!cols'][C] = { wch: maxLen };
-    }
-
+    const ws = XLSX.utils.aoa_to_sheet(csvContent);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-    XLSX.writeFile(wb, `${fileName}.xls`);
-};
-
+    XLSX.writeFile(wb, `${fileName}.xlsx`);    // .csv, .xlsx
+  };
 
   const fetchData = async (searchText) => {
     const filtered = data?.filter(({ doctorId, doctorName, hospitalName, addressInformation, workInformation, contactNumber, qualification, email, gender }) =>
@@ -395,17 +467,17 @@ const Doctor = () => {
       // contactNumber?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       qualification?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
       email?.toLowerCase()?.includes(searchText?.toLowerCase()) ||
-      gender?.toLowerCase()?.includes(searchText?.toLowerCase()) 
+      gender?.toLowerCase()?.includes(searchText?.toLowerCase())
     )
     setDoctorList(searchText?.length > 0 ? (filtered?.length > 0 ? filtered : []) : data)
   };
 
   const fetchEmployee = (searchText) => {
     if (employee) {
-        const filterEmp = employee?.filter((employee) => employee?.contactInformation?.zone?.toLowerCase() === searchText?.toLowerCase())
-        setEmployeeList(searchText?.length > 0 ? (filterEmp?.length > 0 ? filterEmp : []) : employee);
+      const filterEmp = employee?.filter((employee) => employee?.contactInformation?.zone?.toLowerCase() === searchText?.toLowerCase())
+      setEmployeeList(searchText?.length > 0 ? (filterEmp?.length > 0 ? filterEmp : []) : employee);
     }
-}
+  }
 
   useEffect(() => {
     dispatch(fetchDoctorData());
@@ -421,7 +493,7 @@ const Doctor = () => {
   useEffect(() => {
     fetchData();
     fetchEmployee();
-  }, [data,employee]);
+  }, [data, employee]);
 
 
 
@@ -430,6 +502,8 @@ const Doctor = () => {
 
   return (
     <div>
+      <ImportFileModel isOpenImport={isOpenImport} close={() => setisOpenImport(false)} />
+
       <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Doctors</Typography>
@@ -439,10 +513,10 @@ const Doctor = () => {
                 Add Doctor
               </Link>
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={() => convertJsonToExcel(doctorList, 'doctors')}>
+            <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} onClick={downloadExcel}>
               Export
             </Button>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setisOpenImport(true)}>
               Import
             </Button>
           </Stack>

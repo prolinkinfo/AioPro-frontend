@@ -64,6 +64,7 @@
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.9",
     "elkjs": "^0.7.1",
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "formik": "^2.4.2",
     "google-maps-react": "^2.0.6",
@@ -101,6 +102,7 @@
     "utils": "^0.3.1",
     "web-vitals": "^3.1.1",
     "web-worker": "^1.2.0",
+    "xls-to-json": "^2.1.1",
     "xlsx": "^0.18.5",
     "yup": "^1.2.0"
   },

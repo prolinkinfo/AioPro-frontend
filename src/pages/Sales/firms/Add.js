@@ -73,8 +73,8 @@ const AddFirms = () => {
     zone: yup.string().required('Zone is required'),
     address: yup.string().required('Address is required'),
     contactNumber: yup.string().matches(/^[0-9]{10}$/, 'Invalid mobile number'),
-
-    // speciality: yup.string().required('Speciality is required'),
+    pincode: yup.string().matches(/^\d{6}$/, 'Pin code must be exactly 6 digits'),
+    email: yup.string().email(),
     assignedTo: yup.string().required('Assigned To is required'),
   });
 
@@ -314,22 +314,19 @@ const AddFirms = () => {
                 <Autocomplete
                   size="small"
                   onChange={(event, newValue) => {
-                    formik.setFieldValue('assignedTo', newValue ? newValue.basicInformation?.employeesName : '');
+                    formik.setFieldValue('assignedTo', newValue ? `${newValue?.basicInformation?.firstName}${newValue?.basicInformation?.surname}`
+                      : "");
                   }}
                   fullWidth
                   options={employeeList}
-                  value={
-                    employeeList.find(
-                      (employee) => employee?.basicInformation?.employeesName === formik.values.assignedTo
-                    ) || null
-                  }
-                  getOptionLabel={(employee) => employee?.basicInformation?.employeesName}
+                  value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.assignedTo) || null}
+                  getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                   style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       style={{ textTransform: 'capitalize' }}
-                      placeholder="Select Assigned To"
+                      placeholder='Select Assigned To'
                       error={formik.touched.assignedTo && Boolean(formik.errors.assignedTo)}
                       helperText={formik.touched.assignedTo && formik.errors.assignedTo}
                     />
@@ -364,10 +361,7 @@ const AddFirms = () => {
                   fullWidth
                   options={employeeList}
                   value={
-                    employeeList.find(
-                      (employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}` === formik.values.employeeAssigned
-                    ) || null
-                  }
+                    employeeList.find((employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}` === formik.values.employeeAssigned) || null}
                   getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
                   style={{ textTransform: 'capitalize' }}
                   renderInput={(params) => (

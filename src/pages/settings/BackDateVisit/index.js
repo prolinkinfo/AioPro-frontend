@@ -19,6 +19,7 @@ import { fetchBackDateVisitData } from '../../../redux/slice/GetBackDateVisitSli
 import CustomMenu from '../../../components/CustomMenu';
 import BackDateListSample from '../../../assets/files/BackDateListSample.xls'
 import ImportFile from '../../../components/ImportFile';
+import ImportFileModel from './components/ImportFileModel';
 
 const BackDateVisit = () => {
 
@@ -136,7 +137,7 @@ const BackDateVisit = () => {
   return (
     <div>
       {/* Import File */}
-      <ImportFile isOpenImport={isOpenImport} setIsOpenImport={setIsOpenImport} />
+      <ImportFileModel isOpenImport={isOpenImport} setIsOpenImport={setIsOpenImport} />
 
       {/* Add BackDateVisit */}
       <AddBackDateVisit isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchBackDateVisitData={fetchBackDateVisitData} />
@@ -172,7 +173,7 @@ const BackDateVisit = () => {
                 columns={columns}
                 initialState={{
                   pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
+                    paginationModel: { page: 0, pageSize: 10 },
                   },
                 }}
                 getRowId={(row) => row._id}
