@@ -201,7 +201,7 @@ const Doctor = () => {
       headerName: 'Speciality',
       width: 130,
       renderCell: (params) => {
-        return <Box>{params?.row?.workInformation?.speciality[0]}</Box>;
+        return <Box>{params?.row?.workInformation?.speciality?.length > 0 && params?.row?.workInformation?.speciality?.speciality?.[0]}</Box>;
       },
     },
     {
@@ -421,7 +421,7 @@ const Doctor = () => {
         const accessor = doctor.accessor;
         // Check if the accessor has nested properties
         if (accessor.includes('.')) {
-          const nestedProperties = accessor.split('.');
+          const nestedProperties = accessor?.split('.');
           let nestedValue = rec;
           nestedProperties.forEach((prop) => {
             nestedValue = nestedValue?.[prop];

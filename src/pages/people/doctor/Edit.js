@@ -177,7 +177,7 @@ const Edit = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Update Doctor</Typography>
                     <Stack direction="row" spacing={2}>
-                        <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={() => navigate()}>
+                        <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={() => navigate(-1)}>
                             Back
                         </Button>
                     </Stack>

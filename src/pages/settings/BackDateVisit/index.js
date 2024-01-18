@@ -106,9 +106,9 @@ const BackDateVisit = () => {
   }
 
   const fullName = (name) => {
-    let separatedNames = name.split(/(?=[A-Z])/);
-    let firstName = separatedNames[0];
-    let lastName = separatedNames[1];
+    let separatedNames = name?.split(/(?=[A-Z])/);
+    let firstName = separatedNames && separatedNames[0];
+    let lastName = separatedNames && separatedNames[1];
 
     return `${firstName} ${lastName}`
   }
@@ -156,13 +156,13 @@ const BackDateVisit = () => {
               <Stack direction={'row'} spacing={1} display={"flex"} alignItems={"center"}>
                 <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
                 <Tooltip title="Upload File" arrow>
-                  <Button sx={{ minWidth: "0px", padding: "0px" }}>
-                    <RxUpload fontSize={"28px"} cursor={"pointer"} onClick={() => setIsOpenImport(true)} />
+                  <Button variant='contained' startIcon={<Iconify icon="clarity:import-solid" />} onClick={() => setIsOpenImport(true)}>
+                    Import
                   </Button>
                 </Tooltip>
                 <Tooltip title="Download Sample File" arrow>
-                  <Button sx={{ minWidth: "0px", padding: "0px" }}>
-                    <RxDownload fontSize={"28px"} cursor={"pointer"} onClick={downloadSamFile} />
+                  <Button onClick={downloadSamFile} variant='contained' startIcon={<Iconify icon="lucide:download" />}>
+                    Download
                   </Button>
                 </Tooltip>
               </Stack>

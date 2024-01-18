@@ -1,4 +1,5 @@
-import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
+/* eslint-disable camelcase */
+import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { DataGrid, nbNO } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
@@ -6,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx'
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
 import ActionBtn from '../../../components/actionbtn/ActionBtn'
@@ -16,6 +18,8 @@ import { apidelete, apiget, apiput } from '../../../service/api'
 import { fetchProductData } from '../../../redux/slice/GetProductSlice';
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice';
 import CustomMenu from '../../../components/CustomMenu';
+import ImportFileModel from './components/ImportFileModel';
+import product_samFile from '../../../assets/files/product_samFile.xlsx'
 
 const statusList = [
     "Active",
@@ -31,6 +35,7 @@ const Product = () => {
     const [id, setId] = useState('')
     const [isOpenAdd, setIsOpenAdd] = useState(false)
     const [isOpenEdit, setIsOpenEdit] = useState(false)
+    const [isOpenImport, setisOpenImport] = useState(false);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClose = () => setAnchorEl(null);
@@ -136,6 +141,72 @@ const Product = () => {
         { field: 'size', headerName: 'Size', width: 100 },
 
     ];
+    const csvColumns = [
+        { Header: "Product Name", accessor: "productName" },
+        { Header: "Product Code", accessor: "productCode" },
+        { Header: "Division", accessor: "division" },
+        { Header: "Composition Name", accessor: "compositionName" },
+        { Header: "MRP", accessor: "mrp" },
+        { Header: "Out Price", accessor: "outPrice" },
+        { Header: "Packaging", accessor: "packaging" },
+        { Header: "Tax Type", accessor: "taxType" },
+        { Header: "Tax Percent", accessor: "taxPercent" },
+        { Header: "HSN", accessor: "hsn" },
+        { Header: "Product Group", accessor: "productGroup" },
+        { Header: "Grade", accessor: "grade" },
+        { Header: "Size", accessor: "size" },
+        { Header: "Status", accessor: "status" },
+    ];
+
+    const downloadExcel = () => {
+        const AllRecords = productList?.map((rec) => {
+            const selectedFieldsData = {};
+            csvColumns.forEach((item) => {
+                const accessor = item.accessor;
+                // Check if the accessor has nested properties
+                if (accessor.includes('.')) {
+                    const nestedProperties = accessor.split('.');
+                    let nestedValue = rec;
+                    nestedProperties.forEach((prop) => {
+                        nestedValue = nestedValue?.[prop];
+                    });
+                    selectedFieldsData[accessor] = nestedValue;
+                } else {
+                    selectedFieldsData[accessor] = rec[accessor];
+                }
+            });
+            return selectedFieldsData;
+        });
+        convertJsonToExcel(AllRecords, csvColumns, 'product');
+    };
+
+    const convertJsonToExcel = (jsonArray, csvColumns, fileName) => {
+        const csvHeader = csvColumns.map((col) => col.Header);
+        const csvContent = [
+            csvHeader,
+            ...jsonArray.map((row) => csvColumns.map((col) => row[col.accessor])),
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(csvContent);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+
+        // Auto-size columns
+        const colWidths = csvContent[0]?.map((col, i) => {
+            return {
+                wch: Math.max(...csvContent?.map((row) => row[i]?.toString()?.length)),
+            };
+        });
+        ws['!cols'] = colWidths;
+
+        XLSX.writeFile(wb, `${fileName}.xlsx`);
+    };
+
+    
+    const downloadSamFile = () => {
+        window.open(product_samFile)
+    }
+
 
     const deleteSchemeMaster = async (id) => {
         const result = await apidelete(`/api/products/${id}`);
@@ -180,6 +251,9 @@ const Product = () => {
 
     return (
         <div>
+            {/* import File */}
+            <ImportFileModel isOpenImport={isOpenImport} close={() => setisOpenImport(false)} />
+
             {/* Add Product */}
             <AddProduct isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchProductData={fetchProductData} />
 
@@ -191,7 +265,7 @@ const Product = () => {
                 <TableStyle>
                     <Box width="100%" pt={3}>
                         <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} mb={2}>
-                            <Grid item xs={12} sm={6} md={6}>
+                            <Grid item xs={12} sm={12} md={12} display={"flex"} justifyContent={"space-between"}>
                                 <Stack direction={"row"} spacing={2}>
                                     <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                                         Add New
@@ -201,42 +275,59 @@ const Product = () => {
                                             Add Group
                                         </Link>
                                     </Button>
-                                    <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} style={{ marginLeft: '10px' }}>
+                                    <Button variant="contained" startIcon={<Iconify icon="bxs:file-export" />} style={{ marginLeft: '10px' }} onClick={downloadExcel}>
                                         Export
                                     </Button>
                                 </Stack>
+                                <Stack direction={"row"} spacing={2}>
+                                    <Tooltip title="Upload File" arrow>
+                                        <Button variant='contained' startIcon={<Iconify icon="clarity:import-solid" />} onClick={() => setisOpenImport(true)}>
+                                            Import
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip title="Download Sample File" arrow>
+                                        <Button variant='contained' startIcon={<Iconify icon="lucide:download" />} onClick={downloadSamFile}>
+                                            Download
+                                        </Button>
+                                    </Tooltip>
+                                </Stack>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6}>
-                                <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"end"}>
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        onChange={(event, newValue) => {
-                                            filterData(newValue ? newValue.divisionName : "")
-                                        }}
-                                        options={divisionList}
-                                        size='small'
-                                        getOptionLabel={(division) => division?.divisionName}
-                                        renderInput={(params) => <TextField {...params} placeholder='Filter By Division' style={{ fontSize: "12px" }} />}
-                                    />
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={statusList}
-                                        size='small'
-                                        onChange={(event, newValue) => {
-                                            filterData(newValue || "")
-                                        }}
-                                        getOptionLabel={(status) => status}
-                                        renderInput={(params) => <TextField {...params} placeholder='Filter By Status' style={{ fontSize: "12px" }} />}
-                                    />
-                                    <TextField
-                                        type='text'
-                                        size='small'
-                                        placeholder='Search'
-                                        style={{ width: "200px" }}
-                                        onChange={fetchData}
-                                    />
+                            <Grid item xs={12} sm={12} md={12}>
+                                <Stack direction={"row"} display={"flex"} justifyContent={"space-between"} >
+                                    <Stack direction={"row"} spacing={2}>
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            onChange={(event, newValue) => {
+                                                filterData(newValue ? newValue.divisionName : "")
+                                            }}
+                                            sx={{ width: 200 }}
+                                            options={divisionList}
+                                            size='small'
+                                            getOptionLabel={(division) => division?.divisionName}
+                                            renderInput={(params) => <TextField {...params} placeholder='Filter By Division' style={{ fontSize: "12px" }} />}
+                                        />
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={statusList}
+                                            size='small'
+                                            sx={{ width: 200 }}
+                                            onChange={(event, newValue) => {
+                                                filterData(newValue || "")
+                                            }}
+                                            getOptionLabel={(status) => status}
+                                            renderInput={(params) => <TextField {...params} placeholder='Filter By Status' style={{ fontSize: "12px" }} />}
+                                        />
+                                    </Stack>
+                                    <Box>
+                                        <TextField
+                                            type='text'
+                                            size='small'
+                                            placeholder='Search'
+                                            onChange={fetchData}
+                                        />
+                                    </Box>
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -246,7 +337,7 @@ const Product = () => {
                                 columns={columns}
                                 initialState={{
                                     pagination: {
-                                        paginationModel: { page: 0, pageSize: 5 },
+                                        paginationModel: { page: 0, pageSize: 10 },
                                     },
                                 }}
                                 pageSizeOptions={[5, 10]}
@@ -256,7 +347,7 @@ const Product = () => {
                     </Box>
                 </TableStyle>
             </Container>
-        </div>
+        </div >
     )
 }
 

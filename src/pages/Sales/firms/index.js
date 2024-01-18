@@ -53,12 +53,12 @@ import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 import { firmaTypeData } from '../../../redux/slice/GetFirmTypesSlice';
 import { fetchfirmData } from '../../../redux/slice/GetFirmSlice';
 import VisitModel from './VisitModel';
-import ImportFile from './ImportFile';
 import RejectModel from './RejectModel';
+import ImportFileModel from './components/ImportFileModel';
 
 const Firms = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [fileImport, setFileImport] = useState(false);
+  const [isOpenImport, setisOpenImport] = useState(false);
   const [firmsList, setFirmsList] = useState([]);
   const [openModel, setOpenModel] = useState(false);
   const [approveModel, setApproveModel] = useState(false);
@@ -152,9 +152,9 @@ const Firms = () => {
   };
 
   const fullName = (name) => {
-    let separatedNames = name.split(/(?=[A-Z])/);
-    let firstName = separatedNames[0];
-    let lastName = separatedNames[1];
+    let separatedNames = name?.split(/(?=[A-Z])/);
+    let firstName = separatedNames && separatedNames[0];
+    let lastName = separatedNames && separatedNames[1];
 
     return `${firstName} ${lastName}`
   }
@@ -367,7 +367,8 @@ const Firms = () => {
 
   return (
     <div>
-      <ImportFile isOpen={fileImport} handleClose={setFileImport} />
+      <ImportFileModel isOpenImport={isOpenImport} close={() => setisOpenImport(false)} />
+
       <VisitModel isOpen={isOpen} handleCloseView={handleCloseView} />
       <RejectModel isOpen={rejectModel} handleClose={setRejectModel} />
       <Container maxWidth="xl">
@@ -388,7 +389,7 @@ const Firms = () => {
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => setFileImport(true)}
+              onClick={() => setisOpenImport(true)}
             >
               Import
             </Button>

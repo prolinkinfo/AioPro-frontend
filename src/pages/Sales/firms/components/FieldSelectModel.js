@@ -10,7 +10,7 @@ import ExcelJS from 'exceljs';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { apipost } from '../../../../service/api';
-import { fetchDoctorData } from '../../../../redux/slice/GetDoctorSlice';
+import { fetchfirmData } from '../../../../redux/slice/GetFirmSlice';
 
 // eslint-disable-next-line arrow-body-style
 const FieldSelectModel = ({ open, close, fileData }) => {
@@ -24,52 +24,52 @@ const FieldSelectModel = ({ open, close, fileData }) => {
     ];
 
     const fieldsInCrm = [
-        { Header: 'Doctor Id', accessor: 'doctorId', width: 20 },
-        { Header: 'Doctor Code', accessor: 'doctorCode', width: 20 },
-        { Header: "Registration Number", accessor: "registrationNumber" },
-        { Header: "Doctor Name", accessor: "doctorName" },
-        { Header: "City", accessor: "city" },
-        { Header: "Hospital Name", accessor: "hospitalName" },
-        { Header: "Employee Name", accessor: "employeeName" },
-        { Header: "Immediate Senior", accessor: "immediateSenior" },
-        { Header: "Contact Number", accessor: "contactNumber" },
-        { Header: "Speciality", accessor: "speciality" },
-        { Header: "Qualification", accessor: "qualification" },
-        { Header: "Division", accessor: "division" },
-        { Header: "Category", accessor: "category" },
-        { Header: "Zone", accessor: "zone" },
-        { Header: "Email", accessor: "email" },
-        { Header: "Gender", accessor: "gender" },
-        { Header: "Date Of Birth", accessor: "dateOfBirth" },
-        { Header: "Anniversary Date", accessor: "anniversaryDate" },
-        { Header: "Type", accessor: "type" },
+        { Header: 'Firm Id', accessor: 'firmId', width: 20 },
+        { Header: 'Date', accessor: 'date', width: 20 },
+        { Header: "Firm Code", accessor: "firmCode" },
         { Header: "Firm Name", accessor: "firmName" },
-        { Header: "Country Name", accessor: "countryName" },
+        { Header: "Firm Type", accessor: "firmType" },
+        { Header: "Contact Number", accessor: "contactNumber" },
+        { Header: "Contact Person Name", accessor: "contactPersonName" },
+        { Header: "City", accessor: "city" },
+        { Header: "Zone", accessor: "zone" },
+        { Header: "Division", accessor: "division" },
+        { Header: "Assigned Employee", accessor: "assignedEmployee" },
+        { Header: "Assigned Firm", accessor: "assignedFirm" },
+        { Header: "Email", accessor: "email" },
+        { Header: "Address", accessor: "address" },
+        { Header: "First Level Manager", accessor: "firstLevelManager" },
+        { Header: "Second Level Manager", accessor: "secondLevelManager" },
+        { Header: "Third Level Manager", accessor: "thirdLevelManager" },
+        { Header: "Date of Birth", accessor: "dateofBirth" },
+        { Header: "Pan Number", accessor: "panNumber" },
+        { Header: "Drug License Number", accessor: "drugLicenseNumber" },
+        { Header: "Food License Number", accessor: "foodLicenseNumber" },
         { Header: "Status", accessor: "status" },
     ];
 
     const initialValues = {
-        doctorId: '',
-        doctorCode: '',
-        registrationNumber: '',
-        doctorName: '',
-        city: '',
-        hospitalName: '',
-        employeeName: '',
-        immediateSenior: '',
-        contactNumber: '',
-        speciality: '',
-        qualification: '',
-        division: '',
-        category: '',
-        zone: '',
-        email: '',
-        gender: '',
-        dateOfBirth: '',
-        anniversaryDate: '',
-        type: '',
+        firmId: '',
+        date: '',
+        firmCode: '',
         firmName: '',
-        countryName: '',
+        firmType: '',
+        contactNumber: '',
+        contactPersonName: '',
+        city: '',
+        zone: '',
+        division: '',
+        assignedEmployee: '',
+        assignedFirm: '',
+        email: '',
+        address: '',
+        firstLevelManager: '',
+        secondLevelManager: '',
+        thirdLevelManager: '',
+        dateofBirth: '',
+        panNumber: '',
+        drugLicenseNumber: '',
+        foodLicenseNumber: '',
         status: '',
     };
 
@@ -79,29 +79,30 @@ const FieldSelectModel = ({ open, close, fileData }) => {
         onSubmit: (values, { resetForm }) => {
             const Data = importedFileData?.map((item, ind) => {
                 console.log(item)
-                const dateOfBirth = moment(item[values.dateOfBirth || "dateOfBirth"]);
-                const anniversaryDate = moment(item[values.anniversaryDate || "anniversaryDate"]);
+                const date = moment(item[values.date || "date"]);
+                const dateofBirth = moment(item[values.dateofBirth || "dateofBirth"]);
                 return {
-                    doctorId: item[values.doctorId || "doctorId"] || '',
-                    registrationNumber: item[values.registrationNumber || "registrationNumber"] || '',
-                    doctorName: item[values.doctorName || "doctorName"] || '',
-                    city: item[values.city || "city"] || '',
-                    hospitalName: item[values.hospitalName || "hospitalName"] || '',
-                    employeeName: item[values.employeeName || "employeeName"] || '',
-                    immediateSenior: item[values.immediateSenior || "immediateSenior"] || '',
-                    contactNumber: item[values.contactNumber || "contactNumber"] || '',
-                    speciality: item[values.speciality || "speciality"] || '',
-                    qualification: item[values.qualification || "qualification"] || '',
-                    division: item[values.division || "division"] || '',
-                    category: item[values.category || "category"] || '',
-                    zone: item[values.zone || "zone"] || '',
-                    email: item[values.email || "email"] || '',
-                    gender: item[values.gender || "gender"] || '',
-                    dateOfBirth: dateOfBirth.isValid() ? item[values.dateOfBirth || "dateOfBirth"] || '' : '',
-                    anniversaryDate: anniversaryDate.isValid() ? item[values.anniversaryDate || "anniversaryDate"] || '' : '',
-                    type: item[values.type || "type"] || '',
+                    firmId: item[values.firmId || "firmId"] || '',
+                    date: date.isValid() ? item[values.date || "date"] || '' : '',
+                    firmCode: item[values.firmCode || "firmCode"] || '',
                     firmName: item[values.firmName || "firmName"] || '',
-                    countryName: item[values.countryName || "countryName"] || '',
+                    firmType: item[values.firmType || "firmType"] || '',
+                    contactNumber: item[values.contactNumber || "contactNumber"] || '',
+                    contactPersonName: item[values.contactPersonName || "contactPersonName"] || '',
+                    city: item[values.city || "city"] || '',
+                    zone: item[values.zone || "zone"] || '',
+                    division: item[values.division || "division"] || '',
+                    assignedEmployee: item[values.assignedEmployee || "assignedEmployee"] || '',
+                    assignedFirm: item[values.assignedFirm || "assignedFirm"] || '',
+                    email: item[values.email || "email"] || '',
+                    address: item[values.address || "address"] || '',
+                    firstLevelManager: item[values.firstLevelManager || "firstLevelManager"] || '',
+                    secondLevelManager: item[values.secondLevelManager || "secondLevelManager"] || '',
+                    thirdLevelManager: item[values.thirdLevelManager || "thirdLevelManager"] || '',
+                    dateofBirth: dateofBirth.isValid() ? item[values.dateofBirth || "dateofBirth"] || '' : '',
+                    panNumber: item[values.panNumber || "panNumber"] || '',
+                    drugLicenseNumber: item[values.drugLicenseNumber || "drugLicenseNumber"] || '',
+                    foodLicenseNumber: item[values.foodLicenseNumber || "foodLicenseNumber"] || '',
                     status: item[values.status || "status"] || '',
                     createdDate: new Date()
                 }
@@ -114,16 +115,16 @@ const FieldSelectModel = ({ open, close, fileData }) => {
 
     const AddData = async (data) => {
         try {
-            const response = await apipost('/api/doctor/addMany', data)
+            const response = await apipost('/api/firm/addMany', data)
             if (response.status === 200) {
-                toast.success(`Doctors imported successfully`)
+                toast.success(`File imported successfully`)
                 resetForm();
-                dispatch(fetchDoctorData());
+                dispatch(fetchfirmData());
                 close();
             }
         } catch (e) {
             console.error(e);
-            toast.error(`Doctors import failed`)
+            toast.error(`File import failed`)
             resetForm();
         }
 
@@ -139,9 +140,7 @@ const FieldSelectModel = ({ open, close, fileData }) => {
                     header: true,
                 });
                 const parsedData = csv?.data;
-                setImportedFileData(parsedData);
-                console.log(parsedData, "parsedData");
-    
+                setImportedFileData(parsedData);    
                 const fileHeadingFields = parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
                 setImportedFileFields(fileHeadingFields);
     
@@ -177,8 +176,6 @@ const FieldSelectModel = ({ open, close, fileData }) => {
         }
     };
 
-    console.log(importedFileFields,"importedFileFields")
-    console.log(importedFileData,"importedFileData")
 
     useEffect(() => {
         if (fileData) {

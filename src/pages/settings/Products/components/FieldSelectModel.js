@@ -10,7 +10,7 @@ import ExcelJS from 'exceljs';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { apipost } from '../../../../service/api';
-import { fetchDoctorData } from '../../../../redux/slice/GetDoctorSlice';
+import { fetchProductData } from '../../../../redux/slice/GetProductSlice';
 
 // eslint-disable-next-line arrow-body-style
 const FieldSelectModel = ({ open, close, fileData }) => {
@@ -24,52 +24,34 @@ const FieldSelectModel = ({ open, close, fileData }) => {
     ];
 
     const fieldsInCrm = [
-        { Header: 'Doctor Id', accessor: 'doctorId', width: 20 },
-        { Header: 'Doctor Code', accessor: 'doctorCode', width: 20 },
-        { Header: "Registration Number", accessor: "registrationNumber" },
-        { Header: "Doctor Name", accessor: "doctorName" },
-        { Header: "City", accessor: "city" },
-        { Header: "Hospital Name", accessor: "hospitalName" },
-        { Header: "Employee Name", accessor: "employeeName" },
-        { Header: "Immediate Senior", accessor: "immediateSenior" },
-        { Header: "Contact Number", accessor: "contactNumber" },
-        { Header: "Speciality", accessor: "speciality" },
-        { Header: "Qualification", accessor: "qualification" },
+        { Header: 'Product Name', accessor: 'productName' },
+        { Header: 'Product Code', accessor: 'productCode' },
         { Header: "Division", accessor: "division" },
-        { Header: "Category", accessor: "category" },
-        { Header: "Zone", accessor: "zone" },
-        { Header: "Email", accessor: "email" },
-        { Header: "Gender", accessor: "gender" },
-        { Header: "Date Of Birth", accessor: "dateOfBirth" },
-        { Header: "Anniversary Date", accessor: "anniversaryDate" },
-        { Header: "Type", accessor: "type" },
-        { Header: "Firm Name", accessor: "firmName" },
-        { Header: "Country Name", accessor: "countryName" },
+        { Header: "Composition Name", accessor: "compositionName" },
+        { Header: "MRP", accessor: "mrp" },
+        { Header: "Packaging", accessor: "packaging" },
+        { Header: "Tax Type", accessor: "taxType" },
+        { Header: "Tax Percent", accessor: "taxPercent" },
+        { Header: "HSN", accessor: "hsn" },
+        { Header: "Product Group", accessor: "productGroup" },
+        { Header: "Grade", accessor: "grade" },
+        { Header: "Size", accessor: "size" },
         { Header: "Status", accessor: "status" },
     ];
 
     const initialValues = {
-        doctorId: '',
-        doctorCode: '',
-        registrationNumber: '',
-        doctorName: '',
-        city: '',
-        hospitalName: '',
-        employeeName: '',
-        immediateSenior: '',
-        contactNumber: '',
-        speciality: '',
-        qualification: '',
+        productName: '',
+        productCode: '',
         division: '',
-        category: '',
-        zone: '',
-        email: '',
-        gender: '',
-        dateOfBirth: '',
-        anniversaryDate: '',
-        type: '',
-        firmName: '',
-        countryName: '',
+        compositionName: '',
+        mrp: '',
+        packaging: '',
+        taxType: '',
+        taxPercent: '',
+        hsn: '',
+        productGroup: '',
+        grade: '',
+        size: '',
         status: '',
     };
 
@@ -78,30 +60,19 @@ const FieldSelectModel = ({ open, close, fileData }) => {
         enableReinitialize: true,
         onSubmit: (values, { resetForm }) => {
             const Data = importedFileData?.map((item, ind) => {
-                console.log(item)
-                const dateOfBirth = moment(item[values.dateOfBirth || "dateOfBirth"]);
-                const anniversaryDate = moment(item[values.anniversaryDate || "anniversaryDate"]);
                 return {
-                    doctorId: item[values.doctorId || "doctorId"] || '',
-                    registrationNumber: item[values.registrationNumber || "registrationNumber"] || '',
-                    doctorName: item[values.doctorName || "doctorName"] || '',
-                    city: item[values.city || "city"] || '',
-                    hospitalName: item[values.hospitalName || "hospitalName"] || '',
-                    employeeName: item[values.employeeName || "employeeName"] || '',
-                    immediateSenior: item[values.immediateSenior || "immediateSenior"] || '',
-                    contactNumber: item[values.contactNumber || "contactNumber"] || '',
-                    speciality: item[values.speciality || "speciality"] || '',
-                    qualification: item[values.qualification || "qualification"] || '',
+                    productName: item[values.productName || "productName"] || '',
+                    productCode: item[values.productCode || "productCode"] || '',
                     division: item[values.division || "division"] || '',
-                    category: item[values.category || "category"] || '',
-                    zone: item[values.zone || "zone"] || '',
-                    email: item[values.email || "email"] || '',
-                    gender: item[values.gender || "gender"] || '',
-                    dateOfBirth: dateOfBirth.isValid() ? item[values.dateOfBirth || "dateOfBirth"] || '' : '',
-                    anniversaryDate: anniversaryDate.isValid() ? item[values.anniversaryDate || "anniversaryDate"] || '' : '',
-                    type: item[values.type || "type"] || '',
-                    firmName: item[values.firmName || "firmName"] || '',
-                    countryName: item[values.countryName || "countryName"] || '',
+                    compositionName: item[values.compositionName || "compositionName"] || '',
+                    mrp: item[values.mrp || "mrp"] || '',
+                    packaging: item[values.packaging || "packaging"] || '',
+                    taxType: item[values.taxType || "taxType"] || '',
+                    taxPercent: item[values.taxPercent || "taxPercent"] || '',
+                    hsn: item[values.hsn || "hsn"] || '',
+                    productGroup: item[values.productGroup || "productGroup"] || '',
+                    grade: item[values.grade || "grade"] || '',
+                    size: item[values.size || "size"] || '',
                     status: item[values.status || "status"] || '',
                     createdDate: new Date()
                 }
@@ -114,16 +85,16 @@ const FieldSelectModel = ({ open, close, fileData }) => {
 
     const AddData = async (data) => {
         try {
-            const response = await apipost('/api/doctor/addMany', data)
+            const response = await apipost('/api/products/addMany', data)
             if (response.status === 200) {
-                toast.success(`Doctors imported successfully`)
+                toast.success(`File imported successfully`)
                 resetForm();
-                dispatch(fetchDoctorData());
+                dispatch(fetchProductData());
                 close();
             }
         } catch (e) {
             console.error(e);
-            toast.error(`Doctors import failed`)
+            toast.error(`File import failed`)
             resetForm();
         }
 
@@ -139,9 +110,7 @@ const FieldSelectModel = ({ open, close, fileData }) => {
                     header: true,
                 });
                 const parsedData = csv?.data;
-                setImportedFileData(parsedData);
-                console.log(parsedData, "parsedData");
-    
+                setImportedFileData(parsedData);    
                 const fileHeadingFields = parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
                 setImportedFileFields(fileHeadingFields);
     
@@ -177,8 +146,6 @@ const FieldSelectModel = ({ open, close, fileData }) => {
         }
     };
 
-    console.log(importedFileFields,"importedFileFields")
-    console.log(importedFileData,"importedFileData")
 
     useEffect(() => {
         if (fileData) {
