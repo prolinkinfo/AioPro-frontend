@@ -74,8 +74,8 @@ const AddEmployees = () => {
   const userRole = user?.role.toLowerCase();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
-
   const [employeeList, setEmployeeList] = useState([]);
+  const [stateList, setStateList] = useState([]);
 
   // -----------  validationSchema
   const validationSchema = Yup.object({
@@ -334,6 +334,12 @@ const AddEmployees = () => {
   const back = () => {
     navigate(`/${userRole}/dashboard/people/employees`);
   };
+
+  const fetchState = (name) => {
+    const findState = state?.filter(({ countryName }) => countryName?.toLowerCase() === name?.toLowerCase())
+    setStateList(findState)
+    console.log(findState,"findState")
+  }
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
@@ -671,7 +677,10 @@ const AddEmployees = () => {
                   fullWidth
                   size="small"
                   value={country.find((item) => item.countryName === formik.values.country) || null}
-                  onChange={(e, value) => formik.setFieldValue('country', value ? value.countryName : '')}
+                  onChange={(e, value) => {
+                    formik.setFieldValue('country', value ? value?.countryName : '');
+                    fetchState(value ? value?.countryName : "")
+                  }}
                   getOptionLabel={({ countryName }) => countryName}
                   renderInput={(params) => (
                     <TextField
@@ -691,10 +700,10 @@ const AddEmployees = () => {
                 <Autocomplete
                   disablePortal
                   name="state"
-                  options={state}
+                  options={stateList}
                   fullWidth
                   size="small"
-                  value={state.find((item) => item.stateName === formik.values.state) || null}
+                  value={stateList.find((item) => item.stateName === formik.values.state) || null}
                   onChange={(e, value) => formik.setFieldValue('state', value ? value.stateName : '')}
                   getOptionLabel={({ stateName }) => stateName}
                   renderInput={(params) => (
