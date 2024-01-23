@@ -1,3 +1,4 @@
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable object-shorthand */
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/self-closing-comp */
@@ -11,6 +12,8 @@ import { fetchZoneData } from '../../../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../../../redux/slice/GetDivisionSlice';
 import { fetchEmployeeData } from '../../../../redux/slice/GetEmployeeSlice';
 import { firmaTypeData } from '../../../../redux/slice/GetFirmTypesSlice';
+import { apipost, apiput } from '../../../../service/api';
+import { fetchFirmMonthMaintenance } from '../../../../redux/slice/GetFirmMonthMaintenanceSlice';
 
 
 const monthList = [
@@ -89,14 +92,17 @@ const WeekMaintenance = () => {
     const [selectedMonth, setSelectedMonth] = useState("");
     const [selectedYear, setSelectedYear] = useState("");
     const [weekData, setWeekData] = useState([]);
-    const [data, setData] = useState([]);
+    const [id, setId] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
+    const [isTrue, setIsTrue] = useState(false);
+    const dispatch = useDispatch();
+    const [weekDatas, setWeekDatas] = useState([]);
 
-    const [weekDates, setWeekDates] = useState([]);
+    const weekmain = useSelector((state) => state?.getFirmMonthMaintenance?.data)
 
     const handleDateChange = (weekId, field, value) => {
-        setWeekDates((prevDates) => ({
+        setWeekDatas((prevDates) => ({
             ...prevDates,
             [weekId]: {
                 ...prevDates[weekId],
@@ -108,97 +114,119 @@ const WeekMaintenance = () => {
     const handleSearch = () => {
         setMonth(selectedMonth);
         setYear(selectedYear)
-        setWeekDates("");
+        setWeekData("");
         const filtered = weekmain?.filter(({ month, year }) =>
             month?.toLowerCase() === selectedMonth?.toLowerCase() &&
             year?.toLowerCase() === selectedYear?.toLowerCase()
         )
-        setWeekDates({
+        console.log(filtered, "is")
+        console.log(filtered[0]._id, "is")
+        const isTrue = filtered && filtered.length > 0 && filtered[0]?._id ? true : false;
+        console.log(isTrue, "is")
+        setIsTrue(isTrue)
+        setWeekDatas({
             week1: {
-                startDate: filtered[0]?.weekDates?.week1?.startDate,
-                endDate: filtered[0]?.weekDates?.week1?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week1?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week1?.startDate,
+                endDate: filtered[0]?.weekData?.week1?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week1?.submissionDeadline
             },
             week2: {
-                startDate: filtered[0]?.weekDates?.week2?.startDate,
-                endDate: filtered[0]?.weekDates?.week2?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week2?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week2?.startDate,
+                endDate: filtered[0]?.weekData?.week2?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week2?.submissionDeadline
             },
             week3: {
-                startDate: filtered[0]?.weekDates?.week3?.startDate,
-                endDate: filtered[0]?.weekDates?.week3?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week3?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week3?.startDate,
+                endDate: filtered[0]?.weekData?.week3?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week3?.submissionDeadline
             },
             week4: {
-                startDate: filtered[0]?.weekDates?.week4?.startDate,
-                endDate: filtered[0]?.weekDates?.week4?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week4?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week4?.startDate,
+                endDate: filtered[0]?.weekData?.week4?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week4?.submissionDeadline
             },
             week5: {
-                startDate: filtered[0]?.weekDates?.week5?.startDate,
-                endDate: filtered[0]?.weekDates?.week5?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week5?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week5?.startDate,
+                endDate: filtered[0]?.weekData?.week5?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week5?.submissionDeadline
             },
             week6: {
-                startDate: filtered[0]?.weekDates?.week6?.startDate,
-                endDate: filtered[0]?.weekDates?.week6?.endDate,
-                submissionDeadline: filtered[0]?.weekDates?.week5?.submissionDeadline
+                startDate: filtered[0]?.weekData?.week6?.startDate,
+                endDate: filtered[0]?.weekData?.week6?.endDate,
+                submissionDeadline: filtered[0]?.weekData?.week5?.submissionDeadline
             },
         });
 
         setWeekData(filtered)
-        console.log(filtered, "filtered")
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setMonth(selectedMonth);
         setYear(selectedYear)
-        const d = {
+        const payload = {
             month: month,
             year: year,
-            weekDates
+            weekData: weekDatas
         }
-        setData([...data, d])
-        setWeekData([...weekData, d])
+        const result = await apipost('/api/firmMonthMaintenance', payload);
+        if (result && result.status === 200) {
+            dispatch(fetchFirmMonthMaintenance());
+        }
     }
 
-    const handleEdit = (data) => {
+
+    const handleEditData = (data) => {
+        setIsTrue(true)
+        setId(data?._id)
         setSelectedMonth(data?.month);
         setSelectedYear(data?.year);
         setMonth(data?.month)
         setYear(data?.year)
-        setWeekDates({
+        setWeekDatas({
             week1: {
-                startDate: data?.weekDates?.week1?.startDate,
-                endDate: data?.weekDates?.week1?.endDate,
-                submissionDeadline: data?.weekDates?.week1?.submissionDeadline
+                startDate: data?.weekData?.week1?.startDate,
+                endDate: data?.weekData?.week1?.endDate,
+                submissionDeadline: data?.weekData?.week1?.submissionDeadline
             },
             week2: {
-                startDate: data?.weekDates?.week2?.startDate,
-                endDate: data?.weekDates?.week2?.endDate,
-                submissionDeadline: data?.weekDates?.week2?.submissionDeadline
+                startDate: data?.weekData?.week2?.startDate,
+                endDate: data?.weekData?.week2?.endDate,
+                submissionDeadline: data?.weekData?.week2?.submissionDeadline
             },
             week3: {
-                startDate: data?.weekDates?.week3?.startDate,
-                endDate: data?.weekDates?.week3?.endDate,
-                submissionDeadline: data?.weekDates?.week3?.submissionDeadline
+                startDate: data?.weekData?.week3?.startDate,
+                endDate: data?.weekData?.week3?.endDate,
+                submissionDeadline: data?.weekData?.week3?.submissionDeadline
             },
             week4: {
-                startDate: data?.weekDates?.week4?.startDate,
-                endDate: data?.weekDates?.week4?.endDate,
-                submissionDeadline: data?.weekDates?.week4?.submissionDeadline
+                startDate: data?.weekData?.week4?.startDate,
+                endDate: data?.weekData?.week4?.endDate,
+                submissionDeadline: data?.weekData?.week4?.submissionDeadline
             },
             week5: {
-                startDate: data?.weekDates?.week5?.startDate,
-                endDate: data?.weekDates?.week5?.endDate,
-                submissionDeadline: data?.weekDates?.week5?.submissionDeadline
+                startDate: data?.weekData?.week5?.startDate,
+                endDate: data?.weekData?.week5?.endDate,
+                submissionDeadline: data?.weekData?.week5?.submissionDeadline
             },
             week6: {
-                startDate: data?.weekDates?.week6?.startDate,
-                endDate: data?.weekDates?.week6?.endDate,
-                submissionDeadline: data?.weekDates?.week5?.submissionDeadline
+                startDate: data?.weekData?.week6?.startDate,
+                endDate: data?.weekData?.week6?.endDate,
+                submissionDeadline: data?.weekData?.week5?.submissionDeadline
             },
         });
+    }
+
+    const handleEdit = async () => {
+        const payload = {
+            _id: id,
+            month: month,
+            year: year,
+            weekData: weekDatas
+        }
+        const result = await apiput('/api/firmMonthMaintenance', payload);
+        if (result && result.status === 200) {
+            dispatch(fetchFirmMonthMaintenance());
+        }
     }
 
     const fetchData = async (e) => {
@@ -209,7 +237,10 @@ const WeekMaintenance = () => {
         fetchData();
     }, [weekmain])
 
-    console.log(weekData, "weekData")
+    useEffect(() => {
+        dispatch(fetchFirmMonthMaintenance());
+    }, [])
+
     return (
         <div>
             <Box width="100%" pt={3}>
@@ -274,16 +305,16 @@ const WeekMaintenance = () => {
                                                             <TableCell align="left" style={{ fontWeight: "bold", }}>{week?.weekName}</TableCell>
                                                             <TableCell align="left">
                                                                 <div style={{ display: "flex", alignItems: "center", }}>
-                                                                    <span>From</span><span style={{ margin: "0px 15px 0px 15px" }}>-</span><TextField size='small' type='date' value={weekDates[week.id]?.startDate || ''}
+                                                                    <span>From</span><span style={{ margin: "0px 15px 0px 15px" }}>-</span><TextField size='small' type='date' value={weekDatas[week.id]?.startDate || ''}
                                                                         onChange={(e) =>
                                                                             handleDateChange(week.id, 'startDate', e.target.value)
-                                                                        } /> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <span>To</span> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <TextField size='small' type='date' value={weekDates[week.id]?.endDate || ''} onChange={(e) =>
+                                                                        } /> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <span>To</span> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <TextField size='small' type='date' value={weekDatas[week.id]?.endDate || ''} onChange={(e) =>
                                                                             handleDateChange(week?.id, 'endDate', e.target.value)
                                                                         } />
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell align="left" style={{ display: "flex", alignItems: "center", }}>
-                                                                <span style={{ fontWeight: "bold" }}>Submission Deadline </span> <TextField size='small' type='date' value={weekDates[week.id]?.submissionDeadline || ''} onChange={(e) =>
+                                                                <span style={{ fontWeight: "bold" }}>Submission Deadline </span> <TextField size='small' type='date' value={weekDatas[week.id]?.submissionDeadline || ''} onChange={(e) =>
                                                                     handleDateChange(week?.id, 'submissionDeadline', e.target.value)
                                                                 } style={{ marginLeft: "15px" }} />
                                                             </TableCell>
@@ -294,7 +325,13 @@ const WeekMaintenance = () => {
                                                     <TableCell align="left" style={{}}></TableCell>
                                                     <TableCell align="left"></TableCell>
                                                     <TableCell align="center">
-                                                        <Button variant='contained' onClick={handleSubmit}>Save</Button>
+                                                        {
+                                                            isTrue === true ?
+                                                                <Button variant='contained' onClick={handleEdit}>Edit</Button>
+                                                                :
+                                                                <Button Button variant='contained' onClick={handleSubmit}>Save</Button>
+
+                                                        }
                                                     </TableCell>
 
                                                 </TableRow>
@@ -327,16 +364,16 @@ const WeekMaintenance = () => {
                                             weekData?.map((item) => (
                                                 <TableRow >
                                                     <TableCell align="left">
-                                                        <Button variant='outlined' color='primary' onClick={() => handleEdit(item)}>Edit</Button>
+                                                        <Button variant='outlined' color='primary' onClick={() => handleEditData(item)}>Edit</Button>
                                                     </TableCell>
                                                     <TableCell align="left">{item?.month}</TableCell>
                                                     <TableCell align="left">{item?.year}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week1?.startDate ? moment(item?.weekDates?.week1?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week1?.endDate ? moment(item?.weekDates?.week1?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week2?.startDate ? moment(item?.weekDates?.week2?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week2?.endDate ? moment(item?.weekDates?.week2?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week3?.startDate ? moment(item?.weekDates?.week3?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week3?.endDate ? moment(item?.weekDates?.week3?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week4?.startDate ? moment(item?.weekDates?.week4?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week4?.endDate ? moment(item?.weekDates?.week4?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week5?.startDate ? moment(item?.weekDates?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week5?.endDate ? moment(item?.weekDates?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekDates?.week5?.startDate ? moment(item?.weekDates?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekDates?.week5?.endDate ? moment(item?.weekDates?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week1?.startDate ? moment(item?.weekData?.week1?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week1?.endDate ? moment(item?.weekData?.week1?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week2?.startDate ? moment(item?.weekData?.week2?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week2?.endDate ? moment(item?.weekData?.week2?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week3?.startDate ? moment(item?.weekData?.week3?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week3?.endDate ? moment(item?.weekData?.week3?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week4?.startDate ? moment(item?.weekData?.week4?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week4?.endDate ? moment(item?.weekData?.week4?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week5?.startDate ? moment(item?.weekData?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week5?.endDate ? moment(item?.weekData?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{`${item?.weekData?.week5?.startDate ? moment(item?.weekData?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week5?.endDate ? moment(item?.weekData?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
                                                 </TableRow>
                                             ))
 
@@ -347,8 +384,8 @@ const WeekMaintenance = () => {
                         </TableContainer>
                     </Box>
                 </Grid>
-            </Box>
-        </div>
+            </Box >
+        </div >
     )
 }
 

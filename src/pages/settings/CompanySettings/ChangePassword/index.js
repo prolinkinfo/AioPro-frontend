@@ -3,7 +3,7 @@ import { Box, Button, Card, Container, FormLabel, Grid, Stack, TextField, Typogr
 import React from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { apiput } from '../../../service/api';
+import { apiput } from '../../../../service/api';
 
 const ChangePassword = (props) => {
     const Validations = yup.object({

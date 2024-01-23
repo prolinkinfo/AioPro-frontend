@@ -100,7 +100,7 @@ import FirmMonthly from '../pages/Sales/firmMonthly';
 import LeaveReport from '../pages/Reports/LeaveReport';
 import VisitFirmReport from '../pages/Reports/FirmVisitReport';
 import VisitCounter from '../pages/settings/VisitCounter';
-import ChangePassword from '../pages/settings/ChangePassword'
+import ChangePassword from '../pages/settings/CompanySettings/ChangePassword'
 import DoctorView from '../pages/visit/doctorVisit/view'
 import VisitReport from '../pages/Reports/VisitReport';
 import AddFirms from '../pages/Sales/firms/Add';
@@ -119,6 +119,8 @@ import { Scheduler } from '../pages/calender/scheduler';
 import { Viewtourplan } from '../pages/calender/work/Viewtourplan';
 import Approveplan from '../pages/calender/work/Approveplan';
 import ViewEmployees from '../pages/people/employees/EmployeeView';
+import Branding from '../pages/settings/CompanySettings/Branding';
+import PersonalSettings from '../pages/settings/CompanySettings/PersonalSettings';
 
 // ----------------------------------------------------------------------
 
@@ -229,6 +231,8 @@ export default function Router() {
 
         // Company Settings
         { path: 'setting/companySettings/changePassword', element: <ChangePassword /> },
+        { path: 'setting/companySettings/branding', element: <Branding /> },
+        { path: 'setting/companySettings/personalSettings', element: <PersonalSettings /> },
 
         // Data Settings
         { path: 'setting/dataSetting/dataManagement', element: <DataManagement /> },

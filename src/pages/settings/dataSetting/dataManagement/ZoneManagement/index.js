@@ -6120,9 +6120,11 @@ const data = [
 const ZoneManagement = () => {
 
     const [zoneName, setZoneName] = useState('');
+    const [zonesName, setZonesName] = useState([]);
     const [cityList, setCityList] = useState([]);
     const [stateList, setStateList] = useState([])
     const [isTrue, setIsTrue] = useState(false)
+    const [id, setId] = useState([])
     const dispatch = useDispatch()
     const [currentPage, setCurrentPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -6141,7 +6143,7 @@ const ZoneManagement = () => {
         setCurrentPage(0);
     }
 
-    console.log(cityList,"cityList")
+    console.log(zonesName, "zonesName")
 
     const currentListData = cityList.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
 
@@ -6160,6 +6162,20 @@ const ZoneManagement = () => {
             setIsTrue(true)
         }
     }
+
+    // const handleUpdateAll = async () => {
+    //     const payload = {
+    //         _id: id,
+    //         zoneName,
+    //     }
+    //     const result = await apiput('/api/citymaster/zoneMap/addMany', zonesName);
+
+    //     if (result && result.status === 200) {
+    //         await dispatch(fetchCityData());
+    //         setZoneName('');
+    //         setIsTrue(true)
+    //     }
+    // }
 
     const fetchState = (country) => {
         const filteredState = stateData?.filter(({ countryName }) => countryName?.toLowerCase() === country?.toLowerCase());
@@ -6233,40 +6249,55 @@ const ZoneManagement = () => {
                             </TableHead>
                             <TableBody>
                                 {currentListData && currentListData?.length > 0 && currentListData ? currentListData?.map((row, index) => (
-                                    <TableRow
-                                        key={row._id}
-                                    >
-                                        <TableCell align="center">{row.cityName}</TableCell>
-                                        <TableCell align="center">{row.zoneName}</TableCell>
-                                        <TableCell align="center">
-                                            {/* <TextField size='small' onChange={(e) => handleChange(e)} /> */}
-                                            <Autocomplete
-                                                size="small"
-                                                onChange={(event, newValue) => {
-                                                    setZoneName(newValue ? newValue?.zoneName : "")
-                                                }}
-                                                fullWidth
-                                                options={zoneList}
-                                                getOptionLabel={(zone) => zone?.zoneName}
-                                                style={{ textTransform: 'capitalize' }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        style={{ textTransform: 'capitalize', width: "300px" }}
-                                                        placeholder='Select Zone'
-                                                    />
-                                                )}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="center"><Button variant='contained' onClick={() => handleSave(row?._id)}>Update</Button></TableCell>
-                                    </TableRow>
+                                    <>
+                                        <TableRow
+                                            key={row._id}
+                                        >
+                                            <TableCell align="center">{row.cityName}</TableCell>
+                                            <TableCell align="center">{row.zoneName}</TableCell>
+                                            <TableCell align="center">
+                                                {/* <TextField size='small' onChange={(e) => handleChange(e)} /> */}
+                                                <Autocomplete
+                                                    size="small"
+                                                    onChange={(event, newValue) => {
+                                                        setZoneName(newValue ? newValue?.zoneName : "");
+                                                        // if (row._id && !id.includes(row._id)) {
+                                                        //     setId(row._id);
+                                                        // }
+                                                        // setZonesName([...zonesName, { _id: row._id, zoneName: newValue?.zoneName }]);
+                                                    }}
+                                                    fullWidth
+                                                    options={zoneList}
+                                                    getOptionLabel={(zone) => zone?.zoneName}
+                                                    style={{ textTransform: 'capitalize' }}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            style={{ textTransform: 'capitalize', width: "300px" }}
+                                                            placeholder='Select Zone'
+                                                        />
+                                                    )}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center"><Button variant='outlined' onClick={() => handleSave(row?._id)}>Update</Button></TableCell>
+                                        </TableRow>
+                                    </>
+
                                 ))
                                     :
                                     <TableRow>
                                         <TableCell colSpan={6}><Typography textAlign={"center"}>Not Found</Typography></TableCell>
                                     </TableRow>
-
                                 }
+                                {/* {
+                                    currentListData && currentListData?.length > 0 &&
+                                    <TableRow>
+                                        <TableCell />
+                                        <TableCell />
+                                        <TableCell />
+                                        <TableCell align="center"><Button variant='contained' onClick={() => handleUpdateAll()}>Update All</Button></TableCell>
+                                    </TableRow>
+                                } */}
                             </TableBody>
                         </Table>
                     </TableContainer>

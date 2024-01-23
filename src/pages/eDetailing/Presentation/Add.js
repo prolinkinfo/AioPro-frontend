@@ -30,7 +30,7 @@ const assigedType = [
 
 const AddPresentation = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd,fetchPresentationData } = props;
+    const { isOpenAdd, handleCloseAdd, fetchPresentationData } = props;
 
     const dispatch = useDispatch();
     const employeeList = useSelector((state) => state?.getEmployee?.data)
@@ -87,8 +87,13 @@ const AddPresentation = (props) => {
         dispatch(fetchProductData());
         dispatch(fetchDoctorSpecialityData());
         dispatch(fetchDivisionData());
-
     }, [])
+
+    useEffect(() => {
+        if(formik.values.assigedType === "All"){
+            formik.setFieldValue("assigedTo","All")
+        }
+    }, [formik.values.assigedType])
 
     return (
         <div>
@@ -122,8 +127,7 @@ const AddPresentation = (props) => {
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.presentationName && Boolean(formik.errors.presentationName)}
-                                    helperText={formik.touched.presentationName && formik.errors.presentationName}
-                                />
+                                    helperText={formik.touched.presentationName && formik.errors.presentationName} />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Assiged Type</FormLabel>
@@ -143,16 +147,12 @@ const AddPresentation = (props) => {
                                             style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Assiged Type'
                                             error={formik.touched.assigedType && Boolean(formik.errors.assigedType)}
-                                            helperText={formik.touched.assigedType && formik.errors.assigedType}
-                                        />
-                                    )}
-                                />
+                                            helperText={formik.touched.assigedType && formik.errors.assigedType} />
+                                    )} />
                             </Grid>
-
-                            <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Assiged To</FormLabel>
-                                {
-                                    formik.values.assigedType === "Doctor" &&
+                            {formik.values.assigedType === "Doctor" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -169,14 +169,12 @@ const AddPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Doctor'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Speciality" &&
-
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>}
+                            {formik.values.assigedType === "Speciality" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -193,13 +191,13 @@ const AddPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Speciality'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Product" &&
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
+                            {formik.values.assigedType === "Product" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -216,13 +214,13 @@ const AddPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Product'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Eployee" &&
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
+                            {formik.values.assigedType === "Eployee" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -239,13 +237,10 @@ const AddPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Employee'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-
-                            </Grid>
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Division</FormLabel>
                                 <Autocomplete
@@ -264,10 +259,8 @@ const AddPresentation = (props) => {
                                             style={{ textTransform: 'capitalize' }}
                                             placeholder='Select Division'
                                             error={formik.touched.division && Boolean(formik.errors.division)}
-                                            helperText={formik.touched.division && formik.errors.division}
-                                        />
-                                    )}
-                                />
+                                            helperText={formik.touched.division && formik.errors.division} />
+                                    )} />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Description</FormLabel>
@@ -283,13 +276,11 @@ const AddPresentation = (props) => {
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.description && Boolean(formik.errors.description)}
-                                    helperText={formik.touched.description && formik.errors.description}
-                                />
+                                    helperText={formik.touched.description && formik.errors.description} />
                             </Grid>
                         </Grid>
                     </form>
-                </DialogContent>
-                <DialogActions>
+                </DialogContent><DialogActions>
                     <Button
                         type="submit"
                         variant="contained"
@@ -311,8 +302,8 @@ const AddPresentation = (props) => {
                         Cancle
                     </Button>
                 </DialogActions>
-            </Dialog>
-        </div>
+        </Dialog >
+        </div >
     );
 };
 

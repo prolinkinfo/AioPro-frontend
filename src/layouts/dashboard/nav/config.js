@@ -330,8 +330,16 @@ export const adminConfig = [
         path: `/${userRole}/dashboard/setting/companySettings`,
         nestedChildren: [
           {
+            title: 'Branding',
+            path: `/${userRole}/dashboard/setting/companySettings/branding`,
+          },
+          {
             title: 'Change Password',
             path: `/${userRole}/dashboard/setting/companySettings/changePassword`,
+          },
+          {
+            title: 'Personal Settings',
+            path: `/${userRole}/dashboard/setting/companySettings/personalSettings`,
           },
         ],
       },

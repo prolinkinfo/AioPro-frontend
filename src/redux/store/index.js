@@ -45,6 +45,7 @@ import GetWorkAgendaSlice from '../slice/GetWorkAgendaSlice'
 import GetMediaGalleryReducer from '../slice/GetMediaGallerySlice';
 import GetHolidayCalendarReducer from '../slice/GetHolidayCalendarSlice';
 import GetDesignationsanReducer from'../slice/GetDesignationSlice'
+import GetFirmMonthMaintenanceSlice from '../slice/GetFirmMonthMaintenanceSlice';
 
 const store = configureStore({
   reducer: {
@@ -93,7 +94,8 @@ const store = configureStore({
     getWorkAgenda: GetWorkAgendaSlice,
     getMediaGallery: GetMediaGalleryReducer,
     getHolidayCalendar: GetHolidayCalendarReducer,
-    getDesignation:GetDesignationsanReducer
+    getDesignation:GetDesignationsanReducer,
+    getFirmMonthMaintenance:GetFirmMonthMaintenanceSlice,
   },
 });
 

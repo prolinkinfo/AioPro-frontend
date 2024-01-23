@@ -11,9 +11,14 @@ import { apidelete, apiget } from '../../service/api';
 import folderimg from '../../assets/images/Folder-icon.png'
 import pdfimg from '../../assets/images/Pdf-icon.png'
 import xlsimg from '../../assets/images/xls-icon.png'
+import xlsximg from '../../assets/images/xlsx-icon.png'
+import pngimg from '../../assets/images/png-icon.png'
+import jpgimg from '../../assets/images/jpg-icon.png'
+import csvimg from '../../assets/images/csv-icon.png'
+import fileimg from '../../assets/images/file-icon.png'
 import EditFolder from './Folder/Edit';
 import DeleteModel from '../../components/Deletemodle'
-
+import Permissions from './Permissions';
 
 const Files = () => {
 
@@ -25,7 +30,8 @@ const Files = () => {
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
     const [isOpenUpload, setIsOpenUpload] = useState(false);
-    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
+    const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
+    const [isOpenPreModel, setIsOpenPreModel] = useState(false);
 
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
@@ -75,6 +81,9 @@ const Files = () => {
 
     return (
         <div>
+            {/* Permissions */}
+            <Permissions isOpen={isOpenPreModel} handleClose={() => setIsOpenPreModel(false)} />
+
             {/* Create Folder */}
             <AddFolder isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchFolder={fetchFolder} />
 
@@ -125,7 +134,7 @@ const Files = () => {
                                                     <Stack direction={"row"} spacing={1}>
                                                         <Button size='small' startIcon={<Iconify icon="bxs:edit" />} onClick={() => handleOpenEdit(folder)} >edit</Button>
                                                         <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: folder?._id, type: "folder" })}>delete</Button>
-                                                        <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />}>Permissions</Button>
+                                                        <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />} onClick={() => setIsOpenPreModel(true)}>Permissions</Button>
                                                     </Stack>
                                                 </div>
                                             </div>
@@ -138,46 +147,25 @@ const Files = () => {
                                 }
                             </Grid>
                             :
-                            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+                            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 3 }}>
                                 {
                                     folderList?.filter((folder) => folder?._id === folderId)?.map((folder) => (
                                         folder?.filesName && folder?.filesName?.length > 0 ?
                                             folder?.filesName?.map((file) => (
-                                                // <Grid item xs={2} sm={3} md={3}>
-                                                //     <div style={{ display: "flex", justifyContent: "space-around" }}>
-                                                //         <div key={file._id}>
-                                                //             <a href={file?.filePath} target='_blank' rel="noreferrer"><img src={file?.fileType === "image/png" ? file?.filePath : file?.fileType === "application/pdf" ? pdfimg : file?.fileType === "application/vnd.ms-excel" ? xlsimg :""} alt="img" style={{ cursor: "pointer", height: "100px" }} /></a>
-                                                //         </div>
-                                                //         <div>
-                                                //             <Typography style={{ marginTop: "7px" }} variant='inherit'>{file?.fileName}</Typography>
-                                                //             <Typography style={{ fontSize: "15px" }} >{file?.createdOn ? moment(file?.createdOn).format('DD MMM YYYY hh:mm A') : ""}</Typography>
-                                                //             <Stack direction={"row"} spacing={1}>
-                                                // <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: file?._id, type: "file" })}>delete</Button>
-                                                // <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />}>Permissions</Button>
-                                                //             </Stack>
-                                                //         </div>
-                                                //     </div>
-                                                // </Grid>
                                                 <Grid item xs={2} sm={3} md={3}>
-                                                    <Card style={{ width: "300px" }}>
-                                                        <CardMedia alt="green iguana" />
-                                                        <div style={{ display: "flex", justifyContent: "center" }}>
-                                                            <a href={file?.filePath} target='_blank' rel="noreferrer"><img src={file?.fileType === "image/png" || file?.fileType === "image/jpeg" ? file?.filePath : file?.fileType === "application/pdf" ? pdfimg : file?.fileType === "application/vnd.ms-excel" ? xlsimg : ""} alt="img" style={{ cursor: "pointer", height: "150px", width: "200px" }} /></a>
+                                                    <div style={{ display: "flex" }}>
+                                                        <div key={file._id}>
+                                                            <a href={file?.filePath} target='_blank' rel="noreferrer"><img src={file?.fileType === "application/pdf" ? pdfimg : file?.fileType === "application/vnd.ms-excel" ? xlsimg : file?.fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? xlsximg : file?.fileType === "text/csv" ? csvimg : file?.fileType === "image/jpeg" ? jpgimg : file?.fileType === "image/png" ? pngimg : fileimg} alt="img" style={{ cursor: "pointer", height: "100px" }} /></a>
                                                         </div>
-                                                        <CardContent style={{ padding: "3px" }}>
-                                                            <Typography gutterBottom variant="button" component="div" align='center'>
-                                                                {file?.fileName}
-                                                            </Typography>
-                                                            <Typography gutterBottom variant="button" component="div" align='center'>
-                                                                {file?.createdOn ? moment(file?.createdOn).format('DD MMM YYYY hh:mm A') : ""}
-                                                            </Typography>
-                                                        </CardContent>
-                                                        <Divider />
-                                                        <CardActions>
-                                                            <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: file?._id, type: "file" })}>delete</Button>
-                                                            <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />}>Permissions</Button>
-                                                        </CardActions>
-                                                    </Card>
+                                                        <div>
+                                                            <Typography style={{ marginTop: "7px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} variant='inherit'>{file?.fileName}</Typography>
+                                                            <Typography style={{ fontSize: "15px" }} >{file?.createdOn ? moment(file?.createdOn).format('DD MMM YYYY hh:mm A') : ""}</Typography>
+                                                            <Stack direction={"row"} spacing={1}>
+                                                                <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: file?._id, type: "file" })}>delete</Button>
+                                                                <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />} onClick={() => setIsOpenPreModel(true)}>Permissions</Button>
+                                                            </Stack>
+                                                        </div>
+                                                    </div>
                                                 </Grid>
                                             )
                                             )

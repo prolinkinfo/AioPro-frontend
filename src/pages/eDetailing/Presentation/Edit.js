@@ -92,7 +92,13 @@ const EdiPresentation = (props) => {
         dispatch(fetchDoctorSpecialityData());
         dispatch(fetchDivisionData());
 
-    }, [])
+    }, [isOpenEdit])
+
+    useEffect(() => {
+        if (formik.values.assigedType === "All") {
+            formik.setFieldValue("assigedTo", "All")
+        }
+    }, [formik.values.assigedType])
 
     return (
         <div>
@@ -153,10 +159,9 @@ const EdiPresentation = (props) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} sm={12} md={12}>
-                                <FormLabel>Assiged To</FormLabel>
-                                {
-                                    formik.values.assigedType === "Doctor" &&
+                            {formik.values.assigedType === "Doctor" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -173,14 +178,12 @@ const EdiPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Doctor'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Speciality" &&
-
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>}
+                            {formik.values.assigedType === "Speciality" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -197,13 +200,13 @@ const EdiPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Speciality'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Product" &&
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
+                            {formik.values.assigedType === "Product" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -220,13 +223,13 @@ const EdiPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Product'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-                                {
-                                    formik.values.assigedType === "Eployee" &&
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
+                            {formik.values.assigedType === "Eployee" &&
+                                <Grid item xs={12} sm={12} md={12}>
+                                    <FormLabel>Assiged To</FormLabel>
                                     <Autocomplete
                                         size="small"
                                         onChange={(event, newValue) => {
@@ -243,13 +246,10 @@ const EdiPresentation = (props) => {
                                                 style={{ textTransform: 'capitalize' }}
                                                 placeholder='Select Employee'
                                                 error={formik.touched.assigedTo && Boolean(formik.errors.assigedTo)}
-                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo}
-                                            />
-                                        )}
-                                    />
-                                }
-
-                            </Grid>
+                                                helperText={formik.touched.assigedTo && formik.errors.assigedTo} />
+                                        )} />
+                                </Grid>
+                            }
                             <Grid item xs={12} sm={12} md={12}>
                                 <FormLabel>Division</FormLabel>
                                 <Autocomplete
