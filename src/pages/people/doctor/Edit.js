@@ -20,7 +20,8 @@ import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const Edit = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const userRole = user?.role.toLowerCase(); const navigate = useNavigate()
+    const userRole = user?.role.toLowerCase(); 
+    const navigate = useNavigate()
     const [specialityList, setSpecialityList] = useState([]);
     const [data, setData] = useState({});
     const dispatch = useDispatch()

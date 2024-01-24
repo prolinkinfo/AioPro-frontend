@@ -90,6 +90,7 @@ import Daywiseexpenses from '../pages/expendar/Daywiseexpenses';
 import Expensehead from '../pages/expendar/Expensehead';
 import Standardfarechart from '../pages/expendar/Standardfarechart';
 import Files from '../pages/Files'
+import File from '../pages/Files/File';
 import ReportPage from '../pages/Reports';
 import Target from '../pages/Sales/target';
 import SecondarySales from '../pages/Sales/secondarySales';
@@ -247,6 +248,7 @@ export default function Router() {
         { path: 'expenses/expensehead', element: <Expensehead /> },
         { path: 'expenses/standardfarechart', element: <Standardfarechart /> },
         { path: 'files', element: <Files /> },
+        { path: 'file/:id', element: <File /> },
         { path: 'reports', element: <ReportPage /> },
         { path: 'reports/leave', element: <LeaveReport /> },
         { path: 'reports/visit', element: <VisitReport /> },

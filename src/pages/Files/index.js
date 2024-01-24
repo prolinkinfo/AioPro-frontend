@@ -4,6 +4,8 @@
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Container, Divider, Grid, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../components/iconify'
 import AddFolder from './Folder/Add';
 import Upload from './Upload';
@@ -19,20 +21,23 @@ import fileimg from '../../assets/images/file-icon.png'
 import EditFolder from './Folder/Edit';
 import DeleteModel from '../../components/Deletemodle'
 import Permissions from './Permissions';
+import { fetchFolder } from '../../redux/slice/GetFolderSlice';
 
 const Files = () => {
 
-    const [folderList, setFolderList] = useState([])
     const [folderId, setFolderId] = useState('')
     const [data, setData] = useState("")
     const [type, setType] = useState("")
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenAdd, setIsOpenAdd] = useState(false);
     const [isOpenEdit, setIsOpenEdit] = useState(false);
-    const [isOpenUpload, setIsOpenUpload] = useState(false);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
     const [isOpenPreModel, setIsOpenPreModel] = useState(false);
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const folderList = useSelector((state) => state?.getFolder?.data)
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userRole = user?.role.toLowerCase();
     const handleOpenAdd = () => setIsOpenAdd(true);
     const handleCloseAdd = () => setIsOpenAdd(false);
     const handleOpenEdit = (data) => {
@@ -40,43 +45,30 @@ const Files = () => {
         setIsOpenEdit(true);
     };
     const handleCloseEdit = () => setIsOpenEdit(false);
-    const handleOpenUpload = () => setIsOpenUpload(true);
-    const handleCloseUpload = () => setIsOpenUpload(false);
+
     const handleOpenDeleteModel = () => setIsOpenDeleteModel(true)
     const handleCloseDeleteModel = () => setIsOpenDeleteModel(false)
 
     const handleOpen = (id) => {
+        navigate(`/${userRole}/dashboard/file/${id}`)
         setFolderId(id)
-        setIsOpen(true)
     }
 
-    const handleClickDeleteBtn = async (data) => {
-        setData(data?.id);
-        setType(data?.type)
+    const handleClickDeleteBtn = async (id) => {
+        setData(id);
         handleOpenDeleteModel();
     };
 
-    const fetchFolder = async () => {
-        const result = await apiget(`/api/folder`);
-        if (result && result.status === 200) {
-            setFolderList(result?.data?.result);
-        }
-    };
 
     const deleteFolder = async (id) => {
-        const result = await apidelete(type === "file" ? `/api/files/${id}` : `/api/folder/${id}`);
+        const result = await apidelete(`/api/folder/${id}`);
         if (result && result.status === 200) {
-            fetchFolder();
+            dispatch(fetchFolder());
         }
     };
 
-    const back = () => {
-        setIsOpen(false)
-        setFolderId('')
-    }
-
     useEffect(() => {
-        fetchFolder();
+        dispatch(fetchFolder());
     }, [])
 
     return (
@@ -90,94 +82,44 @@ const Files = () => {
             {/* Update Folder */}
             <EditFolder isOpenEdit={isOpenEdit} handleCloseEdit={handleCloseEdit} fetchFolder={fetchFolder} data={data} />
 
-            {/* Upload File */}
-            <Upload isOpenUpload={isOpenUpload} handleCloseUpload={handleCloseUpload} folderId={folderId} fetchFolder={fetchFolder} />
-
             <DeleteModel isOpenDeleteModel={isOpenDeleteModel} handleCloseDeleteModel={handleCloseDeleteModel} deleteData={deleteFolder} id={data} />
 
             <Container maxWidth="xl">
                 <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
                     <Typography variant="h4">Files</Typography>
                     <Stack direction="row" spacing={2}>
-
-                        {
-                            isOpen === true ?
-                                <>
-                                    <Button variant="contained" startIcon={<Iconify icon="material-symbols:upload" />} onClick={handleOpenUpload}>
-                                        Upload
-                                    </Button><Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={back}>
-                                        Back
-                                    </Button>
-                                </>
-                                :
-                                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                                    Create Folder
-                                </Button>
-                        }
-
+                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+                            Create Folder
+                        </Button>
                     </Stack>
                 </Stack>
                 <Box style={{ marginTop: "50px" }}>
-                    {
-                        isOpen === false ?
-                            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-                                {folderList && folderList?.length > 0 ?
-                                    folderList?.map((folder) => (
-                                        <Grid item xs={2} sm={3} md={3}>
-                                            <div style={{ display: "flex", justifyContent: "space-around" }}>
-                                                <div key={folder._id}>
-                                                    <img src={folderimg} alt="Folder Icon" height={90} onClick={() => handleOpen(folder?._id)} style={{ cursor: "pointer" }} />
-                                                </div>
-                                                <div>
-                                                    <Typography style={{ marginTop: "7px" }} variant='inherit'>{folder?.folderName}</Typography>
-                                                    <Typography style={{ fontSize: "15px" }} >{moment(folder?.createdOn).format('DD MMM YYYY hh:mm A')}</Typography>
-                                                    <Stack direction={"row"} spacing={1}>
-                                                        <Button size='small' startIcon={<Iconify icon="bxs:edit" />} onClick={() => handleOpenEdit(folder)} >edit</Button>
-                                                        <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: folder?._id, type: "folder" })}>delete</Button>
-                                                        <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />} onClick={() => setIsOpenPreModel(true)}>Permissions</Button>
-                                                    </Stack>
-                                                </div>
-                                            </div>
-                                        </Grid>
-                                    ))
-                                    :
-                                    <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "250px" }}>
-                                        <Typography variant='h5'>No Folders Found</Typography>
+                    <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
+                        {folderList && folderList?.length > 0 ?
+                            folderList?.map((folder) => (
+                                <Grid item xs={2} sm={3} md={3}>
+                                    <div style={{ display: "flex", justifyContent: "space-around" }}>
+                                        <div key={folder._id}>
+                                            <img src={folderimg} alt="Folder Icon" height={90} onClick={() => handleOpen(folder?._id)} style={{ cursor: "pointer" }} />
+                                        </div>
+                                        <div>
+                                            <Typography style={{ marginTop: "7px" }} variant='inherit'>{folder?.folderName}</Typography>
+                                            <Typography style={{ fontSize: "15px" }} >{moment(folder?.createdOn).format('DD MMM YYYY hh:mm A')}</Typography>
+                                            <Stack direction={"row"} spacing={1}>
+                                                <Button size='small' startIcon={<Iconify icon="bxs:edit" />} onClick={() => handleOpenEdit(folder)} >edit</Button>
+                                                <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn(folder?._id)}>delete</Button>
+                                                <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />} onClick={() => setIsOpenPreModel(true)}>Permissions</Button>
+                                            </Stack>
+                                        </div>
                                     </div>
-                                }
-                            </Grid>
+                                </Grid>
+                            ))
                             :
-                            <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 3 }}>
-                                {
-                                    folderList?.filter((folder) => folder?._id === folderId)?.map((folder) => (
-                                        folder?.filesName && folder?.filesName?.length > 0 ?
-                                            folder?.filesName?.map((file) => (
-                                                <Grid item xs={2} sm={3} md={3}>
-                                                    <div style={{ display: "flex" }}>
-                                                        <div key={file._id}>
-                                                            <a href={file?.filePath} target='_blank' rel="noreferrer"><img src={file?.fileType === "application/pdf" ? pdfimg : file?.fileType === "application/vnd.ms-excel" ? xlsimg : file?.fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? xlsximg : file?.fileType === "text/csv" ? csvimg : file?.fileType === "image/jpeg" ? jpgimg : file?.fileType === "image/png" ? pngimg : fileimg} alt="img" style={{ cursor: "pointer", height: "100px" }} /></a>
-                                                        </div>
-                                                        <div>
-                                                            <Typography style={{ marginTop: "7px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} variant='inherit'>{file?.fileName}</Typography>
-                                                            <Typography style={{ fontSize: "15px" }} >{file?.createdOn ? moment(file?.createdOn).format('DD MMM YYYY hh:mm A') : ""}</Typography>
-                                                            <Stack direction={"row"} spacing={1}>
-                                                                <Button size='small' color='error' startIcon={<Iconify icon="material-symbols:delete-outline" />} onClick={() => handleClickDeleteBtn({ id: file?._id, type: "file" })}>delete</Button>
-                                                                <Button size='small' startIcon={<Iconify icon="fluent-mdl2:repair" />} onClick={() => setIsOpenPreModel(true)}>Permissions</Button>
-                                                            </Stack>
-                                                        </div>
-                                                    </div>
-                                                </Grid>
-                                            )
-                                            )
-                                            :
-                                            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "250px" }}>
-                                                <Typography variant='h5'>No Files Found</Typography>
-                                            </div>
-                                    )
-                                    )
-                                }
-                            </Grid>
-                    }
+                            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "250px" }}>
+                                <Typography variant='h5'>No Folders Found</Typography>
+                            </div>
+                        }
+                    </Grid>
                 </Box>
             </Container>
         </div >

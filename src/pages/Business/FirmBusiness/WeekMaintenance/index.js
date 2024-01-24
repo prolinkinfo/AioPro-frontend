@@ -119,11 +119,7 @@ const WeekMaintenance = () => {
             month?.toLowerCase() === selectedMonth?.toLowerCase() &&
             year?.toLowerCase() === selectedYear?.toLowerCase()
         )
-        console.log(filtered, "is")
-        console.log(filtered[0]._id, "is")
-        const isTrue = filtered && filtered.length > 0 && filtered[0]?._id ? true : false;
-        console.log(isTrue, "is")
-        setIsTrue(isTrue)
+        setIsTrue(filtered?.length > 0 ? true : false)
         setWeekDatas({
             week1: {
                 startDate: filtered[0]?.weekData?.week1?.startDate,
@@ -305,12 +301,26 @@ const WeekMaintenance = () => {
                                                             <TableCell align="left" style={{ fontWeight: "bold", }}>{week?.weekName}</TableCell>
                                                             <TableCell align="left">
                                                                 <div style={{ display: "flex", alignItems: "center", }}>
-                                                                    <span>From</span><span style={{ margin: "0px 15px 0px 15px" }}>-</span><TextField size='small' type='date' value={weekDatas[week.id]?.startDate || ''}
+                                                                    <span>From</span>
+                                                                    <span style={{ margin: "0px 15px 0px 15px" }}>-</span>
+                                                                    <TextField
+                                                                        size='small'
+                                                                        type='date'
+                                                                        value={weekDatas[week.id]?.startDate || ''}
                                                                         onChange={(e) =>
                                                                             handleDateChange(week.id, 'startDate', e.target.value)
-                                                                        } /> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <span>To</span> <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <TextField size='small' type='date' value={weekDatas[week.id]?.endDate || ''} onChange={(e) =>
+                                                                        }
+                                                                    />
+                                                                    <span style={{ margin: "0px 15px 0px 15px" }}>-</span> <span>To</span> <span style={{ margin: "0px 15px 0px 15px" }}>-</span>
+                                                                    <TextField
+                                                                        size='small'
+                                                                        type='date'
+                                                                        value={weekDatas[week.id]?.endDate || ''}
+                                                                        inputProps={{ min: weekDatas[week.id]?.startDate }}
+                                                                        onChange={(e) =>
                                                                             handleDateChange(week?.id, 'endDate', e.target.value)
-                                                                        } />
+                                                                        }
+                                                                    />
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell align="left" style={{ display: "flex", alignItems: "center", }}>
@@ -368,12 +378,12 @@ const WeekMaintenance = () => {
                                                     </TableCell>
                                                     <TableCell align="left">{item?.month}</TableCell>
                                                     <TableCell align="left">{item?.year}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week1?.startDate ? moment(item?.weekData?.week1?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week1?.endDate ? moment(item?.weekData?.week1?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week2?.startDate ? moment(item?.weekData?.week2?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week2?.endDate ? moment(item?.weekData?.week2?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week3?.startDate ? moment(item?.weekData?.week3?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week3?.endDate ? moment(item?.weekData?.week3?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week4?.startDate ? moment(item?.weekData?.week4?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week4?.endDate ? moment(item?.weekData?.week4?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week5?.startDate ? moment(item?.weekData?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week5?.endDate ? moment(item?.weekData?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
-                                                    <TableCell align="left">{`${item?.weekData?.week5?.startDate ? moment(item?.weekData?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week5?.endDate ? moment(item?.weekData?.week5?.endDate).format("DD/MM/YYYY") : "-"}`}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week1 ? `${item?.weekData?.week1?.startDate ? moment(item?.weekData?.week1?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week1?.endDate ? moment(item?.weekData?.week1?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week2 ? `${item?.weekData?.week2?.startDate ? moment(item?.weekData?.week2?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week2?.endDate ? moment(item?.weekData?.week2?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week3 ? `${item?.weekData?.week3?.startDate ? moment(item?.weekData?.week3?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week3?.endDate ? moment(item?.weekData?.week3?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week4 ? `${item?.weekData?.week4?.startDate ? moment(item?.weekData?.week4?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week4?.endDate ? moment(item?.weekData?.week4?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week5 ? `${item?.weekData?.week5?.startDate ? moment(item?.weekData?.week5?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week5?.endDate ? moment(item?.weekData?.week5?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
+                                                    <TableCell align="left">{item?.weekData?.week6 ? `${item?.weekData?.week6?.startDate ? moment(item?.weekData?.week6?.startDate).format("DD/MM/YYYY") : "-"} To ${item?.weekData?.week6?.endDate ? moment(item?.weekData?.week6?.endDate).format("DD/MM/YYYY") : "-"}` : "-"}</TableCell>
                                                 </TableRow>
                                             ))
 

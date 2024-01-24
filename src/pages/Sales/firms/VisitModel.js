@@ -145,7 +145,7 @@ const VisitModel = (props) => {
 
                 <Grid item xs={12} sm={12} md={12}>
                   <FormLabel>Employee</FormLabel>
-                  <Autocomplete
+                  {/* <Autocomplete
                     disablePortal
                     name="employeeName"
                     id="combo-box-demo"
@@ -160,9 +160,29 @@ const VisitModel = (props) => {
                     renderInput={(params) => (
                       <TextField {...params} placeholder="Select Employee" style={{ fontSize: '12px' }} />
                     )}
+                  /> */}
+                  <Autocomplete
+                    size="small"
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('employeeName', newValue ? `${newValue?.basicInformation?.firstName}${newValue?.basicInformation?.surname}`
+                        : "");
+                    }}
+                    fullWidth
+                    options={employeeList}
+                    value={employeeList.find(employee => employee?.basicInformation?.firstName + employee?.basicInformation?.surname === formik.values.employeeName)}
+                    getOptionLabel={(employee) => `${employee?.basicInformation?.firstName} ${employee?.basicInformation?.surname}`}
+                    style={{ textTransform: 'capitalize' }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        style={{ textTransform: 'capitalize' }}
+                        placeholder='Select Employee'
+                        error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                        helperText={formik.touched.employeeName && formik.errors.employeeName}
+                      />
+                    )}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={12} md={12}>
                   <FormLabel>Firm</FormLabel>
                   <Autocomplete

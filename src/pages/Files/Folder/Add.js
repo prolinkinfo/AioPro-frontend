@@ -12,12 +12,13 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const AddFolder = (props) => {
     // eslint-disable-next-line react/prop-types
     const { isOpenAdd, handleCloseAdd ,fetchFolder} = props;
-
+    const dispatch = useDispatch();
     // -----------  validationSchema
     const validationSchema = yup.object({
         folderName: yup.string().required('Folder is required'),
@@ -37,7 +38,7 @@ const AddFolder = (props) => {
         if (result && result.status === 200) {
             formik.resetForm();
             handleCloseAdd();
-            fetchFolder();
+            dispatch(fetchFolder());
         }
     }
 

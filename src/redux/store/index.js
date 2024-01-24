@@ -44,8 +44,10 @@ import GetVisitCounterReducer from '../slice/GetVisitCounterSlice';
 import GetWorkAgendaSlice from '../slice/GetWorkAgendaSlice'
 import GetMediaGalleryReducer from '../slice/GetMediaGallerySlice';
 import GetHolidayCalendarReducer from '../slice/GetHolidayCalendarSlice';
-import GetDesignationsanReducer from'../slice/GetDesignationSlice'
+import GetDesignationsanReducer from '../slice/GetDesignationSlice'
 import GetFirmMonthMaintenanceSlice from '../slice/GetFirmMonthMaintenanceSlice';
+import GetFolderReducer from '../slice/GetFolderSlice';
+import GetDoctorMonthMaintenanceSlice from '../slice/GetDoctorMonthMaintenanceSlice';
 
 const store = configureStore({
   reducer: {
@@ -94,8 +96,10 @@ const store = configureStore({
     getWorkAgenda: GetWorkAgendaSlice,
     getMediaGallery: GetMediaGalleryReducer,
     getHolidayCalendar: GetHolidayCalendarReducer,
-    getDesignation:GetDesignationsanReducer,
-    getFirmMonthMaintenance:GetFirmMonthMaintenanceSlice,
+    getDesignation: GetDesignationsanReducer,
+    getFirmMonthMaintenance: GetFirmMonthMaintenanceSlice,
+    getFolder: GetFolderReducer,
+    getDoctorMonthMaintenance: GetDoctorMonthMaintenanceSlice,
   },
 });
 
