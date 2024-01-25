@@ -22,7 +22,7 @@ const settings = {
 
 const carouselStyle = {
   width: '800px', // Set the width as per your requirement
-  height: '800px', // Set the height as per your requirement
+  // height: '800px', // Set the height as per your requirement
   margin: "auto"
 };
 
@@ -79,9 +79,12 @@ const ViewPresentation = () => {
                   <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
                     Add Slide
                   </Button>
-                  <Button variant="contained" onClick={() => setIsTrue(true)} style={{ marginLeft: "15px" }}>
-                    Preview
-                  </Button>
+                  {
+                    data?.slideImgs?.length > 0 &&
+                    <Button variant="contained" startIcon={<Iconify icon="icon-park-outline:preview-open" />} onClick={() => setIsTrue(true)} style={{ marginLeft: "15px" }}>
+                      Preview
+                    </Button>
+                  }
                 </div>
               </>
             }
@@ -97,9 +100,9 @@ const ViewPresentation = () => {
               data?.slideImgs?.map((item) => {
                 return (
                   <>
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={3} >
                       <Box mt={4}>
-                        <img src={item?.image} height={300} width={500}/>
+                        <img src={item?.image} height={200} width={400} />
                       </Box>
                     </Grid>
                   </>
@@ -116,7 +119,7 @@ const ViewPresentation = () => {
                 data?.slideImgs?.map((item) => {
                   return (
                     <>
-                      <div style={{ padding:"50px"}}>
+                      <div >
                         <img src={item?.image}/>
                       </div>
                     </>

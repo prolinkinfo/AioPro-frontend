@@ -13,7 +13,6 @@ import CustomMenu from '../../../components/CustomMenu';
 
 const Type = () => {
   const [typeList, setTypeList] = useState([]);
-
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [isOpenEdit, setIsOpenEdit] = useState(false)
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false)
@@ -106,7 +105,7 @@ const Type = () => {
               </Button>
               <TextField type="text" size="small" placeholder="Search" onChange={fetchData} />
             </Stack>
-            <Card style={{ height: '72vh' }}>
+            <Card style={{ height: '60vh' }}>
               <DataGrid
                 rows={typeList}
                 columns={columns}

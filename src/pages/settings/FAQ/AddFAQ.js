@@ -1,67 +1,109 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Grid, MenuItem, Select, FormControl } from '@mui/material';
+import { Button, Grid, MenuItem, Select, FormControl, FormLabel, Autocomplete, TextField, Container, Stack, Typography, Card } from '@mui/material';
 // import Editor from 'src/components/Editor'
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Iconify from '../../../components/iconify';
 import Editor from '../../../components/Editor';
 import Questions from './Questions';
-import { apiget } from '../../../service/api';
+import { apipost, apiput } from '../../../service/api';
+import { fetchFaqQuestion } from '../../../redux/slice/GetFaqQuestionSlice';
 
 const FaqAdd = () => {
   const [pageTailorData, setPageTailorData] = useState({});
   const [isOpenAdd, setIsOpenAdd] = useState(false);
-  const [faqQuestions, setFaqQuestions] = useState([]);
-  const [age, setAge] = useState('');
+  const location = useLocation();
+  const { data } = location.state || {};
+  const [question, setQuestion] = useState('');
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const faqQuestionList = useSelector((state) => state?.getFaqQuestion?.data)
 
   const handleOpenAdd = () => setIsOpenAdd(true);
   const handleCloseAdd = () => setIsOpenAdd(false);
 
   const updateEditorState = (val) => {
-    console.log('val', val);
-    pageTailorData[val?.id] = val?.data;
-    setPageTailorData(pageTailorData);
+    setPageTailorData(val);
   };
 
-  const fetchTypeData = async () => {
-    const result = await apiget(`/api/faqQuestion`);
-    if (result && result.status === 200) {
-      setFaqQuestions(result?.data);
+  const handleSubmit = async () => {
+    const payloadA = {
+      question,
+      answer: pageTailorData,
     }
-  };
+    const payloadB = {
+      _id: data?._id,
+      question,
+      answer: pageTailorData,
+    }
+    if (data?._id) {
+      await apiput('/api/faqMaster', payloadB);
+    } else {
+      await apipost('/api/faqMaster', payloadA);
+    }
+    navigate(-1);
+  }
 
   useEffect(() => {
-    fetchTypeData();
+    dispatch(fetchFaqQuestion());
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      setQuestion(data?.question);
+      setPageTailorData(data?.answer);
+    }
+  }, [data]);
+
   return (
-    <div style={{ padding: '25px 100px' }}>
-      <Questions isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} />
-      <form>
-        <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} sx={{ marginY: '20px' }}>
-          <Grid item xs={8} sm={8} md={7}>
-            <FormControl fullWidth>
-              <Select value={age} onChange={handleChange} displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
-                <MenuItem value="">Select Questions</MenuItem>
-                {faqQuestions?.map(({ question }, index) => (
-                  <MenuItem key={index} value={question}>
-                    {question}
-                  </MenuItem>
-                ))}
-              </Select>
-              {/* <FormHelperText>Without label</FormHelperText> */}
-            </FormControl>
+    <>
+      <Questions isOpenAdd={isOpenAdd} handleCloseAdd={handleCloseAdd} fetchFaqQuestion={fetchFaqQuestion} />
+      <Container maxWidth="xl">
+        <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
+          <Typography variant="h4">FAQ Bank</Typography>
+          <Button variant="contained" startIcon={<Iconify icon="material-symbols:arrow-back-ios" />} onClick={() => navigate(-1)}>
+            Back
+          </Button>
+        </Stack>
+        <form>
+          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} sx={{ marginY: '20px' }}>
+            <Grid item xs={8} sm={8} md={7}>
+              <Autocomplete
+                size="small"
+                onChange={(event, newValue) => {
+                  setQuestion(newValue ? newValue?.question : "");
+                }}
+                fullWidth
+                options={faqQuestionList}
+                value={faqQuestionList.find(faqQuestion => faqQuestion?.question === question) || null}
+                getOptionLabel={(faqQuestion) => faqQuestion?.question}
+                style={{ textTransform: 'capitalize' }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    style={{ textTransform: 'capitalize' }}
+                    placeholder='Select Question'
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={4} sm={4} md={5}>
+              <Button variant="outlined" onClick={handleOpenAdd}>
+                Add Question
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <FormLabel>Answer</FormLabel>
+              <Editor handleChangeMessage={updateEditorState} message={pageTailorData} />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <Button variant='contained' onClick={handleSubmit}>Save</Button>
+            </Grid>
           </Grid>
-          <Grid item xs={4} sm={4} md={5}>
-            <Button variant="outlined" onClick={handleOpenAdd}>
-              Add Question
-            </Button>
-          </Grid>
-        </Grid>
-        <Editor Id="12112121112222" handleChangeMessage={updateEditorState} message={pageTailorData} />
-      </form>
-    </div>
+        </form>
+      </Container>
+    </>
   );
 };
 

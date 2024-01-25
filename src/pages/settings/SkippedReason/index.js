@@ -117,7 +117,7 @@ const SkippedReason = () => {
                                 onChange={fetchData}
                             />
                         </Stack>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={reasonList}
                                 columns={columns}

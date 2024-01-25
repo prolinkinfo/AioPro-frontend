@@ -223,7 +223,7 @@ const ProductSample = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={sampleList}
                                 columns={columns}

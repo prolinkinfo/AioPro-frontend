@@ -172,12 +172,12 @@ const WeekMaintenance = () => {
 
 
     const handleEditData = (data) => {
-        setIsTrue(true)
-        setId(data?._id)
+        setIsTrue(true);
+        setId(data?._id);
         setSelectedMonth(data?.month);
         setSelectedYear(data?.year);
-        setMonth(data?.month)
-        setYear(data?.year)
+        setMonth(data?.month);
+        setYear(data?.year);
         setWeekDatas({
             week1: {
                 startDate: data?.weekData?.week1?.startDate,

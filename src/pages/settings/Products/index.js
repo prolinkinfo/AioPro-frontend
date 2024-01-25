@@ -270,7 +270,7 @@ const Product = () => {
                                         Add New
                                     </Button>
                                     <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                                        <Link to={`/${userRole}/dashboard/setting/productGroup`} style={{ color: 'white', textDecoration: 'none' }}>
+                                        <Link to={`/${userRole}/dashboard/setting/applicationMaster/productGroup`} style={{ color: 'white', textDecoration: 'none' }}>
                                             Add Group
                                         </Link>
                                     </Button>
@@ -330,7 +330,7 @@ const Product = () => {
                                 </Stack>
                             </Grid>
                         </Grid>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={productList}
                                 columns={columns}

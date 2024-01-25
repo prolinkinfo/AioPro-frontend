@@ -7,6 +7,7 @@ import Iconify from '../../../../components/iconify';
 import { fetchZoneData } from '../../../../redux/slice/GetZoneSlice';
 import { fetchDivisionData } from '../../../../redux/slice/GetDivisionSlice';
 import { fetchEmployeeData } from '../../../../redux/slice/GetEmployeeSlice';
+import { fetchDoctorData } from '../../../../redux/slice/GetDoctorSlice';
 
 const data = [
     {
@@ -50,14 +51,19 @@ const yearList = [
     { label: '2027' },
 ];
 const DoctorBusiness = () => {
-    const [employeeList, setEmployeeList] = useState([])
-    const [business, setBusiness] = useState([])
+    const [employeeList, setEmployeeList] = useState([]);
+    const [doctorList, setDoctorList] = useState([]);
+    const [business, setBusiness] = useState([]);
+    const [zoneName, setZoneName] = useState('');
+    const [division, setDivision] = useState('');
+    const [empName, setEmpName] = useState('');
     const [total, setTotal] = useState(0);
     const dispatch = useDispatch()
 
     const zoneList = useSelector((state) => state?.getZone.data)
     const divisionList = useSelector((state) => state?.getDivision.data)
     const employee = useSelector((state) => state?.getEmployee?.data)
+    const doctorData = useSelector((state) => state?.getDoctor?.data)
 
     const handleChange = (index, value) => {
         const newValues = [...business];
@@ -77,10 +83,23 @@ const DoctorBusiness = () => {
         }
     }
 
+    const fetchData = () => {
+        const filtered = doctorData?.filter(({ addressInformation,workInformation }) =>
+            addressInformation?.zone?.toLowerCase() === zoneName?.toLowerCase() ||
+            workInformation?.assignedTo?.toLowerCase() === empName?.toLowerCase() 
+        )
+        setDoctorList(filtered)
+        console.log(filtered, "filtered")
+    }
+
+    // console.log(doctorList, "doctorList")
+
+
     useEffect(() => {
         dispatch(fetchZoneData());
         dispatch(fetchDivisionData());
         dispatch(fetchEmployeeData());
+        dispatch(fetchDoctorData());
     }, [])
 
     useEffect(() => {
@@ -96,6 +115,7 @@ const DoctorBusiness = () => {
                             disablePortal
                             onChange={(event, newValue) => {
                                 fetchEmployee(newValue ? newValue.zoneName : "");
+                                setZoneName(newValue ? newValue.zoneName : "");
                             }}
                             id="combo-box-demo"
                             options={zoneList}
@@ -111,6 +131,7 @@ const DoctorBusiness = () => {
                             id="combo-box-demo"
                             onChange={(event, newValue) => {
                                 // fetchEmployee(newValue ? newValue.divisionName : "");
+                                setDivision(newValue ? newValue.divisionName : "")
                             }}
                             options={divisionList}
                             getOptionLabel={(division) => division?.divisionName}
@@ -174,7 +195,7 @@ const DoctorBusiness = () => {
                     </Grid>
                     <Grid item xs={12} sm={2} md={2}>
                         <Stack direction={"row"} spacing={1}>
-                            <Button variant='contained'>Go</Button>
+                            <Button variant='contained' onClick={fetchData}>Go</Button>
                             <Button variant='contained' startIcon={<Iconify icon="bxs:file-export" />}>Export</Button>
                         </Stack>
                     </Grid>
@@ -192,15 +213,15 @@ const DoctorBusiness = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {data && data?.length > 0 && data ? data?.map((row, index) => (
+                                    {doctorList && doctorList?.length > 0 && doctorList ? doctorList?.map((row, index) => (
                                         <>
                                             <TableRow
                                                 key={row._id}
                                             >
-                                                <TableCell align="left">{row.sNo}</TableCell>
-                                                <TableCell align="left">{row.doctorName}</TableCell>
-                                                <TableCell align="left">{row.Speciality}</TableCell>
-                                                <TableCell align="left">{row.City}</TableCell>
+                                                <TableCell align="left">{index + 1}</TableCell>
+                                                <TableCell align="left">{row?.doctorName}</TableCell>
+                                                <TableCell align="left">{row?.workInformation?.speciality[0]}</TableCell>
+                                                <TableCell align="left">{row?.addressInformation?.city}</TableCell>
                                                 <TableCell align="left">{row.empName}</TableCell>
                                                 <TableCell align="left">
                                                     <TextField size='small' onChange={(e) => handleChange(index, e.target.value)} />
@@ -215,34 +236,40 @@ const DoctorBusiness = () => {
                                         </TableRow>
 
                                     }
-                                    <TableRow>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left" style={{ fontWeight: "bold" }}>{data[0]?.empName}</TableCell>
-                                        <TableCell align="left" style={{ fontWeight: "bold" }}>{total}</TableCell>
-                                    </TableRow>
+                                    {
+                                        doctorList && doctorList?.length > 0 &&
+                                        <>
+                                            <TableRow>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left" style={{ fontWeight: "bold" }}>{doctorList[0]?.empName}</TableCell>
+                                                <TableCell align="left" style={{ fontWeight: "bold" }}>{total}</TableCell>
+                                            </TableRow>
 
-                                    <TableRow >
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left" style={{ fontWeight: "bold" }}>Total</TableCell>
-                                        <TableCell align="left" style={{ fontWeight: "bold" }}>{total}</TableCell>
-                                    </TableRow>
+                                            <TableRow >
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left" style={{ fontWeight: "bold" }}>Total</TableCell>
+                                                <TableCell align="left" style={{ fontWeight: "bold" }}>{total}</TableCell>
+                                            </TableRow>
 
-                                    <TableRow >
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left"></TableCell>
-                                        <TableCell align="left">
-                                            <Button variant='contained'>Save</Button>
-                                        </TableCell>
-                                    </TableRow>
+                                            <TableRow >
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left">
+                                                    <Button variant='contained'>Save</Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                    }
+
                                 </TableBody>
 
                             </Table>

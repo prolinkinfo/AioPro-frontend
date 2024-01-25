@@ -104,7 +104,7 @@ const ActivityType = () => {
               </Button>
               <TextField type="text" size="small" placeholder="Search" onChange={fetchTypeData} />
             </Stack>
-            <Card style={{ height: '72vh' }}>
+            <Card style={{ height: '60vh' }}>
               <DataGrid
                 rows={typeList}
                 columns={columns}

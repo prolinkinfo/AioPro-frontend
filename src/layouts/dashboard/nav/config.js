@@ -276,7 +276,7 @@ export const adminConfig = [
           },
           {
             title: 'Radius Settings',
-            path: `/${userRole}/dashboard/setting/applicationMaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/radiusSettings`,
           },
           {
             title: 'Relation Master',
@@ -288,7 +288,7 @@ export const adminConfig = [
           },
           {
             title: 'Sample / Gift With Challan',
-            path: `/${userRole}/dashboard/setting/applicationMaster`,
+            path: `/${userRole}/dashboard/setting/applicationMaster/manageGiftWithChallan`,
           },
           {
             title: 'Scheme Master',

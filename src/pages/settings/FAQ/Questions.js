@@ -12,15 +12,16 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { FormLabel, Dialog, Button, Autocomplete, FormControl } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { apipost } from '../../../service/api';
 
 const Questions = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { isOpenAdd, handleCloseAdd } = props;
-
+  const { isOpenAdd, handleCloseAdd, fetchFaqQuestion } = props;
+  const dispatch = useDispatch();
   // -----------  validationSchema
   const validationSchema = yup.object({
-    question: yup.string().required('Activity Name is required'),
+    question: yup.string().required('Questions is required'),
   });
 
   // -----------   initialValues
@@ -28,13 +29,14 @@ const Questions = (props) => {
     question: '',
   };
 
-  const addType = async (values) => {
+  const addQuestion = async (values) => {
     const pyload = {
       question: values.question,
     };
     const result = await apipost('/api/faqQuestion', pyload);
 
     if (result && result.status === 200) {
+      dispatch(fetchFaqQuestion());
       formik.resetForm();
       handleCloseAdd();
     }
@@ -44,7 +46,7 @@ const Questions = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      addType(values);
+      addQuestion(values);
     },
   });
 
@@ -70,12 +72,12 @@ const Questions = (props) => {
               <Grid item xs={12} sm={12} md={12}>
                 <FormLabel>Questions</FormLabel>
                 <TextField
-                  id="typeName"
+                  id="question"
                   name="question"
                   label=""
                   size="small"
                   maxRows={10}
-                  placeholder="Enter Type Name"
+                  placeholder="Enter Question"
                   value={formik.values.question}
                   onChange={formik.handleChange}
                   fullWidth

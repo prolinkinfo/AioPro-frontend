@@ -122,6 +122,8 @@ import Approveplan from '../pages/calender/work/Approveplan';
 import ViewEmployees from '../pages/people/employees/EmployeeView';
 import Branding from '../pages/settings/CompanySettings/Branding';
 import PersonalSettings from '../pages/settings/CompanySettings/PersonalSettings';
+import RadiusSettings from '../pages/settings/RadiusSettings';
+import SampleGiftWithChallan from '../pages/settings/Sample Gift With Challan';
 
 // ----------------------------------------------------------------------
 
@@ -226,6 +228,8 @@ export default function Router() {
         { path: 'setting/applicationMaster/visitCounter', element: <VisitCounter /> },
         { path: 'setting/applicationMaster/workAgenda', element: <WorkAgenda /> },
         { path: 'setting/applicationMaster/zone', element: <Zone /> },
+        { path: 'setting/applicationMaster/radiusSettings', element: <RadiusSettings /> },
+        { path: 'setting/applicationMaster/manageGiftWithChallan', element: <SampleGiftWithChallan /> },
 
         // setting
         { path: 'setting/tutorialMaster', element: <TutorialMaster /> },

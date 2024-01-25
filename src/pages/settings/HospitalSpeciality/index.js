@@ -102,7 +102,7 @@ const HospitalSpeciality = () => {
                                 onChange={fetchData}
                             />
                         </Stack>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={specialityList}
                                 columns={columns}

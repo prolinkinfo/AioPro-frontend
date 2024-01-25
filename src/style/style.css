@@ -184,3 +184,15 @@
 .select-dialog .css-154lg22-MuiPaper-root-MuiDialog-paper {
   max-width: 700px !important;
 }
+
+.faq-table tbody tr td {
+  border: 1px solid #d6d7d7 !important
+}
+
+.faq-table tr th {
+  border: 1px solid #d6d7d7 !important
+}
+
+.ql-snow .ql-tooltip {
+  left: 0px !important;
+}

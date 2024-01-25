@@ -42,11 +42,12 @@ const Editor = ({ Id, handleChangeMessage, message }) => {
   };
 
   const editorChangeVal = (val) => {
-    if (Id) {
-      handleChangeMessage({ id: Id, data: val });
-    } else {
-      handleChangeMessage(val);
-    }
+    // if (Id) {
+    //   handleChangeMessage({ id: Id, data: val });
+    // } else {
+    //   handleChangeMessage(val);
+    // }
+    handleChangeMessage(val);
   };
 
   return (

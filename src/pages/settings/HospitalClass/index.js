@@ -99,7 +99,7 @@ const HospitalClass = () => {
                                 onChange={fetchData}
                             />
                         </Stack>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={classList}
                                 columns={columns}

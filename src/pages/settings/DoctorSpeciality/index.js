@@ -236,7 +236,7 @@ const DoctorSpeciality = () => {
                                 </Stack>
                             </Grid>
                         </Grid>
-                        <Card style={{ height: '72vh' }}>
+                        <Card style={{ height: '60vh' }}>
                             <DataGrid
                                 rows={specialityList}
                                 columns={columns}

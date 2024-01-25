@@ -48,6 +48,8 @@ import GetDesignationsanReducer from '../slice/GetDesignationSlice'
 import GetFirmMonthMaintenanceSlice from '../slice/GetFirmMonthMaintenanceSlice';
 import GetFolderReducer from '../slice/GetFolderSlice';
 import GetDoctorMonthMaintenanceSlice from '../slice/GetDoctorMonthMaintenanceSlice';
+import GetFaqQuestionSlice from '../slice/GetFaqQuestionSlice';
+import GetFAQMasterSlice from '../slice/GetFAQMasterSlice';
 
 const store = configureStore({
   reducer: {
@@ -100,6 +102,8 @@ const store = configureStore({
     getFirmMonthMaintenance: GetFirmMonthMaintenanceSlice,
     getFolder: GetFolderReducer,
     getDoctorMonthMaintenance: GetDoctorMonthMaintenanceSlice,
+    getFaqQuestion: GetFaqQuestionSlice,
+    getFaqMaster: GetFAQMasterSlice,
   },
 });
 

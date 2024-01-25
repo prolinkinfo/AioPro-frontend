@@ -51,7 +51,7 @@ const Campaingn = () => {
         </Stack>
         <TableStyle>
           <Box width="100%" pt={3}>
-            <Card style={{ height: '72vh' }}>
+            <Card style={{ height: '60vh' }}>
               <DataGrid
                 rows={rows}
                 columns={columns}
