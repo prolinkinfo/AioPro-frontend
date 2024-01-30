@@ -157,16 +157,16 @@ const Administrator = () => {
                                 Add Administrator
                             </Button>
                         </Stack>
-                        <Card style={{ height: '72vh', paddingTop: '15px' }}>
+                        <Card style={{ height: '67vh', paddingTop: '15px' }}>
                             <DataGrid
                                 rows={administratorList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
-                                        paginationModel: { page: 0, pageSize: 5 },
+                                        paginationModel: { page: 0, pageSize: 10 },
                                     },
                                 }}
-                                pageSizeOptions={[5, 10]}
+                                pageSizeOptions={[5, 10, 25, 50, 100]}
                                 getRowId={row => row._id}
                             />
                         </Card>

@@ -10,10 +10,10 @@ import ExcelJS from 'exceljs';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { apipost } from '../../../../service/api';
-import { fetchBackDateVisitData } from '../../../../redux/slice/GetBackDateVisitSlice';
+import { fetchChallanData } from '../../../../redux/slice/GetChallanSlice';
 
 // eslint-disable-next-line arrow-body-style
-const BackDateVisitModel = ({ open, close, fileData }) => {
+const FieldSelectModel = ({ open, close, fileData }) => {
     const [importedFileFields, setImportedFileFields] = useState([]);
     const [importedFileData, setImportedFileData] = useState([]);
     const dispatch = useDispatch();
@@ -24,18 +24,26 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
     ];
 
     const fieldsInCrm = [
-        { Header: 'Employee Name', accessor: 'employeeName', width: 20 },
-        { Header: "From Date", accessor: "fromDate" },
-        { Header: "To Date", accessor: "toDate" },
-        { Header: "Deadline", accessor: "deadline" },
+        { Header: 'Sample/Gift Code', accessor: 'sampleGiftCode' },
+        { Header: "Pack Size", accessor: "packSize" },
+        { Header: "Quantity", accessor: "quantity" },
+        { Header: "Batch No", accessor: "batchNo" },
+        { Header: "Expiry Date", accessor: "expiryDate" },
+        { Header: "Challan No", accessor: "challanNo" },
+        { Header: "Field Person", accessor: "fieldPerson" },
+        { Header: "Date", accessor: "date" },
+
     ];
 
     const initialValues = {
-        employeeName: '',
-        fromDate: '',
-        toDate: '',
-        deadline: '',
-        createdDate: ''
+        sampleGiftCode: '',
+        packSize: '',
+        quantity: '',
+        batchNo: '',
+        expiryDate: '',
+        challanNo: '',
+        fieldPerson: '',
+        date: '',
     };
 
     const formik = useFormik({
@@ -43,16 +51,16 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
         enableReinitialize: true,
         onSubmit: (values, { resetForm }) => {
             const Data = importedFileData?.map((item, ind) => {
-
-                const fromDate = moment(item[values.fromDate || "fromDate"]);
-                const toDate = moment(item[values.toDate || "toDate"]);
-                const deadline = moment(item[values.deadline || "deadline"]);
-
+                const expiryDate = moment(item[values.expiryDate || "expiryDate"]);
+                const date = moment(item[values.date || "date"]);
                 return {
-                    employeeName: item[values.employeeName || "employeeName"] || '',
-                    fromDate: fromDate.isValid() ? item[values.fromDate || "fromDate"] || '' : '',
-                    toDate: toDate.isValid() ? item[values.toDate || "toDate"] || '' : '',
-                    deadline: deadline.isValid() ? item[values.deadline || "deadline"] || '' : '',
+                    sampleGiftCode: item[values.sampleGiftCode || "sampleGiftCode"] || '',
+                    packSize: item[values.packSize || "packSize"] || '',
+                    quantity: item[values.quantity || "quantity"] || '',
+                    expiryDate: expiryDate.isValid() ? item[values.expiryDate || "expiryDate"] || '' : '',
+                    challanNo: item[values.challanNo || "challanNo"] || '',
+                    fieldPerson: item[values.fieldPerson || "fieldPerson"] || '',
+                    toDate: date.isValid() ? item[values.date || "date"] || '' : '',
                     createdDate: new Date()
                 }
             });
@@ -62,21 +70,21 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
     const { errors, touched, values, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm } = formik
 
 
-    const AddData = async (visit) => {
+    const AddData = async (data) => {
         try {
-            const response = await apipost('/api/backDateVisit/addMany', visit)
+            const response = await apipost('/api/sampleGiftWithChallan/addMany', data)
             if (response.status === 200) {
-                toast.success(`BackDate Visit imported successfully`)
+                toast.success(`File imported successfully`)
                 resetForm();
-                dispatch(fetchBackDateVisitData());
+                dispatch(fetchChallanData());
                 close();
             }
         } catch (e) {
             console.error(e);
-            toast.error(`BackDate Visit import failed`)
+            toast.error(`File import failed`)
             resetForm();
         }
-        
+
     };
 
     const parseFileData = async (file) => {
@@ -90,23 +98,19 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
                 });
                 const parsedData = csv?.data;
                 setImportedFileData(parsedData);
-
-                const fileHeadingFields = Object.keys(parsedData[0]);
+                const fileHeadingFields = parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
                 setImportedFileFields(fileHeadingFields);
 
             } else if (extension === 'xlsx') {
                 const data = new Uint8Array(target.result);
                 const workbook = new ExcelJS.Workbook();
-
-                console.log(workbook,"workbook")
-
                 await workbook.xlsx.load(data);
 
                 const worksheet = workbook.getWorksheet(1);
                 const jsonData = [];
 
                 // Iterate over rows and cells
-                worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+                worksheet?.eachRow({ includeEmpty: true, skipHeader: true }, (row, rowNumber) => {
                     const rowData = {};
                     row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                         rowData[worksheet.getCell(1, colNumber).value] = cell.value;
@@ -114,10 +118,9 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
                     jsonData.push(rowData);
                 });
 
-
                 setImportedFileData(jsonData);
-
-                const fileHeadingFields = Object.keys(jsonData[0]);
+                jsonData?.splice(0, 1);
+                const fileHeadingFields = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
                 setImportedFileFields(fileHeadingFields);
             }
         };
@@ -129,7 +132,7 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
             reader.readAsArrayBuffer(blob);
         }
     };
-    
+
 
     useEffect(() => {
         if (fileData) {
@@ -242,4 +245,4 @@ const BackDateVisitModel = ({ open, close, fileData }) => {
     )
 }
 
-export default BackDateVisitModel
+export default FieldSelectModel

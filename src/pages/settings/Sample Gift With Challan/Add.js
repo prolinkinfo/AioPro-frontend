@@ -12,12 +12,14 @@ import * as yup from 'yup';
 import { FormLabel, Dialog, Button, Autocomplete } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { apipost } from '../../../service/api';
+import dayjs from 'dayjs';
+import { fetchChallanData } from '../../../redux/slice/GetChallanSlice';
+import { apiget, apipost, apiput } from '../../../service/api';
 import { fetchEmployeeData } from '../../../redux/slice/GetEmployeeSlice';
 
 const AddSampleGiftWithChallan = (props) => {
     // eslint-disable-next-line react/prop-types
-    const { isOpenAdd, handleCloseAdd } = props;
+    const { isOpenAdd, handleCloseAdd, challanData, setChallanData } = props;
     const dispatch = useDispatch();
     const employeeList = useSelector((state) => state?.getEmployee?.data)
 
@@ -35,18 +37,18 @@ const AddSampleGiftWithChallan = (props) => {
 
     // -----------   initialValues
     const initialValues = {
-        sampleGiftCode: '',
-        packSize: '',
-        quantity: '',
-        batchNo: '',
-        expiryDate: '',
-        challanNo: '',
-        fieldPerson: '',
-        date: '',
+        sampleGiftCode: challanData?.sampleGiftCode || "",
+        packSize: challanData?.packSize || "",
+        quantity: challanData?.quantity || "",
+        batchNo: challanData?.batchNo || "",
+        expiryDate: challanData?.expiryDate || "",
+        challanNo: challanData?.challanNo || "",
+        fieldPerson: challanData?.fieldPerson || "",
+        date: challanData?.date || "",
     };
 
     const add = async (values) => {
-        const pyload = {
+        const pyloadA = {
             sampleGiftCode: values?.sampleGiftCode,
             packSize: values?.packSize,
             quantity: values?.quantity,
@@ -54,22 +56,36 @@ const AddSampleGiftWithChallan = (props) => {
             expiryDate: values?.expiryDate,
             challanNo: values?.challanNo,
             fieldPerson: values?.fieldPerson,
-            date: values?.values
+            date: values?.date
         }
-        // const result = await apipost('/api/type', pyload);
+        const pyloadB = {
+            _id: challanData?._id,
+            sampleGiftCode: values?.sampleGiftCode,
+            packSize: values?.packSize,
+            quantity: values?.quantity,
+            batchNo: values?.batchNo,
+            expiryDate: values?.expiryDate,
+            challanNo: values?.challanNo,
+            fieldPerson: values?.fieldPerson,
+            date: values?.date,
+            modifiedOn: new Date()
+        }
+        const result = challanData?._id ? await apiput('/api/sampleGiftWithChallan', pyloadB) : await apipost('/api/sampleGiftWithChallan', pyloadA);
 
-        // if (result && result.status === 200) {
-        //     formik.resetForm();
-        //     handleCloseAdd();
-        //     // dispatch(fetchTypeData());
+        if (result && result.status === 200) {
+            formik.resetForm();
+            handleCloseAdd();
+            setChallanData('')
+            dispatch(fetchChallanData());
 
-        // }
+        }
     }
 
 
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize: true,
         onSubmit: async (values) => {
             add(values)
         },
@@ -89,9 +105,15 @@ const AddSampleGiftWithChallan = (props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography variant="h6">Add Details </Typography>
+                    <Typography variant="h6">{challanData ? "Edit" : "Add"} Details</Typography>
                     <Typography>
-                        <ClearIcon onClick={handleCloseAdd} style={{ cursor: 'pointer' }} />
+                        <ClearIcon
+                            onClick={() => {
+                                handleCloseAdd();
+                                setChallanData('');
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        />
                     </Typography>
                 </DialogTitle>
 
@@ -170,7 +192,7 @@ const AddSampleGiftWithChallan = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
-                                    value={formik.values.expiryDate}
+                                    value={dayjs(formik.values.expiryDate).format("YYYY-MM-DD")}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.expiryDate && Boolean(formik.errors.expiryDate)}
@@ -225,7 +247,7 @@ const AddSampleGiftWithChallan = (props) => {
                                     type='date'
                                     size="small"
                                     maxRows={10}
-                                    value={formik.values.date}
+                                    value={dayjs(formik.values.date).format("YYYY-MM-DD")}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     error={formik.touched.date && Boolean(formik.errors.date)}
@@ -252,6 +274,7 @@ const AddSampleGiftWithChallan = (props) => {
                         onClick={() => {
                             formik.resetForm();
                             handleCloseAdd();
+                            setChallanData('');
                         }}
                     >
                         Cancle

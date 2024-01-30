@@ -217,17 +217,17 @@ const Visit = () => {
 
   const convertJsonToExcel = (jsonArray, fileName) => {
     const field = jsonArray?.map((item) => {
-        return {
-            "Visit Id": item?.visitId,
-            "Doctor Id": item?.doctorId,
-            "Doctor Name": item?.doctorName,
-            "Clinic Address": item?.clinicAddress,
-            "Zone": item?.zoneName,
-            "City": item?.cityName,
-            "Employee Name": fullName(item?.employeeName),
-            "Date": moment(item?.visitDate).format("DD/MM/YYYY"),
-            "Status": item?.status,
-        };
+      return {
+        "Visit Id": item?.visitId,
+        "Doctor Id": item?.doctorId,
+        "Doctor Name": item?.doctorName,
+        "Clinic Address": item?.clinicAddress,
+        "Zone": item?.zoneName,
+        "City": item?.cityName,
+        "Employee Name": fullName(item?.employeeName),
+        "Date": moment(item?.visitDate).format("DD/MM/YYYY"),
+        "Status": item?.status,
+      };
     });
 
     const ws = XLSX.utils.json_to_sheet(field);
@@ -235,33 +235,33 @@ const Visit = () => {
     // Bold the header
     const headerRange = XLSX.utils.decode_range(ws['!ref']);
     for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-        const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
-        if (ws[headerCell]) {
-            ws[headerCell].s = { font: { bold: true } };
-        }
+      const headerCell = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+      if (ws[headerCell]) {
+        ws[headerCell].s = { font: { bold: true } };
+      }
     }
 
     // Auto-size columns based on data content
     const dataRange = XLSX.utils.decode_range(ws['!ref']);
     for (let C = dataRange.s.c; C <= dataRange.e.c; ++C) {
-        let maxLen = 0;
-        for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
-            const cell = XLSX.utils.encode_cell({ r: R, c: C });
-            if (ws[cell] && ws[cell].v) {
-                const cellValue = ws[cell].v.toString().length + 2;
-                if (cellValue > maxLen) {
-                    maxLen = cellValue;
-                }
-            }
+      let maxLen = 0;
+      for (let R = dataRange.s.r; R <= dataRange.e.r; ++R) {
+        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+        if (ws[cell] && ws[cell].v) {
+          const cellValue = ws[cell].v.toString().length + 2;
+          if (cellValue > maxLen) {
+            maxLen = cellValue;
+          }
         }
-        ws['!cols'] = ws['!cols'] || [];
-        ws['!cols'][C] = { wch: maxLen };
+      }
+      ws['!cols'] = ws['!cols'] || [];
+      ws['!cols'][C] = { wch: maxLen };
     }
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, `${fileName}.xls`);
-};
+  };
 
   useEffect(() => {
     dispatch(fetchDoctorVisitData());
@@ -278,7 +278,7 @@ const Visit = () => {
     <div>
       {/* Add visit */}
       <AddVisit isOpen={isOpenAdd} handleClose={handleCloseAdd} fetchDoctorVisitData={fetchDoctorVisitData} />
-      
+
       <Container maxWidth="xl" style={{ height: '72vh', paddingTop: '15px' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" pt={1}>
           <Typography variant="h4">Doctor Visit</Typography>
@@ -391,16 +391,16 @@ const Visit = () => {
                             /> */}
 
             </Grid>
-            <Card style={{ height: '72vh', paddingTop: '15px' }}>
+            <Card style={{ height: '67vh', paddingTop: '15px' }}>
               <DataGrid
                 rows={doctorVisitList}
                 columns={columns}
                 initialState={{
                   pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
+                    paginationModel: { page: 0, pageSize: 10 },
                   },
                 }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[5, 10, 25, 50, 100]}
                 getRowId={(row) => row._id}
               />
             </Card>

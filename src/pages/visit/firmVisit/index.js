@@ -3,14 +3,13 @@
 /* eslint-disable no-const-assign */
 /* eslint-disable arrow-body-style */
 import { Autocomplete, Box, Button, Card, Container, Grid, Stack, TextField, Typography } from '@mui/material'
-import { DataGrid, nbNO } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import * as XLSX from 'xlsx'
 import TableStyle from '../../../components/TableStyle'
 import Iconify from '../../../components/iconify'
-import ActionBtn from '../../../components/actionbtn/ActionBtn'
 import { fetchFirmVisitData } from '../../../redux/slice/GetFirmVisitSlice'
 import { fetchZoneData } from '../../../redux/slice/GetZoneSlice'
 import { fetchDivisionData } from '../../../redux/slice/GetDivisionSlice'
@@ -366,19 +365,16 @@ const FirmVisit = () => {
                             /> */}
 
                         </Grid>
-                        <Card style={{ height: '72vh', paddingTop: '15px' }}>
-                            {/* <Stack direction={"row"} spacing={2} display={"flex"} justifyContent={"end"} mb={2}>
-                               
-                            </Stack> */}
+                        <Card style={{ height: '67vh', paddingTop: '15px' }}>
                             <DataGrid
                                 rows={firmVisitList}
                                 columns={columns}
                                 initialState={{
                                     pagination: {
-                                        paginationModel: { page: 0, pageSize: 5 },
+                                        paginationModel: { page: 0, pageSize: 10 },
                                     },
                                 }}
-                                pageSizeOptions={[5, 10]}
+                                pageSizeOptions={[5, 10, 25, 50, 100]}
                                 getRowId={(row) => row._id}
 
                             />
